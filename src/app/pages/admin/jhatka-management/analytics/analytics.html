@@ -1,0 +1,212 @@
+<mat-card class="cardWithShadow">
+  <mat-card-header class="m-b-16">
+    <mat-card-title>Jhatka analytics</mat-card-title>
+    <mat-card-subtitle>
+      Money is rupees (the service converts once). "Contribution" excludes COGS and operator payouts — those are settled separately, so this is not profit.
+    </mat-card-subtitle>
+  </mat-card-header>
+
+  <mat-card-content>
+    <div class="row g-3 align-items-end">
+      <div class="col-12 col-md-3">
+        <mat-form-field appearance="outline" class="w-100">
+          <mat-label>From</mat-label>
+          <input matInput type="date" [(ngModel)]="from" />
+        </mat-form-field>
+      </div>
+      <div class="col-12 col-md-3">
+        <mat-form-field appearance="outline" class="w-100">
+          <mat-label>To</mat-label>
+          <input matInput type="date" [(ngModel)]="to" />
+        </mat-form-field>
+      </div>
+      <div class="col-12 col-md-6 d-flex gap-2">
+        <button mat-flat-button color="primary" (click)="getAnalytics()">Apply</button>
+        <button mat-stroked-button (click)="reset()">Last 30 days</button>
+      </div>
+    </div>
+
+    <p class="f-s-12 text-muted">
+      Window is capped server-side at 90 days.
+      <ng-container *ngIf="data">
+        Showing {{ data.period.from | date: 'dd MMM yyyy' }} — {{ data.period.to | date: 'dd MMM yyyy' }}.
+      </ng-container>
+    </p>
+
+    <div *ngIf="!isLoaded" class="p-y-24 text-center">
+      <mat-spinner diameter="32"></mat-spinner>
+    </div>
+
+    <ng-container *ngIf="isLoaded && data">
+      <div *ngIf="needsAttention" class="mb-3">
+        <div class="alert alert-warning mb-0" role="alert">
+          <strong>Needs attention.</strong>
+          {{ data.compliance.openRecalls }} open recall(s) and
+          {{ data.compliance.byStatus['expired'] || 0 }} expired compliance record(s) in this period.
+          An expiry blocks NEW orders at that outlet only — existing orders still deliver.
+        </div>
+      </div>
+
+      <!-- ORDER + MONEY -------------------------------------------------- -->
+      <div class="row g-3 mb-3">
+        <div class="col-12 col-md-3">
+          <div class="border rounded p-3 h-100">
+            <div class="f-s-12 text-muted">Orders</div>
+            <div class="f-s-24 f-w-600">{{ data.orders.count }}</div>
+          </div>
+        </div>
+        <div class="col-12 col-md-3">
+          <div class="border rounded p-3 h-100">
+            <div class="f-s-12 text-muted">Gross collected</div>
+            <div class="f-s-24 f-w-600">₹{{ data.contribution.grossCollected | number: '1.2-2' }}</div>
+            <div class="f-s-12 text-muted">Estimated minus refunds</div>
+          </div>
+        </div>
+        <div class="col-12 col-md-3">
+          <div class="border rounded p-3 h-100">
+            <div class="f-s-12 text-muted">Contribution after wastage</div>
+            <div class="f-s-24 f-w-600">₹{{ data.contribution.contributionAfterWastage | number: '1.2-2' }}</div>
+            <div class="f-s-12 text-muted">Not profit — COGS excluded</div>
+          </div>
+        </div>
+        <div class="col-12 col-md-3">
+          <div class="border rounded p-3 h-100">
+            <div class="f-s-12 text-muted">Refund rate</div>
+            <div class="f-s-24 f-w-600">{{ data.contribution.refundRate }}%</div>
+            <div class="f-s-12 text-muted">Above ~2% a variant refunds every week</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- BR-06 / §3.3 --------------------------------------------------- -->
+      <div class="alert alert-info">
+        <strong>Absorbed overcharge: ₹{{ data.contribution.absorbedOvercharge | number: '1.2-2' }}</strong>
+        — weight above the estimate that LocalWala paid for and charged nobody (BR-06).
+        A rising figure means the COD ceiling is under-priced, or an outlet is
+        over-reporting preparation volume. Watch it against wastage, not on its own.
+      </div>
+
+      <!-- WASTAGE -------------------------------------------------------- -->
+      <div class="row g-3 mb-3">
+        <div class="col-12 col-md-6">
+          <mat-card class="cardWithShadow h-100">
+            <mat-card-header>
+              <mat-card-title>Wastage — ₹{{ data.wastage.value | number: '1.2-2' }}</mat-card-title>
+              <mat-card-subtitle>
+                {{ data.wastage.count }} record(s), {{ data.wastage.orderLinked }} order-linked.
+                Order-linked waste is the cost of doing business; the rest is a decision somebody made.
+              </mat-card-subtitle>
+            </mat-card-header>
+            <mat-card-content>
+              <table class="w-100 f-s-14">
+                <tr *ngFor="let row of toRows(data.wastage.byCause)">
+                  <td>{{ row[0] }}</td>
+                  <td class="text-end f-w-600">{{ row[1] }}</td>
+                </tr>
+              </table>
+            </mat-card-content>
+          </mat-card>
+        </div>
+
+        <div class="col-12 col-md-6">
+          <mat-card class="cardWithShadow h-100">
+            <mat-card-header>
+              <mat-card-title>Refunds — ₹{{ data.refunds.value | number: '1.2-2' }}</mat-card-title>
+              <mat-card-subtitle>{{ data.refunds.count }} refund document(s). Every refund is a document — order amounts are never mutated in place.</mat-card-subtitle>
+            </mat-card-header>
+            <mat-card-content>
+              <div class="f-s-12 text-muted f-w-600 text-uppercase mt-2">By reason</div>
+              <table class="w-100 f-s-14">
+                <tr *ngFor="let row of toRows(data.refunds.byReason)">
+                  <td>{{ row[0] }}</td>
+                  <td class="text-end f-w-600">{{ row[1] }}</td>
+                </tr>
+              </table>
+
+              <div class="f-s-12 text-muted f-w-600 text-uppercase mt-3">By status</div>
+              <table class="w-100 f-s-14">
+                <tr *ngFor="let row of toRows(data.refunds.byStatus)">
+                  <td>{{ row[0] }}</td>
+                  <td class="text-end f-w-600">{{ row[1] }}</td>
+                </tr>
+              </table>
+            </mat-card-content>
+          </mat-card>
+        </div>
+      </div>
+
+      <!-- MIX + COMPLIANCE ----------------------------------------------- -->
+      <div class="row g-3">
+        <div class="col-12 col-md-4">
+          <mat-card class="cardWithShadow h-100">
+            <mat-card-header>
+              <mat-card-title>Orders by business model</mat-card-title>
+              <mat-card-subtitle>LocalWala is Merchant of Record in all three.</mat-card-subtitle>
+            </mat-card-header>
+            <mat-card-content>
+              <table class="w-100 f-s-14">
+                <tr *ngFor="let m of businessModels">
+                  <td>{{ m }}</td>
+                  <td class="text-end f-w-600">{{ data.orders.byBusinessModel[m] || 0 }}</td>
+                </tr>
+              </table>
+            </mat-card-content>
+          </mat-card>
+        </div>
+
+        <div class="col-12 col-md-4">
+          <mat-card class="cardWithShadow h-100">
+            <mat-card-header>
+              <mat-card-title>Subscriptions</mat-card-title>
+              <mat-card-subtitle>
+                {{ data.subscriptions.count }} active subscription(s). Skipped occurrences are notified to the customer — never silent.
+              </mat-card-subtitle>
+            </mat-card-header>
+            <mat-card-content>
+              <div class="d-flex justify-content-between f-s-14">
+                <span>Occurrences generated</span><span class="f-w-600">{{ data.subscriptions.occurrencesGenerated }}</span>
+              </div>
+              <div class="d-flex justify-content-between f-s-14">
+                <span>Occurrences skipped</span><span class="f-w-600">{{ data.subscriptions.occurrencesSkipped }}</span>
+              </div>
+            </mat-card-content>
+          </mat-card>
+        </div>
+
+        <div class="col-12 col-md-4">
+          <mat-card class="cardWithShadow h-100">
+            <mat-card-header>
+              <mat-card-title>Compliance — {{ data.outlets.count }} outlet(s)</mat-card-title>
+              <mat-card-subtitle>Derived from expiry dates, never asserted by hand.</mat-card-subtitle>
+            </mat-card-header>
+            <mat-card-content>
+              <table class="w-100 f-s-14">
+                <tr *ngFor="let row of toRows(data.compliance.byStatus)">
+                  <td>{{ row[0] }}</td>
+                  <td class="text-end f-w-600">{{ row[1] }}</td>
+                </tr>
+              </table>
+            </mat-card-content>
+          </mat-card>
+        </div>
+      </div>
+
+      <!-- ORDER LIFECYCLE ----------------------------------------------- -->
+      <div class="mt-3">
+        <mat-card class="cardWithShadow">
+          <mat-card-header>
+            <mat-card-title>Orders by lifecycle</mat-card-title>
+          </mat-card-header>
+          <mat-card-content>
+            <div class="d-flex flex-wrap gap-3">
+              <div class="border rounded px-3 py-2" *ngFor="let row of toRows(data.orders.byLifecycle)">
+                <div class="f-s-12 text-muted">{{ row[0] }}</div>
+                <div class="f-s-18 f-w-600">{{ row[1] }}</div>
+              </div>
+            </div>
+          </mat-card-content>
+        </mat-card>
+      </div>
+    </ng-container>
+  </mat-card-content>
+</mat-card>

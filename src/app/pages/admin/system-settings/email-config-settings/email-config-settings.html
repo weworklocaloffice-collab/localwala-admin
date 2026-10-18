@@ -1,0 +1,198 @@
+<div class="row">
+  <div class="col-lg-8 col-sm-12 p-b-16">
+    <form name="eventForm" [formGroup]="settingForm" class="event-form" (ngSubmit)="onSubmit()" id="topContent">
+      <mat-card class="cardWithShadow theme-card">
+        <mat-card-header>
+          <mat-card-title class="m-b-0">
+            {{util.appTranslate('mail_config_setup')}}
+          </mat-card-title>
+        </mat-card-header>
+
+        <mat-card-content class="b-t-0">
+          <div class="row">
+            <div class="col-lg-4 col-sm-12 p-b-16">
+              <mat-form-field appearance="outline" class="w-100" color="primary">
+                <mat-label>{{util.appTranslate('smtp_host')}}</mat-label>
+                <input matInput formControlName="smtpHost" type="text" placeholder="Ex. mail.google.com" />
+                @if(haveSubmitClicked == true && f['smtpHost'].invalid){
+                <mat-hint class="m-b-16 error-msg">
+                  @if(f['smtpHost'].errors &&
+                  f['smtpHost'].errors['required']){
+                  <div class="text-error">
+                    {{util.appTranslate('form_required')}}
+                  </div>
+                  }
+                </mat-hint>
+                }
+              </mat-form-field>
+            </div>
+
+            <div class="col-lg-4 col-sm-12 p-b-16">
+              <mat-form-field appearance="outline" class="w-100" color="primary">
+                <mat-label>{{util.appTranslate('smtp_port')}}</mat-label>
+                <input matInput formControlName="smtpPort" type="number" placeholder="Ex. 465" />
+                @if(haveSubmitClicked == true && f['smtpPort'].invalid){
+                <mat-hint class="m-b-16 error-msg">
+                  @if(f['smtpPort'].errors &&
+                  f['smtpPort'].errors['required']){
+                  <div class="text-error">
+                    {{util.appTranslate('form_required')}}
+                  </div>
+                  }
+                </mat-hint>
+                }
+              </mat-form-field>
+            </div>
+
+            <div class="col-lg-4 col-sm-12 p-b-16">
+              <mat-form-field appearance="outline" class="w-100" color="primary">
+                <mat-label>{{util.appTranslate('smtp_driver')}}</mat-label>
+                <input matInput formControlName="smtpDriver" type="text" placeholder="Ex. smtp" />
+                @if(haveSubmitClicked == true && f['smtpDriver'].invalid){
+                <mat-hint class="m-b-16 error-msg">
+                  @if(f['smtpDriver'].errors &&
+                  f['smtpDriver'].errors['required']){
+                  <div class="text-error">
+                    {{util.appTranslate('form_required')}}
+                  </div>
+                  }
+                </mat-hint>
+                }
+              </mat-form-field>
+            </div>
+
+            <div class="col-lg-4 col-sm-12 p-b-16">
+              <mat-form-field appearance="outline" class="w-100" color="primary">
+                <mat-label>{{util.appTranslate('smtp_encryption')}}</mat-label>
+                <input matInput formControlName="smtpEncryption" type="text" placeholder="Ex. SSL" />
+                @if(haveSubmitClicked == true && f['smtpEncryption'].invalid){
+                <mat-hint class="m-b-16 error-msg">
+                  @if(f['smtpEncryption'].errors &&
+                  f['smtpEncryption'].errors['required']){
+                  <div class="text-error">
+                    {{util.appTranslate('form_required')}}
+                  </div>
+                  }
+                </mat-hint>
+                }
+              </mat-form-field>
+            </div>
+
+            <div class="col-lg-4 col-sm-12 p-b-16">
+              <mat-form-field appearance="outline" class="w-100" color="primary">
+                <mat-label>{{util.appTranslate('smtp_username')}}</mat-label>
+                <input matInput formControlName="smtpUsername" type="email" placeholder="Ex. mail@gmail.com" />
+                @if(haveSubmitClicked == true && f['smtpUsername'].invalid){
+                <mat-hint class="m-b-16 error-msg">
+                  @if(f['smtpUsername'].errors &&
+                  f['smtpUsername'].errors['required']){
+                  <div class="text-error">
+                    {{util.appTranslate('form_required')}}
+                  </div>
+                  }
+                </mat-hint>
+                }
+              </mat-form-field>
+            </div>
+
+            <div class="col-lg-4 col-sm-12 p-b-16">
+              <mat-form-field appearance="outline" class="w-100" color="primary">
+                <mat-label>{{util.appTranslate('smtp_password')}}</mat-label>
+                <input matInput formControlName="smtpPassword" type="password" placeholder="Ex. *****" />
+                @if(haveSubmitClicked == true && f['smtpPassword'].invalid){
+                <mat-hint class="m-b-16 error-msg">
+                  @if(f['smtpPassword'].errors &&
+                  f['smtpPassword'].errors['required']){
+                  <div class="text-error">
+                    {{util.appTranslate('form_required')}}
+                  </div>
+                  }
+                </mat-hint>
+                }
+              </mat-form-field>
+            </div>
+
+            <div class="col-lg-4 col-sm-12 p-b-16">
+              <mat-form-field appearance="outline" class="w-100" color="primary">
+                <mat-label>{{util.appTranslate('smtp_from_mail')}}</mat-label>
+                <input matInput formControlName="smtpFromEmail" type="email" placeholder="Ex. mail@gmail.com" />
+                @if(haveSubmitClicked == true && f['smtpFromEmail'].invalid){
+                <mat-hint class="m-b-16 error-msg">
+                  @if(f['smtpFromEmail'].errors &&
+                  f['smtpFromEmail'].errors['required']){
+                  <div class="text-error">
+                    {{util.appTranslate('form_required')}}
+                  </div>
+                  }
+                </mat-hint>
+                }
+              </mat-form-field>
+            </div>
+
+            <div class="col-lg-4 col-sm-12 p-b-16">
+              <mat-form-field appearance="outline" class="w-100" color="primary">
+                <mat-label>{{util.appTranslate('smtp_from_name')}}</mat-label>
+                <input matInput formControlName="smtpFromName" type="text" placeholder="Ex. Localwala" />
+                @if(haveSubmitClicked == true && f['smtpFromName'].invalid){
+                <mat-hint class="m-b-16 error-msg">
+                  @if(f['smtpFromName'].errors &&
+                  f['smtpFromName'].errors['required']){
+                  <div class="text-error">
+                    {{util.appTranslate('form_required')}}
+                  </div>
+                  }
+                </mat-hint>
+                }
+              </mat-form-field>
+            </div>
+          </div>
+        </mat-card-content>
+        <mat-card-actions class="b-t-1">
+          <button mat-flat-button color="primary" type="submit">
+            {{ action == 'add' ? util.appTranslate('submit_btn') : util.appTranslate('update_btn')}}
+          </button>
+          <button mat-flat-button class="m-l-8 bg-secondary text-white" type="button"
+            (click)="onReset()">{{util.appTranslate('reset_btn')}}</button>
+        </mat-card-actions>
+      </mat-card>
+    </form>
+  </div>
+
+  <div class="col-lg-4 col-sm-12 p-b-16">
+    <form name="eventEmailForm" [formGroup]="demoForm" class="event-form" (ngSubmit)="onDemoSubmit()"
+      id="topEmailContent">
+      <mat-card class="cardWithShadow theme-card">
+        <mat-card-header>
+          <mat-card-title class="m-b-0">
+            {{util.appTranslate('send_test_email')}}
+          </mat-card-title>
+        </mat-card-header>
+
+        <mat-card-content class="b-t-0">
+          <div class="row">
+            <div class="col-lg-12 col-sm-12 p-b-16">
+              <mat-form-field appearance="outline" class="w-100" color="primary">
+                <mat-label>{{util.appTranslate('email_lbl')}}</mat-label>
+                <input matInput formControlName="email" type="text" placeholder="Ex. mail@mail.com" />
+                @if(haveDemoSubmitClicked == true && demoF['email'].invalid){
+                <mat-hint class="m-b-16 error-msg">
+                  @if(demoF['email'].errors && demoF['email'].errors['required']){
+                  <div class="text-error">
+                    {{util.appTranslate('form_required')}}
+                  </div>
+                  }
+                </mat-hint>
+                }
+              </mat-form-field>
+            </div>
+          </div>
+        </mat-card-content>
+        <mat-card-actions class="b-t-1">
+          <button mat-flat-button color="primary" type="submit">
+            {{util.appTranslate('send_mail')}}
+          </button>
+        </mat-card-actions>
+      </mat-card>
+    </form>
+  </div>
+</div>

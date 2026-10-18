@@ -1,0 +1,166 @@
+[
+  {
+    "title": "Restaurant new order",
+    "slug": "restaurant-new-order",
+    "helper": "{{user}}"
+  },
+  {
+    "title": "Restaurant order rejected",
+    "slug": "restaurant-order-rejected",
+    "helper": "{{restaurant}}"
+  },
+  {
+    "title": "Restaurant order accepted",
+    "slug": "restaurant-order-accepted",
+    "helper": "{{restaurant}}{{time}}"
+  },
+  {
+    "title": "Restaurant schedule order accepted",
+    "slug": "restaurant-schedule-order-accepted",
+    "helper": "{{restaurant}}"
+  },
+  {
+    "title": "Restaurant order ready",
+    "slug": "restaurant-order-ready",
+    "helper": "{{restaurant}}"
+  },
+  {
+    "title": "Driver new order",
+    "slug": "driver-new-order",
+    "helper": "{{restaurant}}"
+  },
+  {
+    "title": "Driver order rejected",
+    "slug": "driver-order-rejected",
+    "helper": "{{driver}}"
+  },
+  {
+    "title": "Driver order accepted",
+    "slug": "driver-order-accepted",
+    "helper": "{{driver}}"
+  },
+  {
+    "title": "Restaurant order handover",
+    "slug": "restaurant-order-handover",
+    "helper": "{{restaurant}}{{driver}}"
+  },
+  {
+    "title": "Driver order ongoing",
+    "slug": "driver-order-ongoing",
+    "helper": "{{driver}}"
+  },
+  {
+    "title": "Restaurant order delivered",
+    "slug": "restaurant-order-delivered",
+    "helper": "{{restaurant}}"
+  },
+  {
+    "title": "Driver order delivered",
+    "slug": "driver-order-delivered",
+    "helper": "{{driver}}"
+  },
+  {
+    "title": "User order cancelled",
+    "slug": "user-order-cancelled",
+    "helper": "{{user}}"
+  },
+  {
+    "title": "Order refunded",
+    "slug": "order-refunded",
+    "helper": "{{amount}}"
+  },
+  {
+    "title": "Order partially refunded",
+    "slug": "order-partially-refunded",
+    "helper": "{{amount}}"
+  },
+  {
+    "title": "Driver reached restaurant",
+    "slug": "driver-reached-restaurant",
+    "helper": "{{driver}}"
+  },
+  {
+    "title": "Driver reached customer",
+    "slug": "driver-reached-customer",
+    "helper": "{{driver}}"
+  },
+  {
+    "title": "Refund Request Cancelled",
+    "slug": "refund-request-cancelled",
+    "helper": "{{reason}}"
+  },
+  {
+    "title": "Tiffin Subscription Package Purchased",
+    "slug": "tiffin-subscription-package-purchased",
+    "helper": "{{user}}{{packageName}}"
+  },
+  {
+    "title": "User Tiffin Subscription Package Cancelled",
+    "slug": "user-tiffin-subscription-package-cancelled",
+    "helper": "{{user}}{{packageName}}"
+  },
+  {
+    "title": "Restaurant Tiffin Subscription Package Cancelled",
+    "slug": "restaurant-tiffin-subscription-package-cancelled",
+    "helper": "{{restaurant}}{{packageName}}"
+  },
+  {
+    "title": "Tiffin Subscription Package Refunded",
+    "slug": "refunded-tiffin-subscription-package",
+    "helper": "{{amount}}"
+  },
+  {
+    "title": "Tiffin Subscription partially refunded",
+    "slug": "refunded-tiffin-subscription-partially-refunded",
+    "helper": "{{amount}}"
+  },
+  {
+    "title": "Tiffin Subscription Package Refunded Cancelled",
+    "slug": "refunded-tiffin-subscription-package-cancelled",
+    "helper": "{{reason}}"
+  },
+  {
+    "title": "New Dining Booking",
+    "slug": "new-dining-booking",
+    "helper": "{{user}}"
+  },
+  {
+    "title": "Dining Booking Accepted",
+    "slug": "dining-booking-accepted",
+    "helper": "{{restaurant}}"
+  },
+  {
+    "title": "Dining Booking Completed",
+    "slug": "dining-booking-completed"
+  },
+  {
+    "title": "Dining Booking Cancelled",
+    "slug": "dining-booking-cancelled",
+    "helper": "{{user}}"
+  },
+  {
+    "title": "Dining Booking Rejected",
+    "slug": "dining-booking-rejected",
+    "helper": "{{restaurant}}"
+  },
+  {
+    "title": "Dining Booking Refunded",
+    "slug": "dining-booking-refunded",
+    "helper": "{{amount}}"
+  },
+  {
+    "title": "Dining Booking Refund Request Cancelled",
+    "slug": "dining-booking-refund-request-cancelled",
+    "helper": "{{reason}}"
+  },
+  {
+    "title": "New Kitchen Order Received",
+    "slug": "new-kitchen-order",
+    "helper": "{{kind}}"
+  },
+  {
+    "title": "Cooking Complete – Ready to Serve!",
+    "slug": "kitchen-order-completed",
+    "helper": "{{kind}}{{order}}"
+  }
+]

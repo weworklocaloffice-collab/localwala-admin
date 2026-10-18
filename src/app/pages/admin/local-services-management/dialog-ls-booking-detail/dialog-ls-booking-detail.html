@@ -1,0 +1,23 @@
+<h2 mat-dialog-title>{{ booking?.bookingCode || 'Booking' }}</h2>
+<mat-dialog-content>
+  @if (!isLoaded) {
+    <div class="p-24 text-center text-muted">{{ util.appTranslate('ts_loading') }}</div>
+  } @else if (booking) {
+    <div class="f-s-14">Status: {{ booking.status }} · Mode: {{ booking.bookingMode }}</div>
+    <div class="f-s-14">Labour ₹{{ booking.labourAmount }} · Parts ₹{{ booking.partsAmount }}</div>
+    @if (booking.cancelReason) {
+      <div class="f-s-14">Cancel reason: {{ booking.cancelReason }}</div>
+    }
+    <h4 class="m-t-16">History ({{ history.length }})</h4>
+    @for (h of history; track h._id) {
+      <div class="f-s-14">{{ h.from || '—' }} → {{ h.to }}@if (h.reason) {
+        <span class="text-muted"> ({{ h.reason }})</span>
+      }</div>
+    }
+  } @else {
+    <div class="p-24 text-center text-muted">{{ util.appTranslate('ts_no_records_found') }}</div>
+  }
+</mat-dialog-content>
+<mat-dialog-actions align="end">
+  <button mat-button (click)="onClose()">Close</button>
+</mat-dialog-actions>

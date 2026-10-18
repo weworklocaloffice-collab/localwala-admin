@@ -1,0 +1,449 @@
+<mat-card class="mat-card-top chat-app cardWithShadow overflow-hidden">
+  <mat-sidenav-container [ngClass]="{
+      'side-panel-opened': sidePanelOpened,
+      'side-panel-closed': !sidePanelOpened
+    }">
+    <!-- ---------------------------------------------------- -->
+    <!-- sidebar -->
+    <!-- ---------------------------------------------------- -->
+    <mat-sidenav #chatnav [mode]="isOver() ? 'over' : 'side'" [opened]="!isOver()" (open)="sidePanelOpened = true"
+      (close)="sidePanelOpened = false" class="shadow-none b-r-1">
+      <ng-scrollbar class="position-relative" #chatListScroll>
+
+        <div class="p-24">
+          <!-- search -->
+          <mat-form-field appearance="outline" class="w-100">
+            <input matInput [placeholder]="util.appTranslate('search_chats')" [(ngModel)]="searchQuery"
+              (ngModelChange)="onSearch($event)" />
+            <mat-icon matSuffix>
+              <ng-icon name="tablerSearch" class="icon-20"></ng-icon>
+            </mat-icon>
+          </mat-form-field>
+          <!-- dropdown -->
+
+          <button mat-button [matMenuTriggerFor]="menu">
+            <div class="d-flex align-items-center">
+              {{currentChatType == 'regular' ? util.appTranslate('regular_chat') : util.appTranslate('support_chat') }}
+              <ng-icon name="tablerChevronDown" class="icon-20 m-l-4"></ng-icon>
+            </div>
+          </button>
+
+          <mat-menu #menu="matMenu" class="cardWithShadow">
+            <button mat-menu-item (click)="onChatChange('regular')">
+              <span>{{util.appTranslate('regular_chat')}}</span>
+            </button>
+            <button mat-menu-item (click)="onChatChange('support')">
+              <span>{{util.appTranslate('support_chat')}}</span>
+            </button>
+          </mat-menu>
+        </div>
+
+        @if (currentChatType == 'regular') {
+        <mat-nav-list class="chat-listing">
+          @if (!isChatListLoaded) {
+          <div>
+            @for (item of [1,2,3,4,5]; track $index) {
+            <mat-list-item role="listitem" lines="2">
+              <div class="d-flex align-items-center p-x-16 p-b-4 h-100" matListItemTitle>
+                <img src="assets/images/onerror.png" alt="" width="42" height="42" class="rounded-circle" />
+                <div class="m-l-16 w-100">
+                  <div class="f-w-600 mat-subtitle-1 f-s-16 lh-sm w-100">
+                    <mat-progress-bar mode="indeterminate" color="primary"></mat-progress-bar>
+                  </div>
+                  <div class="f-s-14 m-t-4 m-b-0 w-100">
+                    <mat-progress-bar mode="indeterminate" color="primary"></mat-progress-bar>
+                  </div>
+                </div>
+              </div>
+            </mat-list-item>
+            }
+          </div>
+          }
+          @if (isChatListLoaded) {
+          <div>
+            @for (chats of chatList; track $index) {
+            <mat-list-item role="listitem" lines="2" (click)="onChatSelect(chats)"
+              [class.bg-light-primary]="chatId == chats.id">
+              <div class="d-flex align-items-center p-x-16 p-b-4 h-100" matListItemTitle>
+                <div class="avatar-group">
+                  <img [src]="api.mediaUrl+chats.receiverInfo.image" alt="user1"
+                    onError="this.src='assets/images/onerror.png'" class="rounded-circle" width="30" height="30"
+                    [matTooltip]="chats.receiverInfo.firstName +' '+ chats.receiverInfo.lastName" />
+                  <img [src]="api.mediaUrl+chats.senderInfo.image" alt="user1"
+                    onError="this.src='assets/images/onerror.png'" class="rounded-circle" width="30" height="30"
+                    [matTooltip]="chats.senderInfo.firstName +' '+ chats.senderInfo.lastName" />
+                </div>
+                <div class="m-l-16">
+                  <h3 class="f-w-600 f-s-10 lh-sm">
+                    {{ chatName(chats) }}
+                  </h3>
+                  <p class="f-s-10 m-b-0">{{ util.trimText(chats.lastMessage,20) }}</p>
+                </div>
+              </div>
+            </mat-list-item>
+            }
+          </div>
+          }
+
+          @if (isLoadMoreChatList) {
+          <div class="p-24">
+            <mat-spinner [diameter]="30" style="margin: 0 auto;"></mat-spinner>
+          </div>
+          }
+        </mat-nav-list>
+        }
+
+        @if (currentChatType == 'support') {
+        <mat-nav-list class="chat-listing">
+          @if (!isSupportChatListLoaded) {
+          <div>
+            @for (item of [1,2,3,4,5]; track $index) {
+            <mat-list-item role="listitem" lines="2">
+              <div class="d-flex align-items-center p-x-16 p-b-4 h-100" matListItemTitle>
+                <img src="assets/images/onerror.png" alt="" width="42" height="42" class="rounded-circle" />
+                <div class="m-l-16 w-100">
+                  <div class="f-w-600 mat-subtitle-1 f-s-16 lh-sm w-100">
+                    <mat-progress-bar mode="indeterminate" color="primary"></mat-progress-bar>
+                  </div>
+                  <div class="f-s-14 m-t-4 m-b-0 w-100">
+                    <mat-progress-bar mode="indeterminate" color="primary"></mat-progress-bar>
+                  </div>
+                </div>
+              </div>
+            </mat-list-item>
+            }
+          </div>
+          }
+
+          @if (isSupportChatListLoaded) {
+          <div>
+            @for (chats of supportChatList; track $index) {
+            <mat-list-item role="listitem" lines="2" (click)="onSupportChatSelect(chats)"
+              [class.bg-light-primary]="supportChatId == chats.id">
+              <div class="d-flex align-items-center p-x-16 p-b-4 h-100" matListItemTitle>
+                <div class="avatar-group">
+                  @for (team of chats.team; track $index) {
+                  <img [src]="api.mediaUrl+team.image" alt="user1" onError="this.src='assets/images/onerror.png'"
+                    class="rounded-circle" width="30" height="30" [matTooltip]="team.firstName +' '+ team.lastName" />
+                  }
+                  <img [src]="api.mediaUrl+chats.customer.image" alt="user1"
+                    onError="this.src='assets/images/onerror.png'" class="rounded-circle" width="30" height="30"
+                    [matTooltip]="chats.customer.firstName +' '+ chats.customer.lastName" />
+                </div>
+                <div class="m-l-16">
+                  <h3 class="f-w-600 f-s-10 lh-sm">
+                    @if (chats.supportType == 'orders') {
+                    <span>{{util.appTranslate('orders_support')}}</span>
+                    }
+                    @if (chats.supportType == 'dining') {
+                    <span>{{util.appTranslate('dining_booking_support')}}</span>
+                    }
+                    @if (chats.supportType == 'tiffin_subscription') {
+                    <span>{{util.appTranslate('tiffin_subscription_support')}}</span>
+                    }
+                    @if (chats.supportType == 'complaints') {
+                    <span>{{util.appTranslate('complaints_support')}}</span>
+                    }
+                    @if (chats.supportType == 'reports') {
+                    <span>{{util.appTranslate('reports_support')}}</span>
+                    }
+                    @if (chats.supportType == 'restaurant_complaints') {
+                    <span>{{util.appTranslate('restaurant_complaints_support')}}</span>
+                    }
+                  </h3>
+                  <p class="f-s-10 m-b-0">{{ util.trimText(chats.lastMessage,20) }}</p>
+                </div>
+              </div>
+            </mat-list-item>
+            }
+          </div>
+          }
+
+          @if (isLoadMoreSupportChatList) {
+          <div class="p-24">
+            <mat-spinner [diameter]="30" style="margin: 0 auto;"></mat-spinner>
+          </div>
+          }
+
+        </mat-nav-list>
+        }
+      </ng-scrollbar>
+    </mat-sidenav>
+    <!-- ------------------------------------------- -->
+    <!-- details -->
+    <!-- ------------------------------------------- -->
+    <mat-toolbar class="no-shadow chat-right-panel bg-white d-flex align-items-center p-y-8 b-b-1">
+      <button (click)="chatnav.toggle()" class="m-r-10" mat-icon-button>
+        <mat-icon>short_text</mat-icon>
+      </button>
+      @if (chatInitialize) {
+      <div class="d-flex align-items-center">
+        <div class="avatar-group">
+          @for (receiver of receiverImages; track $index) {
+          <img [src]="api.mediaUrl+receiver" alt="user1" onError="this.src='assets/images/onerror.png'"
+            class="rounded-circle" width="30" height="30" />
+          }
+        </div>
+        <div class="mat-subtitle-1 f-s-16 f-w-600 m-b-0 m-l-16">
+          {{ receiverName }}
+        </div>
+      </div>
+      }
+      <div class="m-l-auto more-btn-align">
+        <mat-form-field class="theme-select m-l-16" appearance="outline">
+          <mat-select [value]="exportTypeList" [(ngModel)]="exportTypeList"
+            (selectionChange)="onExportListCollection($event.value)">
+            <mat-option value="export">
+              {{util.appTranslate('export_list_kind')}}
+            </mat-option>
+            <mat-option value="excel">
+              {{util.appTranslate('excel_export_kind')}}
+            </mat-option>
+            <mat-option value="csv">
+              {{util.appTranslate('csv_export_kind')}}
+            </mat-option>
+            <mat-option value="raw">
+              {{util.appTranslate('raw_export_kind')}}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+        <mat-form-field class="theme-select m-l-16" appearance="outline">
+          <mat-select [value]="exportTypeMessages" [(ngModel)]="exportTypeMessages"
+            (selectionChange)="onExportMessageCollection($event.value)">
+            <mat-option value="export">
+              {{util.appTranslate('export_message_kind')}}
+            </mat-option>
+            <mat-option value="excel">
+              {{util.appTranslate('excel_export_kind')}}
+            </mat-option>
+            <mat-option value="csv">
+              {{util.appTranslate('csv_export_kind')}}
+            </mat-option>
+            <mat-option value="raw">
+              {{util.appTranslate('raw_export_kind')}}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+        <button [matMenuTriggerFor]="importCollectionDD" class="m-l-16" mat-icon-button>
+          <mat-icon>more_vert</mat-icon>
+        </button>
+        <mat-menu #importCollectionDD="matMenu" x-position="before" class="cardWithShadow">
+          <button mat-menu-item
+            (click)="importCollection('chat_list')">{{util.appTranslate('import_chat_list')}}</button>
+          <button mat-menu-item
+            (click)="importCollection('chat_messages')">{{util.appTranslate('import_chat_messages')}}</button>
+          <button mat-menu-item
+            (click)="importCollection('support_chat_list')">{{util.appTranslate('import_support_chat_list')}}</button>
+          <button mat-menu-item
+            (click)="importCollection('support_chat_messages')">{{util.appTranslate('import_support_chat_messages')}}</button>
+        </mat-menu>
+      </div>
+    </mat-toolbar>
+
+    <!-- ------------------------------------------- -->
+    <!-- chat content -->
+    <!-- ------------------------------------------- -->
+    <ng-scrollbar style="height: calc(100vh - 390px)" class="position-relative" #chatMessageScroll>
+      @if (loadMoreRegularChats) {
+      <div class="p-24">
+        <mat-spinner [diameter]="30" style="margin: 0 auto;"></mat-spinner>
+      </div>
+      }
+      @if (loadMoreSupportChats) {
+      <div class="p-24">
+        <mat-spinner [diameter]="30" style="margin: 0 auto;"></mat-spinner>
+      </div>
+      }
+
+      @if (!chatInitialize) {
+      <mat-card-content class="chat-middle-box p-24">
+        <div class="d-flex align-items-center justify-content-center h-100 w-100">
+          <div>
+            <h3 class="mat-subtitle-1 f-w-600">{{util.appTranslate('please_select_a_chat')}}</h3>
+            <img src="/assets/images/breadcrumb/emailSv.png" width="250px" />
+          </div>
+        </div>
+      </mat-card-content>
+      }
+
+      @if (chatInitialize) {
+      <mat-card-content class="chat-middle-box p-24">
+        @if (!regularChatInitialize && currentChatType == 'regular') {
+        <div>
+          @for (item of [1,2,3,4,5,6,7,8,9,10]; track $index) {
+          <ng-container>
+            @if (item % 2 == 0) {
+            <div class="chat-list odd">
+              <div class="chat-message m-b-15 w-100">
+                <div class="chat-block bg-light-primary p-10 rounded d-flex align-items-center">
+                  <mat-progress-bar mode="indeterminate" color="primary"></mat-progress-bar>
+                </div>
+              </div>
+            </div>
+            } @else {
+            <ng-container *ngTemplateOutlet="evenblock"></ng-container>
+            }
+
+            <ng-template #evenblock>
+              <div class="chat-message m-b-15">
+                <div
+                  class="chat-block bg-light-secondary lh-md p-10 rounded d-flex align-items-center mat-subheading-1 f-w-400 m-b-0">
+                  <mat-progress-bar mode="indeterminate" color="primary"></mat-progress-bar>
+                </div>
+              </div>
+            </ng-template>
+          </ng-container>
+          }
+        </div>
+        }
+
+        @if (regularChatInitialize && currentChatType == 'regular') {
+        <div id="chatBox">
+          @for (chats of regularChatMessages; track $index) {
+          <ng-container>
+
+            @if (uid !== chats.senderId) {
+            <div class="chat-list odd">
+              <div class="chat-message m-b-15">
+                <div class="chat-block bg-light-primary p-10 rounded d-flex align-items-center">
+                  <span>
+                    <img [src]="api.mediaUrl + chats.sender.image" onError="this.src='assets/images/onerror.png'"
+                      class="rounded-circle" width="40" height="40" />
+                  </span>
+
+                  <div class="m-l-16">
+                    <mat-label class="mat-subtitle-2 f-w-600 m-b-8 d-block">
+                      {{ chats.sender.firstName + ' ' + chats.sender.lastName }}
+                    </mat-label>
+                    <mat-label class="mat-body-1">
+                      {{ chats.message }}
+                    </mat-label>
+                  </div>
+                </div>
+
+                <p class="chat-date text-muted mat-h5 f-s-12 m-t-5 m-b-0">
+                  {{ getDateFormatted(chats.createdAt) }}
+                </p>
+              </div>
+            </div>
+            } @else {
+            <ng-container *ngTemplateOutlet="evenblock"></ng-container>
+            }
+
+            <ng-template #evenblock>
+              <div class="chat-list even">
+                <div class="chat-message m-b-15">
+                  <div
+                    class="chat-block bg-light-secondary lh-md p-10 rounded d-flex align-items-center mat-subheading-1 f-w-400 m-b-0">
+                    {{chats.message}}
+                  </div>
+                  <p class="chat-date text-muted mat-h5 m-0">
+                    {{ getDateFormatted(chats.createdAt) }}
+                  </p>
+                </div>
+              </div>
+            </ng-template>
+          </ng-container>
+          }
+        </div>
+        }
+
+        @if (!supportChatInitialize && currentChatType == 'support') {
+        <div>
+          @for (item of [1,2,3,4,5,6,7,8,9,10]; track $index) {
+          <ng-container>
+
+            @if (item % 2 === 0) {
+            <div class="chat-list odd">
+              <div class="chat-message m-b-15 w-100">
+                <div class="chat-block bg-light-primary p-10 rounded d-flex align-items-center">
+                  <mat-progress-bar mode="indeterminate" color="primary"></mat-progress-bar>
+                </div>
+              </div>
+            </div>
+            } @else {
+            <ng-container *ngTemplateOutlet="evenblock"></ng-container>
+            }
+
+            <ng-template #evenblock>
+              <div class="chat-message m-b-15">
+                <div
+                  class="chat-block bg-light-secondary lh-md p-10 rounded d-flex align-items-center mat-subheading-1 f-w-400 m-b-0">
+                  <mat-progress-bar mode="indeterminate" color="primary"></mat-progress-bar>
+                </div>
+              </div>
+            </ng-template>
+          </ng-container>
+          }
+        </div>
+        }
+
+        @if (supportChatInitialize && currentChatType == 'support') {
+        <div id="chatBox">
+          @for (chats of supportChatMessages; track $index) {
+          <ng-container>
+
+            @if (uid !== chats.senderId) {
+            <div class="chat-list odd">
+              <div class="chat-message m-b-15">
+                <div class="chat-block bg-light-primary p-10 rounded d-flex align-items-center">
+                  <span>
+                    <img [src]="api.mediaUrl + chats.sender.image" onError="this.src='assets/images/onerror.png'"
+                      class="rounded-circle" width="40" height="40" />
+                  </span>
+
+                  <div class="m-l-16">
+                    <mat-label class="mat-subtitle-2 f-w-600 m-b-8 d-block">
+                      {{ chats.sender.firstName + ' ' + chats.sender.lastName }}
+                    </mat-label>
+
+                    <mat-label class="mat-body-1">
+                      {{ chats.message }}
+                    </mat-label>
+                  </div>
+                </div>
+
+                <p class="chat-date text-muted mat-h5 f-s-12 m-t-5 m-b-0">
+                  {{ getDateFormatted(chats.createdAt) }}
+                </p>
+              </div>
+            </div>
+            } @else {
+            <ng-container *ngTemplateOutlet="evenblock"></ng-container>
+            }
+
+            <ng-template #evenblock>
+              <div class="chat-list even">
+                <div class="chat-message m-b-15">
+                  <div
+                    class="chat-block bg-light-secondary lh-md p-10 rounded d-flex align-items-center mat-subheading-1 f-w-400 m-b-0">
+                    {{chats.message}}
+                  </div>
+                  <p class="chat-date text-muted mat-h5 m-0">
+                    {{ getDateFormatted(chats.createdAt) }}
+                  </p>
+                </div>
+              </div>
+            </ng-template>
+          </ng-container>
+          }
+        </div>
+        }
+      </mat-card-content>
+      }
+    </ng-scrollbar>
+    <mat-divider></mat-divider>
+    <div class="p-t-20 p-l-30 p-r-30">
+      @if (chatInitialize) {
+      <mat-form-field appearance="outline" class="w-100">
+        <mat-label>{{util.appTranslate('message')}}</mat-label>
+        <input matInput [placeholder]="util.appTranslate('send_message')" [(ngModel)]="msg" #myInput
+          (keyup.enter)="sendMessage()" />
+        <button mat-icon-button matSuffix color="primary" (click)="sendMessage()">
+          <mat-icon>send</mat-icon>
+        </button>
+      </mat-form-field>
+      }
+    </div>
+  </mat-sidenav-container>
+</mat-card>

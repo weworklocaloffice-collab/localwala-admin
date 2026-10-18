@@ -1,0 +1,59 @@
+<h2 mat-dialog-title>{{ isEdit ? util.appTranslate('realEstate_edit_category') : util.appTranslate('realEstate_new_category') }}</h2>
+
+<mat-dialog-content>
+  <p class="f-s-14 text-muted">{{ util.appTranslate('realEstate_category_hint') }}</p>
+
+  <div class="d-flex gap-12">
+    <mat-form-field appearance="outline" class="w-100">
+      <mat-label>{{ util.appTranslate('th_key') }}</mat-label>
+      <input matInput [(ngModel)]="form.key" [disabled]="isEdit" placeholder="APARTMENT" />
+      <mat-hint>UPPER_SNAKE_CASE</mat-hint>
+    </mat-form-field>
+    <mat-form-field appearance="outline" class="w-100">
+      <mat-label>{{ util.appTranslate('th_name') }}</mat-label>
+      <input matInput [(ngModel)]="form.name" />
+    </mat-form-field>
+  </div>
+
+  <div class="d-flex gap-12">
+    <mat-form-field appearance="outline" class="w-100">
+      <mat-label>{{ util.appTranslate('th_group') }}</mat-label>
+      <mat-select [(ngModel)]="form.group">
+        @for (g of groups; track g) {
+          <mat-option [value]="g">{{ g }}</mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+    <mat-form-field appearance="outline" class="w-100">
+      <mat-label>{{ util.appTranslate('th_sort_order') }}</mat-label>
+      <input matInput type="number" [(ngModel)]="form.sortOrder" />
+    </mat-form-field>
+  </div>
+
+  <mat-form-field appearance="outline" class="w-100 m-b-16">
+    <mat-label>{{ util.appTranslate('th_description') }}</mat-label>
+    <input matInput [(ngModel)]="form.description" />
+  </mat-form-field>
+
+  <mat-form-field appearance="outline" class="w-100">
+    <mat-label>{{ util.appTranslate('th_icon') }}</mat-label>
+    <input matInput [(ngModel)]="form.icon" placeholder="apartment" />
+    <mat-hint>{{ util.appTranslate('th_material_icon_hint') }}</mat-hint>
+  </mat-form-field>
+
+  @if (isEdit) {
+    <mat-checkbox [(ngModel)]="form.status">{{ util.appTranslate('th_active') }}</mat-checkbox>
+  }
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button (click)="onClose()">{{ util.appTranslate('th_cancel') }}</button>
+  <button
+    mat-flat-button
+    color="primary"
+    [disabled]="isSaving || !form.key || !form.name || !form.group"
+    (click)="onSubmit()"
+  >
+    {{ isEdit ? util.appTranslate('th_save') : util.appTranslate('th_create') }}
+  </button>
+</mat-dialog-actions>

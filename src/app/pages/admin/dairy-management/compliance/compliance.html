@@ -1,0 +1,166 @@
+<mat-card class="cardWithShadow">
+  <mat-card-header class="m-b-16">
+    <mat-card-title>{{ util.appTranslate('dairy_compliance') }}</mat-card-title>
+    <mat-card-subtitle>{{ util.appTranslate('dairy_compliance_subtitle') }}</mat-card-subtitle>
+  </mat-card-header>
+
+  <mat-card-content>
+    <div class="d-flex flex-wrap align-center justify-content-between mb-24 gap-12">
+      <div class="d-flex align-center gap-16">
+        <mat-form-field appearance="outline" class="w-100" style="max-width: 220px">
+          <mat-label>{{ util.appTranslate('th_warning_window') }}</mat-label>
+          <input
+            matInput
+            type="number"
+            min="1"
+            max="365"
+            [(ngModel)]="days"
+            (keyup.enter)="getList()"
+          />
+          <mat-hint>{{ util.appTranslate('ph_days_hint') }}</mat-hint>
+        </mat-form-field>
+        <button mat-stroked-button color="primary" (click)="getList()">
+          {{ util.appTranslate('th_apply') }}
+        </button>
+      </div>
+
+      @if (util.hasRight('dairy_compliance_audit')) {
+        <button mat-flat-button color="primary" (click)="onRefresh()">
+          <mat-icon>refresh</mat-icon>
+          {{ util.appTranslate('dairy_refresh_statuses') }}
+        </button>
+      }
+    </div>
+
+    <!--
+      Counts first, because the question this screen answers is "is anything wrong"
+      rather than "list everything". The stale count is shown even though it is not
+      a licence status: it is the number of rows whose stored status disagrees with
+      the dates, which is what the refresh button fixes.
+    -->
+    <div class="d-flex flex-wrap gap-16 mb-24">
+      <div class="p-16" style="min-width: 180px; flex: 1; background: #f5f5f5">
+        <div class="f-s-12 text-muted">{{ util.appTranslate('dairy_expired') }}</div>
+        <div class="f-w-600 f-s-16" [ngClass]="expiredCount > 0 ? 'text-error' : ''">
+          {{ expiredCount }}
+        </div>
+      </div>
+      <div class="p-16" style="min-width: 180px; flex: 1; background: #f5f5f5">
+        <div class="f-s-12 text-muted">{{ util.appTranslate('dairy_expiring') }}</div>
+        <div class="f-w-600 f-s-16" [ngClass]="expiringCount > 0 ? 'text-warning' : ''">
+          {{ expiringCount }}
+        </div>
+      </div>
+      <div class="p-16" style="min-width: 180px; flex: 1; background: #f5f5f5">
+        <div class="f-s-12 text-muted">{{ util.appTranslate('dairy_stale_statuses') }}</div>
+        <div class="f-w-600 f-s-16" [ngClass]="staleCount > 0 ? 'text-warning' : ''">
+          {{ staleCount }}
+        </div>
+      </div>
+    </div>
+
+    <div class="table-responsive">
+      <table mat-table [dataSource]="records" class="w-100">
+        <ng-container matColumnDef="business">
+          <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1">
+            {{ util.appTranslate('th_outlet') }}
+          </th>
+          <td mat-cell *matCellDef="let element">
+            @if (element.business) {
+              <div class="f-w-600">{{ element.business.name }}</div>
+              <div class="m-t-4 f-s-12 text-muted">{{ element.business.businessModel }}</div>
+            } @else {
+              <span class="text-muted">—</span>
+            }
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="licenceNumber">
+          <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1">
+            {{ util.appTranslate('th_licence_number') }}
+          </th>
+          <td mat-cell *matCellDef="let element">
+            @if (element.licenceNumber) {
+              <span class="f-s-14">{{ element.licenceNumber }}</span>
+            } @else {
+              <span class="f-s-14 text-error">{{ util.appTranslate('dairy_no_licence') }}</span>
+            }
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="expiresAt">
+          <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1">
+            {{ util.appTranslate('th_expires_on') }}
+          </th>
+          <td mat-cell *matCellDef="let element">
+            <span class="f-s-14">{{ element.expiresAt | date: 'dd MMM yyyy' }}</span>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="daysRemaining">
+          <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1">
+            {{ util.appTranslate('th_days_left') }}
+          </th>
+          <td mat-cell *matCellDef="let element">
+            <span
+              class="f-w-600 f-s-14"
+              [ngClass]="
+                element.daysRemaining < 0
+                  ? 'text-error'
+                  : element.daysRemaining <= 30
+                    ? 'text-warning'
+                    : ''
+              "
+            >
+              {{ element.daysRemaining }}
+            </span>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="liveStatus">
+          <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1">
+            {{ util.appTranslate('th_status') }}
+          </th>
+          <td mat-cell *matCellDef="let element">
+            <span
+              class="f-s-14"
+              [ngClass]="
+                element.liveStatus === 'expired'
+                  ? 'text-error'
+                  : element.liveStatus === 'expiring'
+                    ? 'text-warning'
+                    : element.liveStatus === 'valid'
+                      ? 'text-success'
+                      : 'text-muted'
+              "
+            >
+              {{ util.appTranslate('dairy_compliance_' + element.liveStatus) }}
+            </span>
+            <!--
+              A stale cache is shown on the row rather than only as a count, because
+              it changes what this row is reporting: the stored status says one thing
+              and the dates say another, and anything reading the stored one is wrong.
+            -->
+            @if (element.cacheFresh === false) {
+              <div class="m-t-4 f-s-12 text-warning">
+                {{ util.appTranslate('dairy_cache_stale') }} ({{
+                  util.appTranslate('dairy_cached_as')
+                }}
+                {{ util.appTranslate('dairy_compliance_' + element.cachedStatus) }})
+              </div>
+            }
+          </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="displayedColumn"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumn"></tr>
+      </table>
+
+      @if (isLoaded && !records.length) {
+        <div class="p-24 text-center text-muted">
+          {{ util.appTranslate('dairy_all_compliant') }}
+        </div>
+      }
+    </div>
+  </mat-card-content>
+</mat-card>

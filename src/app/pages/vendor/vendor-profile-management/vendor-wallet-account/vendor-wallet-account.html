@@ -1,0 +1,134 @@
+<div class="row">
+  <div class="col-lg-4">
+    <mat-card class="cardWithShadow">
+      <mat-card-content class="p-32 bg-light-primary rounded">
+        <div class="d-flex">
+          <mat-card-title
+            class="f-s-18 m-b-0 m-t-5 text-primary">{{util.appTranslate('total_earning')}}</mat-card-title>
+          <div class="m-l-auto">
+            <button mat-mini-fab class="bg-primary text-white">
+              <ng-icon name="tablerUserDollar" class="icon-20"></ng-icon>
+            </button>
+          </div>
+        </div>
+        <h4 class="m-b-4 m-t-10 p-t-6 f-w-500 f-s-30 text-primary">{{util.priceFormat(totalEarning)}}</h4>
+      </mat-card-content>
+    </mat-card>
+  </div>
+
+  <div class="col-lg-4">
+    <mat-card class="cardWithShadow">
+      <mat-card-content class="p-32 bg-light-success rounded">
+        <div class="d-flex">
+          <mat-card-title
+            class="f-s-18 m-b-0 m-t-5 text-success">{{util.appTranslate('th_wallet_balance')}}</mat-card-title>
+          <div class="m-l-auto">
+            <button mat-mini-fab class="bg-secondary text-white">
+              <ng-icon name="tablerMoneybag" class="icon-20"></ng-icon>
+            </button>
+          </div>
+        </div>
+        <h4 class="m-b-4 m-t-10 p-t-6 f-w-500 f-s-30 text-success">{{util.priceFormat(balance)}}</h4>
+      </mat-card-content>
+    </mat-card>
+  </div>
+
+  <div class="col-lg-4">
+    <mat-card class="cardWithShadow">
+      <mat-card-content class="p-32 bg-light-primary rounded">
+        <div class="d-flex">
+          <mat-card-title class="f-s-18 m-b-0 m-t-5 text-error">{{util.appTranslate('cash_in_hand')}}</mat-card-title>
+          <div class="m-l-auto">
+            <button mat-mini-fab class="bg-warning text-white">
+              <ng-icon name="tablerCreditCard" class="icon-20"></ng-icon>
+            </button>
+          </div>
+        </div>
+        <h4 class="m-b-4 m-t-10 p-t-6 f-w-500 f-s-30 text-error">{{util.priceFormat(inHandAmount)}}</h4>
+      </mat-card-content>
+    </mat-card>
+  </div>
+
+</div>
+
+<div class="row">
+  <div class="col-lg-6 col-sm-12 p-b-16">
+    <mat-card class="cardWithShadow theme-card">
+      <mat-card-header>
+        <mat-card-title class="m-b-0">{{util.appTranslate('wallet_details')}}</mat-card-title>
+      </mat-card-header>
+
+      <mat-card-content class="b-t-0">
+        <mat-tab-group mat-stretch-tabs="false" [selectedIndex]="walletTabIndex" mat-align-tabs="start"
+          animationDuration="0ms" (selectedTabChange)="walletTabChanged($event)">
+          <mat-tab [label]="util.appTranslate('withdrawal')">
+            @if (walletTabIndex == 0) {
+            <app-withdrawal-request></app-withdrawal-request>
+            }
+          </mat-tab>
+
+          <mat-tab [label]="util.appTranslate('withdrawal_history')">
+            <mat-card-content class="p-0">
+              @if (walletTabIndex == 1) {
+              <app-withdrawal-history></app-withdrawal-history>
+              }
+            </mat-card-content>
+          </mat-tab>
+
+          <mat-tab [label]="util.appTranslate('transaction_history')">
+            <mat-card-content class="p-0">
+              @if (walletTabIndex == 2) {
+              <app-transaction-history></app-transaction-history>
+              }
+            </mat-card-content>
+          </mat-tab>
+
+          <mat-tab [label]="util.appTranslate('payout_accounts')">
+            @if (walletTabIndex == 3) {
+            <app-payout-accounts></app-payout-accounts>
+            }
+          </mat-tab>
+
+        </mat-tab-group>
+      </mat-card-content>
+    </mat-card>
+  </div>
+
+  <div class="col-lg-6 col-sm-12 p-b-16">
+    <mat-card class="cardWithShadow theme-card">
+      <mat-card-header>
+        <mat-card-title class="m-b-0">{{util.appTranslate('cash_in_hand')}}</mat-card-title>
+      </mat-card-header>
+
+      <mat-card-content class="b-t-0">
+        <mat-tab-group mat-stretch-tabs="false" [selectedIndex]="cashInHandTabIndex" mat-align-tabs="start"
+          animationDuration="0ms" (selectedTabChange)="cashInHandTabChanged($event)">
+          <mat-tab [label]="util.appTranslate('cash_in_hand_history')">
+            <mat-card-content class="p-0">
+              @if (cashInHandTabIndex == 0) {
+              <app-cash-in-hand-history></app-cash-in-hand-history>
+              }
+            </mat-card-content>
+          </mat-tab>
+
+          <mat-tab [label]="util.appTranslate('submitted_cash_history')">
+            <mat-card-content class="p-0">
+              @if (cashInHandTabIndex == 1) {
+              <app-submitted-cash-history></app-submitted-cash-history>
+              }
+            </mat-card-content>
+          </mat-tab>
+
+          <mat-tab [label]="util.appTranslate('pos_table_order_commission')">
+            <mat-card-content class="p-0">
+              @if (cashInHandTabIndex == 2) {
+              <app-vendor-pos-table-order-commission-history></app-vendor-pos-table-order-commission-history>
+              }
+            </mat-card-content>
+          </mat-tab>
+
+        </mat-tab-group>
+      </mat-card-content>
+    </mat-card>
+  </div>
+</div>

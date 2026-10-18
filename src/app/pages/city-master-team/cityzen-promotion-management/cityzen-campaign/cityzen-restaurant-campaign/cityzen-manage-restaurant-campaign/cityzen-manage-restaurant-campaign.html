@@ -1,0 +1,298 @@
+<form name="eventForm" [formGroup]="campaignForm" class="event-form" (ngSubmit)="onSubmit()" id="topContent">
+  <div class="row">
+    <div class="col-lg-8 col-sm-12 p-b-16">
+      <mat-card class="cardWithShadow theme-card">
+        <mat-card-header>
+          <mat-card-title class="m-b-0">
+            {{util.appTranslate('restaurant_campaign_informations')}}
+          </mat-card-title>
+        </mat-card-header>
+
+        <mat-card-content class="b-t-0">
+
+          <div class="row">
+
+            <div class="col-lg-12 col-sm-12 p-b-16">
+              <mat-form-field appearance="outline" class="w-100" color="primary">
+                <mat-label>{{util.appTranslate('campaign_title')}}</mat-label>
+                <input matInput formControlName="title" type="text" />
+                @if(haveSubmitClicked == true && f['title'].invalid){
+                <mat-hint class="m-b-16 error-msg">
+                  @if(f['title'].errors && f['title'].errors['required']){
+                  <div class="text-error">
+                    {{util.appTranslate('form_required')}}
+                  </div>
+                  }
+                </mat-hint>
+                }
+              </mat-form-field>
+            </div>
+
+            <div class="col-lg-12 col-sm-12 p-b-16">
+              <mat-form-field appearance="outline" class="w-100" color="primary">
+                <mat-label>{{util.appTranslate('campaign_description')}}</mat-label>
+                <textarea matInput formControlName="shortDescription" type="text" row="2"></textarea>
+                @if(haveSubmitClicked == true && f['shortDescription'].invalid){
+                <mat-hint class="m-b-16 error-msg">
+                  @if(f['shortDescription'].errors && f['shortDescription'].errors['required']){
+                  <div class="text-error">
+                    {{util.appTranslate('form_required')}}
+                  </div>
+                  }
+                </mat-hint>
+                }
+              </mat-form-field>
+            </div>
+
+            <div class="col-lg-12 col-sm-12 p-b-16">
+              <mat-tab-group mat-stretch-tabs="false" mat-align-tabs="start">
+                @for (item of languages; track $index) {
+                <mat-tab [label]="item.nativeName">
+                  <div class="mat-body-1 px-16 m-t-12">
+                    <mat-form-field appearance="outline" class="w-100" color="primary">
+                      <input matInput type="text"
+                        placeholder="{{util.appTranslate('campaign_title')}} ({{item.nativeName}})"
+                        [(ngModel)]="item.title" [ngModelOptions]="{standalone: true}" />
+                    </mat-form-field>
+
+                    <mat-form-field appearance="outline" class="w-100" color="primary">
+                      <textarea matInput type="text"
+                        placeholder="{{util.appTranslate('campaign_description')}} ({{item.nativeName}})"
+                        [(ngModel)]="item.shortDescription" [ngModelOptions]="{standalone: true}" row="2"> </textarea>
+                    </mat-form-field>
+
+                  </div>
+                </mat-tab>
+                }
+              </mat-tab-group>
+            </div>
+          </div>
+
+        </mat-card-content>
+      </mat-card>
+
+      <mat-card class="cardWithShadow theme-card">
+        <mat-card-header>
+          <mat-card-title class="m-b-0">
+            {{util.appTranslate('campaign_detail')}}
+          </mat-card-title>
+        </mat-card-header>
+        <mat-card-content class="b-t-0">
+
+          <div class="row">
+            <div class="col-lg-8 col-sm-12 p-b-16">
+              <mat-form-field class="w-100" appearance="outline">
+                <mat-label>{{util.appTranslate('choose_restaurant')}}</mat-label>
+                <input type="text" [placeholder]="util.appTranslate('choose_restaurant')" matInput
+                  [formControl]="restaurantCtrl" [matAutocomplete]="autoRestaurant" />
+                <mat-autocomplete autoActiveFirstOption #autoRestaurant="matAutocomplete"
+                  [displayWith]="displayRestaurantName">
+                  @for (item of restaurants | async; track $index) {
+                  <mat-option [value]="item.id">
+                    {{ getTranslateRestaurantName(item) }}
+                    @if (item && item.locality && item.locality.displayName) {
+                    <span> - {{item.locality.displayName}}</span>
+                    }
+                    @if (item && item.ownerInfo && item.ownerInfo.firstName) {
+                    <span> - {{item.ownerInfo.firstName +' '+item.ownerInfo.lastName}} </span>
+                    }
+                  </mat-option>
+                  }
+                </mat-autocomplete>
+              </mat-form-field>
+            </div>
+
+            <div class="col-lg-2 col-sm-12 p-b-16">
+              <button mat-mini-fab color="primary" type="button" (click)="onAddRestaurantToCampaign()">
+                <ng-icon name="tablerPlus" class="icon-20"></ng-icon>
+              </button>
+            </div>
+
+          </div>
+
+        </mat-card-content>
+      </mat-card>
+
+      <mat-card class="cardWithShadow theme-card"
+        [ngStyle]="{'border': haveSubmitClicked == true && f['restaurant'].invalid ? '2px dashed red' : 'unset'}">
+        <mat-card-header>
+          <mat-card-title class="m-b-0">
+            {{util.appTranslate('campaign_restaurant_list')}}
+          </mat-card-title>
+        </mat-card-header>
+        <mat-card-content class="b-t-0">
+          <div class="table-responsive">
+            <table mat-table [dataSource]="selectedRestaurantList" class="w-100">
+              <ng-container matColumnDef="name">
+                <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1 p-l-0">
+                  {{util.appTranslate('th_name')}}
+                </th>
+                <td mat-cell *matCellDef="let element" class="p-l-0">
+                  <div class="d-flex align-items-center cursor-pointer" (click)="onRestaurantDetail(element)">
+                    <img [src]="api.mediaUrl+element.logo" alt="cover" width="30" height="30" class="rounded"
+                      onError="this.src='assets/images/onerror.png'" />
+                    <div class="m-l-16">
+                      <h6 class="mat-subtitle-1 f-s-14 f-w-600">
+                        {{ element.displayName }}
+                      </h6>
+                    </div>
+                  </div>
+                </td>
+              </ng-container>
+
+              <ng-container matColumnDef="owner">
+                <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1 p-l-0">
+                  {{util.appTranslate('owner')}}
+                </th>
+                <td mat-cell *matCellDef="let element" class="f-s-14">
+                  @if (element && element.ownerInfo && element.ownerInfo.firstName) {
+                  <span>
+                    {{ element.ownerInfo.firstName +' '+ element.ownerInfo.lastName }}
+                  </span>
+                  }
+                </td>
+              </ng-container>
+
+              <ng-container matColumnDef="locality">
+                <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1 p-l-0">
+                  {{util.appTranslate('locality')}}
+                </th>
+                <td mat-cell *matCellDef="let element" class="f-s-14">
+                  {{ element && element.locality && element.locality.displayName ? element.locality.displayName : '' }}
+                </td>
+              </ng-container>
+
+              <ng-container matColumnDef="action">
+                <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1 p-r-0 text-right">
+                  {{util.appTranslate('th_action')}}
+                </th>
+                <td mat-cell *matCellDef="let element" class="f-w-500 text-right p-r-0">
+                  <a (click)="onDelete(element)" class="m-r-10 cursor-pointer text-error"
+                    [matTooltip]="util.appTranslate('click_to_delete')">
+                    <mat-icon>delete</mat-icon>
+                  </a>
+                </td>
+              </ng-container>
+
+              <tr mat-header-row *matHeaderRowDef="displayedColumn"></tr>
+              <tr mat-row *matRowDef="let row; columns: displayedColumn"></tr>
+
+              <tr *matNoDataRow>
+                <td colspan="6" class="m-b-16 m-t-16 text-center">{{util.appTranslate('no_restaurant_found')}}</td>
+              </tr>
+
+            </table>
+          </div>
+        </mat-card-content>
+      </mat-card>
+    </div>
+
+    <div class="col-lg-4 col-sm-12 p-b-16">
+      <mat-card class="cardWithShadow theme-card">
+        <mat-card-header>
+          <mat-card-title class="m-b-0">
+            {{util.appTranslate('meta_information')}}
+          </mat-card-title>
+        </mat-card-header>
+
+        <mat-card-content class="b-t-0">
+          <div class="row">
+            <div class="col-lg-12 col-sm-12 p-b-16">
+              <mat-label [matTooltip]="util.appTranslate('upload_image_ratio_2_o_1')"
+                [ngClass]="haveSubmitClicked == true && f['image'].invalid ? 'f-s-12 text-error' :'f-s-12' ">
+                {{util.appTranslate('image_ratio_2_o_1')}}
+              </mat-label>
+              <img [src]="api.mediaUrl+f['image'].value" class="custom-image-upload border p-5 m-t-16 w-100"
+                (click)="onImageClick()" [matTooltip]="util.appTranslate('select_image_ratio_2_o_1')"
+                onError="this.src='assets/images/placeholder.png'"
+                [ngStyle]="{'border': haveSubmitClicked == true && f['image'].invalid ? '2px dashed red' : '2px dashed #e5e5e5', 'height' : '120px'}" />
+            </div>
+
+          </div>
+
+          <div class="row">
+            <div class="col-lg-6 col-sm-12 p-b-16">
+              <mat-form-field appearance="outline" class="w-100" color="primary">
+                <mat-label>{{util.appTranslate('th_start_date')}}</mat-label>
+                <input matInput formControlName="startDate" type="date" />
+                @if(haveSubmitClicked == true && f['startDate'].invalid){
+                <mat-hint class="m-b-16 error-msg">
+                  @if(f['startDate'].errors && f['startDate'].errors['required']){
+                  <div class="text-error">
+                    {{util.appTranslate('form_required')}}
+                  </div>
+                  }
+                </mat-hint>
+                }
+              </mat-form-field>
+            </div>
+
+            <div class="col-lg-6 col-sm-12 p-b-16">
+              <mat-form-field appearance="outline" class="w-100" color="primary">
+                <mat-label>{{util.appTranslate('th_end_date')}}</mat-label>
+                <input matInput formControlName="endDate" type="date" />
+                @if(haveSubmitClicked == true && f['endDate'].invalid){
+                <mat-hint class="m-b-16 error-msg">
+                  @if(f['endDate'].errors && f['endDate'].errors['required']){
+                  <div class="text-error">
+                    {{util.appTranslate('form_required')}}
+                  </div>
+                  }
+                </mat-hint>
+                }
+              </mat-form-field>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col-lg-6 col-sm-12 p-b-16">
+              <mat-form-field appearance="outline" class="w-100" color="primary">
+                <mat-label>{{util.appTranslate('th_start_time')}}</mat-label>
+                <input matInput formControlName="startTime" type="time" />
+                @if(haveSubmitClicked == true && f['startTime'].invalid){
+                <mat-hint class="m-b-16 error-msg">
+                  @if(f['startTime'].errors && f['startTime'].errors['required']){
+                  <div class="text-error">
+                    {{util.appTranslate('form_required')}}
+                  </div>
+                  }
+                </mat-hint>
+                }
+              </mat-form-field>
+            </div>
+
+            <div class="col-lg-6 col-sm-12 p-b-16">
+              <mat-form-field appearance="outline" class="w-100" color="primary">
+                <mat-label>{{util.appTranslate('th_end_time')}}</mat-label>
+                <input matInput formControlName="endTime" type="time" />
+                @if(haveSubmitClicked == true && f['endTime'].invalid){
+                <mat-hint class="m-b-16 error-msg">
+                  @if(f['endTime'].errors && f['endTime'].errors['required']){
+                  <div class="text-error">
+                    {{util.appTranslate('form_required')}}
+                  </div>
+                  }
+                </mat-hint>
+                }
+              </mat-form-field>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col-lg-6 col-sm-12 p-b-16">
+              <button mat-flat-button color="primary" type="submit" class="w-100">
+                {{ action == 'add' ? util.appTranslate('submit_btn') : util.appTranslate('update_btn')}}
+              </button>
+            </div>
+            <div class="col-lg-6 col-sm-12 p-b-16">
+              <button mat-flat-button (click)="onReset()" class="w-100 bg-secondary text-white"
+                type="button">{{util.appTranslate('reset_btn')}}</button>
+            </div>
+          </div>
+        </mat-card-content>
+
+      </mat-card>
+    </div>
+
+  </div>
+</form>

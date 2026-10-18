@@ -1,0 +1,61 @@
+<div mat-dialog-content class="dialog-form">
+  <form [formGroup]="policyForm" (ngSubmit)="onSubmit()">
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>{{ util.appTranslate('stores_chain_name') }} <span class="required">*</span></mat-label>
+      <input matInput formControlName="chain" placeholder="Chain id">
+      @if (f.chain.invalid && haveSubmitClicked) {
+        <mat-error>{{ util.appTranslate('ts_field_required') }}</mat-error>
+      }
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>{{ util.appTranslate('stores_outlet_name') }}</mat-label>
+      <input matInput formControlName="outlet" placeholder="Outlet id (empty = chain default)">
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>{{ util.appTranslate('stores_policy_type') }} <span class="required">*</span></mat-label>
+      <mat-select formControlName="type">
+        @for (t of types; track t) {
+          <mat-option [value]="t">{{ t }}</mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>{{ util.appTranslate('stores_policy_title') }} <span class="required">*</span></mat-label>
+      <input matInput formControlName="title" placeholder="Policy title">
+      @if (f.title.invalid && haveSubmitClicked) {
+        <mat-error>{{ util.appTranslate('ts_field_required') }}</mat-error>
+      }
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>{{ util.appTranslate('common_description') }}</mat-label>
+      <textarea matInput formControlName="content" rows="4" placeholder="Policy content"></textarea>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>{{ util.appTranslate('effective_from') }}</mat-label>
+      <input matInput [matDatepicker]="startPicker" formControlName="effectiveFrom">
+      <mat-datepicker-toggle matSuffix [for]="startPicker"></mat-datepicker-toggle>
+      <mat-datepicker #startPicker></mat-datepicker>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>{{ util.appTranslate('effective_to') }}</mat-label>
+      <input matInput [matDatepicker]="endPicker" formControlName="effectiveTo">
+      <mat-datepicker-toggle matSuffix [for]="endPicker"></mat-datepicker-toggle>
+      <mat-datepicker #endPicker></mat-datepicker>
+    </mat-form-field>
+
+    <div mat-dialog-actions class="dialog-actions">
+      <button mat-button type="button" (click)="dialogRef.close()" cdkFocusInitial>
+        {{ util.appTranslate('common_cancel') }}
+      </button>
+      <button mat-raised-button color="primary" type="submit" [disabled]="policyForm.invalid">
+        {{ util.appTranslate('ts_add_new') }}
+      </button>
+    </div>
+  </form>
+</div>

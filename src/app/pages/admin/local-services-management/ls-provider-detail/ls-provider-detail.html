@@ -1,0 +1,36 @@
+<mat-card class="cardWithShadow">
+  <mat-card-header class="m-b-16">
+    <mat-card-title>{{ provider?.businessName || 'Provider' }}</mat-card-title>
+    <mat-card-subtitle>{{ provider?.status }}{{ provider?.bookable ? ' · bookable' : ' · not bookable' }}</mat-card-subtitle>
+  </mat-card-header>
+
+  <mat-card-content>
+    @if (!isLoaded) {
+      <div class="p-24 text-center text-muted">{{ util.appTranslate('ts_loading') }}</div>
+    } @else {
+      <h4>Documents ({{ documents.length }})</h4>
+      @for (d of documents; track d._id) {
+        <div class="f-s-14">{{ d.kind }} — {{ d.status }}</div>
+      }
+      @if (!documents.length) {
+        <div class="f-s-14 text-muted">None submitted</div>
+      }
+
+      <h4 class="m-t-16">Offerings ({{ offerings.length }})</h4>
+      @for (o of offerings; track o._id) {
+        <div class="f-s-14">₹{{ o.price }} — {{ o.status }}</div>
+      }
+      @if (!offerings.length) {
+        <div class="f-s-14 text-muted">None published</div>
+      }
+
+      <h4 class="m-t-16">Recent bookings ({{ bookings.length }})</h4>
+      @for (b of bookings; track b._id) {
+        <div class="f-s-14">{{ b.bookingCode }} — {{ b.status }}</div>
+      }
+      @if (!bookings.length) {
+        <div class="f-s-14 text-muted">None yet</div>
+      }
+    }
+  </mat-card-content>
+</mat-card>

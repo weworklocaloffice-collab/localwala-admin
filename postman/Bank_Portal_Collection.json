@@ -1,0 +1,191 @@
+{
+  "info": {
+    "_postman_id": "bank-portal-collection",
+    "name": "LocalWala Bank Portal API",
+    "schema": "https://schema.getpostman.com/schema/comment.json",
+    "description": "Postman collection for Bank Portal API endpoints"
+  },
+  "item": [
+    {
+      "name": "Authentication",
+      "item": [
+        {
+          "name": "Bank Login",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{}\n"
+            },
+            "url": "{{base_url}}/v1/auth/bank/login"
+          }
+        },
+        {
+          "name": "Forgot Password (bank)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{ \"email\": \"test@test.com\" }\n"
+            },
+            "url": "{{base_url}}/v1/auth/bank/forgot-password"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Bank Team",
+      "item": [
+        {
+          "name": "Get Dashboard",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{base_url}}/v1/realestate/bank/dashboard"
+          }
+        },
+        {
+          "name": "Get Applications",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{base_url}}/v1/realestate/bank/applications"
+          }
+        },
+        {
+          "name": "Get Offers",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{base_url}}/v1/realestate/bank/offers"
+          }
+        },
+        {
+          "name": "Create Offer",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"loanApplication\": \"{{loan_app_id}}\",\n  \"loanAmount\": {{loan_amount}},\n  \"tenureMonths\": {{tenure}},\n  \"interestRate\": {{rate}},\n  \"processingFee\": {{fee}}\n}\n"
+            },
+            "url": "{{base_url}}/v1/realestate/bank/offers"
+          }
+        },
+        {
+          "name": "Set Application Status",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"sanctionedAmount\": {{sanctioned}},\n  \"disbursedAmount\": {{disbursed}},\n  \"rejectionReason\": \"{{reason}}\"\n}\n"
+            },
+            "url": "{{base_url}}/v1/realestate/bank/applications/{{app_id}}/status/{{status}}"
+          }
+        },
+        {
+          "name": "Update Password (self-only)",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"password\": \"{{new_password}}\"\n}\n"
+            },
+            "url": "{{base_url}}/v1/realestate/bank/update_password/{{user_id}}"
+          }
+        },
+        {
+          "name": "Get Documents",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{base_url}}/v1/realestate/bank/documents"
+          }
+        }
+      ]
+    }
+  ],
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:3000"
+    },
+    {
+      "key": "loan_app_id",
+      "value": ""
+    },
+    {
+      "key": "loan_amount",
+      "value": "0"
+    },
+    {
+      "key": "tenure",
+      "value": "0"
+    },
+    {
+      "key": "rate",
+      "value": "0"
+    },
+    {
+      "key": "fee",
+      "value": "0"
+    },
+    {
+      "key": "sanctioned",
+      "value": "0"
+    },
+    {
+      "key": "disbursed",
+      "value": "0"
+    },
+    {
+      "key": "reason",
+      "value": ""
+    },
+    {
+      "key": "app_id",
+      "value": ""
+    },
+    {
+      "key": "status",
+      "value": "SANCTIONED"
+    },
+    {
+      "key": "user_id",
+      "value": ""
+    },
+    {
+      "key": "new_password",
+      "value": ""
+    }
+  ]
+}

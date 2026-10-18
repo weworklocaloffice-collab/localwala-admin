@@ -1,0 +1,52 @@
+<div class="color-picker">
+  <div class="color-picker__row">
+    <input
+      type="color"
+      class="color-picker__swatch"
+      [disabled]="disabled"
+      [ngModel]="swatchValue"
+      (change)="onSwatchChange($any($event.target).value)"
+      [attr.aria-label]="util.appTranslate(label || 'background_colour')"
+    />
+
+    <mat-form-field appearance="outline" class="color-picker__field">
+      <mat-label>{{ util.appTranslate(label) }}</mat-label>
+      <input
+        matInput
+        [disabled]="disabled"
+        [placeholder]="placeholder"
+        [ngModel]="hexField"
+        (ngModelChange)="onHexInput($event)"
+      />
+      @if (hexField && !isHexFieldValid(hexField)) {
+        <mat-error>{{ util.appTranslate(invalidHexKey) }}</mat-error>
+      }
+    </mat-form-field>
+
+    @if (value && !disabled) {
+      <button mat-stroked-button type="button" class="color-picker__clear" (click)="onClear()">
+        {{ util.appTranslate('clear') }}
+      </button>
+    }
+  </div>
+
+  @if (hint) {
+    <p class="color-picker__hint text-secondary f-s-12">{{ hint }}</p>
+  }
+
+  @if (palette.length) {
+    <div class="color-picker__palette">
+      @for (color of palette; track color) {
+        <button
+          type="button"
+          class="color-picker__chip"
+          [disabled]="disabled"
+          [style.background-color]="color"
+          [title]="color"
+          [attr.aria-label]="color"
+          (click)="onPalettePick(color)"
+        ></button>
+      }
+    </div>
+  }
+</div>

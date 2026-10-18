@@ -1,0 +1,82 @@
+<mat-card class="cardWithShadow theme-card">
+  <mat-card-header>
+    <mat-card-title class="m-b-0">
+      {{util.appTranslate('project_page_setup')}}
+    </mat-card-title>
+  </mat-card-header>
+
+  <mat-card-content class="b-t-0">
+    <mat-tab-group mat-stretch-tabs="false" mat-align-tabs="start" (selectedTabChange)="tabChanged($event)">
+      <!-- About-Us -->
+      <mat-tab [label]="util.appTranslate('about_us')"></mat-tab>
+      <!-- About-Us -->
+
+      <!-- Privacy Policy -->
+      <mat-tab [label]="util.appTranslate('privacy_policy')"></mat-tab>
+      <!-- Privacy Policy -->
+
+      <!-- Terms And Conditions -->
+      <mat-tab [label]="util.appTranslate('terms_and_conditions')"></mat-tab>
+      <!-- Terms And Conditions -->
+
+      <!-- Refund Policy -->
+      <mat-tab [label]="util.appTranslate('refund_policy')"></mat-tab>
+      <!-- Refund Policy -->
+
+      <!-- Shipping Policy -->
+      <mat-tab [label]="util.appTranslate('shipping_policy')"></mat-tab>
+      <!-- Shipping Policy -->
+
+      <!-- Cancellation Policy -->
+      <mat-tab [label]="util.appTranslate('cancellation_policy')"></mat-tab>
+      <!-- Cancellation Policy -->
+
+      <!-- Cookies -->
+      <mat-tab [label]="util.appTranslate('cookies')"></mat-tab>
+      <!-- Cookies -->
+
+      <!-- Help -->
+      <mat-tab [label]="util.appTranslate('help')"></mat-tab>
+      <!-- Help -->
+
+      <!-- FAQs -->
+      <mat-tab [label]="util.appTranslate('faqs')"></mat-tab>
+      <!-- FAQs -->
+
+      <!--Dining FAQs -->
+      <mat-tab [label]="util.appTranslate('dining_faqs')"></mat-tab>
+      <!--Dining FAQs -->
+    </mat-tab-group>
+  </mat-card-content>
+</mat-card>
+
+@if(tabIndex == 0){
+<app-project-page-form [slug]="about"></app-project-page-form>
+}
+@if(tabIndex == 1){
+<app-project-page-form [slug]="privacy"></app-project-page-form>
+}
+@if(tabIndex == 2){
+<app-project-page-form [slug]="terms"></app-project-page-form>
+}
+@if(tabIndex == 3){
+<app-project-page-form [slug]="refund"></app-project-page-form>
+}
+@if(tabIndex == 4){
+<app-project-page-form [slug]="shipping"></app-project-page-form>
+}
+@if(tabIndex == 5){
+<app-project-page-form [slug]="cancellation"></app-project-page-form>
+}
+@if(tabIndex == 6){
+<app-project-page-form [slug]="cookies"></app-project-page-form>
+}
+@if(tabIndex == 7){
+<app-project-page-form [slug]="help"></app-project-page-form>
+}
+@if(tabIndex == 8){
+<app-project-page-form [slug]="faqs"></app-project-page-form>
+}
+@if(tabIndex == 9){
+<app-project-page-form [slug]="diningFaqs"></app-project-page-form>
+}

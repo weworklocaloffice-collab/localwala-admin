@@ -1,0 +1,75 @@
+<h2 mat-dialog-title>{{ isEdit ? util.appTranslate('th_save') : util.appTranslate('th_create') }}</h2>
+
+<mat-dialog-content>
+  <div class="d-flex gap-12">
+    <mat-form-field appearance="outline" class="w-100">
+      <mat-label>{{ util.appTranslate('th_code') }}</mat-label>
+      <input matInput [(ngModel)]="form.code" [disabled]="isEdit" placeholder="PROFESSIONAL" />
+      <mat-hint>UPPER_SNAKE_CASE, immutable</mat-hint>
+    </mat-form-field>
+    <mat-form-field appearance="outline" class="w-100">
+      <mat-label>{{ util.appTranslate('th_name') }}</mat-label>
+      <input matInput [(ngModel)]="form.name" />
+    </mat-form-field>
+  </div>
+
+  <mat-form-field appearance="outline" class="w-100">
+    <mat-label>{{ util.appTranslate('th_description') }}</mat-label>
+    <input matInput [(ngModel)]="form.description" />
+  </mat-form-field>
+
+  <div class="d-flex gap-12">
+    <mat-form-field appearance="outline" class="w-100">
+      <mat-label>{{ util.appTranslate('th_price') }} (₹)</mat-label>
+      <input matInput type="number" min="0" [(ngModel)]="form.price" [disabled]="isEdit" />
+      @if (isEdit) {
+        <mat-hint>Immutable — sold orders keep their snapshot</mat-hint>
+      }
+    </mat-form-field>
+    <mat-form-field appearance="outline" class="w-100">
+      <mat-label>{{ util.appTranslate('th_duration_days') }}</mat-label>
+      <input matInput type="number" min="1" [(ngModel)]="form.durationDays" [disabled]="isEdit" />
+    </mat-form-field>
+  </div>
+
+  @if (!isEdit) {
+    <mat-form-field appearance="outline" class="w-100">
+      <mat-label>{{ util.appTranslate('th_listings') }} (blank = unlimited)</mat-label>
+      <input matInput type="number" min="1" [(ngModel)]="form.listingCount" />
+    </mat-form-field>
+  }
+
+  <mat-form-field appearance="outline" class="w-100">
+    <mat-label>Features (one per line)</mat-label>
+    <textarea matInput rows="3" [(ngModel)]="form.featuresText"></textarea>
+  </mat-form-field>
+
+  <div class="d-flex gap-12">
+    <mat-form-field appearance="outline" class="w-100">
+      <mat-label>Max images</mat-label>
+      <input matInput type="number" min="0" [(ngModel)]="form.maxImages" />
+    </mat-form-field>
+    <mat-form-field appearance="outline" class="w-100">
+      <mat-label>Max videos</mat-label>
+      <input matInput type="number" min="0" [(ngModel)]="form.maxVideos" />
+    </mat-form-field>
+    <mat-form-field appearance="outline" class="w-100">
+      <mat-label>{{ util.appTranslate('th_sort_order') }}</mat-label>
+      <input matInput type="number" [(ngModel)]="form.sortOrder" />
+    </mat-form-field>
+  </div>
+
+  <mat-checkbox [(ngModel)]="form.status">{{ util.appTranslate('th_active') }}</mat-checkbox>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button (click)="onClose()">{{ util.appTranslate('th_cancel') }}</button>
+  <button
+    mat-flat-button
+    color="primary"
+    [disabled]="!canSubmit"
+    (click)="onSubmit()"
+  >
+    {{ isEdit ? util.appTranslate('th_save') : util.appTranslate('th_create') }}
+  </button>
+</mat-dialog-actions>

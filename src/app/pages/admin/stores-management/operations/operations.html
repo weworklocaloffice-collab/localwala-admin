@@ -1,0 +1,82 @@
+<div class="d-flex flex-column gap-16">
+  <!--
+    The tiles. Each is both a count and a tab, so the number and the queue it opens are
+    the same click target — an operator should not read a count and then hunt for the list.
+  -->
+  <div class="row g-3">
+    @for (c of CONSOLES; track c.key) {
+      <div class="col-12 col-sm-6 col-lg-3">
+        <button
+          type="button"
+          class="console-tile w-100 text-left"
+          [class.active]="activeConsole?.key === c.key"
+          [class.has-attention]="hasAttention(c)"
+          (click)="select(c)"
+        >
+          <div class="d-flex align-center justify-content-between">
+            <mat-icon class="console-tile-icon">{{ c.icon }}</mat-icon>
+            @if (isSummaryLoaded) {
+              <span class="console-tile-count">{{ count(c) }}</span>
+            } @else {
+              <span class="console-tile-count">—</span>
+            }
+          </div>
+          <div class="console-tile-label mt-8">
+            {{ util.appTranslate(c.labelKey) }}
+          </div>
+        </button>
+      </div>
+    }
+  </div>
+
+  @if (activeConsole) {
+    <mat-card class="cardWithShadow">
+      <mat-card-header class="m-b-16">
+        <mat-card-title>{{ util.appTranslate(activeConsole.labelKey) }}</mat-card-title>
+      </mat-card-header>
+
+      <mat-card-content>
+        <div class="f-s-12 text-muted m-b-16">
+          {{ util.appTranslate('stores_console_readonly_note') }}
+        </div>
+
+        <div class="table-responsive">
+          <table mat-table [dataSource]="rows" class="w-100">
+            @for (col of activeConsole.columns; track col) {
+              <ng-container [matColumnDef]="col">
+                <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1">
+                  {{ util.appTranslate('stores_col_' + col) }}
+                </th>
+                <td mat-cell *matCellDef="let element">
+                  <span
+                    class="f-s-14"
+                    [class.text-error]="isCritical(col, cell(element, col))"
+                    [class.f-w-600]="isCritical(col, cell(element, col))"
+                  >
+                    {{ cell(element, col) }}
+                  </span>
+                </td>
+              </ng-container>
+            }
+
+            <tr mat-header-row [matHeaderRowDef]="activeConsole.columns"></tr>
+            <tr mat-row *matRowDef="let row; columns: activeConsole.columns"></tr>
+          </table>
+
+          @if (isRowsLoaded && !rows.length) {
+            <div class="p-24 text-center text-muted">
+              <!-- The empty state is good news and says so, rather than looking like a failure. -->
+              {{ util.appTranslate('stores_console_all_clear') }}
+            </div>
+          }
+
+          @if (!isRowsLoaded) {
+            <div class="p-24 text-center text-muted">
+              {{ util.appTranslate('common_loading') }}
+            </div>
+          }
+        </div>
+      </mat-card-content>
+    </mat-card>
+  }
+</div>

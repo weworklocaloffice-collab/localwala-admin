@@ -1,0 +1,94 @@
+@use 'sass:map';
+@use 'sass:math';
+@use 'variables';
+
+// Helper function to get breakpoint value
+@function bp($name, $breakpoints: variables.$breakpoints) {
+  @return map.get($breakpoints, $name);
+}
+
+// Media of at least the minimum breakpoint width.
+@mixin bp-gt($name, $breakpoints: variables.$breakpoints) {
+  $min: bp($name, $breakpoints);
+
+  @if $min and $min != 0 {
+    @media (min-width: $min) {
+      @content;
+    }
+  } @else {
+    @content;
+  }
+}
+
+// Media of at most the maximum breakpoint width.
+@mixin bp-lt($name, $breakpoints: variables.$breakpoints) {
+  $min: bp($name, $breakpoints);
+
+  // Ensure we have a value and subtract 0.02px to avoid collision
+  // with the next breakpoint (more precise than 1px)
+  @if $min and $min > 0 {
+    $max: $min - 0.02px;
+    @media (max-width: $max) {
+      @content;
+    }
+  } @else {
+    // If it's the smallest breakpoint, usually no max-width is applied
+    @content;
+  }
+}
+
+// Initialize the base column styles (static properties)
+@mixin make-grid-columns($columns: variables.$grid-columns, $gutter: variables.$grid-gutter) {
+  %grid-column {
+    position: relative;
+    width: 100%;
+    padding-right: $gutter * 0.5;
+    padding-left: $gutter * 0.5;
+  }
+
+  @each $breakpoint, $infix in variables.$breakpoint-infixs {
+    // Explicit control flow instead of the if() function
+    $suffix: '';
+    @if $infix != '' {
+      $suffix: '-#{$infix}';
+    }
+
+    .col#{$suffix} {
+      @extend %grid-column;
+    }
+
+    @for $i from 1 through $columns {
+      .col#{$suffix}-#{$i} {
+        @extend %grid-column;
+      }
+    }
+  }
+}
+
+// Generate the functional flexbox logic
+@mixin loop-grid-columns($columns: variables.$grid-columns, $infix: '') {
+  // Define the suffix as a clear string first
+  $suffix: '';
+  @if $infix != '' {
+    $suffix: '-#{$infix}';
+  }
+
+  .col#{$suffix} {
+    flex-basis: 0;
+    flex-grow: 1;
+    max-width: 100%;
+  }
+
+  @for $i from 1 through $columns {
+    $percent: math.percentage(math.div($i, $columns));
+
+    .col#{$suffix}-#{$i} {
+      flex: 0 0 $percent;
+      max-width: $percent;
+    }
+
+    .offset#{$suffix}-#{$i} {
+      margin-left: $percent;
+    }
+  }
+}

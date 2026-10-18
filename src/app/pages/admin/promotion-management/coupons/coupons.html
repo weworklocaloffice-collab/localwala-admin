@@ -1,0 +1,32 @@
+<mat-card class="cardWithShadow theme-card">
+  <mat-card-header>
+    <mat-card-title class="m-b-0">
+      {{util.appTranslate('coupon_management')}}
+    </mat-card-title>
+  </mat-card-header>
+
+  <mat-card-content class="b-t-0">
+    <mat-tab-group mat-stretch-tabs="false" mat-align-tabs="start" (selectedTabChange)="tabChanged($event)">
+      <mat-tab [label]="util.appTranslate('coupon_list')"></mat-tab>
+      <mat-tab [label]="util.appTranslate('coupon_request')"></mat-tab>
+      <mat-tab [label]="util.appTranslate('dining_coupon_list')"></mat-tab>
+      <mat-tab [label]="util.appTranslate('dining_coupon_request')"></mat-tab>
+    </mat-tab-group>
+  </mat-card-content>
+</mat-card>
+
+@if (tabIndex == 0) {
+<app-coupon-list></app-coupon-list>
+}
+
+@if (tabIndex == 1) {
+<app-coupon-request></app-coupon-request>
+}
+
+@if (tabIndex == 2) {
+<app-dining-coupon-list></app-dining-coupon-list>
+}
+
+@if (tabIndex == 3) {
+<app-dining-coupon-request></app-dining-coupon-request>
+}

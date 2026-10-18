@@ -1,0 +1,80 @@
+<mat-toolbar class="topbar horizontal-topbar">
+  <div class="container">
+    <div class="d-none d-sm-flex branding">
+      <app-user-branding></app-user-branding>
+    </div>
+
+    <button mat-icon-button (click)="toggleMobileNav.emit()" class="d-block d-lg-none">
+      <ng-icon name="tablerMenu2" class="icon-20 d-flex"></ng-icon>
+    </button>
+
+    <div class="d-none d-lg-flex">
+      <a mat-button [routerLink]="['/']" routerLinkActive="text-primary" [routerLinkActiveOptions]="{ exact: true }"
+        class="f-s-14">{{ util.appTranslate('home') }}
+      </a>
+      <a mat-button [routerLink]="['/pages/privacy-policy']" routerLinkActive="text-primary" class="f-s-14">
+        {{ util.appTranslate('privacy') }}
+      </a>
+      <a mat-button [routerLink]="['/help-support']" routerLinkActive="text-primary" class="f-s-14">
+        {{ util.appTranslate('help_and_support') }}
+      </a>
+      <a mat-button [routerLink]="['/contact-us']" routerLinkActive="text-primary" class="f-s-14">
+        {{ util.appTranslate('contact') }}
+      </a>
+      <a mat-button [routerLink]="['/pages/about-us']" routerLinkActive="text-primary" class="f-s-14">
+        {{ util.appTranslate('about') }}
+      </a>
+    </div>
+
+    <span class="flex-1-auto"></span>
+
+    @if (partnerButton()) {
+    <button [matMenuTriggerFor]="partnerMenu" mat-button class="m-r-5">
+      <div class="d-flex align-items-center f-s-14">
+        {{ util.appTranslate('partner_with_us') }}
+        <ng-icon name="tablerArrowUpRight" class="icon-20 d-flex"></ng-icon>
+      </div>
+    </button>
+    }
+
+    <mat-menu #partnerMenu="matMenu" class="cardWithShadow">
+      @if (restaurantPartnerButton()) {
+      <button mat-menu-item (click)="onNavigatePage('/restaurant-register-request')">
+        <span class="f-s-14">{{ util.appTranslate('register_as_restaurant') }}</span>
+      </button>
+      }
+      @if (deliverymanPartnerButton()) {
+      <button mat-menu-item (click)="onNavigatePage('/deliveryman-register-request')">
+        <span class="f-s-14">{{ util.appTranslate('register_as_deliveryman') }}</span>
+      </button>
+      }
+    </mat-menu>
+
+    <button [matMenuTriggerFor]="flags" mat-icon-button class="m-r-5">
+      <img [src]="api.mediaUrl+usedLocale" class="rounded-circle object-cover icon-20" />
+    </button>
+    <mat-menu #flags="matMenu" class="cardWithShadow">
+      @for(locale of appLocale; track locale.id) {
+      <button mat-menu-item (click)="changeLanguage(locale)">
+        <div class="d-flex align-items-center">
+          <img [src]="api.mediaUrl+locale.image" class="rounded-circle object-cover m-r-8 icon-20"
+            onError="this.src='assets/images/onerror.png'" />
+          <span class=" f-s-14">{{ locale.nativeName }}</span>
+        </div>
+      </button>
+      }
+    </mat-menu>
+
+    @if(options.theme=='light'){
+    <button mat-icon-button aria-label="lightdark" class="d-flex justify-content-center" (click)="setlightDark('dark')">
+      <ng-icon name="tablerMoon" class="icon-22 d-flex"></ng-icon>
+    </button>
+    }@else{
+    <button mat-icon-button aria-label="lightdark" class="d-flex justify-content-center"
+      (click)="setlightDark('light')">
+      <ng-icon name="tablerSun" class="icon-22 d-flex"></ng-icon>
+    </button>
+    }
+
+  </div>
+</mat-toolbar>

@@ -1,0 +1,49 @@
+<h2 mat-dialog-title class="dialog-title">
+  <span class="title-text">{{util.appTranslate('decline_withdrawal_request')}}</span>
+  <button mat-icon-button mat-dialog-close class="close-btn">
+    <mat-icon>close</mat-icon>
+  </button>
+</h2>
+<div mat-dialog-content style="max-width: 600px;max-height: max-content;" class="m-t-12 p-t-12">
+  <form name="eventForm" [formGroup]="rejectForm" class="event-form" (ngSubmit)="onSubmit()">
+    <div class="row">
+
+      <div class="col-lg-12 col-sm-12 col-md-12 p-b-4">
+        <h6 class="text-muted mat-body-1">{{util.appTranslate('requested_amount')}} : <span
+            class="f-s-14 f-w-600">{{util.priceFormat(amount)}}</span> </h6>
+      </div>
+
+      <div class="col-lg-12 col-sm-12 col-md-12 p-b-4">
+        <h6 class="text-muted mat-body-1">{{util.appTranslate('th_wallet_balance')}} : <span
+            class="f-s-14 f-w-600">{{util.priceFormat(balance)}}</span> </h6>
+      </div>
+
+      <div class="col-lg-12 col-sm-12 col-md-12 p-t-24">
+        <mat-form-field appearance="outline" class="w-100" color="primary">
+          <mat-label>{{util.appTranslate('write_rejection_reason')}}</mat-label>
+          <textarea matInput formControlName="reason" type="text" rows="3"></textarea>
+          @if (isFormSubmit == true && f['reason'].invalid) {
+          <mat-hint class="m-b-16 error-msg">
+            @if (f['reason'].errors && f['reason'].errors['required']) {
+            <div class="text-error">
+              {{util.appTranslate('form_required')}}
+            </div>
+            }
+          </mat-hint>
+          }
+        </mat-form-field>
+      </div>
+    </div>
+    <div mat-dialog-actions class="p-b-24">
+      <button mat-button mat-flat-button color="primary" type="submit" [disabled]="isSubmit == true">
+        @if (isSubmit == true) {
+        <mat-icon>
+          <mat-spinner diameter="15"></mat-spinner>
+        </mat-icon>
+        }
+        {{util.appTranslate('submit_btn')}}
+      </button>
+      <button mat-button mat-dialog-close class="m-l-8 bg-secondary text-white">{{util.appTranslate('cancel_btn')}}</button>
+    </div>
+  </form>
+</div>

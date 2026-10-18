@@ -1,0 +1,91 @@
+<mat-card class="cardWithShadow m-b-16">
+  <mat-card-header class="m-b-16">
+    <mat-card-title>{{ util.appTranslate('realEstate_package_payments') }}</mat-card-title>
+    <mat-card-subtitle>{{ util.appTranslate('realEstate_package_payments_subtitle') }}</mat-card-subtitle>
+  </mat-card-header>
+
+  <mat-card-content>
+    <div class="d-flex flex-wrap align-center justify-content-between mb-24 gap-12">
+      <mat-form-field appearance="outline" class="w-100">
+        <mat-label>{{ util.appTranslate('th_status') }}</mat-label>
+        <mat-select [(ngModel)]="selectedStatus" (selectionChange)="onFilter()">
+          <mat-option value="">{{ util.appTranslate('th_all') }}</mat-option>
+          <mat-option value="PAID">{{ util.appTranslate('th_paid') }}</mat-option>
+          <mat-option value="PENDING">{{ util.appTranslate('th_pending') }}</mat-option>
+          <mat-option value="FAILED">{{ util.appTranslate('th_failed') }}</mat-option>
+          <mat-option value="REFUNDED">{{ util.appTranslate('th_refunded') }}</mat-option>
+        </mat-select>
+      </mat-form-field>
+    </div>
+
+    <div class="table-responsive">
+      <table mat-table [dataSource]="list" class="w-100">
+        <ng-container matColumnDef="vendor">
+          <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1">
+            {{ util.appTranslate('th_vendor') }}
+          </th>
+          <td mat-cell *matCellDef="let element">
+            <div class="f-w-600">{{ element.vendorName || element.vendor }}</div>
+            <div class="f-s-12 text-muted">{{ element.vendorCode }}</div>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="package">
+          <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1">
+            {{ util.appTranslate('th_package') }}
+          </th>
+          <td mat-cell *matCellDef="let element">
+            <div class="f-w-600">{{ element.packageName }}</div>
+            <div class="f-s-12 text-muted">{{ element.packageCode }}</div>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="amount">
+          <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1">
+            {{ util.appTranslate('th_amount') }}
+          </th>
+          <td mat-cell *matCellDef="let element">{{ formatPrice(element.amount) }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="status">
+          <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1">
+            {{ util.appTranslate('th_status') }}
+          </th>
+          <td mat-cell *matCellDef="let element">
+            <span [class.text-success]="element.status === 'PAID'"
+                  [class.text-warn]="element.status === 'PENDING'"
+                  [class.text-muted]="element.status === 'FAILED'">
+              {{ element.status }}
+            </span>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="createdAt">
+          <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1">
+            {{ util.appTranslate('th_date') }}
+          </th>
+          <td mat-cell *matCellDef="let element">{{ formatDate(element.createdAt) }}</td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="displayedColumn"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumn"></tr>
+      </table>
+
+      @if (isLoaded && !list.length) {
+        <div class="p-24 text-center text-muted">
+          {{ util.appTranslate('ts_no_records_found') }}
+        </div>
+      }
+    </div>
+
+    <mat-paginator
+      [hidden]="!isLoaded"
+      #paginator
+      [pageSizeOptions]="[5, 10, 20]"
+      [pageSize]="pageSize"
+      (page)="onPageChange($event)"
+      showFirstLastButtons
+    >
+    </mat-paginator>
+  </mat-card-content>
+</mat-card>

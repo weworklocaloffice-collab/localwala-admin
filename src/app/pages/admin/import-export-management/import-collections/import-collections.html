@@ -1,0 +1,508 @@
+<mat-card class="cardWithShadow theme-card">
+  <mat-card-header>
+    <mat-card-title class="m-b-0">{{displayName}} {{util.appTranslate('bulk_imports')}}</mat-card-title>
+  </mat-card-header>
+  <mat-card-content class="b-t-0">
+    <div class="row m-b-30">
+      <div class="col-lg-6">
+        <mat-card class="b-1 shadow-none">
+          <mat-card-header>
+            <mat-card-title>{{util.appTranslate('instructions')}}</mat-card-title>
+          </mat-card-header>
+          <mat-card-content class="b-t-0">
+            <ul>
+              <li>{{util.appTranslate('import_instruction_one')}}</li>
+              <li>{{util.appTranslate('import_instruction_two')}}</li>
+              <li>{{util.appTranslate('import_instruction_three')}}</li>
+              <li>{{util.appTranslate('import_instruction_four')}}</li>
+              <li>{{util.appTranslate('import_instruction_five')}}</li>
+              <li>{{util.appTranslate('import_instruction_six')}}</li>
+              <li>{{util.appTranslate('import_instruction_seven')}}</li>
+              <li>{{util.appTranslate('import_instruction_eight')}}</li>
+              <li>{{util.appTranslate('import_instruction_nine')}}</li>
+              <li>{{util.appTranslate('import_instruction_ten')}}</li>
+              <li>{{util.appTranslate('import_instruction_eleven')}}</li>
+            </ul>
+          </mat-card-content>
+        </mat-card>
+      </div>
+      <div class="col-lg-6">
+        <mat-card class="b-1 shadow-none">
+          <mat-card-header>
+            <mat-card-title>{{util.appTranslate('download_sample')}}</mat-card-title>
+          </mat-card-header>
+          <mat-card-content class="b-t-0">
+            <mat-form-field appearance="outline" class="w-100 m-b-20">
+              <mat-select [value]="downloadFile" [(ngModel)]="downloadFile">
+                <mat-option value="-">{{util.appTranslate('dd_select')}}</mat-option>
+                <mat-option [value]="sampleExcel">{{util.appTranslate('dd_excel_sample')}}</mat-option>
+                <mat-option [value]="emptyExcel">{{util.appTranslate('dd_excel_empty')}}</mat-option>
+                <mat-option [value]="sampleCSV">{{util.appTranslate('dd_csv_sample')}}</mat-option>
+                <mat-option [value]="emptyCSV">{{util.appTranslate('dd_csv_empty')}}</mat-option>
+              </mat-select>
+            </mat-form-field>
+            <button mat-flat-button color="primary" class="w-100"
+              (click)="onDownload()">{{util.appTranslate('download')}}</button>
+          </mat-card-content>
+        </mat-card>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-lg-6">
+        <mat-card class="b-1 shadow-none">
+          <mat-card-header>
+            <mat-card-title>{{util.appTranslate('select_file_type')}}</mat-card-title>
+          </mat-card-header>
+          <mat-card-content class="b-t-0">
+            <mat-radio-group [(ngModel)]="uploadType">
+              <mat-radio-button color="primary"
+                value="excel">{{util.appTranslate('excel_export_kind')}}</mat-radio-button>
+              <mat-radio-button color="primary" value="csv">{{util.appTranslate('csv_export_kind')}}</mat-radio-button>
+            </mat-radio-group>
+          </mat-card-content>
+        </mat-card>
+      </div>
+      <div class="col-lg-6">
+        <mat-card class="b-1 shadow-none">
+          <mat-card-header>
+            <mat-card-title>{{util.appTranslate('upload_files')}}</mat-card-title>
+          </mat-card-header>
+          <mat-card-content class="b-t-0">
+            <div class="rounded border p-5 import-collection-upload w-100" (click)="importInput.click()">
+              <img [src]="uploadType == 'excel' ? 'assets/images/xls-file.png' :'assets/images/csv-file.png'" alt=""
+                class="import-img">
+              @if (uploadType == 'excel') {
+              <p class="import-instruction">
+                @if (uploadFileName != '') {
+                <span>{{uploadFileName}}</span>
+                }
+                @if (uploadFileName == '') {
+                <span>
+                  {{util.appTranslate('import_instruction_excel')}}
+                </span>
+                }
+              </p>
+              }
+              @if (uploadType == 'csv') {
+              <p class="import-instruction">
+                @if (uploadFileName != '') {
+                <span>{{uploadFileName}}</span>
+                }
+                @if (uploadFileName == '') {
+                <span>
+                  {{util.appTranslate('import_instruction_csv')}}
+                </span>
+                }
+              </p>
+              }
+            </div>
+            <input #importInput type="file" hidden (change)="onFileSelected($event)"
+              [accept]="uploadType == 'csv' ? '.csv' :'.xlsx'">
+          </mat-card-content>
+        </mat-card>
+      </div>
+    </div>
+
+    <div class="m-t-12 text-right">
+      <button mat-flat-button color="primary" (click)="uploadCollection()">{{util.appTranslate('submit_btn')}}</button>
+    </div>
+
+  </mat-card-content>
+</mat-card>
+
+@if (helper == 'withdrawal_methods') {
+<div>
+  <mat-card class="cardWithShadow theme-card" [formGroup]="withdrawalMethodForm">
+    <mat-card-header class="d-flex align-items-center justify-content-between">
+      <mat-card-title class="m-b-0">
+        {{util.appTranslate('create_method_form_elements')}}
+      </mat-card-title>
+      <div class="m-l-auto">
+        <button mat-flat-button color="primary" class="m-l-16" (click)="generateWithdrawalMethod()">
+          {{util.appTranslate('generate_form_elements')}}
+        </button>
+        <button mat-button type="button" color="primary" class="m-l-16" (click)="addFormField()">
+          <div class="d-flex align-items-center">
+            <span>{{util.appTranslate('add_field')}}</span>
+            <ng-icon name="tablerPlus" class="icon-20 m-l-4"></ng-icon>
+          </div>
+        </button>
+      </div>
+    </mat-card-header>
+
+    <mat-card-content class="b-t-1" formArrayName="formElement">
+      @for (formField of withdrawalMethodFormFields.controls; track formField; let i = $index) {
+      <div [formGroupName]="i" class="b-b-1">
+        <div class="row p-b-24 p-t-24">
+          <div class="col-lg-3 col-sm-12 p-b-16">
+            <mat-form-field appearance="outline" class="w-100">
+              <mat-label>{{util.appTranslate('input_type_lbl')}}</mat-label>
+              <mat-select formControlName="fieldType">
+                <mat-option value="text">{{util.appTranslate('text_input')}}</mat-option>
+                <mat-option value="number">{{util.appTranslate('number_input')}}</mat-option>
+                <mat-option value="phone">{{util.appTranslate('phone_input')}}</mat-option>
+                <mat-option value="email">{{util.appTranslate('email_input')}}</mat-option>
+                <mat-option value="date">{{util.appTranslate('date_select')}}</mat-option>
+              </mat-select>
+            </mat-form-field>
+          </div>
+
+          <div class="col-lg-3 col-sm-12 p-b-16">
+            <mat-form-field appearance="outline" class="w-100" color="primary">
+              <mat-label>{{util.appTranslate('field_name')}}</mat-label>
+              <input matInput formControlName="fieldName" type="text" />
+              @if (haveWithdrawalMethodSubmitClicked == true && formField.get('fieldName')?.invalid) {
+              <mat-hint class="m-b-16 error-msg">
+                @if (formField.get('fieldName')?.errors && formField.get('fieldName')?.errors?.['required']) {
+                <div class="text-error">
+                  {{util.appTranslate('form_required')}}
+                </div>
+                }
+              </mat-hint>
+              }
+            </mat-form-field>
+          </div>
+
+          <div class="col-lg-3 col-sm-12 p-b-16">
+            <mat-form-field appearance="outline" class="w-100" color="primary">
+              <mat-label>{{util.appTranslate('field_placeholder')}}</mat-label>
+              <input matInput formControlName="placeholder" type="text" />
+              @if (haveWithdrawalMethodSubmitClicked == true && formField.get('placeholder')?.invalid) {
+              <mat-hint class="m-b-16 error-msg">
+                @if (formField.get('placeholder')?.errors && formField.get('placeholder')?.errors?.['required']) {
+                <div class="text-error">
+                  {{util.appTranslate('form_required')}}
+                </div>
+                }
+              </mat-hint>
+              }
+            </mat-form-field>
+          </div>
+
+          <div class="col-lg-2 col-sm-12 p-b-16">
+            <mat-form-field appearance="outline" class="w-100">
+              <mat-label>{{util.appTranslate('required_lbl')}}</mat-label>
+              <mat-select formControlName="isRequired">
+                <mat-option [value]="true">{{util.appTranslate('dd_yes')}}</mat-option>
+                <mat-option [value]="false">{{util.appTranslate('dd_no')}}</mat-option>
+              </mat-select>
+            </mat-form-field>
+          </div>
+
+          <div class="col-lg-1 col-sm-12 p-b-16 d-flex flex-column align-items-center">
+            @if (i != 0) {
+            <button mat-mini-fab color="primary" type="button" (click)="removeFormField(i)">
+              <ng-icon name="tablerTrash" class="icon-20"></ng-icon>
+            </button>
+            }
+          </div>
+        </div>
+      </div>
+      }
+
+      <div class="">
+        <h4 class="mat-subtitle-1 f-s-16 f-w-600 m-y-16">{{util.appTranslate('form_elements')}}</h4>
+        <mat-form-field appearance="outline" class="w-100">
+          <textarea matInput [(ngModel)]="withdrawalMethodFormElement" rows="5" class="note-content"
+            [ngModelOptions]="{standalone: true}"></textarea>
+          <button mat-icon-button matSuffix (click)="copyclipboardWithdrawalMethodForms()">
+            <mat-icon class="op-5">content_copy</mat-icon>
+          </button>
+        </mat-form-field>
+      </div>
+    </mat-card-content>
+  </mat-card>
+</div>
+}
+
+@if (helper == 'tiffin_packages_list') {
+<div>
+  <mat-card class="cardWithShadow theme-card">
+    <mat-card-header class="d-flex align-items-center justify-content-between">
+      <mat-card-title class="m-b-0">
+        {{util.appTranslate('create_timeslot_and_notice')}}
+      </mat-card-title>
+    </mat-card-header>
+
+    <mat-card-content class="b-t-0">
+      <div class="d-flex align-items-center">
+        <mat-card-title>{{util.appTranslate('availability_slots')}}</mat-card-title>
+        <div class="m-l-auto">
+          <button mat-flat-button color="primary" class="m-l-16" (click)="generateTiffinTimeSlot()">
+            {{util.appTranslate('generate_timeslot')}}
+          </button>
+          <button mat-flat-button class="m-l-16 bg-secondary text-white" type="button"
+            (click)="onAddSlot()">{{util.appTranslate('add')}}</button>
+        </div>
+      </div>
+
+      <div class="row p-t-16">
+        @for (item of tiffinTimeSlot; track $index) {
+        <div class="col-lg-4 col-sm-12 p-b-10 p-t-10 b-b-1">
+          <div class="d-flex align-items-center">
+            <span class="f-s-14 d-block m-b-4">
+              {{item.startTime}} - {{item.endTime}}
+            </span>
+            <span class="m-l-auto">
+              <ng-icon name="tablerEdit" class="icon-20 m-r-10" (click)="onEditSlot(item)"></ng-icon>
+              <ng-icon name="tablerTrash" class="icon-20" (click)="onDeleteSlot(item)"></ng-icon>
+            </span>
+          </div>
+        </div>
+        }
+      </div>
+
+      <div class="">
+        <h4 class="mat-subtitle-1 f-s-16 f-w-600 m-y-16">{{util.appTranslate('timeslot')}}</h4>
+        <mat-form-field appearance="outline" class="w-100">
+          <textarea matInput [(ngModel)]="tiffinTimeSlotString" rows="5" class="note-content"
+            [ngModelOptions]="{standalone: true}"></textarea>
+          <button mat-icon-button matSuffix (click)="copyclipboardTiffinTimeSlot()">
+            <mat-icon class="op-5">content_copy</mat-icon>
+          </button>
+        </mat-form-field>
+      </div>
+
+      <div class="d-flex align-items-center m-b-10">
+        <mat-card-title>{{util.appTranslate('package_instructions')}}</mat-card-title>
+        <div class="m-l-auto">
+          <button mat-flat-button color="primary" class="m-l-16" (click)="generateTiffinNotice()">
+            {{util.appTranslate('generate_instruction')}}
+          </button>
+          <button mat-flat-button class="m-l-16 bg-secondary text-white" type="button"
+            (click)="onAddNotice()">{{util.appTranslate('add')}}</button>
+        </div>
+      </div>
+      <div class="table-responsive">
+        <table mat-table [dataSource]="tiffinNotice" class="w-100 m-t-30">
+          <ng-container matColumnDef="name">
+            <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1 p-l-0">
+              {{util.appTranslate('instruction')}}
+            </th>
+            <td mat-cell *matCellDef="let element" class="p-l-0">
+              <div class="d-flex align-items-center">
+                <h6 class="mat-subtitle-1 f-s-14 f-w-600">
+                  {{ displayNoticeName(element.name) }}
+                </h6>
+              </div>
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="action">
+            <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1 p-r-0 text-right">
+              {{util.appTranslate('th_action')}}
+            </th>
+            <td mat-cell *matCellDef="let element" class="f-w-500 text-right p-r-0">
+              <a (click)="onEditNotice(element)" class="m-r-10 cursor-pointer text-primary"
+                [matTooltip]="util.appTranslate('click_to_edit')">
+                <mat-icon>edit</mat-icon>
+              </a>
+              <a (click)="onDeleteNotice(element)" class="m-r-10 cursor-pointer text-error"
+                [matTooltip]="util.appTranslate('click_to_delete')">
+                <mat-icon>delete</mat-icon>
+              </a>
+            </td>
+          </ng-container>
+
+          <tr mat-header-row *matHeaderRowDef="displayedNoticeColumn"></tr>
+          <tr mat-row *matRowDef="let row; columns: displayedNoticeColumn"></tr>
+
+          <tr *matNoDataRow>
+            <td colspan="6" class="m-b-16 m-t-16 text-center p-5">{{util.appTranslate('no_instruction_found')}}</td>
+          </tr>
+
+        </table>
+      </div>
+      <div class="">
+        <h4 class="mat-subtitle-1 f-s-16 f-w-600 m-y-16">{{util.appTranslate('instructions')}}</h4>
+        <mat-form-field appearance="outline" class="w-100">
+          <textarea matInput [(ngModel)]="tiffinNoticeString" rows="5" class="note-content"
+            [ngModelOptions]="{standalone: true}"></textarea>
+          <button mat-icon-button matSuffix (click)="copyclipboardTiffinNotice()">
+            <mat-icon class="op-5">content_copy</mat-icon>
+          </button>
+        </mat-form-field>
+      </div>
+
+    </mat-card-content>
+  </mat-card>
+</div>
+}
+
+@if (helper == 'foods') {
+<div>
+  <mat-card class="cardWithShadow theme-card" [formGroup]="foodForm">
+    <mat-card-header class="d-flex align-items-center justify-content-between">
+      <mat-card-title class="m-b-0">
+        {{util.appTranslate('food_variations')}}
+      </mat-card-title>
+      <div class="m-l-auto">
+        <button mat-flat-button color="primary" class="m-l-16" (click)="generateFoodVariation()">
+          {{util.appTranslate('generate_food_variation')}}
+        </button>
+        <button mat-button type="button" color="primary" class="m-l-16" (click)="onAddVariation()">
+          <div class="d-flex align-items-center">
+            <span> {{util.appTranslate('add_new_variation')}}</span>
+            <ng-icon name="tablerPlus" class="icon-20 m-l-4"></ng-icon>
+          </div>
+        </button>
+      </div>
+
+    </mat-card-header>
+
+    <mat-card-content class="b-t-1" formArrayName="variations">
+      @for (varient of variationFormFields.controls; track varient; let i = $index) {
+      <div [formGroupName]="i" class="b-b-1">
+        <div class="d-flex align-items-center justify-content-between m-b-16 p-t-12">
+          <mat-checkbox color="primary"
+            formControlName="isRequired">{{util.appTranslate('form_required')}}</mat-checkbox>
+          <mat-radio-group formControlName="type" (change)="onVariationTypeChange($event, i)">
+            <mat-radio-button value="multi"
+              color="primary">{{util.appTranslate('multiple_selection')}}</mat-radio-button>
+            <mat-radio-button value="single"
+              color="primary">{{util.appTranslate('single_selection')}}</mat-radio-button>
+          </mat-radio-group>
+          <button mat-mini-fab color="primary" type="button" (click)="removeVariation(i)">
+            <ng-icon name="tablerTrash" class="icon-20"></ng-icon>
+          </button>
+        </div>
+        <div class="row m-t-6">
+          <div class="col-lg-4 col-sm-12 p-b-16">
+            <mat-form-field appearance="outline" class="w-100" color="primary">
+              <mat-label>{{util.appTranslate('variation_title')}}</mat-label>
+              <input matInput formControlName="title" type="text" />
+              @if (haveFoodSubmitClicked == true && varient.get('title')?.invalid) {
+              <mat-hint class="m-b-16 error-msg">
+                @if (varient.get('title')?.errors && varient.get('title')?.errors?.['required']) {
+                <div class="text-error">
+                  {{util.appTranslate('form_required')}}
+                </div>
+                }
+              </mat-hint>
+              }
+            </mat-form-field>
+          </div>
+
+          <div class="col-lg-4 col-sm-12 p-b-16">
+            <mat-form-field appearance="outline" class="w-100" color="primary">
+              <mat-label>{{util.appTranslate('min_option_to_select')}}</mat-label>
+              <input matInput formControlName="min" type="number" />
+              @if (haveFoodSubmitClicked == true && varient.get('min')?.invalid) {
+              <mat-hint class="m-b-16 error-msg">
+                @if (varient.get('min')?.errors && varient.get('min')?.errors?.['required']) {
+                <div class="text-error">
+                  {{util.appTranslate('form_required')}}
+                </div>
+                }
+              </mat-hint>
+              }
+            </mat-form-field>
+          </div>
+
+          <div class="col-lg-4 col-sm-12 p-b-16">
+            <mat-form-field appearance="outline" class="w-100" color="primary">
+              <mat-label>{{util.appTranslate('max_option_to_select')}}</mat-label>
+              <input matInput formControlName="max" type="number" />
+              @if (haveFoodSubmitClicked == true && varient.get('max')?.invalid) {
+              <mat-hint class="m-b-16 error-msg">
+                @if (varient.get('max')?.errors && varient.get('max')?.errors?.['required']) {
+                <div class="text-error">
+                  {{util.appTranslate('form_required')}}
+                </div>
+                }
+              </mat-hint>
+              }
+            </mat-form-field>
+          </div>
+
+        </div>
+
+        <div formArrayName="options">
+          @for (options of getOptionsControl(i); track options; let j = $index) {
+          <div [formGroupName]="j" class="row">
+            <div class="col-lg-3 col-sm-12 p-b-16">
+              <mat-form-field appearance="outline" class="w-100" color="primary">
+                <mat-label>{{util.appTranslate('option_name')}}</mat-label>
+                <input matInput formControlName="name" type="text" />
+                @if (haveFoodSubmitClicked == true && options.get('name')?.invalid) {
+                <mat-hint class="m-b-16 error-msg">
+                  @if (options.get('name')?.errors && options.get('name')?.errors?.['required']) {
+                  <div class="text-error">
+                    {{util.appTranslate('form_required')}}
+                  </div>
+                  }
+                </mat-hint>
+                }
+              </mat-form-field>
+            </div>
+
+            <div class="col-lg-3 col-sm-12 p-b-16">
+              <mat-form-field appearance="outline" class="w-100" color="primary"
+                [matTooltip]="util.appTranslate('tooltip_final_food_price')">
+                <mat-label>{{util.appTranslate('additional_price')}}</mat-label>
+                <input matInput formControlName="price" type="number" />
+                @if (haveFoodSubmitClicked == true && options.get('price')?.invalid) {
+                <mat-hint class="m-b-16 error-msg">
+                  @if (options.get('price')?.errors && options.get('price')?.errors?.['required']) {
+                  <div class="text-error">
+                    {{util.appTranslate('form_required')}}
+                  </div>
+                  }
+                </mat-hint>
+                }
+              </mat-form-field>
+            </div>
+
+            <div class="col-lg-3 col-sm-12 p-b-16">
+              <mat-form-field appearance="outline" class="w-100" color="primary"
+                [matTooltip]="util.appTranslate('stock_item')">
+                <mat-label>{{util.appTranslate('stock_item')}}</mat-label>
+                <input matInput formControlName="stock" type="number" />
+                @if (haveFoodSubmitClicked == true && options.get('stock')?.invalid) {
+                <mat-hint class="m-b-16 error-msg">
+                  @if (options.get('stock')?.errors && options.get('stock')?.errors?.['required']) {
+                  <div class="text-error">
+                    {{util.appTranslate('form_required')}}
+                  </div>
+                  }
+                </mat-hint>
+                }
+              </mat-form-field>
+            </div>
+
+            <div class="col-lg-3 col-sm-12 p-b-16 d-flex flex-column align-items-center">
+              @if (j != 0) {
+              <button mat-mini-fab color="primary" type="button" (click)="deleteOptionFromVariations(i, j)">
+                <ng-icon name="tablerTrash" class="icon-20"></ng-icon>
+              </button>
+              }
+            </div>
+          </div>
+          }
+        </div>
+
+        <div class="row">
+          <div class="col-lg-3 col-sm-4 p-b-16">
+            <button mat-stroked-button type="button"
+              (click)="addOptionInVariation(i)">{{util.appTranslate('add_new_option')}}</button>
+          </div>
+        </div>
+      </div>
+      }
+
+      <div class="">
+        <h4 class="mat-subtitle-1 f-s-16 f-w-600 m-y-16">{{util.appTranslate('food_variations')}}</h4>
+        <mat-form-field appearance="outline" class="w-100">
+          <textarea matInput [(ngModel)]="foodFormString" rows="5" class="note-content"
+            [ngModelOptions]="{standalone: true}"></textarea>
+          <button mat-icon-button matSuffix (click)="copyclipboardFoodVariation()">
+            <mat-icon class="op-5">content_copy</mat-icon>
+          </button>
+        </mat-form-field>
+      </div>
+
+    </mat-card-content>
+  </mat-card>
+</div>
+}

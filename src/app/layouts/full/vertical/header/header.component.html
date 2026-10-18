@@ -1,0 +1,167 @@
+<mat-toolbar class="topbar">
+  <!-- --------------------------------------------------------------- -->
+  <!-- Desktop Menu -->
+  @if(showToggle) {
+  <button mat-icon-button (click)="toggleCollapsed.emit()" class="d-flex justify-content-center">
+    <ng-icon name="tablerMenu2" class="icon-20 d-flex"></ng-icon>
+  </button>
+  }
+
+  <!-- Mobile Menu -->
+  @if(!showToggle) {
+  <button mat-icon-button (click)="toggleMobileNav.emit()" class="d-flex justify-content-center">
+    <ng-icon name="tablerMenu2" class="icon-20 d-flex"></ng-icon>
+  </button>
+  }
+  <!-- --------------------------------------------------------------- -->
+
+  <!-- --------------------------------------------------------------- -->
+  <!--  Search -->
+  <!-- --------------------------------------------------------------- -->
+  <button mat-icon-button (click)="openDialog()" class="d-flex justify-content-center">
+    <ng-icon name="tablerSearch" class="icon-20 d-flex"></ng-icon>
+  </button>
+
+  <span class="flex-1-auto"></span>
+
+  <!-- --------------------------------------------------------------- -->
+  <!-- langugage Dropdown -->
+  <!-- --------------------------------------------------------------- -->
+  <button [matMenuTriggerFor]="flags" mat-icon-button class="m-r-5">
+    <img [src]="api.mediaUrl+usedLocale" class="rounded-circle object-cover icon-20"
+      onError="this.src='assets/images/onerror.png'" />
+  </button>
+  <mat-menu #flags="matMenu" class="cardWithShadow">
+    @for(locale of appLocale; track locale.id) {
+    <button mat-menu-item (click)="changeLanguage(locale)">
+      <div class="d-flex align-items-center">
+        <img [src]="api.mediaUrl+locale.image" class="rounded-circle object-cover m-r-8 icon-20"
+          onError="this.src='assets/images/onerror.png'" />
+        <span class=" f-s-14">{{ locale.nativeName }}</span>
+      </div>
+    </button>
+    }
+  </mat-menu>
+
+  @if(currentTheme == 'light'){
+  <button mat-icon-button class="d-flex justify-content-center" (click)="setlightDark('dark')">
+    <ng-icon name="tablerMoon" class="icon-22 d-flex"></ng-icon>
+  </button>
+  }@else{
+  <button mat-icon-button class="d-flex justify-content-center" (click)="setlightDark('light')">
+    <ng-icon name="tablerSun" class="icon-22 d-flex"></ng-icon>
+  </button>
+  }
+
+  <!-- --------------------------------------------------------------- -->
+  <!-- Messages Dropdown -->
+  <!-- --------------------------------------------------------------- -->
+  <button mat-icon-button [matMenuTriggerFor]="msgmenu" class="m-x-5">
+    <ng-icon name="tablerMessage2Heart" class="d-flex" matBadgeColor="primary"></ng-icon>
+  </button>
+  <mat-menu #msgmenu="matMenu" class="topbar-dd cardWithShadow">
+    <div class="d-flex align-items-center p-x-32 p-y-16">
+      <h6 class="f-s-16 f-w-600 m-0 ">{{util.appTranslate('messages')}}</h6>
+    </div>
+
+    @for(msg of messages; track msg.id) {
+    <button mat-menu-item class="p-x-32 p-y-16">
+      <h5 class="f-s-14 f-w-600 m-0 mat-subtitle-1">
+        {{ msg.sender.firstName +' ' + msg.sender.lastName }}
+      </h5>
+      <span>{{ msg.message }}</span>
+    </button>
+    }
+
+    @if (messages.length) {
+    <div class="p-y-12 p-x-32">
+      <a mat-stroked-button routerLink="/admin/customer-management/chat-list" color="primary" class="w-100">
+        {{util.appTranslate('see_all_conversion')}}
+      </a>
+    </div>
+    }
+  </mat-menu>
+
+  <!-- --------------------------------------------------------------- -->
+  <!-- Notification Dropdown -->
+  <!-- --------------------------------------------------------------- -->
+  <button mat-icon-button [matMenuTriggerFor]="notificationmenu" class="m-x-5">
+    <ng-icon name="tablerBell" class="d-flex" [matBadge]="unreadMessages" matBadgeSize="small" matBadgeColor="primary"></ng-icon>
+  </button>
+  <mat-menu #notificationmenu="matMenu" class="topbar-dd cardWithShadow">
+    <div class="d-flex align-items-center p-x-32 p-y-16">
+      <h6 class="f-s-16 f-w-600 m-0 ">{{util.appTranslate('notifications')}}</h6>
+      <span class="m-l-auto">
+        <span class="bg-primary text-white p-x-8 p-y-4 f-w-500 rounded f-s-12">{{unreadMessages}}
+          {{util.appTranslate('new')}}</span>
+      </span>
+    </div>
+
+    @for(notification of notifications; track notification.id) {
+    <button mat-menu-item class="p-x-32 p-y-16">
+      <h5 class="f-s-14 f-w-600 m-0 mat-subtitle-1">
+        {{ notification.displayName }}
+      </h5>
+      <span>{{ notification.displayContent }}</span>
+    </button>
+    }
+
+    @if (notifications.length) {
+    <div class="p-y-12 p-x-32">
+      <a mat-stroked-button routerLink="/admin/customer-management/notification-list" color="primary" class="w-100">
+        {{util.appTranslate('see_all_notification')}}
+      </a>
+    </div>
+    }
+  </mat-menu>
+
+  <!-- --------------------------------------------------------------- -->
+  <!-- profile Dropdown -->
+  <!-- --------------------------------------------------------------- -->
+  <button mat-icon-button [matMenuTriggerFor]="profilemenu" class="m-l-8">
+    <img [src]="api.mediaUrl+userCoverImage" class="rounded-circle object-cover icon-35 profile-dd" width="35"
+      onError="this.src='assets/images/customer_cover.png'" />
+  </button>
+  <mat-menu #profilemenu="matMenu" class="topbar-dd cardWithShadow">
+    <ng-scrollbar class="position-relative" style="height: 547px">
+      <div class="p-x-32 p-y-16">
+        <h6 class="f-s-16 f-w-600 m-0 ">{{util.appTranslate('user_profile')}}</h6>
+
+        <div class="d-flex align-items-center p-b-24 b-b-1 m-t-16">
+          <img [src]="api.mediaUrl+userCoverImage" class="rounded-circle" width="95"
+            onError="this.src='assets/images/customer_cover.png'" />
+          <div class="m-l-16">
+            <h6 class="f-s-14 f-w-600 m-0 ">{{userName}}</h6>
+            <span class="f-s-14 d-block m-b-4">{{util.appTranslate('administrator')}}</span>
+            <span class="d-flex align-items-center">
+              <ng-icon name="tablerMail" class="icon-15 m-r-4"></ng-icon>
+              {{ util.trimText(userEmail,20) }}
+            </span>
+          </div>
+        </div>
+      </div>
+      <div class="p-x-32">
+        @for(profile of profiledd; track profile.title) {
+        <a class="p-y-16 text-decoration-none d-block text-hover-primary" [routerLink]="[profile.link]">
+          <div class="d-flex align-items-center">
+            <button mat-mini-fab class="text-primary bg-light shadow-none rounded">
+              <img [src]="profile.img" width="20" />
+            </button>
+
+            <div class="m-l-16">
+              <h5 class="f-s-14 f-w-600 m-0 textprimary  hover-text">
+                {{ util.appTranslate(profile.title) }}
+              </h5>
+              <span class="f-s-14 text-body">{{ util.appTranslate(profile.subtitle) }}</span>
+            </div>
+          </div>
+        </a>
+        }
+      </div>
+
+      <div class="p-y-12 p-x-32">
+        <a (click)="onLogout()" mat-stroked-button color="primary" class="w-100">{{util.appTranslate('logout')}}</a>
+      </div>
+    </ng-scrollbar>
+  </mat-menu>
+</mat-toolbar>

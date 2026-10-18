@@ -1,0 +1,110 @@
+<form name="eventForm" [formGroup]="settingForm" class="event-form" (ngSubmit)="onSubmit()" id="topContent">
+  <div class="row">
+    <div class="col-lg-12 col-sm-12 p-b-16">
+      <mat-card class="cardWithShadow theme-card">
+        <mat-card-header>
+          <mat-card-title class="m-b-0">
+            {{util.appTranslate('social_sign_in')}}
+          </mat-card-title>
+        </mat-card-header>
+
+        <mat-card-content class="b-t-0">
+
+          <div class="row p-b-16">
+
+            <!-- <div class="col-lg-4 col-sm-12 p-b-16">
+              <mat-form-field appearance="outline" class="w-100"
+                [matTooltip]="util.appTranslate('apple_signin_tooltip')">
+                <mat-label>{{util.appTranslate('apple_signin')}}</mat-label>
+                <mat-select formControlName="appleSignin" name="appleSignin">
+                  <mat-option [value]="true">{{util.appTranslate('dd_yes')}}</mat-option>
+                  <mat-option [value]="false">{{util.appTranslate('dd_no')}}</mat-option>
+                </mat-select>
+               @if(haveSubmitClicked == true && f['appleSignin'].invalid){
+                <mat-hint class="m-b-16 error-msg">
+                  @if(f['appleSignin'].errors && f['appleSignin'].errors['required']){
+                  <div class="text-error">
+                    {{util.appTranslate('form_required')}}
+                  </div>
+                  }
+                </mat-hint>
+                }
+              </mat-form-field>
+            </div> -->
+
+            <div class="col-lg-4 col-sm-12 p-b-16">
+              <mat-form-field appearance="outline" class="w-100"
+                [matTooltip]="util.appTranslate('google_signin_tooltip')">
+                <mat-label>{{util.appTranslate('google_signin')}}</mat-label>
+                <mat-select formControlName="googleSignin" name="googleSignin">
+                  <mat-option [value]="true">{{util.appTranslate('dd_yes')}}</mat-option>
+                  <mat-option [value]="false">{{util.appTranslate('dd_no')}}</mat-option>
+                </mat-select>
+                @if(haveSubmitClicked == true && f['googleSignin'].invalid){
+                <mat-hint class="m-b-16 error-msg">
+                  @if(f['googleSignin'].errors && f['googleSignin'].errors['required']){
+                  <div class="text-error">
+                    {{util.appTranslate('form_required')}}
+                  </div>
+                  }
+                </mat-hint>
+                }
+              </mat-form-field>
+            </div>
+
+            <div class="col-lg-4 col-sm-12 p-b-16">
+              <mat-form-field appearance="outline" class="w-100"
+                [matTooltip]="util.appTranslate('facebook_signin_tooltip')">
+                <mat-label>{{util.appTranslate('facebook_signin')}}</mat-label>
+                <mat-select formControlName="facebookSignin" name="facebookSignin">
+                  <mat-option [value]="true">{{util.appTranslate('dd_yes')}}</mat-option>
+                  <mat-option [value]="false">{{util.appTranslate('dd_no')}}</mat-option>
+                </mat-select>
+                @if(haveSubmitClicked == true && f['facebookSignin'].invalid){
+                <mat-hint class="m-b-16 error-msg">
+                  @if(f['facebookSignin'].errors && f['facebookSignin'].errors['required']){
+                  <div class="text-error">
+                    {{util.appTranslate('form_required')}}
+                  </div>
+                  }
+                </mat-hint>
+                }
+              </mat-form-field>
+            </div>
+
+          </div>
+
+          @if(f['googleSignin'].value){
+          <div class="row p-b-16" [formGroup]="settingForm.controls['configCredsRaw']">
+            <div class="col-lg-6 col-sm-12 p-b-16">
+              <mat-form-field appearance="outline" class="w-100" color="primary">
+                <mat-label>{{util.appTranslate('google_client_id_url')}}</mat-label>
+                <input matInput formControlName="google_client_id" name="google_client_id" type="text" />
+              </mat-form-field>
+            </div>
+            <div class="col-lg-6 col-sm-12 p-b-16">
+              <mat-form-field appearance="outline" class="w-100" color="primary">
+                <mat-label>{{util.appTranslate('google_server_client_id_url')}}</mat-label>
+                <input matInput formControlName="google_server_id" name="google_server_id" type="text" />
+              </mat-form-field>
+            </div>
+          </div>
+          }
+
+          <div class="row">
+            <div class="col-lg-2 col-sm-6 p-b-16">
+              <button mat-flat-button color="primary" type="submit" class="w-100">
+                {{ action == 'add' ? util.appTranslate('submit_btn') : util.appTranslate('update_btn')}}
+              </button>
+            </div>
+            <div class="col-lg-2 col-sm-6 p-b-16">
+              <button mat-flat-button (click)="onReset()" class="w-100 bg-secondary text-white"
+                type="button">{{util.appTranslate('reset_btn')}}</button>
+            </div>
+          </div>
+
+        </mat-card-content>
+      </mat-card>
+    </div>
+  </div>
+</form>

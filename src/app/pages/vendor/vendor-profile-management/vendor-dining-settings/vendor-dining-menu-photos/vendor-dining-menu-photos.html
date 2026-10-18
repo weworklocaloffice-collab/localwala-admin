@@ -1,0 +1,68 @@
+<mat-card class="cardWithShadow theme-card">
+  <mat-card-header>
+    <mat-card-title class="m-b-0">{{util.appTranslate('dining_categories')}}</mat-card-title>
+  </mat-card-header>
+
+  <mat-card-content class="b-t-0">
+
+    @if (isLoaded) {
+    <div class="row m-t-24">
+      <div class="col-lg-12 col-sm-12 p-b-16">
+        <mat-form-field class="w-100" appearance="outline">
+          <mat-label>{{util.appTranslate('available_dining_category')}}</mat-label>
+          <mat-select (openedChange)="openedChange($event)" [placeholder]="util.appTranslate('select_category')"
+            [formControl]="f['category']" multiple>
+            <mat-select-trigger>
+              {{f['category'].value ? f['category'].value[0] : ''}}
+              @if(f['category'].value!.length > 1){
+              <span class="additional-selection">
+                (+{{f['category'].value!.length - 1}} {{f['category'].value!.length === 2 ?
+                util.appTranslate('other_dd') :
+                util.appTranslate('others_dd')}})
+              </span>
+              }
+            </mat-select-trigger>
+            <div class="w-100">
+              <mat-optgroup>
+                <mat-form-field class="w-100" appearance="outline">
+                  <input #search autocomplete="off" [placeholder]="util.appTranslate('search_dining_category')" matInput
+                    [formControl]="categoryCtrl">
+                </mat-form-field>
+              </mat-optgroup>
+              @if((categoryList | async)?.length == 0){
+              <mat-optgroup>
+                <div>{{util.appTranslate('no_result_found')}}</div>
+              </mat-optgroup>
+              }
+              @for (option of categoryList | async; track $index) {
+              <mat-option (onSelectionChange)="selectionChange($event)" [value]="option.displayName">
+                {{option.displayName}}
+              </mat-option>
+              }
+            </div>
+          </mat-select>
+          @if(haveSubmitClicked == true && f['category'].invalid){
+          <mat-hint class="m-b-16 error-msg">
+            @if(f['category'].errors && f['category'].errors['required']){
+            <div class="text-error">
+              {{util.appTranslate('form_required')}}
+            </div>
+            }
+          </mat-hint>
+          }
+        </mat-form-field>
+      </div>
+    </div>
+    }
+
+  </mat-card-content>
+
+  <mat-card-content class="b-t-0">
+    <div class="row justify-content-end m-t-24">
+      <div class="col-sm-12">
+        <button mat-flat-button color="primary" (click)="onSubmit()">{{util.appTranslate('save_btn')}}</button>
+      </div>
+    </div>
+  </mat-card-content>
+
+</mat-card>

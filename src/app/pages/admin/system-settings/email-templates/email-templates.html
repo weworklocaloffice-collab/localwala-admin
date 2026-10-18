@@ -1,0 +1,96 @@
+<mat-card class="cardWithShadow theme-card">
+  <mat-card-header>
+    <mat-card-title class="m-b-0">
+      {{util.appTranslate('email_template_setup')}}
+    </mat-card-title>
+    <button mat-icon-button class="m-l-auto card-header-info-button" (click)="onMediaDialog()">
+      <ng-icon name="tablerPhotoDown" class="icon-15 d-flex"></ng-icon>
+    </button>
+  </mat-card-header>
+
+  <mat-card-content class="b-t-0">
+    <mat-tab-group mat-stretch-tabs="false" mat-align-tabs="start" (selectedTabChange)="tabChanged($event)">
+      <mat-tab [label]="util.appTranslate('user_verification')"></mat-tab>
+
+      <mat-tab [label]="util.appTranslate('forgot_password')"></mat-tab>
+
+      <mat-tab [label]="util.appTranslate('refund_request')"></mat-tab>
+
+      <mat-tab [label]="util.appTranslate('tiffin_subscription_refund_request')"></mat-tab>
+
+      <mat-tab [label]="util.appTranslate('dining_booking_refund_request')"></mat-tab>
+
+      <mat-tab [label]="util.appTranslate('feedback_thank_you_reply')"></mat-tab>
+
+      <mat-tab [label]="util.appTranslate('report_emergency_thank_you_reply')"></mat-tab>
+
+      <mat-tab [label]="util.appTranslate('order_summary')"></mat-tab>
+
+      <mat-tab [label]="util.appTranslate('restaurant_register_request_approved')"></mat-tab>
+
+      <mat-tab [label]="util.appTranslate('restaurant_register_request_rejected')"></mat-tab>
+
+      <mat-tab [label]="util.appTranslate('deliveryman_register_request_approved')"></mat-tab>
+
+      <mat-tab [label]="util.appTranslate('deliveryman_register_request_rejected')"></mat-tab>
+
+      <mat-tab [label]="util.appTranslate('account_blocked_email')"></mat-tab>
+
+      <mat-tab [label]="util.appTranslate('restaurant_package_expired')"></mat-tab>
+
+      <mat-tab [label]="util.appTranslate('restaurant_package_expire_soon')"></mat-tab>
+
+      <mat-tab [label]="util.appTranslate('support_chat_export_mail')"></mat-tab>
+
+    </mat-tab-group>
+  </mat-card-content>
+</mat-card>
+
+@if(tabIndex == 0){
+<app-user-verification-email-template-form></app-user-verification-email-template-form>
+}
+@if(tabIndex == 1){
+<app-reset-password-email-template-form></app-reset-password-email-template-form>
+}
+@if(tabIndex == 2){
+<app-order-refund-request-email-template-form></app-order-refund-request-email-template-form>
+}
+@if(tabIndex == 3){
+<app-tiffin-subscription-refund-request-email-template-form></app-tiffin-subscription-refund-request-email-template-form>
+}
+@if(tabIndex == 4){
+<app-dining-booking-refund-request-email-template-form></app-dining-booking-refund-request-email-template-form>
+}
+@if(tabIndex == 5){
+<app-feedback-thank-you-form></app-feedback-thank-you-form>
+}
+@if(tabIndex == 6){
+<app-report-emergency-thank-you-form></app-report-emergency-thank-you-form>
+}
+@if(tabIndex == 7){
+<app-order-summary-email-template></app-order-summary-email-template>
+}
+@if(tabIndex == 8){
+<app-restaurant-approve-request-email-template></app-restaurant-approve-request-email-template>
+}
+@if(tabIndex == 9){
+<app-restaurant-reject-request-email-template></app-restaurant-reject-request-email-template>
+}
+@if(tabIndex == 10){
+<app-deliveryman-approve-request-email-template></app-deliveryman-approve-request-email-template>
+}
+@if(tabIndex == 11){
+<app-deliveryman-reject-request-email-template></app-deliveryman-reject-request-email-template>
+}
+@if(tabIndex == 12){
+<app-account-blocked-email-template></app-account-blocked-email-template>
+}
+@if(tabIndex == 13){
+<app-restaurant-expired-package-blocked-email-template></app-restaurant-expired-package-blocked-email-template>
+}
+@if(tabIndex == 14){
+<app-restaurant-package-expiring-soon></app-restaurant-package-expiring-soon>
+}
+@if(tabIndex == 15){
+<app-support-chat-export-email-template></app-support-chat-export-email-template>
+}

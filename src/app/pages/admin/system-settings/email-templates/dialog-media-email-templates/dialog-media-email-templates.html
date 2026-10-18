@@ -1,0 +1,180 @@
+<h2 mat-dialog-title class="dialog-title">
+  <span class="title-text">
+    {{util.appTranslate('add_email_media')}}
+  </span>
+  <button mat-icon-button mat-dialog-close class="close-btn">
+    <mat-icon>close</mat-icon>
+  </button>
+</h2>
+
+<mat-dialog-content class="mat-typography w-100 m-t-12 p-t-12">
+  <div class="row">
+    <div
+      class="col-sm-3 col-lg-3 text-center m-b-16 p-b-24 d-flex flex-column justify-content-center align-items-center">
+      <img [src]="api.mediaUrl+userVerification" class="custom-image-upload border p-5 m-b-16" width="100" height="100"
+        onError="this.src='assets/images/placeholder.png'" (click)="onImagePicker('userVerification')"
+        [ngStyle]="{'border': '2px dashed #e5e5e5'}" />
+      <span class="f-s-12">{{util.appTranslate('email_verification')}}</span>
+    </div>
+
+    <div
+      class="col-sm-3 col-lg-3 text-center m-b-16 p-b-24 d-flex flex-column justify-content-center align-items-center">
+      <img [src]="api.mediaUrl+refundRequest" class="custom-image-upload border p-5 m-b-16" width="100" height="100"
+        onError="this.src='assets/images/placeholder.png'" (click)="onImagePicker('refundRequest')"
+        [ngStyle]="{'border': '2px dashed #e5e5e5'}" />
+      <span class="f-s-12">{{util.appTranslate('refund_request')}}</span>
+    </div>
+
+    <div
+      class="col-sm-3 col-lg-3 text-center m-b-16 p-b-24 d-flex flex-column justify-content-center align-items-center">
+      <img [src]="api.mediaUrl+gratitude" class="custom-image-upload border p-5 m-b-16" width="100" height="100"
+        onError="this.src='assets/images/placeholder.png'" (click)="onImagePicker('gratitude')"
+        [ngStyle]="{'border': '2px dashed #e5e5e5'}" />
+      <span class="f-s-12">{{util.appTranslate('feedback_report')}}</span>
+    </div>
+
+    <div
+      class="col-sm-3 col-lg-3 text-center m-b-16 p-b-24 d-flex flex-column justify-content-center align-items-center">
+      <img [src]="api.mediaUrl+orderSummary" class="custom-image-upload border p-5 m-b-16" width="100" height="100"
+        onError="this.src='assets/images/placeholder.png'" (click)="onImagePicker('orderSummary')"
+        [ngStyle]="{'border': '2px dashed #e5e5e5'}" />
+      <span class="f-s-12">{{util.appTranslate('order_summary')}}</span>
+    </div>
+
+    <div
+      class="col-sm-3 col-lg-3 text-center m-b-16 p-b-24 d-flex flex-column justify-content-center align-items-center">
+      <img [src]="api.mediaUrl+approved" class="custom-image-upload border p-5 m-b-16" width="100" height="100"
+        onError="this.src='assets/images/placeholder.png'" (click)="onImagePicker('approved')"
+        [ngStyle]="{'border': '2px dashed #e5e5e5'}" />
+      <span class="f-s-12">{{util.appTranslate('register_request_approved')}}</span>
+    </div>
+
+    <div
+      class="col-sm-3 col-lg-3 text-center m-b-16 p-b-24 d-flex flex-column justify-content-center align-items-center">
+      <img [src]="api.mediaUrl+rejected" class="custom-image-upload border p-5 m-b-16" width="100" height="100"
+        onError="this.src='assets/images/placeholder.png'" (click)="onImagePicker('rejected')"
+        [ngStyle]="{'border': '2px dashed #e5e5e5'}" />
+      <span class="f-s-12">{{util.appTranslate('register_request_rejected')}}</span>
+    </div>
+
+    <div
+      class="col-sm-3 col-lg-3 text-center m-b-16 p-b-24 d-flex flex-column justify-content-center align-items-center">
+      <img [src]="api.mediaUrl+accountBlocked" class="custom-image-upload border p-5 m-b-16" width="100" height="100"
+        onError="this.src='assets/images/placeholder.png'" (click)="onImagePicker('accountBlocked')"
+        [ngStyle]="{'border': '2px dashed #e5e5e5'}" />
+      <span class="f-s-12">{{util.appTranslate('server_account_blocked_error')}}</span>
+    </div>
+
+    <div
+      class="col-sm-3 col-lg-3 text-center m-b-16 p-b-24 d-flex flex-column justify-content-center align-items-center">
+      <img [src]="api.mediaUrl+restaurantAccountBlocked" class="custom-image-upload border p-5 m-b-16" width="100"
+        height="100" onError="this.src='assets/images/placeholder.png'"
+        (click)="onImagePicker('restaurantAccountBlocked')" [ngStyle]="{'border': '2px dashed #e5e5e5'}" />
+      <span class="f-s-12">{{util.appTranslate('restaurant_blocked')}}</span>
+    </div>
+
+    <div
+      class="col-sm-3 col-lg-3 text-center m-b-16 p-b-24 d-flex flex-column justify-content-center align-items-center">
+      <img [src]="api.mediaUrl+subscriptionExpireSoon" class="custom-image-upload border p-5 m-b-16" width="100"
+        height="100" onError="this.src='assets/images/placeholder.png'"
+        (click)="onImagePicker('subscriptionExpireSoon')" [ngStyle]="{'border': '2px dashed #e5e5e5'}" />
+      <span class="f-s-12">{{util.appTranslate('subscription_expire_soon')}}</span>
+    </div>
+
+    <div
+      class="col-sm-3 col-lg-3 text-center m-b-16 p-b-24 d-flex flex-column justify-content-center align-items-center">
+      <img [src]="api.mediaUrl+supportChatExport" class="custom-image-upload border p-5 m-b-16" width="100" height="100"
+        onError="this.src='assets/images/placeholder.png'" (click)="onImagePicker('supportChatExport')"
+        [ngStyle]="{'border': '2px dashed #e5e5e5'}" />
+      <span class="f-s-12">{{util.appTranslate('support_chat_export')}}</span>
+    </div>
+
+    <div
+      class="col-sm-3 col-lg-3 text-center m-b-16 p-b-24 d-flex flex-column justify-content-center align-items-center">
+      <img [src]="api.mediaUrl+appstore" class="custom-image-upload border p-5 m-b-16" width="100" height="100"
+        onError="this.src='assets/images/placeholder.png'" (click)="onImagePicker('appstore')"
+        [ngStyle]="{'border': '2px dashed #e5e5e5'}" />
+      <span class="f-s-12">{{util.appTranslate('apple_appstore_icon')}}</span>
+    </div>
+
+
+    <div
+      class="col-sm-3 col-lg-3 text-center m-b-16 p-b-24 d-flex flex-column justify-content-center align-items-center">
+      <img [src]="api.mediaUrl+facebook" class="custom-image-upload border p-5 m-b-16" width="100" height="100"
+        onError="this.src='assets/images/placeholder.png'" (click)="onImagePicker('facebook')"
+        [ngStyle]="{'border': '2px dashed #e5e5e5'}" />
+      <span class="f-s-12">{{util.appTranslate('facebook_icon')}}</span>
+    </div>
+
+    <div
+      class="col-sm-3 col-lg-3 text-center m-b-16 p-b-24 d-flex flex-column justify-content-center align-items-center">
+      <img [src]="api.mediaUrl+instagram" class="custom-image-upload border p-5 m-b-16" width="100" height="100"
+        onError="this.src='assets/images/placeholder.png'" (click)="onImagePicker('instagram')"
+        [ngStyle]="{'border': '2px dashed #e5e5e5'}" />
+      <span class="f-s-12">{{util.appTranslate('instagram_icon')}}</span>
+    </div>
+
+    <div
+      class="col-sm-3 col-lg-3 text-center m-b-16 p-b-24 d-flex flex-column justify-content-center align-items-center">
+      <img [src]="api.mediaUrl+linkedin" class="custom-image-upload border p-5 m-b-16" width="100" height="100"
+        onError="this.src='assets/images/placeholder.png'" (click)="onImagePicker('linkedin')"
+        [ngStyle]="{'border': '2px dashed #e5e5e5'}" />
+      <span class="f-s-12">{{util.appTranslate('linkedin_icon')}}</span>
+    </div>
+
+    <div
+      class="col-sm-3 col-lg-3 text-center m-b-16 p-b-24 d-flex flex-column justify-content-center align-items-center">
+      <img [src]="api.mediaUrl+pinterest" class="custom-image-upload border p-5 m-b-16" width="100" height="100"
+        onError="this.src='assets/images/placeholder.png'" (click)="onImagePicker('pinterest')"
+        [ngStyle]="{'border': '2px dashed #e5e5e5'}" />
+      <span class="f-s-12">{{util.appTranslate('pinterest_icon')}}</span>
+    </div>
+
+    <div
+      class="col-sm-3 col-lg-3 text-center m-b-16 p-b-24 d-flex flex-column justify-content-center align-items-center">
+      <img [src]="api.mediaUrl+playstore" class="custom-image-upload border p-5 m-b-16" width="100" height="100"
+        onError="this.src='assets/images/placeholder.png'" (click)="onImagePicker('playstore')"
+        [ngStyle]="{'border': '2px dashed #e5e5e5'}" />
+      <span class="f-s-12">{{util.appTranslate('android_playstore_icon')}}</span>
+    </div>
+
+    <div
+      class="col-sm-3 col-lg-3 text-center m-b-16 p-b-24 d-flex flex-column justify-content-center align-items-center">
+      <img [src]="api.mediaUrl+twitter" class="custom-image-upload border p-5 m-b-16" width="100" height="100"
+        onError="this.src='assets/images/placeholder.png'" (click)="onImagePicker('twitter')"
+        [ngStyle]="{'border': '2px dashed #e5e5e5'}" />
+      <span class="f-s-12">{{util.appTranslate('twitter_x_icon')}}</span>
+    </div>
+
+    <div
+      class="col-sm-3 col-lg-3 text-center m-b-16 p-b-24 d-flex flex-column justify-content-center align-items-center">
+      <img [src]="api.mediaUrl+vimeo" class="custom-image-upload border p-5 m-b-16" width="100" height="100"
+        onError="this.src='assets/images/placeholder.png'" (click)="onImagePicker('vimeo')"
+        [ngStyle]="{'border': '2px dashed #e5e5e5'}" />
+      <span class="f-s-12">{{util.appTranslate('vimeo_icon')}}</span>
+    </div>
+
+    <div
+      class="col-sm-3 col-lg-3 text-center m-b-16 p-b-24 d-flex flex-column justify-content-center align-items-center">
+      <img [src]="api.mediaUrl+youtube" class="custom-image-upload border p-5 m-b-16" width="100" height="100"
+        onError="this.src='assets/images/placeholder.png'" (click)="onImagePicker('youtube')"
+        [ngStyle]="{'border': '2px dashed #e5e5e5'}" />
+      <span class="f-s-12">{{util.appTranslate('youtube_icon')}}</span>
+    </div>
+
+  </div>
+
+
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-flat-button class="bg-secondary text-white" mat-dialog-close>{{util.appTranslate('cancel_btn')}}</button>
+  <button mat-flat-button color="primary" cdkFocusInitial (click)="onSave()">
+    @if (isSubmit == true) {
+    <mat-icon>
+      <mat-spinner diameter="15"></mat-spinner>
+    </mat-icon>
+    }
+    {{util.appTranslate('save_btn')}}
+  </button>
+</mat-dialog-actions>

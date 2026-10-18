@@ -1,0 +1,209 @@
+<mat-card class="cardWithShadow theme-card">
+  <mat-card-header>
+    <mat-card-title class="m-b-0">
+      {{util.appTranslate('setting')}}
+    </mat-card-title>
+  </mat-card-header>
+  <mat-card-content class="p-y-24 b-t-0">
+    <div class="row">
+      <div class="col-sm-6">
+        <form name="eventForm" [formGroup]="form" class="event-form" (ngSubmit)="onSaveDetail()">
+          <mat-card class="cardWithShadow">
+            <mat-card-content class="p-y-24">
+              <mat-card-title>{{util.appTranslate('change_profile')}}</mat-card-title>
+              <mat-card-subtitle
+                class="mat-body-1">{{util.appTranslate('change_profile_detail_here')}}</mat-card-subtitle>
+              <div class="text-center m-t-24">
+                <img [src]="api.mediaUrl+f['image'].value" class="rounded-circle border p-5 m-t-16" width="120"
+                  height="120" [matTooltip]="util.appTranslate('upload_image')" (click)="onImageClick()"
+                  onError="this.src='assets/images/placeholder.png'"
+                  [ngStyle]="{'border': haveSubmitClicked == true && f['image'].invalid ? '2px dashed red' : '2px dashed #e5e5e5', 'height' : '120px'}" />
+              </div>
+
+              <div class="row m-t-24">
+                <div class="col-sm-6">
+                  <mat-label
+                    class="mat-subtitle-2 f-w-600 m-b-8 d-block">{{util.appTranslate('first_name_lbl')}}</mat-label>
+                  <mat-form-field appearance="outline" class="w-100" color="primary">
+                    <input matInput formControlName="firstName" type="text" />
+                    @if(haveSubmitClicked == true && f['firstName'].invalid){
+                    <mat-hint class="m-b-16 error-msg">
+                      @if(f['firstName'].errors && f['firstName'].errors['required']){
+                      <div class="text-error">
+                        {{util.appTranslate('form_required')}}
+                      </div>
+                      }
+                    </mat-hint>
+                    }
+                  </mat-form-field>
+                </div>
+
+                <div class="col-sm-6">
+                  <mat-label
+                    class="mat-subtitle-2 f-w-600 m-b-8 d-block">{{util.appTranslate('last_name_lbl')}}</mat-label>
+                  <mat-form-field appearance="outline" class="w-100" color="primary">
+                    <input matInput formControlName="lastName" type="text" />
+                    @if (haveSubmitClicked == true && f['lastName'].invalid) {
+                    <mat-hint class="m-b-16 error-msg">
+                      @if (f['lastName'].errors && f['lastName'].errors['required']) {
+                      <div class="text-error">
+                        {{util.appTranslate('form_required')}}
+                      </div>
+                      }
+                    </mat-hint>
+                    }
+                  </mat-form-field>
+                </div>
+
+                <div class="col-lg-12 col-sm-12 p-b-16">
+                  <mat-label class="mat-subtitle-2 f-w-600 m-b-8 d-block">{{util.appTranslate('email_lbl')}}</mat-label>
+                  <mat-form-field appearance="outline" class="w-100" color="primary">
+                    <input matInput formControlName="email" type="email" />
+                    @if(haveSubmitClicked == true && f['email'].invalid){
+                    <mat-hint class="m-b-16 error-msg">
+                      @if(f['email'].errors && f['email'].errors['required']){
+                      <div class="text-error">
+                        {{util.appTranslate('form_required')}}
+                      </div>
+                      }
+                      @if(f['email'].errors && f['email'].errors['pattern']){
+                      <div class="text-error">
+                        {{util.appTranslate('email_validation')}}
+                      </div>
+                      }
+                    </mat-hint>
+                    }
+                  </mat-form-field>
+                </div>
+
+                <div class="col-lg-12 col-sm-12 p-b-16">
+                  <div class="row">
+                    <div class="col-lg-3 col-sm-12 p-b-16">
+                      <mat-label
+                        class="mat-subtitle-2 f-w-600 m-b-8 d-block">{{util.appTranslate('country_lbl')}}</mat-label>
+                      <mat-form-field class="w-100" appearance="outline">
+                        <input type="text" [placeholder]="util.appTranslate('choose_country')" matInput
+                          name="countryCode" [formControl]="countryCodeCtrl" [matAutocomplete]="autoCountryCode" />
+                        <mat-autocomplete autoActiveFirstOption #autoCountryCode="matAutocomplete"
+                          (optionSelected)="onCountryCodeSelect($event)">
+                          @for (item of countryCodes | async; track $index) {
+                          <mat-option [value]="item.flag +' '+ item.dial_code +' '+ item.name">
+                            {{item.flag +' '+ item.dial_code + ' '+ item.name }}
+                          </mat-option>
+                          }
+                        </mat-autocomplete>
+                        @if (haveSubmitClicked == true && f['countryCode'].invalid) {
+                        <mat-hint class="m-b-16 error-msg">
+                          @if (f['countryCode'].errors && f['countryCode'].errors['required']) {
+                          <div class="text-error">
+                            {{util.appTranslate('form_required')}}
+                          </div>
+                          }
+                        </mat-hint>
+                        }
+                      </mat-form-field>
+                    </div>
+                    <div class="col-lg-9 col-sm-12 p-b-16">
+                      <mat-label
+                        class="mat-subtitle-2 f-w-600 m-b-8 d-block">{{util.appTranslate('mobile_number')}}</mat-label>
+                      <mat-form-field appearance="outline" class="w-100" color="primary">
+                        <input matInput formControlName="mobile" type="number" />
+                        @if (haveSubmitClicked == true && f['mobile'].invalid) {
+                        <mat-hint class="m-b-16 error-msg">
+                          @if (f['mobile'].errors && f['mobile'].errors['required']) {
+                          <div class="text-error">
+                            {{util.appTranslate('form_required')}}
+                          </div>
+                          }
+                        </mat-hint>
+                        }
+                      </mat-form-field>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="row m-t-12">
+                <div class="col-lg-6 col-sm-12 p-b-16">
+                  <button mat-flat-button color="primary" type="submit" class="w-100">
+                    {{util.appTranslate('update_detail')}}
+                  </button>
+                </div>
+              </div>
+            </mat-card-content>
+          </mat-card>
+        </form>
+      </div>
+      <div class="col-sm-6">
+        <form name="eventForm" [formGroup]="passwordForm" class="event-form" (ngSubmit)="onUpdatePassword()">
+          <mat-card class="cardWithShadow">
+            <mat-card-content class="p-y-24">
+              <mat-card-title>{{util.appTranslate('change_password')}}</mat-card-title>
+              <mat-card-subtitle
+                class="mat-body-1">{{util.appTranslate('change_password_here_sub_title')}}</mat-card-subtitle>
+
+              <div class="row m-t-24">
+                <div class="col-lg-12 col-sm-12 p-b-16">
+                  <mat-label class="mat-subtitle-2 f-w-600 m-b-8 d-block">{{util.appTranslate('password')}}</mat-label>
+                  <mat-form-field appearance="outline" class="w-100" color="primary">
+                    <input matInput [type]="showPassword ? 'password' : 'text'" formControlName="password" />
+                    <button mat-icon-button matSuffix (click)="showPassword = !showPassword" type="button">
+                      <mat-icon class="op-5">{{ showPassword ? "visibility_off" : "visibility"}}</mat-icon>
+                    </button>
+                    @if (havePasswordSubmitClicked == true && pForm['password'].invalid ||
+                    passwordForm.get('password')?.invalid && passwordForm.get('password')?.touched) {
+                    <mat-hint class="m-b-16 error-msg">
+                      @if (pForm['password'].errors && pForm['password'].errors['required']) {
+                      <div class="text-error">
+                        {{util.appTranslate('form_required')}}
+                      </div>
+                      }
+                    </mat-hint>
+                    }
+                  </mat-form-field>
+                </div>
+
+                <div class="col-lg-12 col-sm-12 p-b-16">
+                  <mat-label
+                    class="mat-subtitle-2 f-w-600 m-b-8 d-block">{{util.appTranslate('confirm_password')}}</mat-label>
+                  <mat-form-field appearance="outline" class="w-100" color="primary">
+                    <input matInput [type]="showConfirmPassword ? 'password' : 'text'"
+                      formControlName="confirmPassword" />
+                    <button mat-icon-button matSuffix (click)="showConfirmPassword = !showConfirmPassword"
+                      type="button">
+                      <mat-icon class="op-5">{{ showConfirmPassword ? "visibility_off" : "visibility"}}</mat-icon>
+                    </button>
+                    @if (havePasswordSubmitClicked == true && pForm['confirmPassword'].invalid ||
+                    passwordForm.get('confirmPassword')?.invalid && passwordForm.get('confirmPassword')?.touched) {
+                    <mat-hint class="m-b-16 error-msg">
+                      <div class="text-error">
+                        {{util.appTranslate('form_required')}}
+                      </div>
+                    </mat-hint>
+                    }
+                    @if (passwordForm.get('confirmPassword')?.touched && passwordForm.errors?.['passwordMismatch']) {
+                    <mat-hint class="m-b-16 error-msg">
+                      <div class="text-error">
+                        {{util.appTranslate('password_validation')}}
+                      </div>
+                    </mat-hint>
+                    }
+                  </mat-form-field>
+                </div>
+              </div>
+
+              <div class="row m-t-12">
+                <div class="col-lg-6 col-sm-12 p-b-16">
+                  <button mat-flat-button color="primary" type="submit" class="w-100">
+                    {{util.appTranslate('update_password')}}
+                  </button>
+                </div>
+              </div>
+
+            </mat-card-content>
+          </mat-card>
+        </form>
+      </div>
+    </div>
+  </mat-card-content>
+</mat-card>

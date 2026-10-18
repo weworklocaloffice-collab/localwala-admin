@@ -1,0 +1,171 @@
+<mat-card class="cardWithShadow m-b-16">
+  <mat-card-header class="m-b-16">
+    <mat-card-title>{{ util.appTranslate('realEstate_hold_policy') }}</mat-card-title>
+    <mat-card-subtitle>{{ util.appTranslate('realEstate_hold_policy_subtitle') }}</mat-card-subtitle>
+  </mat-card-header>
+
+  <mat-card-content>
+    @if (!isLoaded) {
+      <div class="p-24 text-center text-muted">{{ util.appTranslate('ts_loading') }}</div>
+    } @else if (error) {
+      <div class="p-24 text-center text-error">{{ error }}</div>
+    } @else {
+      <h3 class="m-t-0">{{ form.name || ('Version v' + (form.version || '?')) }}</h3>
+      <p class="f-s-13 text-muted m-b-16">
+        {{ util.appTranslate('realEstate_hold_policy_status') }}: {{ form.status }}
+        @if (form.effectiveFrom) {
+          · {{ util.appTranslate('th_effective_from') }}: {{ form.effectiveFrom | date }}
+        }
+        @if (form.effectiveTo) {
+          · {{ util.appTranslate('th_effective_to') }}: {{ form.effectiveTo | date }}
+        }
+      </p>
+
+      <div class="d-flex gap-12">
+        <mat-form-field appearance="outline" class="w-100">
+          <mat-label>{{ util.appTranslate('th_principal') }} (₹)</mat-label>
+          <input matInput type="number" [(ngModel)]="form.principalAmount" />
+        </mat-form-field>
+        <mat-form-field appearance="outline" class="w-100">
+          <mat-label>{{ util.appTranslate('th_service_fee') }} %</mat-label>
+          <input matInput type="number" [(ngModel)]="form.serviceFeePercent" />
+        </mat-form-field>
+      </div>
+
+      <div class="d-flex gap-12">
+        <mat-form-field appearance="outline" class="w-100">
+          <mat-label>{{ util.appTranslate('th_service_fee_min') }} (₹)</mat-label>
+          <input matInput type="number" [(ngModel)]="form.serviceFeeMin" />
+        </mat-form-field>
+        <mat-form-field appearance="outline" class="w-100">
+          <mat-label>{{ util.appTranslate('th_service_fee_max') }} (₹)</mat-label>
+          <input matInput type="number" [(ngModel)]="form.serviceFeeMax" />
+        </mat-form-field>
+      </div>
+
+      <div class="d-flex gap-12">
+        <mat-form-field appearance="outline" class="w-100">
+          <mat-label>{{ util.appTranslate('th_duration_days') }}</mat-label>
+          <input matInput type="number" [(ngModel)]="form.durationDays" />
+        </mat-form-field>
+        <mat-form-field appearance="outline" class="w-100">
+          <mat-label>{{ util.appTranslate('th_grace_hours') }}</mat-label>
+          <input matInput type="number" [(ngModel)]="form.gracePeriodHours" />
+        </mat-form-field>
+      </div>
+
+      <div class="d-flex flex-wrap gap-16 m-b-16">
+        <mat-checkbox [(ngModel)]="form.cancellationRefundable">{{ util.appTranslate('th_cancellation_refundable') }}</mat-checkbox>
+        <mat-checkbox [(ngModel)]="form.expiryRefundable">{{ util.appTranslate('th_expiry_refundable') }}</mat-checkbox>
+        <mat-checkbox [(ngModel)]="form.feeRefundableOnListingWithdrawal">{{ util.appTranslate('th_fee_refundable_on_withdrawal') }}</mat-checkbox>
+        <mat-checkbox [(ngModel)]="form.forfeitureRequiresDualControl">{{ util.appTranslate('th_forfeiture_dual_control') }}</mat-checkbox>
+      </div>
+
+      <mat-form-field appearance="outline" class="w-100 m-b-16">
+        <mat-label>{{ util.appTranslate('th_cancellation_fee_borne_by') }}</mat-label>
+        <mat-select [(ngModel)]="form.cancellationFeeBorneBy">
+          <mat-option value="CUSTOMER">{{ util.appTranslate('th_customer') }}</mat-option>
+          <mat-option value="VENDOR">{{ util.appTranslate('th_vendor') }}</mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <div class="d-flex gap-12 m-t-8">
+        @if (util.hasRight('realestate.admin_hold_policy_manage')) {
+          <button mat-flat-button color="primary" [disabled]="isSaving" (click)="onSave()">
+            {{ util.appTranslate('th_save') }}
+          </button>
+          <button mat-stroked-button [disabled]="isSaving" (click)="onNewVersion()">
+            New version
+          </button>
+        }
+      </div>
+
+      <!-- Per-supply tax staging (OD-04). Saving stages a PENDING determination
+           and opens the supply's TAX_CONFIG case — it never approves. The
+           approver decides in the Approvals queue. -->
+      <h3 class="m-t-24">Tax determinations (per supply)</h3>
+      <p class="f-s-13 text-muted m-b-16">
+        Each supply needs its own written determination and its own approval.
+        Saving here stages the values as pending and opens the approval case automatically.
+      </p>
+      @for (s of taxSupplies; track s.key) {
+        <h4 class="m-b-8">
+          {{ s.label }}
+          <span class="text-muted small"> — {{ taxNodeStatus(s.key) }}</span>
+        </h4>
+        <div class="d-flex flex-wrap gap-16 m-b-8">
+          <mat-form-field appearance="outline">
+            <mat-label>HSN / SAC</mat-label>
+            <input matInput [(ngModel)]="taxForm[s.key].hsnSac" placeholder="e.g. 998311">
+          </mat-form-field>
+          <mat-form-field appearance="outline">
+            <mat-label>Tax classification</mat-label>
+            <input matInput [(ngModel)]="taxForm[s.key].taxClassification" placeholder="service / deposit / commission / ...">
+          </mat-form-field>
+          <mat-form-field appearance="outline">
+            <mat-label>Rate (%)</mat-label>
+            <input matInput type="number" min="0" max="100" [(ngModel)]="taxForm[s.key].applicableRate">
+          </mat-form-field>
+          <mat-form-field appearance="outline">
+            <mat-label>Invoice treatment</mat-label>
+            <input matInput [(ngModel)]="taxForm[s.key].invoiceTreatment">
+          </mat-form-field>
+          <mat-form-field appearance="outline">
+            <mat-label>Tax components</mat-label>
+            <input matInput [(ngModel)]="taxForm[s.key].taxComponents" placeholder="CGST + SGST">
+          </mat-form-field>
+          <mat-form-field appearance="outline">
+            <mat-label>Pricing</mat-label>
+            <mat-select [(ngModel)]="taxForm[s.key].inclusivePricing">
+              <mat-option [value]="false">Exclusive</mat-option>
+              <mat-option [value]="true">Inclusive</mat-option>
+            </mat-select>
+          </mat-form-field>
+          <mat-form-field appearance="outline">
+            <mat-label>Effective from</mat-label>
+            <input matInput [(ngModel)]="taxForm[s.key].effectiveFrom" placeholder="YYYY-MM-DD">
+          </mat-form-field>
+          <mat-form-field appearance="outline">
+            <mat-label>Effective to</mat-label>
+            <input matInput [(ngModel)]="taxForm[s.key].effectiveTo" placeholder="YYYY-MM-DD (optional)">
+          </mat-form-field>
+          <mat-form-field appearance="outline">
+            <mat-label>Approval reference</mat-label>
+            <input matInput [(ngModel)]="taxForm[s.key].approvalReference" placeholder="written memo ref">
+          </mat-form-field>
+        </div>
+        <mat-form-field appearance="outline" class="w-100 m-b-8">
+          <mat-label>Change reason</mat-label>
+          <input matInput [(ngModel)]="taxForm[s.key].changeReason" placeholder="Reason for this determination">
+        </mat-form-field>
+        <div class="d-flex gap-12 m-b-16">
+          @if (util.hasRight('realestate.admin_hold_policy_manage')) {
+            <button mat-stroked-button color="primary" [disabled]="taxSaving[s.key]" (click)="onSaveTax(s.key)">
+              Stage {{ s.label }} &amp; open approval case
+            </button>
+          }
+        </div>
+      }
+
+      @if (history.length) {
+        <h3 class="m-t-24">{{ util.appTranslate('th_history') }}</h3>
+        <ul class="f-s-13">
+          @for (h of history; track h._id) {
+            <li>
+              v{{ h.version }} — {{ h.status }} ({{ h.effectiveFrom | date }})
+              @if (h.status === 'DRAFT' && util.hasRight('realestate.admin_hold_policy_manage')) {
+                <a (click)="onSubmitVersion(h)" class="m-l-10 cursor-pointer">Submit</a>
+              }
+              @if (h.status === 'PENDING_APPROVAL' && util.hasRight('realestate.admin_hold_policy_approve')) {
+                <a (click)="onApproveVersion(h)" class="m-l-10 cursor-pointer text-success">Approve</a>
+              }
+              @if (h.status === 'APPROVED' && util.hasRight('realestate.admin_hold_policy_activate')) {
+                <a (click)="onActivateVersion(h)" class="m-l-10 cursor-pointer text-success">Activate</a>
+              }
+            </li>
+          }
+        </ul>
+      }
+    }
+  </mat-card-content>
+</mat-card>

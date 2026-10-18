@@ -1,0 +1,465 @@
+<div class="row">
+  <div class="col-lg-8">
+    <mat-card class="cardWithShadow theme-card">
+      <mat-card-header>
+        <mat-card-title class="m-b-0">
+          {{util.appTranslate('chat_stats')}}
+        </mat-card-title>
+      </mat-card-header>
+
+      <mat-card-content class="p-32">
+<div class="row m-b-16">
+  <div class="col-12">
+    <mat-card class="cardWithShadow theme-card">
+      <mat-card-content class="p-16">
+        <div class="d-flex align-items-center justify-content-between m-b-12">
+          <span class="f-s-14 f-w-600">{{util.appTranslate('kpi_title')}}</span>
+          <span>
+            <button mat-stroked-button class="m-r-8" [color]="kpiDays === 7 ? 'primary' : ''" (click)="setKpiDays(7)">7d</button>
+            <button mat-stroked-button class="m-r-8" [color]="kpiDays === 30 ? 'primary' : ''" (click)="setKpiDays(30)">30d</button>
+            <button mat-stroked-button [color]="kpiDays === 90 ? 'primary' : ''" (click)="setKpiDays(90)">90d</button>
+          </span>
+        </div>
+        @if (kpi) {
+        <div class="row">
+          <div class="col-lg-3 col-sm-4 col-6 m-b-12">
+            <mat-card class="shadow-none bg-light-primary text-center p-12">
+              <div class="f-s-11 text-muted text-uppercase">Tickets</div>
+              <div class="f-s-24 f-w-700 text-primary">{{kpi.total}}</div>
+              <div class="f-s-11 text-muted">{{kpi.openNow}} open now</div>
+            </mat-card>
+          </div>
+          <div class="col-lg-3 col-sm-4 col-6 m-b-12">
+            <mat-card class="shadow-none bg-light-warning text-center p-12">
+              <div class="f-s-11 text-muted text-uppercase">Avg first reply</div>
+              <div class="f-s-24 f-w-700 text-warning">{{fmtDur(kpi.avgFirstResponseSec)}}</div>
+              <div class="f-s-11 text-muted">target 0:30</div>
+            </mat-card>
+          </div>
+          <div class="col-lg-3 col-sm-4 col-6 m-b-12">
+            <mat-card class="shadow-none bg-light-info text-center p-12">
+              <div class="f-s-11 text-muted text-uppercase">Avg resolution</div>
+              <div class="f-s-20 f-w-700 text-info">{{fmtDur(kpi.avgResolutionSec)}}</div>
+              <div class="f-s-11 text-muted">{{kpi.resolved}} resolved</div>
+            </mat-card>
+          </div>
+          <div class="col-lg-3 col-sm-4 col-6 m-b-12">
+            <mat-card class="shadow-none bg-light-success text-center p-12">
+              <div class="f-s-11 text-muted text-uppercase">Contained by bot</div>
+              <div class="f-s-24 f-w-700 text-success">{{kpi.containmentPct === null ? '-' : kpi.containmentPct + '%'}}</div>
+              <div class="f-s-11 text-muted">no human needed</div>
+            </mat-card>
+          </div>
+          <div class="col-lg-3 col-sm-4 col-6 m-b-12">
+            <mat-card class="shadow-none bg-light-secondary text-center p-12">
+              <div class="f-s-11 text-muted text-uppercase">CSAT</div>
+              <div class="f-s-24 f-w-700">{{kpi.csatAvg === null ? '-' : kpi.csatAvg}}</div>
+              <div class="f-s-11 text-muted">
+                @if (kpi.csatAvg !== null) { {{kpi.csatCount}} ratings · }
+                @if (kpi.csatDist && kpi.csatDist.length) {
+                @for (d of kpi.csatDist; track d.score) {
+                <span class="m-r-4">{{d.score}}★ {{d.n}}</span>
+                }
+                }
+              </div>
+            </mat-card>
+          </div>
+          <div class="col-lg-3 col-sm-4 col-6 m-b-12">
+            <mat-card class="shadow-none text-center p-12" [ngClass]="kpi.slaCompliancePct !== null && kpi.slaCompliancePct < 90 ? 'bg-light-error' : 'bg-light-success'">
+              <div class="f-s-11 text-muted text-uppercase">SLA compliance</div>
+              <div class="f-s-24 f-w-700" [ngClass]="kpi.slaCompliancePct !== null && kpi.slaCompliancePct < 90 ? 'text-error' : 'text-success'">{{kpi.slaCompliancePct === null ? '-' : kpi.slaCompliancePct + '%'}}</div>
+              <div class="f-s-11 text-muted">target ≥ 90%</div>
+            </mat-card>
+          </div>
+        </div>
+        @if (kpiAgents.length) {
+        <div class="table-responsive m-t-16">
+          <table mat-table [dataSource]="kpiAgents" class="w-100">
+            <ng-container matColumnDef="agent">
+              <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-14">Agent</th>
+              <td mat-cell *matCellDef="let a" class="f-w-600">{{a.name}}</td>
+            </ng-container>
+            <ng-container matColumnDef="open">
+              <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-14 text-center">Open</th>
+              <td mat-cell *matCellDef="let a" class="text-center">
+                <span class="rounded f-w-600 p-6 p-y-4 f-s-12" [ngClass]="a.openNow >= 3 ? 'bg-light-error text-error' : 'bg-light-success text-success'">{{a.openNow}}</span>
+              </td>
+            </ng-container>
+            <ng-container matColumnDef="resolved">
+              <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-14 text-center">Resolved</th>
+              <td mat-cell *matCellDef="let a" class="text-center">{{a.resolved}}</td>
+            </ng-container>
+            <ng-container matColumnDef="frt">
+              <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-14 text-center">Avg first reply</th>
+              <td mat-cell *matCellDef="let a" class="text-center">{{fmtDur(a.avgFrtSec)}}</td>
+            </ng-container>
+            <ng-container matColumnDef="csat">
+              <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-14 text-center">CSAT</th>
+              <td mat-cell *matCellDef="let a" class="text-center">{{a.csatAvg === null ? '-' : a.csatAvg + ' (' + a.csatCount + ')'}}</td>
+            </ng-container>
+            <tr mat-header-row *matHeaderRowDef="['agent','open','resolved','frt','csat']"></tr>
+            <tr mat-row *matRowDef="let row; columns: ['agent','open','resolved','frt','csat']"></tr>
+          </table>
+        </div>
+        }
+        } @else {
+        <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+        }
+      </mat-card-content>
+    </mat-card>
+  </div>
+</div>
+
+<div class="row">
+          @for (item of chatCount; track $index) {
+          <div class="col-lg-4 col-sm-6">
+            <mat-card
+              class="shadow-none text-center bg-light-{{ item.color }} shadow-none position-relative card-hover cursor-pointer">
+              <mat-card-content class="p-16">
+                <img [src]="item.img" alt="users" width="30" height="30" class="rounded" />
+                <h4 class="mat-subtitle-2 f-w-600 text-{{ item.color }} m-t-8">
+                  {{ item.title }}
+                </h4>
+                <h4 class="m-t-4 mat-subtitle-2 f-w-600 text-{{ item.color }} m-t-8">
+                  {{ item.desc }}
+                </h4>
+              </mat-card-content>
+            </mat-card>
+          </div>
+          }
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+  </div>
+
+  <div class="col-lg-4">
+    <mat-card class="cardWithShadow theme-card">
+      <mat-card-header>
+        <mat-card-title class="m-b-0">
+          {{util.appTranslate('chart_stats')}}
+        </mat-card-title>
+      </mat-card-header>
+
+      <mat-card-content class="p-32">
+        <div id="chart" class="d-flex flex-column m-t-30 position-relative">
+          <apx-chart [series]="chatChartOption.series" [chart]="chatChartOption.chart" [legend]="chatChartOption.legend"
+            [labels]="chatChartOption.labels" [dataLabels]="chatChartOption.dataLabels"
+            [colors]="chatChartOption.colors" [stroke]="chatChartOption.stroke" [tooltip]="chatChartOption.tooltip"
+            [plotOptions]="chatChartOption.plotOptions"></apx-chart>
+        </div>
+      </mat-card-content>
+    </mat-card>
+  </div>
+</div>
+
+<mat-card class="cardWithShadow theme-card overflow-hidden">
+  <mat-card-header class="d-sm-flex">
+    <div class="m-r-auto">
+      <mat-card-title class="m-0">{{util.appTranslate('support_chats')}}</mat-card-title>
+    </div>
+    <div class="d-flex align-items-center">
+      <div class="d-flex align-items-center text-secondary">
+        <ng-icon name="tablerPoint" class="icon-12 d-flex"></ng-icon>
+        <div class="m-l-12 d-flex">
+          <span class="f-s-14">{{util.appTranslate('open')}}:{{openChats}} </span>
+        </div>
+      </div>
+      <div class="d-flex m-l-16 align-items-center text-primary">
+        <ng-icon name="tablerPoint" class="icon-12 d-flex"></ng-icon>
+        <div class="m-l-12 d-flex">
+          <span class="f-s-14">{{util.appTranslate('in_progress')}}:{{inProgressChats}} </span>
+        </div>
+      </div>
+      <div class="d-flex m-l-16 align-items-center text-error">
+        <ng-icon name="tablerPoint" class="icon-12 d-flex"></ng-icon>
+        <div class="m-l-12 d-flex">
+          <span class="f-s-14">{{util.appTranslate('resolved')}}:{{resolvedChats}} </span>
+        </div>
+      </div>
+      <mat-form-field class="m-l-16 theme-select" appearance="outline">
+        <mat-select [value]="chatType" [(ngModel)]="chatType" (selectionChange)="onFilter($event.value)">
+          <mat-option value="all">
+            {{util.appTranslate('dd_all')}}
+          </mat-option>
+          <mat-option value="open">
+            {{util.appTranslate('open')}}
+          </mat-option>
+          <mat-option value="in_progress">
+            {{util.appTranslate('in_progress')}}
+          </mat-option>
+          <mat-option value="resolved">
+            {{util.appTranslate('resolved')}}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+    </div>
+  </mat-card-header>
+
+  <mat-card-content>
+    <div class="table-responsive">
+      @if (!isLoaded) {
+      <table mat-table [dataSource]="util.dummyArray" class="w-100">
+        <ng-container matColumnDef="id">
+          <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1 p-l-0 text-center">
+            {{util.appTranslate('chat_id')}}
+          </th>
+          <td mat-cell *matCellDef="let element" class="p-l-0">
+            <mat-progress-bar mode="indeterminate" color="light"></mat-progress-bar>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="type_id">
+          <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1 p-l-0 text-center">
+            {{util.appTranslate('issue_id')}}
+          </th>
+          <td mat-cell *matCellDef="let element" class="f-s-14">
+            <mat-progress-bar mode="indeterminate" color="light"></mat-progress-bar>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="customer">
+          <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1 p-l-0 text-center">
+            {{util.appTranslate('th_customer')}}
+          </th>
+          <td mat-cell *matCellDef="let element" class="f-s-14">
+            <mat-progress-bar mode="indeterminate" color="light"></mat-progress-bar>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="type">
+          <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1 p-l-0 text-center">
+            {{util.appTranslate('type')}}
+          </th>
+          <td mat-cell *matCellDef="let element" class="f-s-14">
+            <mat-progress-bar mode="indeterminate" color="light"></mat-progress-bar>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="status">
+          <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1 p-l-0 text-center">
+            {{util.appTranslate('th_status')}}
+          </th>
+          <td mat-cell *matCellDef="let element">
+            <mat-progress-bar mode="indeterminate" color="light"></mat-progress-bar>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="team">
+          <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1">
+            {{util.appTranslate('team')}}
+          </th>
+          <td mat-cell *matCellDef="let element">
+            <mat-progress-bar mode="indeterminate" color="light"></mat-progress-bar>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="time">
+          <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1">
+            {{util.appTranslate('th_time')}}
+          </th>
+          <td mat-cell *matCellDef="let element">
+            <mat-progress-bar mode="indeterminate" color="light"></mat-progress-bar>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="action">
+          <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1 p-r-0 text-right">
+            {{util.appTranslate('th_action')}}
+          </th>
+          <td mat-cell *matCellDef="let element" class="f-w-500 text-right p-r-0">
+            <mat-progress-bar mode="indeterminate" color="light"></mat-progress-bar>
+          </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="displayedColumn"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumn"></tr>
+
+      </table>
+      }
+
+      @if (isLoaded) {
+      <table mat-table [dataSource]="chatList" class="w-100">
+        <ng-container matColumnDef="id">
+          <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1 p-l-0 text-center">
+            {{util.appTranslate('chat_id')}}
+          </th>
+          <td mat-cell *matCellDef="let element" class="f-s-14 text-uppercase text-center">
+            {{ util.refId(element.id) }}
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="type_id">
+          <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1 p-l-0 text-center">
+            {{util.appTranslate('issue_id')}}
+          </th>
+          <td mat-cell *matCellDef="let element" class="f-s-14 text-uppercase text-center">
+            @if (element.supportType == 'orders' && element.orders != null && element.orders != '') {
+            <span>
+              {{ util.refId(element.orders) }}
+            </span>
+            }
+            @if (element.supportType == 'dining' && element.booking != null && element.booking != '') {
+            <span>
+              {{ util.refId(element.booking) }}
+            </span>
+            }
+            @if (element.supportType == 'tiffin_subscription' && element.purchaseSubscription != null &&
+            element.purchaseSubscription != '') {
+            <span>
+              {{ util.refId(element.purchaseSubscription) }}
+            </span>
+            }
+            @if (element.supportType == 'complaints' && element.complaints != null && element.complaints != '') {
+            <span>
+              {{ util.refId(element.complaints) }}
+            </span>
+            }
+            @if (element.supportType == 'reports' && element.reportIssue != null && element.reportIssue != '') {
+            <span>
+              {{ util.refId(element.reportIssue) }}
+            </span>
+            }
+            @if (element.supportType == 'restaurant_complaints' && element.restaurantComplaints != null &&
+            element.restaurantComplaints != '') {
+            <span>
+              {{ util.refId(element.restaurantComplaints) }}
+            </span>
+            }
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="customer">
+          <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1 p-l-0 text-left">
+            {{util.appTranslate('th_customer')}}
+          </th>
+          <td mat-cell *matCellDef="let element" class="p-l-0">
+            <div class="d-flex align-items-center">
+              <img [src]="api.mediaUrl+element.customer.image" alt="users" width="60" height="60" class="rounded"
+                onError="this.src='assets/images/onerror.png'" />
+              <div class="m-l-16">
+                <h6 class="f-s-14 mat-subtitle-1 f-w-600">
+                  {{ element.customer.firstName +' '+ element.customer.lastName}}
+                </h6>
+                <span class="mat-body-1 f-s-12">
+                  {{ element.customer.contactEmail }}
+                </span> <br>
+                <span class="mat-body-1 f-s-12">
+                  {{ '+' +element.customer.countryCode +' '+ element.customer.contactNumber }}
+                </span>
+              </div>
+            </div>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="type">
+          <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1 p-l-0 text-left">
+            {{util.appTranslate('type')}}
+          </th>
+          <td mat-cell *matCellDef="let element" class="f-s-14 text-left">
+            @if (element.supportType == 'orders') {
+            <h6 class="mat-subtitle-1 f-s-14 f-w-600">
+              {{util.appTranslate('orders')}}
+            </h6>
+            }
+            @if (element.supportType == 'dining') {
+            <h6 class="mat-subtitle-1 f-s-14 f-w-600">
+              {{util.appTranslate('th_dining_booking')}}
+            </h6>
+            }
+            @if (element.supportType == 'tiffin_subscription') {
+            <h6 class="mat-subtitle-1 f-s-14 f-w-600">
+              {{util.appTranslate('tiffin_subscriptions')}}
+            </h6>
+            }
+            @if (element.supportType == 'complaints') {
+            <h6 class="mat-subtitle-1 f-s-14 f-w-600">
+              {{util.appTranslate('complaints')}}
+            </h6>
+            }
+            @if (element.supportType == 'reports') {
+            <h6 class="mat-subtitle-1 f-s-14 f-w-600">
+              {{util.appTranslate('report_lbl')}}
+            </h6>
+            }
+            @if (element.supportType == 'restaurant_complaints') {
+            <h6 class="mat-subtitle-1 f-s-14 f-w-600">
+              {{util.appTranslate('restaurant_complaints')}}
+            </h6>
+            }
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="status">
+          <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1 p-l-0 text-center">
+            {{util.appTranslate('th_status')}}
+          </th>
+          <td mat-cell *matCellDef="let element" class="f-s-14 text-center">
+            @if (element.status == 'open') {
+            <span class="bg-light-primary text-primary rounded f-w-600 p-6 p-y-4 f-s-12">
+              {{util.appTranslate('open')}}
+            </span>
+            }
+            @if (element.status == 'in_progress') {
+            <span class="bg-light-success text-success rounded f-w-600 p-6 p-y-4 f-s-12">
+              {{util.appTranslate('in_progress')}}
+            </span>
+            }
+            @if (element.status == 'resolved') {
+            <span class="bg-light-error text-error rounded f-w-600 p-6 p-y-4 f-s-12">
+              {{util.appTranslate('resolved')}}
+            </span>
+            }
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="team">
+          <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1 text-left">
+            {{util.appTranslate('team')}}
+          </th>
+          <td mat-cell *matCellDef="let element" class="f-s-14 text-left">
+            <div class="avatar-group">
+              @for (team of element.team; track $index) {
+              <img [src]="api.mediaUrl+team.image" [alt]="team.firstName +' '+ team.lastName" class="rounded-circle"
+                width="30" height="30" onError="this.src='assets/images/onerror.png'"
+                [matTooltip]="team.firstName +' '+ team.lastName" />
+              }
+            </div>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="time">
+          <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1">
+            {{util.appTranslate('th_time')}}
+          </th>
+          <td mat-cell *matCellDef="let element" class="f-s-14 text-center">
+            {{ getDate(element.updatedAt) }}
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="action">
+          <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1 p-r-0 text-right">
+            {{util.appTranslate('th_action')}}
+          </th>
+          <td mat-cell *matCellDef="let element" class="f-w-500 text-right p-r-0">
+            <a (click)="onChat(element)" class="m-r-10 cursor-pointer text-secondary"
+              [matTooltip]="util.appTranslate('click_to_view')">
+              <mat-icon>chat</mat-icon>
+            </a>
+          </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="displayedColumn"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumn"></tr>
+
+        <tr *matNoDataRow>
+          <td colspan="8" class="m-b-16 m-t-16 text-center">{{util.appTranslate('table_no_data_found')}}</td>
+        </tr>
+
+      </table>
+      }
+      <mat-paginator [hidden]="!isLoaded" #chatPaginator [pageSizeOptions]="[5,10, 20]" [pageSize]="pageSize"
+        (page)="onPageChange($event)" showFirstLastButtons></mat-paginator>
+    </div>
+  </mat-card-content>
+</mat-card>

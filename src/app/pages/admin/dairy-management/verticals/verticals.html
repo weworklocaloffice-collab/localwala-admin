@@ -1,0 +1,108 @@
+<mat-card class="cardWithShadow">
+  <mat-card-header class="m-b-16">
+    <mat-card-title>{{ util.appTranslate('dairy_verticals_title') }}</mat-card-title>
+    <mat-card-subtitle>{{ util.appTranslate('dairy_verticals_subtitle') }}</mat-card-subtitle>
+  </mat-card-header>
+
+  <mat-card-content>
+    <!--
+      A halted vertical is called out in a banner rather than left to the toggle.
+      A row of switches with no words next to them would not tell an operator
+      whether dairy is currently trading, which is the one thing this screen exists
+      to answer.
+    -->
+    @if (isLoaded && verticals.length && !isTrading) {
+      <div class="mb-24 p-16" style="border-left: 4px solid #f44336; background: #fff5f5">
+        <div class="f-w-600">{{ util.appTranslate('dairy_halted_banner_title') }}</div>
+        <div class="m-t-8 f-s-14">{{ util.appTranslate('dairy_halted_banner_body') }}</div>
+      </div>
+    }
+
+    <div class="table-responsive">
+      <table mat-table [dataSource]="verticals" class="w-100">
+        <ng-container matColumnDef="name">
+          <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1">
+            {{ util.appTranslate('th_name') }}
+          </th>
+          <td mat-cell *matCellDef="let element">
+            <div class="f-w-600">{{ element.name }}</div>
+            <div class="m-t-4 f-s-12 text-muted">{{ element.description }}</div>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="businessCount">
+          <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1">
+            {{ util.appTranslate('th_outlets') }}
+          </th>
+          <td mat-cell *matCellDef="let element">
+            <div>{{ element.businessCount }}</div>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="status">
+          <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1">
+            {{ util.appTranslate('th_status') }}
+          </th>
+          <td mat-cell *matCellDef="let element">
+            @if (util.hasRight('dairy_vertical_manage')) {
+              <mat-slide-toggle
+                [checked]="element.status"
+                (change)="onToggle(element, $event.checked)"
+                [matTooltip]="
+                  element.status
+                    ? util.appTranslate('dairy_switch_is_on')
+                    : util.appTranslate('dairy_switch_is_off')
+                "
+              >
+              </mat-slide-toggle>
+            } @else {
+              <span class="f-s-14 text-muted">
+                {{
+                  element.status
+                    ? util.appTranslate('common_enabled')
+                    : util.appTranslate('common_disabled')
+                }}
+              </span>
+            }
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="lastChanged">
+          <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1">
+            {{ util.appTranslate('th_last_changed') }}
+          </th>
+          <td mat-cell *matCellDef="let element">
+            @if (element.statusChangedAt) {
+              <div class="f-s-14">{{ element.statusChangedAt | date: 'dd MMM yyyy, HH:mm' }}</div>
+              @if (element.statusReason) {
+                <div class="m-t-4 f-s-12 text-muted">{{ element.statusReason }}</div>
+              }
+            } @else {
+              <span class="text-muted">—</span>
+            }
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="action">
+          <th mat-header-cell *matHeaderCellDef></th>
+          <td mat-cell *matCellDef="let element">
+            <span class="f-s-12" [ngClass]="element.status ? 'text-success' : 'text-error'">
+              {{
+                element.status
+                  ? util.appTranslate('dairy_state_trading')
+                  : util.appTranslate('dairy_state_halted')
+              }}
+            </span>
+          </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="displayedColumn"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumn"></tr>
+      </table>
+
+      @if (isLoaded && !verticals.length) {
+        <div class="p-24 text-center text-muted">{{ util.appTranslate('dairy_no_verticals') }}</div>
+      }
+    </div>
+  </mat-card-content>
+</mat-card>

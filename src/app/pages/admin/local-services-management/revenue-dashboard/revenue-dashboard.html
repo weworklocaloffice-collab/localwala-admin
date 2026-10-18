@@ -1,0 +1,24 @@
+<mat-card class="cardWithShadow">
+  <mat-card-header class="m-b-16">
+    <mat-card-title>{{ util.appTranslate('ls_revenue_dashboard') }}</mat-card-title>
+    <mat-card-subtitle>{{ util.appTranslate('ls_revenue_dashboard_subtitle') }}</mat-card-subtitle>
+  </mat-card-header>
+
+  <mat-card-content>
+    @if (!isLoaded) {
+      <div class="p-24 text-center text-muted">{{ util.appTranslate('ts_loading') }}</div>
+    } @else if (summary) {
+      <div class="d-flex flex-wrap gap-12">
+        <mat-card class="p-16"><div class="f-s-12 text-muted">{{ util.appTranslate('ls_gbv') }}</div><div class="f-w-600 f-s-20">₹{{ summary.grossBookingValue }}</div></mat-card>
+        <mat-card class="p-16"><div class="f-s-12 text-muted">{{ util.appTranslate('ls_fees') }}</div><div class="f-w-600 f-s-20">₹{{ summary.bookingFees }}</div></mat-card>
+        <mat-card class="p-16"><div class="f-s-12 text-muted">{{ util.appTranslate('ls_commission') }}</div><div class="f-w-600 f-s-20">₹{{ summary.commission }}</div></mat-card>
+        <mat-card class="p-16"><div class="f-s-12 text-muted">{{ util.appTranslate('ls_platform_revenue') }}</div><div class="f-w-600 f-s-20">₹{{ summary.platformRevenue }}</div></mat-card>
+        <mat-card class="p-16"><div class="f-s-12 text-muted">{{ util.appTranslate('ls_provider_payable') }}</div><div class="f-w-600 f-s-20">₹{{ summary.providerPayable }}</div></mat-card>
+        <mat-card class="p-16"><div class="f-s-12 text-muted">{{ util.appTranslate('ls_reversals') }}</div><div class="f-w-600 f-s-20 text-warning">₹{{ summary.reversals }}</div></mat-card>
+        <mat-card class="p-16"><div class="f-s-12 text-muted">{{ util.appTranslate('ls_net_revenue') }}</div><div class="f-w-600 f-s-20 text-success">₹{{ summary.netRevenue }}</div></mat-card>
+      </div>
+    } @else {
+      <div class="p-24 text-center text-muted">{{ util.appTranslate('ts_no_records_found') }}</div>
+    }
+  </mat-card-content>
+</mat-card>

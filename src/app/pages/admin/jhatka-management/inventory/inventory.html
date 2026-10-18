@@ -1,0 +1,241 @@
+<mat-card class="cardWithShadow">
+  <mat-card-header class="m-b-16">
+    <mat-card-title>Inventory — platform view</mat-card-title>
+    <mat-card-subtitle>Batches, stock, ledger, wastage and recalls across every outlet. Movements and wastage are read-only: the ledger is proof, not editable text.</mat-card-subtitle>
+  </mat-card-header>
+
+  <mat-card-content>
+    <nav mat-tab-nav-bar [tabPanel]="inventoryPanel">
+      <a mat-tab-link (click)="setTab('batches')" [active]="tab === 'batches'">Batches</a>
+      <a mat-tab-link (click)="setTab('stock')" [active]="tab === 'stock'">Stock</a>
+      <a mat-tab-link (click)="setTab('movements')" [active]="tab === 'movements'">Ledger</a>
+      <a mat-tab-link (click)="setTab('wastage')" [active]="tab === 'wastage'">Wastage</a>
+      <a mat-tab-link (click)="setTab('recalls')" [active]="tab === 'recalls'">Recalls</a>
+    </nav>
+    <mat-tab-nav-panel #inventoryPanel></mat-tab-nav-panel>
+
+    <div class="m-t-16 m-b-16">
+      <mat-form-field appearance="outline">
+        <mat-label>Outlet id (blank = all)</mat-label>
+        <input matInput [(ngModel)]="outletFilter" (change)="currentPage = 0; getTab()" placeholder="ObjectId" />
+      </mat-form-field>
+    </div>
+
+    <!-- BATCHES ---------------------------------------------------------- -->
+    <div *ngIf="tab === 'batches'" class="table-responsive">
+      <div class="m-b-16">
+        <mat-form-field appearance="outline">
+          <mat-label>Status</mat-label>
+          <mat-select [(ngModel)]="batchStatus" (selectionChange)="currentPage = 0; getBatches()">
+            <mat-option value="">All</mat-option>
+            <mat-option value="source">Source</mat-option>
+            <mat-option value="opened">Opened</mat-option>
+            <mat-option value="quarantined">Quarantined</mat-option>
+            <mat-option value="expired">Expired</mat-option>
+            <mat-option value="consumed">Consumed</mat-option>
+          </mat-select>
+        </mat-form-field>
+        <mat-form-field appearance="outline" class="m-l-16">
+          <mat-label>Expiring within (days)</mat-label>
+          <input matInput type="number" [(ngModel)]="expiringInDays" (change)="currentPage = 0; getBatches()" placeholder="e.g. 3" />
+        </mat-form-field>
+      </div>
+      <table mat-table [dataSource]="batches" class="w-100">
+        <ng-container matColumnDef="batch">
+          <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1">Batch</th>
+          <td mat-cell *matCellDef="let element">
+            <div class="f-w-600">{{ element.batchNo }}</div>
+            <div class="m-t-4 f-s-12 text-muted">{{ element.rawSku }} · {{ element.outlet?.name }}</div>
+          </td>
+        </ng-container>
+        <ng-container matColumnDef="product">
+          <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1">Product</th>
+          <td mat-cell *matCellDef="let element">{{ element.product?.name }}</td>
+        </ng-container>
+        <ng-container matColumnDef="qty">
+          <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1">Qty</th>
+          <td mat-cell *matCellDef="let element">{{ element.availableQty }} / {{ element.receivedQty }} {{ element.unit }}</td>
+        </ng-container>
+        <ng-container matColumnDef="expiry">
+          <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1">Expiry</th>
+          <td mat-cell *matCellDef="let element">
+            <span [class.text-danger]="element.isExpired">{{ element.expiresAt | date:'dd MMM' }}</span>
+            <span *ngIf="element.daysToExpiry != null" class="f-s-12 text-muted"> ({{ element.daysToExpiry }}d)</span>
+          </td>
+        </ng-container>
+        <ng-container matColumnDef="status">
+          <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1">Status</th>
+          <td mat-cell *matCellDef="let element">{{ element.status }}<span *ngIf="!element.isSellable"> · not sellable</span></td>
+        </ng-container>
+        <ng-container matColumnDef="action">
+          <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1">Action</th>
+          <td mat-cell *matCellDef="let element">
+            <button mat-button color="warn" *ngIf="element.status !== 'quarantined'" (click)="quarantine(element)">Quarantine</button>
+            <button mat-button color="primary" *ngIf="element.status === 'quarantined'" (click)="release(element)">Release</button>
+          </td>
+        </ng-container>
+        <tr mat-header-row *matHeaderRowDef="batchColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: batchColumns;"></tr>
+      </table>
+      <mat-paginator
+        [length]="total"
+        [pageSize]="pageSize"
+        [pageSizeOptions]="[10, 25, 50]"
+        (page)="onPageChange($event)">
+      </mat-paginator>
+    </div>
+
+    <!-- STOCK ------------------------------------------------------------ -->
+    <div *ngIf="tab === 'stock'" class="table-responsive">
+      <table mat-table [dataSource]="stock" class="w-100">
+        <ng-container matColumnDef="item">
+          <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1">Item</th>
+          <td mat-cell *matCellDef="let element">
+            <div class="f-w-600">{{ element.kind }} · {{ element.unit }}</div>
+            <div class="m-t-4 f-s-12 text-muted">{{ element.batch?.batchNo }} · {{ element.outlet?.name }}</div>
+          </td>
+        </ng-container>
+        <ng-container matColumnDef="balances">
+          <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1">On hand / reserved / available</th>
+          <td mat-cell *matCellDef="let element">{{ element.onHand }} / {{ element.reserved }} / {{ element.availableQty }} {{ element.unit }}</td>
+        </ng-container>
+        <ng-container matColumnDef="sellable">
+          <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1">Sellable</th>
+          <td mat-cell *matCellDef="let element">{{ element.sellable > 0 ? element.sellable + ' ' + element.unit : 'No — expired or blocked' }}</td>
+        </ng-container>
+        <tr mat-header-row *matHeaderRowDef="stockColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: stockColumns;"></tr>
+      </table>
+      <mat-paginator
+        [length]="total"
+        [pageSize]="pageSize"
+        [pageSizeOptions]="[10, 25, 50]"
+        (page)="onPageChange($event)">
+      </mat-paginator>
+    </div>
+
+    <!-- LEDGER ----------------------------------------------------------- -->
+    <div *ngIf="tab === 'movements'" class="table-responsive">
+      <div class="m-b-16">
+        <mat-form-field appearance="outline">
+          <mat-label>Movement type</mat-label>
+          <input matInput [(ngModel)]="movementType" (change)="currentPage = 0; getMovements()" placeholder="e.g. EXPIRY_WRITE_OFF" />
+        </mat-form-field>
+      </div>
+      <table mat-table [dataSource]="movements" class="w-100">
+        <ng-container matColumnDef="when">
+          <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1">When</th>
+          <td mat-cell *matCellDef="let element">{{ element.createdAt | date:'dd MMM HH:mm' }}</td>
+        </ng-container>
+        <ng-container matColumnDef="type">
+          <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1">Type</th>
+          <td mat-cell *matCellDef="let element">{{ element.movementType }}</td>
+        </ng-container>
+        <ng-container matColumnDef="delta">
+          <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1">Delta</th>
+          <td mat-cell *matCellDef="let element">{{ element.qtyDelta }}</td>
+        </ng-container>
+        <ng-container matColumnDef="balance">
+          <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1">Balance after</th>
+          <td mat-cell *matCellDef="let element">{{ element.onHandAfter }} on hand · {{ element.availableAfter }} avail · seq {{ element.movementSeq }}</td>
+        </ng-container>
+        <tr mat-header-row *matHeaderRowDef="movementColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: movementColumns;"></tr>
+      </table>
+      <mat-paginator
+        [length]="total"
+        [pageSize]="pageSize"
+        [pageSizeOptions]="[25, 50, 100]"
+        (page)="onPageChange($event)">
+      </mat-paginator>
+    </div>
+
+    <!-- WASTAGE ---------------------------------------------------------- -->
+    <div *ngIf="tab === 'wastage'" class="table-responsive">
+      <div class="m-b-16">
+        <mat-form-field appearance="outline">
+          <mat-label>Cause</mat-label>
+          <mat-select [(ngModel)]="wastageCause" (selectionChange)="currentPage = 0; getWastage()">
+            <mat-option value="">All</mat-option>
+            <mat-option value="TRIM">Trim</mat-option>
+            <mat-option value="SPOILAGE">Spoilage</mat-option>
+            <mat-option value="EXPIRY">Expiry</mat-option>
+            <mat-option value="OVER_PREPARATION">Over-preparation</mat-option>
+            <mat-option value="CUSTOMER_REJECTED">Customer rejected</mat-option>
+            <mat-option value="QUALITY_REJECTION">Quality rejection</mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
+      <table mat-table [dataSource]="wastage" class="w-100">
+        <ng-container matColumnDef="when">
+          <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1">When</th>
+          <td mat-cell *matCellDef="let element">{{ (element.occurredAt || element.createdAt) | date:'dd MMM HH:mm' }}</td>
+        </ng-container>
+        <ng-container matColumnDef="cause">
+          <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1">Cause</th>
+          <td mat-cell *matCellDef="let element">{{ element.cause }}<span *ngIf="element.orderLinked"> · order-linked</span></td>
+        </ng-container>
+        <ng-container matColumnDef="qty">
+          <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1">Qty</th>
+          <td mat-cell *matCellDef="let element">{{ element.qty }} {{ element.unit }}</td>
+        </ng-container>
+        <ng-container matColumnDef="value">
+          <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1">Est. value</th>
+          <td mat-cell *matCellDef="let element">{{ element.estimatedValue | paise }}</td>
+        </ng-container>
+        <tr mat-header-row *matHeaderRowDef="wastageColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: wastageColumns;"></tr>
+      </table>
+      <mat-paginator
+        [length]="total"
+        [pageSize]="pageSize"
+        [pageSizeOptions]="[10, 25, 50]"
+        (page)="onPageChange($event)">
+      </mat-paginator>
+    </div>
+
+    <!-- RECALLS ---------------------------------------------------------- -->
+    <div *ngIf="tab === 'recalls'" class="table-responsive">
+      <div class="m-b-16">
+        <mat-form-field appearance="outline">
+          <mat-label>Status</mat-label>
+          <mat-select [(ngModel)]="recallStatus" (selectionChange)="currentPage = 0; getRecalls()">
+            <mat-option value="">All</mat-option>
+            <mat-option value="open">Open</mat-option>
+            <mat-option value="notifying">Notifying</mat-option>
+            <mat-option value="closed">Closed</mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
+      <table mat-table [dataSource]="recalls" class="w-100">
+        <ng-container matColumnDef="recall">
+          <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1">Recall</th>
+          <td mat-cell *matCellDef="let element">
+            <div class="f-w-600">{{ element.recallNo }}</div>
+            <div class="m-t-4 f-s-12 text-muted">{{ element.batch?.batchNo }} · {{ element.outlet?.name }}</div>
+          </td>
+        </ng-container>
+        <ng-container matColumnDef="severity">
+          <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1">Severity</th>
+          <td mat-cell *matCellDef="let element">{{ element.severity }}</td>
+        </ng-container>
+        <ng-container matColumnDef="customers">
+          <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1">Notified</th>
+          <td mat-cell *matCellDef="let element">{{ element.notifiedCount }}</td>
+        </ng-container>
+        <ng-container matColumnDef="status">
+          <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1">Status</th>
+          <td mat-cell *matCellDef="let element">{{ element.status }}</td>
+        </ng-container>
+        <tr mat-header-row *matHeaderRowDef="recallColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: recallColumns;"></tr>
+      </table>
+      <mat-paginator
+        [length]="total"
+        [pageSize]="pageSize"
+        [pageSizeOptions]="[10, 25, 50]"
+        (page)="onPageChange($event)">
+      </mat-paginator>
+    </div>
+  </mat-card-content>
+</mat-card>

@@ -1,0 +1,62 @@
+[
+  {
+    "userName": "Emily Johnson",
+    "occupation": "Marketing Manager",
+    "stars": 5,
+    "review": "Localwala has made my life so much easier! The app is incredibly user-friendly, and I can always count on fast delivery and fresh food. I love discovering local restaurants I wouldn’t have found otherwise. Plus, the loyalty rewards are a great bonus — I’ve already saved quite a bit just by ordering regularly!"
+  },
+  {
+    "userName": "Michael Smith",
+    "occupation": "Software Developer",
+    "stars": 4,
+    "review": "I order through Localwala several times a week, and it’s consistently reliable. The real-time tracking works perfectly, and customer support is super quick to respond if there’s ever a question. It’s clear that Localwala actually cares about user experience, and that makes all the difference."
+  },
+  {
+    "userName": "Olivia Davis",
+    "occupation": "Graphic Designer",
+    "stars": 5,
+    "review": "I absolutely love using Localwala during my busy workdays. The delivery is always on time, and I appreciate how easy it is to reorder my favorite meals. The app layout is sleek and simple — even my parents started using it after I showed them how intuitive it is!"
+  },
+  {
+    "userName": "Daniel Martinez",
+    "occupation": "Restaurant Owner",
+    "stars": 5,
+    "review": "Partnering with Localwala has been fantastic for my restaurant. Orders come in smoothly, payments are on time, and the support team is always available. We’ve seen a huge boost in online sales since joining. It’s a platform that truly values its restaurant partners."
+  },
+  {
+    "userName": "Sophia Williams",
+    "occupation": "Delivery Partner",
+    "stars": 5,
+    "review": "Being a delivery driver with Localwala has been a great experience. The app gives me fair order distribution, accurate navigation, and fast payouts. I love the flexibility — I can choose my own hours and earn good money doing something I enjoy. Highly recommended for anyone looking for flexible work!"
+  },
+  {
+    "userName": "Jacob Brown",
+    "occupation": "Financial Analyst",
+    "stars": 5,
+    "review": "Localwala is the only food delivery service I trust. The restaurants are well-vetted, and the food always arrives fresh and hot. I also like how transparent the prices are — no hidden fees, no surprises. The service quality really sets it apart from other apps I’ve used."
+  },
+  {
+    "userName": "Ava Thompson",
+    "occupation": "Content Creator",
+    "stars": 4,
+    "review": "I’m always on the go, and Localwala makes it so convenient to grab something healthy and quick. The range of restaurant options is amazing, and the app’s promotions are a huge plus. It feels like they really understand what modern customers want from a food delivery service."
+  },
+  {
+    "userName": "Ethan Clark",
+    "occupation": "Logistics Coordinator",
+    "stars": 5,
+    "review": "I’ve been using Localwala for a few months now, and it’s been fantastic. The delivery times are accurate, and I’ve never had an issue with missing items. I appreciate how professional the delivery drivers are — always courteous and on time. Keep up the great work!"
+  },
+  {
+    "userName": "Isabella Lewis",
+    "occupation": "College Student",
+    "stars": 3,
+    "review": "As a college student living on campus, Localwala is a lifesaver. I use it almost every day for late-night meals or study breaks. The app is super simple to use, and I love the student discounts! It’s affordable, fast, and reliable — everything I need in a delivery service."
+  },
+  {
+    "userName": "William Anderson",
+    "occupation": "Entrepreneur",
+    "stars": 2,
+    "review": "I travel a lot for work, and Localwala never lets me down. It works seamlessly in every city I visit, with a great selection of restaurants. I also appreciate the professionalism of the delivery staff. It’s rare to find a food delivery platform this consistent — five stars all the way."
+  }
+]

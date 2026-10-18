@@ -1,0 +1,191 @@
+<mat-card class="cardWithShadow">
+  <mat-card-header class="m-b-16">
+    <mat-card-title>{{ util.appTranslate(listTitleKey) }}</mat-card-title>
+  </mat-card-header>
+
+  <mat-card-content>
+    <div class="tabs-bar mb-24">
+      <button
+        type="button"
+        (click)="onTab('stock')"
+        class="tab-button {{ tab === 'stock' ? 'active' : '' }}"
+      >
+        {{ util.appTranslate('stores_inventory_stock') }}
+      </button>
+      <button
+        type="button"
+        (click)="onTab('movements')"
+        class="tab-button {{ tab === 'movements' ? 'active' : '' }}"
+      >
+        {{ util.appTranslate('stores_inventory_movements') }}
+      </button>
+    </div>
+
+    @if (tab === 'stock') {
+      <div class="d-flex flex-wrap align-center justify-content-end mb-24 gap-12">
+        <mat-form-field appearance="outline" class="w-200">
+          <mat-label>{{ util.appTranslate('stores_inventory_filter') }}</mat-label>
+          <mat-select [(ngModel)]="statusFilter" (selectionChange)="onLowFilter($event.value)">
+            <mat-option value="">{{ util.appTranslate('common_all') }}</mat-option>
+            <mat-option value="low">{{ util.appTranslate('stores_inventory_low_only') }}</mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
+    }
+
+    <div class="table-responsive">
+      <table mat-table [dataSource]="list" class="w-100">
+        @if (tab === 'stock') {
+          <ng-container matColumnDef="outlet">
+            <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1">
+              {{ util.appTranslate('stores_outlet_name') }}
+            </th>
+            <td mat-cell *matCellDef="let element">
+              <div class="f-w-600">{{ element.outlet?.name || element.outlet?.outletCode || '—' }}</div>
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="product">
+            <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1">
+              {{ util.appTranslate('th_name') }}
+            </th>
+            <td mat-cell *matCellDef="let element">
+              <div class="f-w-600">{{ element.product?.name || '—' }}</div>
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="variant">
+            <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1">
+              {{ util.appTranslate('stores_inventory_variant') }}
+            </th>
+            <td mat-cell *matCellDef="let element">
+              <div class="f-s-14">{{ element.variant?.name || element.variant?.sku || '—' }}</div>
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="onHand">
+            <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1">
+              {{ util.appTranslate('stores_inventory_on_hand') }}
+            </th>
+            <td mat-cell *matCellDef="let element">
+              <span class="f-s-14 f-w-600">{{ element.onHand || 0 }}</span>
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="reserved">
+            <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1">
+              {{ util.appTranslate('stores_inventory_reserved') }}
+            </th>
+            <td mat-cell *matCellDef="let element">
+              <span class="f-s-14">{{ element.reserved || 0 }}</span>
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="available">
+            <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1">
+              {{ util.appTranslate('stores_inventory_available') }}
+            </th>
+            <td mat-cell *matCellDef="let element">
+              <span class="f-s-14 f-w-600">{{ element.availableQty || 0 }}</span>
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="lowStock">
+            <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1">
+              {{ util.appTranslate('stores_inventory_low') }}
+            </th>
+            <td mat-cell *matCellDef="let element">
+              @if ((element.availableQty || 0) <= (element.reorderLevel || 0)) {
+                <mat-icon class="text-warn">warning</mat-icon>
+              } @else {
+                <span class="f-s-14 text-muted">—</span>
+              }
+            </td>
+          </ng-container>
+        } @else {
+          <ng-container matColumnDef="product">
+            <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1">
+              {{ util.appTranslate('th_name') }}
+            </th>
+            <td mat-cell *matCellDef="let element">
+              <div class="f-w-600">{{ element.product?.name || '—' }}</div>
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="variant">
+            <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1">
+              {{ util.appTranslate('stores_inventory_variant') }}
+            </th>
+            <td mat-cell *matCellDef="let element">
+              <div class="f-s-14">{{ element.variant?.name || element.variant?.sku || '—' }}</div>
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="type">
+            <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1">
+              {{ util.appTranslate('stores_inventory_movement_type') }}
+            </th>
+            <td mat-cell *matCellDef="let element">
+              <span class="f-s-14">{{ element.type || '—' }}</span>
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="quantity">
+            <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1">
+              {{ util.appTranslate('stores_inventory_quantity') }}
+            </th>
+            <td mat-cell *matCellDef="let element">
+              <span class="f-s-14 f-w-600">{{ element.quantity || 0 }}</span>
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="before">
+            <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1">
+              {{ util.appTranslate('stores_inventory_before') }}
+            </th>
+            <td mat-cell *matCellDef="let element">
+              <span class="f-s-14">{{ element.before || 0 }}</span>
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="after">
+            <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1">
+              {{ util.appTranslate('stores_inventory_after') }}
+            </th>
+            <td mat-cell *matCellDef="let element">
+              <span class="f-s-14">{{ element.after || 0 }}</span>
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="createdAt">
+            <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1">
+              {{ util.appTranslate('stores_inventory_when') }}
+            </th>
+            <td mat-cell *matCellDef="let element">
+              <span class="f-s-14">{{ element.createdAt ? (element.createdAt | date: 'dd MMM yyyy HH:mm') : '—' }}</span>
+            </td>
+          </ng-container>
+        }
+
+        <tr mat-header-row *matHeaderRowDef="displayedColumn"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumn"></tr>
+      </table>
+
+      @if (isLoaded && !list.length) {
+        <div class="p-24 text-center text-muted">
+          {{ util.appTranslate('ts_no_records_found') }}
+        </div>
+      }
+    </div>
+
+    <mat-paginator
+      [hidden]="!isLoaded"
+      #paginator
+      [pageSizeOptions]="[5, 10, 20]"
+      [pageSize]="pageSize"
+      (page)="onPageChange($event)"
+      showFirstLastButtons
+    >
+    </mat-paginator>
+  </mat-card-content>
+</mat-card>

@@ -1,0 +1,98 @@
+<mat-card class="cardWithShadow">
+  <mat-card-header class="m-b-16">
+    <mat-card-title>{{ util.appTranslate(listTitleKey) }}</mat-card-title>
+  </mat-card-header>
+
+  <mat-card-content>
+    <div class="d-flex flex-wrap align-center justify-content-between mb-24 gap-12">
+      <div class="search-box">
+        <mat-form-field appearance="outline" class="w-100">
+          <mat-label>{{ util.appTranslate('th_search') }}</mat-label>
+          <input
+            matInput
+            [(ngModel)]="searchQuery"
+            (keyup.enter)="onSearch()"
+            [placeholder]="util.appTranslate('th_search')" />
+        </mat-form-field>
+      </div>
+    </div>
+
+    <div class="table-responsive">
+      <table mat-table [dataSource]="list" class="w-100">
+        <ng-container matColumnDef="outletCode">
+          <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1">
+            {{ util.appTranslate('stores_outlet_code') }}
+          </th>
+          <td mat-cell *matCellDef="let element">
+            <div class="f-w-600">{{ element.outletCode || '—' }}</div>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="name">
+          <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1">
+            {{ util.appTranslate('stores_outlet_name') }}
+          </th>
+          <td mat-cell *matCellDef="let element">
+            <div>{{ element.name || '—' }}</div>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="chain">
+          <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1">
+            {{ util.appTranslate('stores_chain_name') }}
+          </th>
+          <td mat-cell *matCellDef="let element">
+            <div>{{ element.chain?.name || '—' }}</div>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="status">
+          <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1">
+            {{ util.appTranslate('th_status') }}
+          </th>
+          <td mat-cell *matCellDef="let element">
+            <span class="status-chip" [ngClass]="element.status">{{ element.status }}</span>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="codEnabled">
+          <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1">
+            {{ util.appTranslate('stores_cod_enabled') }}
+          </th>
+          <td mat-cell *matCellDef="let element">
+            <mat-icon [class.text-success]="element.deliveryConfig?.codEnabled" [class.text-muted]="!element.deliveryConfig?.codEnabled">
+              {{ element.deliveryConfig?.codEnabled ? 'check_circle' : 'cancel' }}
+            </mat-icon>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="invoiceSeries">
+          <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1">
+            {{ util.appTranslate('stores_invoice_series') }}
+          </th>
+          <td mat-cell *matCellDef="let element">
+            <div>{{ element.invoiceSeries?.prefix || '—' }}/{{ element.invoiceSeries?.financialYear || '—' }}/{{ (element.invoiceSeries?.lastSequence || 0).toString().padStart(6, '0') }}</div>
+          </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="displayedColumn"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumn"></tr>
+      </table>
+
+      @if (isLoaded && !list.length) {
+        <div class="p-24 text-center text-muted">
+          {{ util.appTranslate('ts_no_records_found') }}
+        </div>
+      }
+
+      <mat-paginator
+        [hidden]="!isLoaded"
+        #paginator
+        [pageSizeOptions]="[5, 10, 20]"
+        [pageSize]="pageSize"
+        (page)="onPageChange($event)"
+        showFirstLastButtons>
+      </mat-paginator>
+    </div>
+  </mat-card-content>
+</mat-card>

@@ -1,0 +1,22 @@
+<h2 mat-dialog-title class="m-b-0">
+  {{ util.appTranslate('stores_driver_suspend_title') }}
+</h2>
+
+<mat-dialog-content>
+  <div class="f-s-14 m-b-16">
+    {{ data?.driver?.driverCode || '' }} · {{ data?.driver?.user?.name || '' }}
+  </div>
+  <mat-form-field appearance="outline" class="w-100">
+    <mat-label>{{ util.appTranslate('stores_reason') }}</mat-label>
+    <textarea matInput rows="3" [(ngModel)]="reason" placeholder="Why is this driver being suspended?"></textarea>
+  </mat-form-field>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end" class="gap-8">
+  <button mat-stroked-button (click)="dialogRef.close()" cdkFocusInitial>
+    {{ util.appTranslate('common_cancel') }}
+  </button>
+  <button mat-flat-button color="warn" (click)="confirm()">
+    {{ util.appTranslate('stores_driver_suspend') }}
+  </button>
+</mat-dialog-actions>

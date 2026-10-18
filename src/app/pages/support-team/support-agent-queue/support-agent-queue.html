@@ -1,0 +1,251 @@
+<mat-card class="cardWithShadow theme-card overflow-hidden">
+  <mat-card-header>
+    <mat-card-title class="m-b-0">
+      {{util.appTranslate('support_queue')}}
+    </mat-card-title>
+  </mat-card-header>
+
+  <mat-card-content class="b-t-0">
+    <mat-tab-group [selectedIndex]="view === 'mine' ? 0 : view === 'unassigned' ? 1 : view === 'breached' ? 2 : view === 'offered' ? 3 : 4"
+      (selectedIndexChange)="setView($event === 0 ? 'mine' : $event === 1 ? 'unassigned' : $event === 2 ? 'breached' : $event === 3 ? 'offered' : 'all')">
+
+      <mat-tab label="{{util.appTranslate('tab_mine')}}" />
+      <mat-tab label="{{util.appTranslate('tab_unassigned')}}" />
+      <mat-tab label="{{util.appTranslate('tab_breached')}}" />
+      <mat-tab label="{{util.appTranslate('tab_offered')}}" />
+      @if (isSupervisor()) {
+      <mat-tab label="{{util.appTranslate('tab_all')}}" />
+      }
+    </mat-tab-group>
+
+    <div class="d-flex align-items-center justify-content-between flex-wrap m-y-16">
+      <mat-form-field appearance="outline" class="m-0" style="min-width: 280px;">
+        <mat-label>{{util.appTranslate('search')}}</mat-label>
+        <input matInput type="text" [ngModel]="searchTerm" (ngModelChange)="onSearch($event)" />
+        <mat-icon matSuffix>search</mat-icon>
+      </mat-form-field>
+      <button mat-stroked-button color="primary" (click)="getList()">
+        <mat-icon>refresh</mat-icon>
+        {{util.appTranslate('refresh')}}
+      </button>
+    </div>
+
+    <div class="table-responsive">
+      @if (!isLoaded) {
+      <table mat-table [dataSource]="util.dummyArray" class="w-100">
+        @for (col of displayedColumn; track col) {
+        <ng-container [matColumnDef]="col">
+          <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1">{{ col }}</th>
+          <td mat-cell *matCellDef="let element">
+            <mat-progress-bar mode="indeterminate" color="light"></mat-progress-bar>
+          </td>
+        </ng-container>
+        }
+        <tr mat-header-row *matHeaderRowDef="displayedColumn"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumn"></tr>
+      </table>
+      }
+
+      @if (isLoaded) {
+      @if (isSupervisor() && selectedIds.size) {
+      <div class="d-flex align-items-center flex-wrap m-b-8 p-8 rounded bg-light-primary">
+        <span class="f-s-12 f-w-600 m-r-8">{{selectedIds.size}} {{util.appTranslate('bulk_selected')}}</span>
+        <button mat-stroked-button class="m-r-8" (click)="bulkResolve()">{{util.appTranslate('close_selected')}}</button>
+        <mat-form-field appearance="outline" style="max-width:200px;" class="m-r-8">
+          <mat-label>{{util.appTranslate('move_to')}}</mat-label>
+          <mat-select [(ngModel)]="bulkAssignTo" (openedChange)="$event && loadBulkAgents()">
+            @for (a of bulkAgents; track a.id) {
+            <mat-option [value]="a.id">{{a.name}} ({{a.openNow}}/3)</mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
+        <button mat-stroked-button class="m-r-8" [disabled]="!bulkAssignTo" (click)="bulkAssign()">{{util.appTranslate('move_btn')}}</button>
+        <button mat-button (click)="clearSelection()">{{util.appTranslate('clear_btn')}}</button>
+      </div>
+      }
+      <table mat-table [dataSource]="queue" class="w-100">
+        <ng-container matColumnDef="select">
+          <th mat-header-cell *matHeaderCellDef class="p-l-0" style="width:36px;"></th>
+          <td mat-cell *matCellDef="let element" class="p-l-0">
+            @if (isSupervisor()) {
+            <mat-checkbox [checked]="selectedIds.has(element.id || element._id)" (change)="toggleSelect(element.id || element._id, $event.checked)"></mat-checkbox>
+            }
+          </td>
+        </ng-container>
+        <ng-container matColumnDef="customer">
+          <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1 p-l-0 text-left">
+            {{util.appTranslate('th_customer')}}
+          </th>
+          <td mat-cell *matCellDef="let element" class="p-l-0">
+            <div class="d-flex align-items-center">
+              <img [src]="api.mediaUrl+element.userId?.image" alt="users" width="48" height="48" class="rounded"
+                onError="this.src='assets/images/onerror.png'" />
+              <div class="m-l-16">
+                <h6 class="f-s-14 mat-subtitle-1 f-w-600 m-b-0">
+                  {{element.userId?.firstName}} {{element.userId?.lastName}}
+                </h6>
+                <span class="mat-body-1 f-s-12 text-break">{{element.lastMessage || '-'}}</span>
+              </div>
+            </div>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="type">
+          <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1 text-left">
+            {{util.appTranslate('type')}}
+          </th>
+          <td mat-cell *matCellDef="let element" class="f-s-14 text-left">
+            <span class="bg-light-secondary text-secondary rounded f-w-600 p-6 p-y-4 f-s-12">
+              {{element.supportType}}
+            </span>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="handover">
+          <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1 text-center">
+            {{util.appTranslate('stage')}}
+          </th>
+          <td mat-cell *matCellDef="let element" class="f-s-14 text-center">
+            @switch (element.handoverState) {
+            @case ('bot') {
+            <span class="bg-light-info text-info rounded f-w-600 p-6 p-y-4 f-s-12">BOT</span>
+            }
+            @case ('queued') {
+            <span class="bg-light-warning text-warning rounded f-w-600 p-6 p-y-4 f-s-12">QUEUED</span>
+            }
+            @case ('assigned') {
+            <span class="bg-light-primary text-primary rounded f-w-600 p-6 p-y-4 f-s-12">ASSIGNED</span>
+            }
+            @case ('human') {
+            <span class="bg-light-success text-success rounded f-w-600 p-6 p-y-4 f-s-12">HUMAN</span>
+            }
+            @default {
+            <span class="bg-light-error text-error rounded f-w-600 p-6 p-y-4 f-s-12">
+              {{element.handoverState || '-'}}
+            </span>
+            }
+            }
+            @if (element.source === 'auto') {
+            <div class="m-t-4"><span class="bg-light-success text-success rounded f-w-600 p-6 p-y-4 f-s-11">{{util.appTranslate('source_auto')}}</span></div>
+            }
+            @if (element.source === 'manual') {
+            <div class="m-t-4"><span class="bg-light-secondary text-secondary rounded f-w-600 p-6 p-y-4 f-s-11">{{util.appTranslate('source_manual')}}</span></div>
+            }
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="priority">
+          <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1 text-center">
+            {{util.appTranslate('priority')}}
+          </th>
+          <td mat-cell *matCellDef="let element" class="f-s-14 text-center">
+            @switch (element.priority) {
+            @case ('urgent') {
+            <span class="bg-light-error text-error rounded f-w-600 p-6 p-y-4 f-s-12">URGENT</span>
+            }
+            @case ('high') {
+            <span class="bg-light-warning text-warning rounded f-w-600 p-6 p-y-4 f-s-12">HIGH</span>
+            }
+            @default {
+            <span class="bg-light-secondary text-secondary rounded f-w-600 p-6 p-y-4 f-s-12">
+              {{element.priority || 'medium'}}
+            </span>
+            }
+            }
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="sla">
+          <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1 text-center">
+            {{util.appTranslate('sla')}}
+          </th>
+          <td mat-cell *matCellDef="let element" class="f-s-14 text-center">
+            @if (element.slaDueAt) {
+            <span class="rounded f-w-600 p-6 p-y-4 f-s-12"
+              [ngClass]="isBreached(element.slaDueAt) ? 'bg-light-error text-error' : 'bg-light-success text-success'">
+              {{ slaLabel(element.slaDueAt) }}
+            </span>
+            } @else {
+            <span class="f-s-12">-</span>
+            }
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="firstResponse">
+          <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1 text-center">
+            {{util.appTranslate('first_response')}}
+          </th>
+          <td mat-cell *matCellDef="let element" class="f-s-14 text-center">
+            @if (element.firstResponseAt) {
+            <span class="rounded f-w-600 p-6 p-y-4 f-s-12 bg-light-success text-success">
+              {{ getDate(element.firstResponseAt) }}
+            </span>
+            } @else {
+            <span class="rounded f-w-600 p-6 p-y-4 f-s-12 bg-light-warning text-warning">
+              {{util.appTranslate('awaiting_response')}}
+            </span>
+            }
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="assignee">          <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1 text-left">
+            {{util.appTranslate('assigned_agent')}}
+          </th>
+          <td mat-cell *matCellDef="let element" class="f-s-14 text-left">
+            @if (element.assignedAgent) {
+            <div class="d-flex align-items-center">
+              <img [src]="api.mediaUrl+element.assignedAgent.image" alt="agent" class="rounded-circle" width="30"
+                height="30" onError="this.src='assets/images/onerror.png'" />
+              <span class="m-l-8 f-s-12">
+                {{element.assignedAgent.firstName}} {{element.assignedAgent.lastName}}
+              </span>
+            </div>
+            } @else {
+            <span class="bg-light-warning text-warning rounded f-w-600 p-6 p-y-4 f-s-12">UNASSIGNED</span>
+            }
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="time">
+          <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1">
+            {{util.appTranslate('th_time')}}
+          </th>
+          <td mat-cell *matCellDef="let element" class="f-s-14 text-center">
+            {{ getDate(element.updatedAt) }}
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="action" stickyEnd>
+          <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1 p-r-0 text-right" style="background: var(--mat-table-background-color, #fff); box-shadow: -4px 0 8px rgba(0,0,0,0.06);">
+            {{util.appTranslate('th_action')}}
+          </th>
+          <td mat-cell *matCellDef="let element" class="f-w-500 text-right p-r-0" style="background: var(--mat-table-background-color, #fff); box-shadow: -4px 0 8px rgba(0,0,0,0.06);">
+            @if (!element.assignedAgent) {
+            <a (click)="onAccept(element)" class="m-r-10 cursor-pointer text-primary"
+              [matTooltip]="util.appTranslate('accept_chat')">
+              <mat-icon>pan_tool</mat-icon>
+            </a>
+            }
+            @if (element.offeredTo) {
+            <span class="m-r-10 f-s-11 f-w-600 text-primary">{{util.appTranslate('offered_badge')}}</span>
+            }
+            <a (click)="onChat(element)" class="m-r-10 cursor-pointer text-secondary"
+              [matTooltip]="util.appTranslate('click_to_view')">
+              <mat-icon>chat</mat-icon>
+            </a>
+          </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="displayedColumn"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumn; trackBy: trackById"></tr>
+
+        <tr *matNoDataRow>
+          <td colspan="8" class="m-b-16 m-t-16 text-center">{{util.appTranslate('table_no_data_found')}}</td>
+        </tr>
+      </table>
+      }
+      <mat-paginator [hidden]="!isLoaded" #queuePaginator [pageSizeOptions]="[20, 50, 100]" [pageSize]="pageSize"
+        (page)="onPageChange($event)" showFirstLastButtons></mat-paginator>
+    </div>
+  </mat-card-content>
+</mat-card>

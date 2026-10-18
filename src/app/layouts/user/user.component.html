@@ -1,0 +1,39 @@
+<span [dir]="options.dir!">
+  <mat-sidenav-container class="mainWrapper" autosize autoFocus [ngClass]="{
+      'sidebarNav-mini':
+        options.sidenavCollapsed && options.navPos !== 'top' && !resView,
+      'sidebarNav-horizontal': true,
+      cardBorder: options.cardBorder
+    }">
+
+    @if (resView) {
+    <mat-sidenav #leftsidenav [mode]="'over'" [opened]="options.sidenavOpened && !isTablet"
+      (openedChange)="onSidenavOpenedChange($event)" (closedStart)="onSidenavClosedStart()" class="sidebarNav">
+      <app-user-sidebar> </app-user-sidebar>
+      <ng-scrollbar class="position-relative" style="height: 100%">
+        <mat-nav-list class="sidebar-list">
+          @for(item of navItems; track item) {
+          <app-nav-user-item [item]="item" (notify)="sidenav.toggle()">
+          </app-nav-user-item>
+          }
+        </mat-nav-list>
+      </ng-scrollbar>
+    </mat-sidenav>
+    }
+
+
+    <mat-sidenav-content class="contentWrapper" #content>
+      <app-user-horizontal-header (toggleMobileNav)="sidenav.toggle()"
+        (optionsChange)="receiveOptions($event)"></app-user-horizontal-header>
+      <main [ngClass]="{maxWidth: true, 'pageWrapper' : pageWrapperCondition() }">
+        <router-outlet></router-outlet>
+      </main>
+
+      <app-bottom-footer></app-bottom-footer>
+
+    </mat-sidenav-content>
+
+
+  </mat-sidenav-container>
+
+</span>

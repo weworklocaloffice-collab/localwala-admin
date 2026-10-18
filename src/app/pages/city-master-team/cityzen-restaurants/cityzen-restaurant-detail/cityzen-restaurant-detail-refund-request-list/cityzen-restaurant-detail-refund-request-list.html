@@ -1,0 +1,550 @@
+<h4 class="mat-headline-6 m-b-16 p-b-16 m-t-16 p-t-16">{{util.appTranslate('order_refund_request')}}</h4>
+
+<div class="table-responsive">
+  @if(!isLoadedOrders){
+  <table mat-table [dataSource]="util.dummyArray" class="w-100">
+    <ng-container matColumnDef="id">
+      <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1 p-l-0">
+        {{util.appTranslate('th_order_id')}}
+      </th>
+      <td mat-cell *matCellDef="let element" class="p-l-0">
+        <mat-progress-bar mode="indeterminate" color="light"></mat-progress-bar>
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="date">
+      <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1 p-l-0">
+        {{util.appTranslate('th_requested_date')}}
+      </th>
+      <td mat-cell *matCellDef="let element" class="f-s-14">
+        <mat-progress-bar mode="indeterminate" color="light"></mat-progress-bar>
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="user">
+      <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1">
+        {{util.appTranslate('th_customer')}}
+      </th>
+      <td mat-cell *matCellDef="let element">
+        <mat-progress-bar mode="indeterminate" color="light"></mat-progress-bar>
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="reason">
+      <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1">
+        {{util.appTranslate('th_reason')}}
+      </th>
+      <td mat-cell *matCellDef="let element">
+        <mat-progress-bar mode="indeterminate" color="light"></mat-progress-bar>
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="payment">
+      <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1">
+        {{util.appTranslate('th_payment')}}
+      </th>
+      <td mat-cell *matCellDef="let element">
+        <mat-progress-bar mode="indeterminate" color="light"></mat-progress-bar>
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="status">
+      <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1">
+        {{util.appTranslate('th_status')}}
+      </th>
+      <td mat-cell *matCellDef="let element">
+        <mat-progress-bar mode="indeterminate" color="light"></mat-progress-bar>
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="action">
+      <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1 p-r-0 text-right">
+        {{util.appTranslate('th_action')}}
+      </th>
+      <td mat-cell *matCellDef="let element" class="f-w-500 text-right p-r-0">
+        <mat-progress-bar mode="indeterminate" color="light"></mat-progress-bar>
+      </td>
+    </ng-container>
+
+    <tr mat-header-row *matHeaderRowDef="displayedOrderColumn"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedOrderColumn"></tr>
+
+  </table>
+  }
+
+  @if(isLoadedOrders){
+  <table mat-table [dataSource]="orderRefundList" class="w-100">
+    <ng-container matColumnDef="id">
+      <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1 p-l-0">
+        {{util.appTranslate('th_order_id')}}
+      </th>
+      <td mat-cell *matCellDef="let element" class="f-s-14 text-uppercase">
+        {{ util.refId(element.id) }}
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="date">
+      <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1 p-l-0">
+        {{util.appTranslate('th_requested_date')}}
+      </th>
+      <td mat-cell *matCellDef="let element" class="f-s-14">
+        {{ getDate(element.createdAt) }}
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="user">
+      <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1">
+        {{util.appTranslate('th_customer')}}
+      </th>
+      <td mat-cell *matCellDef="let element" class="f-s-14 cursor-pointer" (click)="onOrderUserInfo(element)">
+        <h6 class="mat-subtitle-1 f-s-14 f-w-600">
+          {{ element && element.userInfo && element.userInfo.firstName ? element.userInfo.firstName +' '+
+          element.userInfo.lastName : util.appTranslate('invalid_data') }}
+        </h6>
+        <span class="mat-body-1 f-s-12">
+          {{ element && element.userInfo && element.userInfo.contactNumber ? '+'+element.userInfo.countryCode +' '+
+          element.userInfo.contactNumber : util.appTranslate('invalid_data') }}
+        </span>
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="reason">
+      <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1">
+        {{util.appTranslate('th_reason')}}
+      </th>
+      <td mat-cell *matCellDef="let element" class="f-s-14">
+        <h6 class="mat-subtitle-1 f-s-14 f-w-600">
+          {{ element && element.reason && element.reason.displayName ? element.reason.displayName :
+          util.appTranslate('invalid_data')
+          }}
+        </h6>
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="payment">
+      <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1">
+        {{util.appTranslate('th_payment')}}
+      </th>
+      <td mat-cell *matCellDef="let element" class="f-s-14">
+        <h6 class="mat-subtitle-1 f-s-14 f-w-600">
+          {{ element && element.paymentInfo && element.paymentInfo.displayName ? element.paymentInfo.displayName :
+          util.appTranslate('invalid_data') }}
+        </h6>
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="status">
+      <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1">
+        {{util.appTranslate('th_status')}}
+      </th>
+      <td mat-cell *matCellDef="let element">
+        <span
+          class="bg-light-{{getOrderStatusColor(element.status)}} text-{{getOrderStatusColor(element.status)}} rounded f-w-600 p-6 p-y-4 f-s-12">
+          {{ util.appTranslate(element.status) }}
+        </span>
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="action">
+      <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1 p-r-0 text-right">
+        {{util.appTranslate('th_action')}}
+      </th>
+      <td mat-cell *matCellDef="let element" class="f-w-500 text-right p-r-0">
+        <a (click)="onOrderRequestDetail(element.id)" class="m-r-10 cursor-pointer text-primary"
+          [matTooltip]="util.appTranslate('click_to_open')">
+          <mat-icon>double_arrow</mat-icon>
+        </a>
+      </td>
+    </ng-container>
+
+    <tr mat-header-row *matHeaderRowDef="displayedOrderColumn"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedOrderColumn"></tr>
+
+    <tr *matNoDataRow>
+      <td colspan="7" class="m-b-16 m-t-16 text-center">{{util.appTranslate('table_no_data_found')}}</td>
+    </tr>
+
+  </table>
+  }
+
+  <mat-paginator [hidden]="!isLoadedOrders" #orderRefundPaginator [pageSizeOptions]="[5,10, 20]"
+    [pageSize]="pageSizeOrders" (page)="onOrderPageChange($event)" showFirstLastButtons></mat-paginator>
+</div>
+
+<h4 class="mat-headline-6 m-b-16 p-b-16 m-t-16 p-t-16">{{util.appTranslate('tiffin_subscription_refund_request')}}</h4>
+
+<div class="table-responsive">
+  @if(!isLoadedTiffin){
+  <table mat-table [dataSource]="util.dummyArray" class="w-100">
+    <ng-container matColumnDef="id">
+      <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1 p-l-0">
+        {{util.appTranslate('th_order_id')}}
+      </th>
+      <td mat-cell *matCellDef="let element" class="p-l-0">
+        <mat-progress-bar mode="indeterminate" color="light"></mat-progress-bar>
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="date">
+      <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1 p-l-0">
+        {{util.appTranslate('th_requested_date')}}
+      </th>
+      <td mat-cell *matCellDef="let element" class="f-s-14">
+        <mat-progress-bar mode="indeterminate" color="light"></mat-progress-bar>
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="subscription">
+      <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1 p-l-0">
+        {{util.appTranslate('package')}}
+      </th>
+      <td mat-cell *matCellDef="let element" class="f-s-14">
+        <mat-progress-bar mode="indeterminate" color="light"></mat-progress-bar>
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="reason">
+      <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1">
+        {{util.appTranslate('th_reason')}}
+      </th>
+      <td mat-cell *matCellDef="let element">
+        <mat-progress-bar mode="indeterminate" color="light"></mat-progress-bar>
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="user">
+      <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1">
+        {{util.appTranslate('th_customer')}}
+      </th>
+      <td mat-cell *matCellDef="let element">
+        <mat-progress-bar mode="indeterminate" color="light"></mat-progress-bar>
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="payment">
+      <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1">
+        {{util.appTranslate('th_payment')}}
+      </th>
+      <td mat-cell *matCellDef="let element">
+        <mat-progress-bar mode="indeterminate" color="light"></mat-progress-bar>
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="status">
+      <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1">
+        {{util.appTranslate('th_status')}}
+      </th>
+      <td mat-cell *matCellDef="let element">
+        <mat-progress-bar mode="indeterminate" color="light"></mat-progress-bar>
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="action">
+      <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1 p-r-0 text-right">
+        {{util.appTranslate('th_action')}}
+      </th>
+      <td mat-cell *matCellDef="let element" class="f-w-500 text-right p-r-0">
+        <mat-progress-bar mode="indeterminate" color="light"></mat-progress-bar>
+      </td>
+    </ng-container>
+
+    <tr mat-header-row *matHeaderRowDef="displayedTiffinColumn"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedTiffinColumn"></tr>
+
+  </table>
+  }
+
+  @if(isLoadedTiffin){
+  <table mat-table [dataSource]="tiffinRefundList" class="w-100">
+    <ng-container matColumnDef="id">
+      <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1 p-l-0">
+        {{util.appTranslate('th_order_id')}}
+      </th>
+      <td mat-cell *matCellDef="let element" class="f-s-14 text-uppercase">
+        {{ util.refId(element.id) }}
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="date">
+      <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1 p-l-0">
+        {{util.appTranslate('th_requested_date')}}
+      </th>
+      <td mat-cell *matCellDef="let element" class="f-s-14">
+        {{ getDate(element.createdAt) }}
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="subscription">
+      <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1 p-l-0">
+        {{util.appTranslate('package')}}
+      </th>
+      <td mat-cell *matCellDef="let element" class="f-s-14">
+        <div class="d-flex align-items-center">
+          <div class="m-l-0">
+            <h6 class="mat-subtitle-1 f-s-14 f-w-600 lh-sm">
+              {{ element && element.packageInfo && element.packageInfo.displayName ? element.packageInfo.displayName :
+              util.appTranslate('invalid_data') }}
+            </h6>
+            <span class="mat-body-1 f-s-12">
+              {{ element && element.packageInfo && element.packageInfo.orderTo ?
+              util.appTranslate(element.packageInfo.orderTo) :
+              util.appTranslate('invalid_data')
+              }} | {{ element && element.packageInfo && element.packageInfo.available ?
+              util.appTranslate(element.packageInfo.available) : util.appTranslate('invalid_data') }}
+            </span>
+          </div>
+        </div>
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="user">
+      <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1">
+        {{util.appTranslate('th_customer')}}
+      </th>
+      <td mat-cell *matCellDef="let element" class="f-s-14 cursor-pointer" (click)="onTiffinUserInfo(element)">
+        <h6 class="mat-subtitle-1 f-s-14 f-w-600">
+          {{ element && element.userInfo && element.userInfo.firstName ? element.userInfo.firstName +' '+
+          element.userInfo.lastName : util.appTranslate('invalid_data') }}
+        </h6>
+        <span class="mat-body-1 f-s-12">
+          {{ element && element.userInfo && element.userInfo.contactNumber ? '+'+element.userInfo.countryCode +' '+
+          element.userInfo.contactNumber : util.appTranslate('invalid_data') }}
+        </span>
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="reason">
+      <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1">
+        {{util.appTranslate('th_reason')}}
+      </th>
+      <td mat-cell *matCellDef="let element" class="f-s-14">
+        <h6 class="mat-subtitle-1 f-s-14 f-w-600">
+          {{ element && element.reason && element.reason.displayName ? element.reason.displayName :
+          util.appTranslate('invalid_data')
+          }}
+        </h6>
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="payment">
+      <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1">
+        {{util.appTranslate('th_payment')}}
+      </th>
+      <td mat-cell *matCellDef="let element" class="f-s-14">
+        <h6 class="mat-subtitle-1 f-s-14 f-w-600">
+          {{ element && element.paymentInfo && element.paymentInfo.displayName ? element.paymentInfo.displayName :
+          util.appTranslate('invalid_data') }}
+        </h6>
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="status">
+      <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1">
+        {{util.appTranslate('th_status')}}
+      </th>
+      <td mat-cell *matCellDef="let element">
+        <span
+          class="bg-light-{{getTiffinStatusColor(element.status)}} text-{{getTiffinStatusColor(element.status)}} rounded f-w-600 p-6 p-y-4 f-s-12">
+          {{ util.appTranslate(element.status) }}
+        </span>
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="action">
+      <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1 p-r-0 text-right">
+        {{util.appTranslate('th_action')}}
+      </th>
+      <td mat-cell *matCellDef="let element" class="f-w-500 text-right p-r-0">
+        <a (click)="onTiffinRequestDetail(element.id)" class="m-r-10 cursor-pointer text-primary"
+          [matTooltip]="util.appTranslate('click_to_open')">
+          <mat-icon>double_arrow</mat-icon>
+        </a>
+      </td>
+    </ng-container>
+
+    <tr mat-header-row *matHeaderRowDef="displayedTiffinColumn"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedTiffinColumn"></tr>
+
+    <tr *matNoDataRow>
+      <td colspan="7" class="m-b-16 m-t-16 text-center">{{util.appTranslate('table_no_data_found')}}</td>
+    </tr>
+
+  </table>
+  }
+
+  <mat-paginator [hidden]="!isLoadedTiffin" #tiffinRefundPaginator [pageSizeOptions]="[5,10, 20]"
+    [pageSize]="pageSizeTiffin" (page)="onTiffinPageChange($event)" showFirstLastButtons></mat-paginator>
+</div>
+
+<h4 class="mat-headline-6 m-b-16 p-b-16 m-t-16 p-t-16">{{util.appTranslate('dining_booking_refund_request')}}</h4>
+
+<div class="table-responsive">
+  @if(!isLoadedBooking){
+  <table mat-table [dataSource]="util.dummyArray" class="w-100">
+    <ng-container matColumnDef="id">
+      <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1 p-l-0">
+        {{util.appTranslate('th_order_id')}}
+      </th>
+      <td mat-cell *matCellDef="let element" class="p-l-0">
+        <mat-progress-bar mode="indeterminate" color="light"></mat-progress-bar>
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="date">
+      <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1 p-l-0">
+        {{util.appTranslate('th_requested_date')}}
+      </th>
+      <td mat-cell *matCellDef="let element" class="f-s-14">
+        <mat-progress-bar mode="indeterminate" color="light"></mat-progress-bar>
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="user">
+      <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1">
+        {{util.appTranslate('th_customer')}}
+      </th>
+      <td mat-cell *matCellDef="let element">
+        <mat-progress-bar mode="indeterminate" color="light"></mat-progress-bar>
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="reason">
+      <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1">
+        {{util.appTranslate('th_reason')}}
+      </th>
+      <td mat-cell *matCellDef="let element">
+        <mat-progress-bar mode="indeterminate" color="light"></mat-progress-bar>
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="payment">
+      <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1">
+        {{util.appTranslate('th_payment')}}
+      </th>
+      <td mat-cell *matCellDef="let element">
+        <mat-progress-bar mode="indeterminate" color="light"></mat-progress-bar>
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="status">
+      <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1">
+        {{util.appTranslate('th_status')}}
+      </th>
+      <td mat-cell *matCellDef="let element">
+        <mat-progress-bar mode="indeterminate" color="light"></mat-progress-bar>
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="action">
+      <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1 p-r-0 text-right">
+        {{util.appTranslate('th_action')}}
+      </th>
+      <td mat-cell *matCellDef="let element" class="f-w-500 text-right p-r-0">
+        <mat-progress-bar mode="indeterminate" color="light"></mat-progress-bar>
+      </td>
+    </ng-container>
+
+    <tr mat-header-row *matHeaderRowDef="displayedBookingColumn"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedBookingColumn"></tr>
+
+  </table>
+  }
+
+  @if(isLoadedBooking){
+  <table mat-table [dataSource]="bookingRefundList" class="w-100">
+    <ng-container matColumnDef="id">
+      <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1 p-l-0">
+        {{util.appTranslate('th_order_id')}}
+      </th>
+      <td mat-cell *matCellDef="let element" class="f-s-14 text-uppercase">
+        {{ util.refId(element.id) }}
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="date">
+      <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1 p-l-0">
+        {{util.appTranslate('th_requested_date')}}
+      </th>
+      <td mat-cell *matCellDef="let element" class="f-s-14">
+        {{ getDate(element.createdAt) }}
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="user">
+      <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1">
+        {{util.appTranslate('th_customer')}}
+      </th>
+      <td mat-cell *matCellDef="let element" class="f-s-14 cursor-pointer" (click)="onBookingUserInfo(element)">
+        <h6 class="mat-subtitle-1 f-s-14 f-w-600">
+          {{ element && element.userInfo && element.userInfo.firstName ? element.userInfo.firstName +' '+
+          element.userInfo.lastName : util.appTranslate('invalid_data') }}
+        </h6>
+        <span class="mat-body-1 f-s-12">
+          {{ element && element.userInfo && element.userInfo.contactNumber ? '+'+element.userInfo.countryCode +' '+
+          element.userInfo.contactNumber : util.appTranslate('invalid_data') }}
+        </span>
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="reason">
+      <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1">
+        {{util.appTranslate('th_reason')}}
+      </th>
+      <td mat-cell *matCellDef="let element" class="f-s-14">
+        <h6 class="mat-subtitle-1 f-s-14 f-w-600">
+          {{ element && element.reason && element.reason.displayName ? element.reason.displayName :
+          util.appTranslate('invalid_data')
+          }}
+        </h6>
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="payment">
+      <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1">
+        {{util.appTranslate('th_payment')}}
+      </th>
+      <td mat-cell *matCellDef="let element" class="f-s-14">
+        <h6 class="mat-subtitle-1 f-s-14 f-w-600">
+          {{ element && element.paymentInfo && element.paymentInfo.displayName ? element.paymentInfo.displayName :
+          util.appTranslate('invalid_data') }}
+        </h6>
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="status">
+      <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1">
+        {{util.appTranslate('th_status')}}
+      </th>
+      <td mat-cell *matCellDef="let element">
+        <span
+          class="bg-light-{{getBookingStatusColor(element.status)}} text-{{getBookingStatusColor(element.status)}} rounded f-w-600 p-6 p-y-4 f-s-12">
+          {{ util.appTranslate(element.status) }}
+        </span>
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="action">
+      <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1 p-r-0 text-right">
+        {{util.appTranslate('th_action')}}
+      </th>
+      <td mat-cell *matCellDef="let element" class="f-w-500 text-right p-r-0">
+        <a (click)="onBoookingRequestDetail(element.id)" class="m-r-10 cursor-pointer text-primary"
+          [matTooltip]="util.appTranslate('click_to_open')">
+          <mat-icon>double_arrow</mat-icon>
+        </a>
+      </td>
+    </ng-container>
+
+    <tr mat-header-row *matHeaderRowDef="displayedBookingColumn"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedBookingColumn"></tr>
+
+    <tr *matNoDataRow>
+      <td colspan="7" class="m-b-16 m-t-16 text-center">{{util.appTranslate('table_no_data_found')}}</td>
+    </tr>
+
+  </table>
+  }
+
+  <mat-paginator [hidden]="!isLoadedBooking" #bookingRefundPaginator [pageSizeOptions]="[5,10, 20]"
+    [pageSize]="pageSizeBooking" (page)="onBookingPageChange($event)" showFirstLastButtons></mat-paginator>
+</div>

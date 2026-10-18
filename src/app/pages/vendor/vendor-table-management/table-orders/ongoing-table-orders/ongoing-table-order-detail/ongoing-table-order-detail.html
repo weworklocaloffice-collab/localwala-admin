@@ -1,0 +1,312 @@
+<div class="row">
+  <div class="col-lg-7 col-sm-12 p-b-16">
+    <mat-card class="cardWithShadow theme-card">
+      <mat-card-header>
+        <mat-card-title class="m-b-0">
+          {{util.appTranslate('order_items')}}
+        </mat-card-title>
+      </mat-card-header>
+
+      <mat-card-content class="b-t-0">
+
+        @if (items.length) {
+        <div class="table-responsive">
+          <table mat-table [dataSource]="items" class="w-100">
+            <ng-container matColumnDef="name">
+              <th mat-header-cell *matHeaderCellDef class="f-w-600 mat-subtitle-1 f-s-14">
+                {{util.appTranslate('item')}}
+              </th>
+              <td mat-cell *matCellDef="let element">
+                <div class="d-flex align-items-center">
+                  <div class="m-l-0">
+                    <h6 class="mat-subtitle-1 f-s-14 f-w-600 lh-sm">
+                      {{ util.trimText(element.foodInfo.displayName, 30) }}
+                    </h6>
+                    <p class="mat-body-1 f-s-12">
+                      {{ util.trimText(element.optionName, 60) }}
+                    </p>
+                  </div>
+                </div>
+              </td>
+            </ng-container>
+
+            <ng-container matColumnDef="quantity">
+              <th mat-header-cell *matHeaderCellDef class="f-w-600 mat-subtitle-1 f-s-14">
+                {{util.appTranslate('th_quantity')}}
+              </th>
+              <td mat-cell *matCellDef="let element">
+                <p class="f-s-16 f-w-500 m-l-24 m-r-24">{{element.quantity}}</p>
+              </td>
+            </ng-container>
+
+            <ng-container matColumnDef="totalPrice">
+              <th mat-header-cell *matHeaderCellDef class="f-w-600 mat-subtitle-1 f-s-14">
+                {{util.appTranslate('th_price')}}
+              </th>
+              <td mat-cell *matCellDef="let element">
+                <span class="mat-subtitle-1 f-s-14 f-w-600 m-l-4">
+                  {{util.priceFormat(element.itemPrice)}}
+                </span>
+              </td>
+            </ng-container>
+
+            <ng-container matColumnDef="action">
+              <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1 p-l-0">
+                {{util.appTranslate('th_action')}}
+              </th>
+              <td mat-cell *matCellDef="let element" class="p-l-0">
+                <a (click)="onDeleteItem(element)" class="cursor-pointer text-error"
+                  [matTooltip]="util.appTranslate('click_to_delete')">
+                  <mat-icon>delete</mat-icon>
+                </a>
+              </td>
+            </ng-container>
+
+            <tr mat-header-row *matHeaderRowDef="cartItemColumn"></tr>
+            <tr mat-row *matRowDef="let row; columns: cartItemColumn"></tr>
+          </table>
+        </div>
+        }
+
+      </mat-card-content>
+    </mat-card>
+  </div>
+  <div class="col-lg-5 col-sm-12 p-b-16">
+    <mat-card class="cardWithShadow theme-card">
+      <mat-card-header>
+        <mat-card-title class="m-b-0">
+          {{util.appTranslate('billing_information')}}
+        </mat-card-title>
+      </mat-card-header>
+
+      <mat-card-content class="b-t-0">
+
+
+        <div class="row m-t-10">
+          <div class="col-lg-6 col-sm-12 p-b-16">
+            <mat-form-field appearance="outline" class="w-100" color="primary">
+              <mat-label>{{util.appTranslate('th_discount')}}</mat-label>
+              <input matInput type="number" [(ngModel)]="usedDiscountPrice"
+                (keyup)="onDiscountTypeChangeEvent($event)" />
+            </mat-form-field>
+          </div>
+
+          <div class="col-lg-6 col-sm-12 p-b-16">
+            <mat-form-field appearance="outline" class="w-100">
+              <mat-label>{{util.appTranslate('discount_type')}}</mat-label>
+              <mat-select (selectionChange)="onDiscountChangeEvent($event)" [(ngModel)]="discountType">
+                <mat-option value="per">{{util.appTranslate('percentage')}}</mat-option>
+                <mat-option value="amount">{{util.appTranslate('amount')}}</mat-option>
+              </mat-select>
+            </mat-form-field>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col-lg-12 col-sm-12 p-b-16">
+            <mat-form-field appearance="outline" class="w-100">
+              <mat-label>{{util.appTranslate('payment_mode')}}</mat-label>
+              <mat-select [(ngModel)]="paymentMode">
+                <mat-option value="online">{{util.appTranslate('online_payment')}}</mat-option>
+                <mat-option value="offline">{{util.appTranslate('cash_payment')}}</mat-option>
+              </mat-select>
+            </mat-form-field>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col-lg-12 col-sm-12 p-b-16">
+            <mat-form-field appearance="outline" class="w-100">
+              <mat-label>{{util.appTranslate('customer_type')}}</mat-label>
+              <mat-select [(ngModel)]="customerType" (selectionChange)="onCustomerChangeEvent($event)">
+                <mat-option value="guest">{{util.appTranslate('dd_guest_customer')}}</mat-option>
+                <mat-option value="regular">{{util.appTranslate('dd_regular_customer')}}</mat-option>
+              </mat-select>
+            </mat-form-field>
+          </div>
+        </div>
+
+        <form name="eventForm" [formGroup]="customerForm" class="event-form" id="topContent">
+          @if (customerType == 'regular') {
+          <div class="row">
+            <div class="col-lg-12 col-sm-12">
+              <mat-form-field appearance="outline" class="w-100" color="primary">
+                <mat-label>{{util.appTranslate('customer_name')}}</mat-label>
+                <input matInput formControlName="customerName" type="text" />
+                @if (haveSubmitClicked == true && f['customerName'].invalid) {
+                <mat-hint class="m-b-16 error-msg">
+                  @if (f['customerName'].errors && f['customerName'].errors['required']) {
+                  <div class="text-error">
+                    {{util.appTranslate('form_required')}}
+                  </div>
+                  }
+                </mat-hint>
+                }
+              </mat-form-field>
+            </div>
+
+            <div class="col-lg-12 col-sm-12">
+              <div class="row">
+                <div class="col-lg-3 col-sm-12 p-b-16">
+                  <mat-form-field class="w-100" appearance="outline">
+                    <mat-label>{{util.appTranslate('country_lbl')}}</mat-label>
+                    <input type="text" [placeholder]="util.appTranslate('choose_country')" matInput
+                      name="customerCountryCode" [formControl]="countryCodeCtrl" [matAutocomplete]="autoCountryCode" />
+                    <mat-autocomplete autoActiveFirstOption #autoCountryCode="matAutocomplete"
+                      (optionSelected)="onCountryCodeSelect($event)">
+                      @for (item of countryCodes | async; track $index) {
+                      <mat-option [value]="item.flag +' '+ item.dial_code +' '+ item.name">
+                        {{item.flag +' '+ item.dial_code + ' '+ item.name }}
+                      </mat-option>
+                      }
+                    </mat-autocomplete>
+                    @if (haveSubmitClicked == true && f['customerCountryCode'].invalid) {
+                    <mat-hint class="m-b-16 error-msg">
+                      @if (f['customerCountryCode'].errors && f['customerCountryCode'].errors['required']) {
+                      <div class="text-error">
+                        {{util.appTranslate('form_required')}}
+                      </div>
+                      }
+                    </mat-hint>
+                    }
+                  </mat-form-field>
+                </div>
+                <div class="col-lg-9 col-sm-12 p-b-16">
+                  <mat-form-field appearance="outline" class="w-100" color="primary">
+                    <mat-label>{{util.appTranslate('mobile_number')}}</mat-label>
+                    <input matInput formControlName="customerContact" type="number" />
+                    @if (haveSubmitClicked == true && f['customerContact'].invalid) {
+                    <mat-hint class="m-b-16 error-msg">
+                      @if (f['customerContact'].errors && f['customerContact'].errors['required']) {
+                      <div class="text-error">
+                        {{util.appTranslate('form_required')}}
+                      </div>
+                      }
+                    </mat-hint>
+                    }
+                  </mat-form-field>
+                </div>
+              </div>
+            </div>
+
+          </div>
+          }
+        </form>
+
+        <div class="d-flex align-items-center justify-content-between w-100 m-8">
+          <p class="mat-subtitle-1 f-s-14">{{util.appTranslate('th_item_total')}}</p>
+          <span class="mat-subtitle-1 f-s-14">
+            {{util.priceFormat(realTotal)}}
+          </span>
+        </div>
+
+        @if (itemDiscount > 0) {
+        <div class="d-flex align-items-center justify-content-between w-100 m-8">
+          <p class="mat-subtitle-1 f-s-14">{{util.appTranslate('th_item_discount')}}</p>
+          <span class="mat-subtitle-1 f-s-14">
+            (-) {{util.priceFormat(itemDiscount)}}
+          </span>
+        </div>
+        }
+
+        <div class="d-flex align-items-center justify-content-between w-100 m-8">
+          <p class="mat-subtitle-1 f-s-14">{{util.appTranslate('th_sub_total')}}</p>
+          <span class="mat-subtitle-1 f-s-14">
+            (+) {{util.priceFormat(itemTotal)}}
+          </span>
+        </div>
+
+        <div class="d-flex align-items-center justify-content-between w-100 m-8">
+          <p class="mat-subtitle-1 f-s-14">{{util.appTranslate('th_food_service_charge')}} ({{foodTaxName}})</p>
+          <div>
+            <span class="mat-subtitle-1 f-s-14">
+              (+) {{util.priceFormat(foodServiceCharge)}}
+            </span>
+            <span class="bg-light rounded f-w-500 p-6 p-y-4 f-s-12 cursor-pointer m-l-8"
+              (click)="removePriceEvent('foodServiceCharge')">
+              <ng-icon name="tablerTrash" class="icon-12 text-error"></ng-icon>
+            </span>
+          </div>
+        </div>
+
+        <div class="d-flex align-items-center justify-content-between w-100 m-8">
+          <p class="mat-subtitle-1 f-s-14">{{util.appTranslate('service_charge')}} ({{additionalServiceName}})</p>
+          <div>
+            <span class="mat-subtitle-1 f-s-14">
+              (+) {{util.priceFormat(serviceCharge)}}
+            </span>
+            <span class="bg-light rounded f-w-500 p-6 p-y-4 f-s-12 cursor-pointer m-l-8"
+              (click)="removePriceEvent('serviceCharge')">
+              <ng-icon name="tablerTrash" class="icon-12 text-error"></ng-icon>
+            </span>
+          </div>
+        </div>
+
+        <div class="d-flex align-items-center justify-content-between w-100 m-8">
+          <p class="mat-subtitle-1 f-s-14">{{util.appTranslate('packaging_charge')}}</p>
+          <div>
+            <span class="mat-subtitle-1 f-s-14">
+              (+) {{util.priceFormat(packagingCharges)}}
+            </span>
+            <span class="bg-light rounded f-w-500 p-6 p-y-4 f-s-12 cursor-pointer m-l-8"
+              (click)="removePriceEvent('packageCharge')">
+              <ng-icon name="tablerTrash" class="icon-12 text-error"></ng-icon>
+            </span>
+          </div>
+        </div>
+
+        <div class="d-flex align-items-center justify-content-between w-100 m-8">
+          <p class="mat-subtitle-1 f-s-14">{{util.appTranslate('packaging_charge_tax')}}</p>
+          <div>
+            <span class="mat-subtitle-1 f-s-14">
+              (+) {{util.priceFormat(packagingChargesTax)}}
+            </span>
+            <span class="bg-light rounded f-w-500 p-6 p-y-4 f-s-12 cursor-pointer m-l-8"
+              (click)="removePriceEvent('packageChargeTax')">
+              <ng-icon name="tablerTrash" class="icon-12 text-error"></ng-icon>
+            </span>
+          </div>
+        </div>
+
+        @if (discountAmount > 0) {
+        <div class="d-flex align-items-center justify-content-between w-100 m-8">
+          <p class="mat-subtitle-1 f-s-14">{{util.appTranslate('th_discount')}}</p>
+          <div>
+            <span class="mat-subtitle-1 f-s-14">
+              (-) {{util.priceFormat(discountAmount)}}
+            </span>
+            <span class="bg-light rounded f-w-500 p-6 p-y-4 f-s-12 cursor-pointer m-l-8"
+              (click)="removePriceEvent('discount')">
+              <ng-icon name="tablerTrash" class="icon-12 text-error"></ng-icon>
+            </span>
+          </div>
+        </div>
+        }
+
+        <div class="position-relative m-t-20 m-b-20">
+          <mat-divider></mat-divider>
+        </div>
+
+        <div class="d-flex align-items-center justify-content-between w-100 m-8">
+          <p class="mat-subtitle-1 f-s-14 f-w-600">{{util.appTranslate('th_grand_total')}}</p>
+          <span class="mat-subtitle-1 f-s-14 f-w-600">
+            {{util.priceFormat(grandTotal)}}
+          </span>
+        </div>
+
+        <div class="position-relative m-t-20 m-b-20">
+          <mat-divider></mat-divider>
+        </div>
+
+        <div class="row">
+          <div class="col-lg-6 col-sm-12 p-b-16">
+            <button mat-flat-button color="primary" type="button" (click)="onSubmit()" class="w-100">
+              {{util.appTranslate('submit_btn')}}
+            </button>
+          </div>
+        </div>
+
+      </mat-card-content>
+    </mat-card>
+  </div>
+</div>

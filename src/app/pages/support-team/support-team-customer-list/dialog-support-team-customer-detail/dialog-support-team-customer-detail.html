@@ -1,0 +1,24 @@
+<h2 mat-dialog-title class="dialog-title">
+  <span class="title-text">{{util.appTranslate('customer_detail')}}</span>
+  <button mat-icon-button mat-dialog-close class="close-btn">
+    <mat-icon>close</mat-icon>
+  </button>
+</h2>
+<mat-dialog-content class="mat-typography m-t-12 p-t-12">
+  <div class="row">
+    <div class="col-lg-12 col-sm-12 col-md-12 p-b-4">
+      <h6 class="text-muted mat-body-1">{{util.appTranslate('th_name')}}:
+        <span class="f-s-14 f-w-600">{{name}}</span>
+      </h6>
+      <h6 class="text-muted mat-body-1">{{util.appTranslate('email_lbl')}}:
+        <a href="mailto:{{email}}" class="link">{{email}}</a>
+      </h6>
+      <h6 class="text-muted mat-body-1">{{util.appTranslate('contact_no')}}:
+        <a href="tel:{{mobile}}" class="link">{{mobile}}</a>
+      </h6>
+    </div>
+  </div>
+</mat-dialog-content>
+<mat-dialog-actions align="end">
+  <button mat-flat-button class="bg-secondary text-white" mat-dialog-close>{{util.appTranslate('close')}}</button>
+</mat-dialog-actions>

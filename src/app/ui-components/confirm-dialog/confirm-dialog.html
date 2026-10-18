@@ -1,0 +1,16 @@
+<h5 mat-dialog-title class="dialog-title">
+  <span class="title-text">{{ title }}</span>
+  <button mat-icon-button mat-dialog-close class="close-btn">
+    <mat-icon>close</mat-icon>
+  </button>
+</h5>
+<div mat-dialog-content class="mat-subtitle-2 lh-16" style="max-width: 300px">
+  {{ subTitle }}
+</div>
+<div mat-dialog-actions class="p-24 p-t-0">
+  <button mat-flat-button class="bg-secondary text-white" mat-dialog-close (click)="onActionButton('confirm')">
+    {{ okTitle }}
+  </button>
+  <button mat-flat-button mat-dialog-close cdkFocusInitial (click)="onActionButton('ts_cancel')">{{ closeTitle
+    }}</button>
+</div>

@@ -1,0 +1,177 @@
+<div class="row">
+  <div class="col-lg-8 col-sm-12 p-b-16">
+    <mat-card class="cardWithShadow theme-card">
+      <mat-card-header>
+        <mat-card-title class="m-b-0">{{util.appTranslate('withdrawal_detail')}}</mat-card-title>
+      </mat-card-header>
+
+      <mat-card-content class="b-t-0">
+        <div class="row m-b-5 p-b-10">
+          <div class="col-lg-12 col-sm-12 col-md-12">
+            <h6 class="text-muted mat-body-1 f-s-14 f-w-600">{{util.appTranslate('payout_method')}}</h6>
+          </div>
+        </div>
+
+        <div class="d-flex align-items-center m-b-5 p-b-10">
+          <img [src]="api.mediaUrl+withdrawalMethodImage" alt="cover" width="20" height="20" class="rounded-circle"
+            onError="this.src='assets/images/onerror.png'" />
+          <div class="m-l-16">
+            <h6 class="mat-subtitle-1 f-s-14 f-w-600">
+              {{ withdrawalMethodName }}
+            </h6>
+          </div>
+        </div>
+
+        <div class="row m-b-5 p-b-10">
+          <div class="col-lg-12 col-sm-12 col-md-12">
+            <h6 class="text-muted mat-body-1 f-s-14 f-w-600">{{util.appTranslate('th_payout_creds')}}</h6>
+          </div>
+        </div>
+
+        @if (status == 'created') {
+        <div class="row m-b-5 p-b-10">
+          @for (item of credential; track $index) {
+          <div class="col-lg-12 col-sm-12 col-md-12 p-b-4">
+            <h6 class="text-muted mat-body-1">{{item.fieldName}} : <span
+                class="f-s-14 f-w-600">{{item.fieldValue}}</span> </h6>
+          </div>
+          }
+        </div>
+        }
+
+        @if (status != 'created') {
+        <div class="row m-b-5 p-b-10">
+          @for (item of requestCredential; track $index) {
+          <div class="col-lg-12 col-sm-12 col-md-12 p-b-4">
+            <h6 class="text-muted mat-body-1">{{item.fieldName}} : <span
+                class="f-s-14 f-w-600">{{item.fieldValue}}</span> </h6>
+          </div>
+          }
+        </div>
+        }
+
+      </mat-card-content>
+    </mat-card>
+  </div>
+
+  <div class="col-lg-4 col-sm-12 p-b-16">
+    <mat-card class="cardWithShadow theme-card">
+      <mat-card-header>
+        <mat-card-title class="m-b-0">
+          {{util.appTranslate('request_detail')}}
+        </mat-card-title>
+      </mat-card-header>
+
+      <mat-card-content class="b-t-0">
+        <div class="row">
+          <div class="col-lg-12 col-sm-12 col-md-12">
+            <h6 class="text-muted mat-body-1">{{util.appTranslate('th_requested_date')}} : <span
+                class="f-s-14 f-w-600">{{createdAt}}</span> </h6>
+          </div>
+          <div class="col-lg-12 col-sm-12 col-md-12">
+            <h6 class="text-muted mat-body-1">{{util.appTranslate('requested_amount')}} : <span
+                class="f-s-14 f-w-600">{{util.priceFormat(amount)}}</span> </h6>
+          </div>
+          <div class="col-lg-12 col-sm-12 col-md-12">
+            <h6 class="text-muted mat-body-1">{{util.appTranslate('th_wallet_balance')}} : <span
+                class="f-s-14 f-w-600">{{util.priceFormat(walletBalance)}}</span> </h6>
+          </div>
+          @if (status != 'created') {
+          <div class="col-lg-12 col-sm-12 col-md-12">
+            <h6 class="text-muted mat-body-1">{{util.appTranslate('th_status')}} : <span class="f-s-14 f-w-600">
+                {{ util.appTranslate(status)}}</span>
+            </h6>
+          </div>
+          }
+          @if (status == 'rejected' && rejectedReason !='') {
+          <div class="col-lg-12 col-sm-12 col-md-12">
+            <h6 class="text-muted mat-body-1">{{util.appTranslate('th_reason')}} : <span
+                class="f-s-14 f-w-600">{{rejectedReason}}</span> </h6>
+          </div>
+          }
+        </div>
+      </mat-card-content>
+
+      @if (status == 'created') {
+      <mat-card-actions class="b-t-1">
+        <button mat-flat-button class="w-100 bg-secondary text-white" extended (click)="onDeclineRequest()">
+          <div class="d-flex align-items-center">
+            <ng-icon name="tablerX" class="icon-15 m-r-4"></ng-icon>
+            <span>{{util.appTranslate('decline')}}</span>
+          </div>
+        </button>
+        <button mat-flat-button color="primary" class="m-l-8 w-100" extended (click)="onApproveRequest()">
+          <div class="d-flex align-items-center">
+            <ng-icon name="tablerBrandMastercard" class="icon-15 m-r-4"></ng-icon>
+            <span>{{util.appTranslate('approve')}}</span>
+          </div>
+        </button>
+      </mat-card-actions>
+      }
+    </mat-card>
+
+    @if (from == 'restaurant') {
+    <mat-card class="cardWithShadow theme-card">
+      <mat-card-header>
+        <mat-card-title class="m-b-0">
+          {{util.appTranslate('restaurant_details')}}
+        </mat-card-title>
+      </mat-card-header>
+
+      <mat-card-content class="b-t-1 text-center p-24">
+        <img [src]="api.mediaUrl+restaurantLogo" class="rectangle-image border p-5" width="90" height="90"
+          onError="this.src='assets/images/onerror.png'" />
+        <h4 class="m-t-16 m-b-0 text-center">
+          {{restaurantName}} ({{restaurantOwnerName}})
+        </h4>
+        <span class="f-s-12">{{ restaurantOwnerEmail }}</span>
+        <div class="m-t-10">
+          <span class="f-s-14">
+            {{util.appTranslate('mobile_number')}} {{ restaurantOwnerMobile }}
+          </span>
+        </div>
+        <div class="m-t-10">
+          <span class="f-s-14">
+            {{util.appTranslate('address')}} : {{restaurantAddress}}
+          </span>
+        </div>
+        <div class="m-t-10">
+          <span class="f-s-14">
+            {{util.appTranslate('type')}} : {{restaurantRole}}
+          </span>
+        </div>
+      </mat-card-content>
+    </mat-card>
+    }
+
+    @if (from == 'deliveryman') {
+    <mat-card class="cardWithShadow theme-card">
+      <mat-card-header>
+        <mat-card-title class="m-b-0">
+          {{util.appTranslate('deliveryman_details')}}
+        </mat-card-title>
+      </mat-card-header>
+
+      <mat-card-content class="b-t-1 text-center p-24">
+        <img [src]="api.mediaUrl+deliverymanImage" class="rectangle-image border p-5" width="90" height="90"
+          onError="this.src='assets/images/onerror.png'" />
+        <h4 class="m-t-16 m-b-0 text-center">
+          {{deliverymanName}}
+        </h4>
+        <span class="f-s-12">{{ delivermanEmail }}</span>
+        <div class="m-t-10">
+          <span class="f-s-14">
+            {{util.appTranslate('mobile_number')}} {{ deliverymanMobile }}
+          </span>
+        </div>
+        <div class="m-t-10">
+          <span class="f-s-14">
+            {{util.appTranslate('type')}} : {{deliverymanRole}}
+          </span>
+        </div>
+      </mat-card-content>
+    </mat-card>
+    }
+
+  </div>
+</div>

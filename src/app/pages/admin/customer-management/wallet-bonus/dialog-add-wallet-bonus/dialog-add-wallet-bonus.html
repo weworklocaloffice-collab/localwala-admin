@@ -1,0 +1,189 @@
+<h2 mat-dialog-title class="dialog-title">
+  <span class="title-text">
+    {{ action == 'create' ? util.appTranslate('add_bonus') : util.appTranslate('update_bonus') }}
+  </span>
+  <button mat-icon-button mat-dialog-close class="close-btn">
+    <mat-icon>close</mat-icon>
+  </button>
+</h2>
+<form name="eventForm" [formGroup]="bonusForm" class="event-form" (ngSubmit)="onSubmit()">
+  <mat-dialog-content class="mat-typography">
+    <div class="row">
+      <div class="col-12 text-center m-b-16 p-b-24 d-flex flex-column justify-content-center align-items-center">
+        <img [src]="api.mediaUrl+f['image'].value" class="custom-image-upload border p-5 m-b-16" width="100"
+          height="100" onError="this.src='assets/images/placeholder.png'" (click)="onImagePicker()"
+          [ngStyle]="{'border': isFormSubmit == true &&  f['image'].invalid ? '2px dashed red' : '2px dashed #e5e5e5'}" />
+        <span [ngClass]="isFormSubmit == true &&  f['image'].invalid ? 'f-s-12 text-error' :'f-s-12' "
+          [matTooltip]="util.appTranslate('upload_image_ratio_1_o_1')">{{util.appTranslate('image_ratio_1_o_1')}}</span>
+      </div>
+
+      <div class="col-12">
+        <mat-form-field appearance="outline" class="w-100" color="primary">
+          <mat-label>{{util.appTranslate('th_name')}}</mat-label>
+          <input matInput formControlName="name" type="text" />
+          @if(isFormSubmit == true && f['name'].invalid){
+          <mat-hint class="m-b-16 error-msg">
+            @if(f['name'].errors && f['name'].errors['required']){
+            <div class="text-error">
+              {{util.appTranslate('form_required')}}
+            </div>
+            }
+          </mat-hint>
+          }
+        </mat-form-field>
+      </div>
+
+      <div class="col-12">
+        <mat-form-field appearance="outline" class="w-100" color="primary">
+          <mat-label>{{util.appTranslate('short_description')}}</mat-label>
+          <textarea matInput formControlName="shortDescription" type="text" row="2"></textarea>
+          @if(isFormSubmit == true && f['shortDescription'].invalid){
+          <mat-hint class="m-b-16 error-msg">
+            @if(f['shortDescription'].errors && f['shortDescription'].errors['required']){
+            <div class="text-error">
+              {{util.appTranslate('form_required')}}
+            </div>
+            }
+          </mat-hint>
+          }
+        </mat-form-field>
+      </div>
+
+      <div class="col-lg-6 col-sm-12">
+        <mat-form-field appearance="outline" class="w-100">
+          <mat-label>{{util.appTranslate('bonus_type')}}</mat-label>
+          <mat-select formControlName="bonusType" (selectionChange)="discountChanged($event)">
+            <mat-option value="amount">{{util.appTranslate('amount')}}</mat-option>
+            <mat-option value="percentage">{{util.appTranslate('percentage')}}</mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
+
+      <div class="col-lg-6 col-sm-12">
+        <mat-form-field appearance="outline" class="w-100" color="primary">
+          <mat-label>{{util.appTranslate('min_bonus_amount')}}</mat-label>
+          <input matInput formControlName="bonusAmount" type="number" />
+          @if(isFormSubmit == true && f['bonusAmount'].invalid){
+          <mat-hint class="m-b-16 error-msg">
+            @if(f['bonusAmount'].errors && f['bonusAmount'].errors['required']){
+            <div class="text-error">
+              {{util.appTranslate('form_required')}}
+            </div>
+            }
+          </mat-hint>
+          }
+        </mat-form-field>
+      </div>
+
+      <div class="col-lg-6 col-sm-12">
+        <mat-form-field appearance="outline" class="w-100" color="primary">
+          <mat-label>{{util.appTranslate('max_bonus_amount')}}</mat-label>
+          <input matInput formControlName="maxBonusAmount" type="number" />
+          @if(isFormSubmit == true && f['maxBonusAmount'].invalid){
+          <mat-hint class="m-b-16 error-msg">
+            @if(f['maxBonusAmount'].errors && f['maxBonusAmount'].errors['required']){
+            <div class="text-error">
+              {{util.appTranslate('form_required')}}
+            </div>
+            }
+          </mat-hint>
+          }
+        </mat-form-field>
+      </div>
+
+      <div class="col-lg-6 col-sm-12">
+        <mat-form-field appearance="outline" class="w-100" color="primary">
+          <mat-label>{{util.appTranslate('min_wallet_amount')}}</mat-label>
+          <input matInput formControlName="minWalletAmount" type="number" />
+          @if(isFormSubmit == true && f['minWalletAmount'].invalid){
+          <mat-hint class="m-b-16 error-msg">
+            @if(f['minWalletAmount'].errors && f['minWalletAmount'].errors['required']){
+            <div class="text-error">
+              {{util.appTranslate('form_required')}}
+            </div>
+            }
+          </mat-hint>
+          }
+        </mat-form-field>
+      </div>
+
+      <div class="col-lg-6 col-sm-12">
+        <mat-form-field appearance="outline" class="w-100" color="primary">
+          <mat-label>{{util.appTranslate('th_start_date')}}</mat-label>
+          <input matInput formControlName="start" type="date" />
+          @if(isFormSubmit == true && f['start'].invalid){
+          <mat-hint class="m-b-16 error-msg">
+            @if(f['start'].errors && f['start'].errors['required']){
+            <div class="text-error">
+              {{util.appTranslate('form_required')}}
+            </div>
+            }
+          </mat-hint>
+          }
+        </mat-form-field>
+      </div>
+
+      <div class="col-lg-6 col-sm-12">
+        <mat-form-field appearance="outline" class="w-100" color="primary">
+          <mat-label>{{util.appTranslate('expire_date')}}</mat-label>
+          <input matInput formControlName="expires" type="date" />
+          @if(isFormSubmit == true && f['expires'].invalid){
+          <mat-hint class="m-b-16 error-msg">
+            @if(f['expires'].errors && f['expires'].errors['required']){
+            <div class="text-error">
+              {{util.appTranslate('form_required')}}
+            </div>
+            }
+          </mat-hint>
+          }
+        </mat-form-field>
+      </div>
+
+      <div class="col-12 m-b-16 p-b-16">
+        <mat-tab-group mat-stretch-tabs="false" mat-align-tabs="start">
+          @for (item of languages; track $index) {
+          <mat-tab [label]="item.nativeName">
+            <div class="mat-body-1 px-16 m-t-12">
+              <mat-form-field appearance="outline" class="w-100" color="primary">
+                <input matInput type="text" placeholder="{{util.appTranslate('th_name')}} ({{item.nativeName}})"
+                  [(ngModel)]="item.title" [ngModelOptions]="{standalone: true}" />
+              </mat-form-field>
+
+              <mat-form-field appearance="outline" class="w-100" color="primary">
+                <textarea matInput type="text"
+                  placeholder="{{util.appTranslate('short_description')}} ({{item.nativeName}})"
+                  [(ngModel)]="item.shortDescription" [ngModelOptions]="{standalone: true}" row="2"> </textarea>
+              </mat-form-field>
+
+            </div>
+          </mat-tab>
+          }
+        </mat-tab-group>
+      </div>
+    </div>
+  </mat-dialog-content>
+
+  <mat-dialog-actions align="end">
+    @if (action == 'create') {
+    <button mat-flat-button color="primary" type="submit" [disabled]="isSubmit == true" cdkFocusInitial>
+      @if (isSubmit == true) {
+      <mat-icon>
+        <mat-spinner diameter="15"></mat-spinner>
+      </mat-icon>
+      }
+      {{util.appTranslate('save_btn')}}
+    </button>
+    }
+
+    @if (action == 'edit') {
+    <button mat-flat-button color="primary" type="submit" [disabled]="isSubmit == true" cdkFocusInitial>
+      @if (isSubmit == true) {
+      <mat-icon>
+        <mat-spinner diameter="15"></mat-spinner>
+      </mat-icon>
+      }
+      {{util.appTranslate('update_btn')}}
+    </button>
+    }
+  </mat-dialog-actions>
+</form>

@@ -1,0 +1,34 @@
+<mat-card class="cardWithShadow theme-card">
+  <mat-card-header>
+    <mat-card-title class="m-b-0">
+      {{util.appTranslate('table_orders')}}
+    </mat-card-title>
+  </mat-card-header>
+
+  <mat-card-content class="b-t-0">
+    <mat-tab-group mat-stretch-tabs="false" [selectedIndex]="tabIndex" mat-align-tabs="start"
+      (selectedTabChange)="tabChanged($event)">
+
+      <mat-tab>
+        <ng-template matTabLabel>
+          <span>{{util.appTranslate('ongoing_orders')}}</span>
+        </ng-template>
+      </mat-tab>
+
+      <mat-tab>
+        <ng-template matTabLabel>
+          <span>{{util.appTranslate('completed_orders')}}</span>
+        </ng-template>
+      </mat-tab>
+
+    </mat-tab-group>
+  </mat-card-content>
+</mat-card>
+
+@if (tabIndex == 0) {
+<app-ongoing-table-orders></app-ongoing-table-orders>
+}
+
+@if (tabIndex == 1) {
+<app-completed-table-orders></app-completed-table-orders>
+}

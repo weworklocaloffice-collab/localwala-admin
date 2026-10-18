@@ -1,0 +1,37 @@
+<h2 mat-dialog-title>{{ util.appTranslate('ls_new_rule') }}</h2>
+<mat-dialog-content>
+  <form [formGroup]="ruleForm" class="d-flex flex-column gap-12">
+    <mat-form-field appearance="outline"><mat-label>Code</mat-label><input matInput formControlName="code" /></mat-form-field>
+    <mat-form-field appearance="outline"><mat-label>Name</mat-label><input matInput formControlName="name" /></mat-form-field>
+    <mat-form-field appearance="outline">
+      <mat-label>Model</mat-label>
+      <mat-select formControlName="revenueModel">
+        <mat-option value="BOOKING_FEE">BOOKING_FEE</mat-option>
+        <mat-option value="COMMISSION">COMMISSION</mat-option>
+        <mat-option value="COMBINED">COMBINED</mat-option>
+        <mat-option value="LEAD_FEE">LEAD_FEE</mat-option>
+      </mat-select>
+    </mat-form-field>
+    <mat-form-field appearance="outline"><mat-label>Category (empty = platform)</mat-label><input matInput formControlName="categoryKey" /></mat-form-field>
+    <mat-form-field appearance="outline"><mat-label>Service (empty = all)</mat-label><input matInput formControlName="serviceKey" /></mat-form-field>
+    <div class="d-flex gap-12">
+      <mat-slide-toggle formControlName="bookingFeeEnabled">Fee ON/OFF</mat-slide-toggle>
+      <mat-slide-toggle formControlName="commissionEnabled">Commission ON/OFF</mat-slide-toggle>
+    </div>
+    <mat-form-field appearance="outline"><mat-label>Fee ₹</mat-label><input matInput type="number" formControlName="bookingFee" /></mat-form-field>
+    <mat-form-field appearance="outline"><mat-label>Commission %</mat-label><input matInput type="number" formControlName="commissionRatePercent" /></mat-form-field>
+    <mat-form-field appearance="outline">
+      <mat-label>Basis</mat-label>
+      <mat-select formControlName="calculationBasis">
+        <mat-option value="LABOUR_ONLY">LABOUR_ONLY</mat-option>
+        <mat-option value="SERVICE_VALUE">SERVICE_VALUE</mat-option>
+        <mat-option value="BOOKING_VALUE">BOOKING_VALUE</mat-option>
+      </mat-select>
+    </mat-form-field>
+    <mat-form-field appearance="outline"><mat-label>Effective from</mat-label><input matInput type="date" formControlName="effectiveFrom" /></mat-form-field>
+  </form>
+</mat-dialog-content>
+<mat-dialog-actions align="end">
+  <button mat-button (click)="onCancel()">Cancel</button>
+  <button mat-flat-button color="primary" (click)="onConfirm()" [disabled]="isSubmit">Create draft</button>
+</mat-dialog-actions>

@@ -1,0 +1,313 @@
+<mat-card class="cardWithShadow m-b-16">
+  <mat-card-header class="m-b-16">
+    <mat-card-title>{{ util.appTranslate('realEstate_settings') }}</mat-card-title>
+    <mat-card-subtitle>{{ util.appTranslate('realEstate_settings_subtitle') }}</mat-card-subtitle>
+  </mat-card-header>
+
+  <mat-card-content>
+    @if (!isLoaded) {
+      <div class="p-24 text-center text-muted">{{ util.appTranslate('ts_loading') }}</div>
+    } @else {
+      <!-- Legacy feature flags (single loop — no duplicates) -->
+      <div class="d-flex flex-wrap gap-16 mb-24">
+        @for (key of flags; track key) {
+          <mat-slide-toggle [(ngModel)]="form[key]">
+            {{ util.appTranslate('realEstate_setting_' + key) }}
+          </mat-slide-toggle>
+        }
+      </div>
+
+      <div class="d-flex flex-wrap gap-16 mb-24">
+        @for (n of numbers; track n.key) {
+          <mat-form-field appearance="outline">
+            <mat-label>{{ util.appTranslate('realEstate_setting_' + n.key) }}</mat-label>
+            <input matInput type="number" [min]="n.min" [(ngModel)]="form[n.key]">
+          </mat-form-field>
+        }
+      </div>
+
+      <!-- ═══════════ OD-01: Hold & Custody ═══════════ -->
+      <h3 class="m-b-8">Hold &amp; Custody (OD-01)</h3>
+      <p class="text-muted small m-b-16">
+        Only an approved custody configuration can be activated for live hold transactions.
+        An unapproved platform current-account option is not compliant by default.
+        New transactions use the active version; history keeps frozen snapshots.
+      </p>
+
+      <div class="p-12 mb-16" style="background:#e8f5e9;border:1px solid #a5d6a7;border-radius:8px;">
+        Custody is approved through the <strong>hold-policy case workflow</strong>
+        (operator drafts → finance/legal approves → administrator activates), worked from the
+        <strong>Hold policy</strong> screen and the <strong>Approvals</strong> queue.
+        This screen only stages the arrangement details — the approval controls below are read-only.
+      </div>
+
+      @if (custodyLiveBlocked) {
+        <div class="p-12 mb-16" style="background:#fff8e1;border:1px solid #ffe082;border-radius:8px;">
+          Live hold transactions are <strong>blocked</strong> until an approved custody
+          configuration is <strong>ACTIVE</strong> (current: {{ holdCustody.status }}).
+        </div>
+      }
+
+      <div class="d-flex flex-wrap gap-16 mb-16">
+        <mat-form-field appearance="outline">
+          <mat-label>Custody mode</mat-label>
+          <mat-select [(ngModel)]="holdCustody.custodyMode">
+            @for (m of custodyModes; track m) {
+              <mat-option [value]="m">{{ m }}</mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
+        <mat-form-field appearance="outline">
+          <mat-label>Custodian / bank reference</mat-label>
+          <input matInput [(ngModel)]="holdCustody.custodianBankReference" placeholder="e.g. escrow-2024-01">
+        </mat-form-field>
+        <mat-form-field appearance="outline">
+          <mat-label>Account identifier (masked)</mat-label>
+          <input matInput type="password" [(ngModel)]="holdCustody.accountIdentifier" placeholder="Secure reference only" autocomplete="off">
+        </mat-form-field>
+        <mat-form-field appearance="outline">
+          <mat-label>Principal release conditions</mat-label>
+          <input matInput [(ngModel)]="holdCustody.principalReleaseConditions" placeholder="e.g. dual approval required">
+        </mat-form-field>
+        <mat-form-field appearance="outline">
+          <mat-label>Refund SLA / processing rules</mat-label>
+          <input matInput [(ngModel)]="holdCustody.refundSLA" placeholder="e.g. 7 business days">
+        </mat-form-field>
+        <mat-form-field appearance="outline">
+          <mat-label>Reconciliation frequency</mat-label>
+          <input matInput [(ngModel)]="holdCustody.reconciliationFrequency" placeholder="daily / weekly / monthly">
+        </mat-form-field>
+      </div>
+
+      <mat-form-field appearance="outline" class="w-100 mb-16">
+        <mat-label>Supporting approval documents (one reference per line)</mat-label>
+        <textarea matInput rows="2" [(ngModel)]="holdCustody.supportingDocuments" placeholder="doc ref / URL per line"></textarea>
+      </mat-form-field>
+
+      <h4 class="m-b-8">Custody approval (read-only — decided via approval case)</h4>
+      <div class="d-flex flex-wrap gap-16 mb-24">
+        <mat-form-field appearance="outline">
+          <mat-label>Status</mat-label>
+          <input matInput [value]="holdCustody.status" disabled>
+        </mat-form-field>
+        <mat-form-field appearance="outline">
+          <mat-label>Approved by</mat-label>
+          <input matInput [value]="holdCustody.approvedBy" disabled>
+        </mat-form-field>
+        <mat-form-field appearance="outline">
+          <mat-label>Approved at</mat-label>
+          <input matInput [value]="holdCustody.approvedAt" disabled>
+        </mat-form-field>
+        <mat-form-field appearance="outline">
+          <mat-label>Effective from</mat-label>
+          <input matInput [(ngModel)]="holdCustody.effectiveFrom" placeholder="YYYY-MM-DD">
+        </mat-form-field>
+        <mat-form-field appearance="outline">
+          <mat-label>Effective to</mat-label>
+          <input matInput [(ngModel)]="holdCustody.effectiveTo" placeholder="YYYY-MM-DD (optional)">
+        </mat-form-field>
+        <mat-form-field appearance="outline">
+          <mat-label>Approval reference</mat-label>
+          <input matInput [(ngModel)]="holdCustody.approvalReference" placeholder="case / ref number">
+        </mat-form-field>
+        <mat-form-field appearance="outline">
+          <mat-label>Configuration version</mat-label>
+          <input matInput [(ngModel)]="holdCustody.configurationVersion" placeholder="1.0">
+        </mat-form-field>
+        <mat-form-field appearance="outline">
+          <mat-label>Change reason</mat-label>
+          <input matInput [(ngModel)]="holdCustody.changeReason" placeholder="Reason for this change">
+        </mat-form-field>
+      </div>
+
+      <!-- ═══════════ OD-04: Tax & Invoicing ═══════════ -->
+      <h3 class="m-b-8">Tax &amp; Invoicing (OD-04)</h3>
+      <p class="text-muted small m-b-16">
+        Separate configuration per supply. Classification + rate stay
+        <strong>inactive</strong> until a written determination is recorded and approved.
+        The four supplies are never merged: LISTING_PACKAGE_PAYMENT,
+        PROPERTY_SALE_COMMISSION, PROPERTY_HOLD, PROPERTY_HOLD_SERVICE_FEE.
+      </p>
+
+      <div class="p-12 mb-16" style="background:#e8f5e9;border:1px solid #a5d6a7;border-radius:8px;">
+        Each supply is approved through its own <strong>TAX_CONFIG approval case</strong>
+        (operator stages here or on the <strong>Hold policy</strong> screen → finance/legal approves
+        in the <strong>Approvals</strong> queue). The approval-status controls below are read-only —
+        staging a determination here opens its case automatically.
+      </div>
+
+      <!-- Hold service fee -->
+      <h4 class="m-b-8">
+        Hold service fee
+        @if (!taxActive(taxInvoicing.holdServiceFee)) {
+          <span class="text-muted small"> — INACTIVE (no approved determination)</span>
+        }
+      </h4>
+      <div class="d-flex flex-wrap gap-16 mb-16">
+        <mat-form-field appearance="outline">
+          <mat-label>Tax classification</mat-label>
+          <input matInput [(ngModel)]="taxInvoicing.holdServiceFee.taxClassification" placeholder="service / deposit / ...">
+        </mat-form-field>
+        <mat-form-field appearance="outline">
+          <mat-label>Approved rate (%)</mat-label>
+          <input matInput type="number" min="0" max="100" [(ngModel)]="taxInvoicing.holdServiceFee.approvedRate">
+        </mat-form-field>
+        <mat-form-field appearance="outline">
+          <mat-label>Invoice treatment</mat-label>
+          <input matInput [(ngModel)]="taxInvoicing.holdServiceFee.invoiceTreatment">
+        </mat-form-field>
+        <mat-form-field appearance="outline">
+          <mat-label>Tax components</mat-label>
+          <input matInput [(ngModel)]="taxInvoicing.holdServiceFee.taxComponents" placeholder="CGST + SGST">
+        </mat-form-field>
+        <mat-form-field appearance="outline">
+          <mat-label>Pricing</mat-label>
+          <mat-select [(ngModel)]="taxInvoicing.holdServiceFee.inclusivePricing">
+            <mat-option [value]="false">Exclusive</mat-option>
+            <mat-option [value]="true">Inclusive</mat-option>
+          </mat-select>
+        </mat-form-field>
+        <mat-form-field appearance="outline">
+          <mat-label>Approval status (read-only — via approval case)</mat-label>
+          <input matInput [value]="taxInvoicing.holdServiceFee.approvalStatus" disabled>
+        </mat-form-field>
+        <mat-form-field appearance="outline">
+          <mat-label>Approval reference</mat-label>
+          <input matInput [(ngModel)]="taxInvoicing.holdServiceFee.approvalReference">
+        </mat-form-field>
+      </div>
+
+      <!-- Property sale commission -->
+      <h4 class="m-b-8">
+        Property sale commission
+        @if (!taxActive(taxInvoicing.propertySaleCommission)) {
+          <span class="text-muted small"> — INACTIVE (no approved determination)</span>
+        }
+      </h4>
+      <div class="d-flex flex-wrap gap-16 mb-16">
+        <mat-form-field appearance="outline">
+          <mat-label>Tax classification</mat-label>
+          <input matInput [(ngModel)]="taxInvoicing.propertySaleCommission.taxClassification" placeholder="commission / service">
+        </mat-form-field>
+        <mat-form-field appearance="outline">
+          <mat-label>Approved rate (%)</mat-label>
+          <input matInput type="number" min="0" max="100" [(ngModel)]="taxInvoicing.propertySaleCommission.approvedRate">
+        </mat-form-field>
+        <mat-form-field appearance="outline">
+          <mat-label>Invoice treatment</mat-label>
+          <input matInput [(ngModel)]="taxInvoicing.propertySaleCommission.invoiceTreatment">
+        </mat-form-field>
+        <mat-form-field appearance="outline">
+          <mat-label>Approval status (read-only — via approval case)</mat-label>
+          <input matInput [value]="taxInvoicing.propertySaleCommission.approvalStatus" disabled>
+        </mat-form-field>
+        <mat-form-field appearance="outline">
+          <mat-label>Approval reference</mat-label>
+          <input matInput [(ngModel)]="taxInvoicing.propertySaleCommission.approvalReference">
+        </mat-form-field>
+      </div>
+
+      <!-- Hold principal -->
+      <h4 class="m-b-8">
+        Hold principal / fee treatment
+        @if (!taxActive(taxInvoicing.holdPrincipal)) {
+          <span class="text-muted small"> — INACTIVE (no approved determination)</span>
+        }
+      </h4>
+      <div class="d-flex flex-wrap gap-16 mb-16">
+        <mat-form-field appearance="outline">
+          <mat-label>Classification (deposit / consideration)</mat-label>
+          <input matInput [(ngModel)]="taxInvoicing.holdPrincipal.taxClassification">
+        </mat-form-field>
+        <mat-form-field appearance="outline">
+          <mat-label>Approved rate (%)</mat-label>
+          <input matInput type="number" min="0" max="100" [(ngModel)]="taxInvoicing.holdPrincipal.approvedRate">
+        </mat-form-field>
+        <mat-form-field appearance="outline">
+          <mat-label>Invoice treatment</mat-label>
+          <input matInput [(ngModel)]="taxInvoicing.holdPrincipal.invoiceTreatment">
+        </mat-form-field>
+        <mat-form-field appearance="outline">
+          <mat-label>Approval status (read-only — via approval case)</mat-label>
+          <input matInput [value]="taxInvoicing.holdPrincipal.approvalStatus" disabled>
+        </mat-form-field>
+        <mat-form-field appearance="outline">
+          <mat-label>Approval reference</mat-label>
+          <input matInput [(ngModel)]="taxInvoicing.holdPrincipal.approvalReference">
+        </mat-form-field>
+      </div>
+
+      <!-- Listing package fee -->
+      <h4 class="m-b-8">
+        Listing package fee
+        @if (!taxActive(taxInvoicing.listingPackageFee)) {
+          <span class="text-muted small"> — INACTIVE (no approved determination)</span>
+        }
+      </h4>
+      <div class="d-flex flex-wrap gap-16 mb-16">
+        <mat-form-field appearance="outline">
+          <mat-label>Tax classification</mat-label>
+          <input matInput [(ngModel)]="taxInvoicing.listingPackageFee.taxClassification" placeholder="service / entitlement">
+        </mat-form-field>
+        <mat-form-field appearance="outline">
+          <mat-label>Approved rate (%)</mat-label>
+          <input matInput type="number" min="0" max="100" [(ngModel)]="taxInvoicing.listingPackageFee.approvedRate">
+        </mat-form-field>
+        <mat-form-field appearance="outline">
+          <mat-label>Invoice treatment</mat-label>
+          <input matInput [(ngModel)]="taxInvoicing.listingPackageFee.invoiceTreatment">
+        </mat-form-field>
+        <mat-form-field appearance="outline">
+          <mat-label>Approval status (read-only — via approval case)</mat-label>
+          <input matInput [value]="taxInvoicing.listingPackageFee.approvalStatus" disabled>
+        </mat-form-field>
+        <mat-form-field appearance="outline">
+          <mat-label>Approval reference</mat-label>
+          <input matInput [(ngModel)]="taxInvoicing.listingPackageFee.approvalReference">
+        </mat-form-field>
+      </div>
+
+      <h4 class="m-b-8">Tax section approval (read-only — per-supply cases decide)</h4>
+      <div class="d-flex flex-wrap gap-16 mb-24">
+        <mat-form-field appearance="outline">
+          <mat-label>Status</mat-label>
+          <input matInput [value]="taxInvoicing.status" disabled>
+        </mat-form-field>
+        <mat-form-field appearance="outline">
+          <mat-label>Approved by</mat-label>
+          <input matInput [value]="taxInvoicing.approvedBy" disabled>
+        </mat-form-field>
+        <mat-form-field appearance="outline">
+          <mat-label>Approved at</mat-label>
+          <input matInput [value]="taxInvoicing.approvedAt" disabled>
+        </mat-form-field>
+        <mat-form-field appearance="outline">
+          <mat-label>Effective from</mat-label>
+          <input matInput [(ngModel)]="taxInvoicing.effectiveFrom" placeholder="YYYY-MM-DD">
+        </mat-form-field>
+        <mat-form-field appearance="outline">
+          <mat-label>Effective to</mat-label>
+          <input matInput [(ngModel)]="taxInvoicing.effectiveTo" placeholder="YYYY-MM-DD (optional)">
+        </mat-form-field>
+        <mat-form-field appearance="outline">
+          <mat-label>Approval reference</mat-label>
+          <input matInput [(ngModel)]="taxInvoicing.approvalReference">
+        </mat-form-field>
+        <mat-form-field appearance="outline">
+          <mat-label>Configuration version</mat-label>
+          <input matInput [(ngModel)]="taxInvoicing.configurationVersion" placeholder="1.0">
+        </mat-form-field>
+        <mat-form-field appearance="outline">
+          <mat-label>Change reason</mat-label>
+          <input matInput [(ngModel)]="taxInvoicing.changeReason">
+        </mat-form-field>
+      </div>
+
+      @if (canEdit()) {
+        <button mat-flat-button color="primary" [disabled]="isSaving" (click)="onSave()">
+          {{ util.appTranslate('th_save') }}
+        </button>
+      }
+    }
+  </mat-card-content>
+</mat-card>

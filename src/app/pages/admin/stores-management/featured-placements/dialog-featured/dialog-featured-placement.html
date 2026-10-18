@@ -1,0 +1,63 @@
+<div mat-dialog-content class="dialog-form">
+  <form [formGroup]="placementForm" (ngSubmit)="onSubmit()">
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>{{ util.appTranslate('stores_outlet_name') }} <span class="required">*</span></mat-label>
+      <input matInput formControlName="outlet" placeholder="Outlet id">
+      @if (f.outlet.invalid && haveSubmitClicked) {
+        <mat-error>{{ util.appTranslate('ts_field_required') }}</mat-error>
+      }
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>{{ util.appTranslate('stores_chain_name') }} <span class="required">*</span></mat-label>
+      <input matInput formControlName="chain" placeholder="Chain id">
+      @if (f.chain.invalid && haveSubmitClicked) {
+        <mat-error>{{ util.appTranslate('ts_field_required') }}</mat-error>
+      }
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>{{ util.appTranslate('stores_featured_product') }}</mat-label>
+      <input matInput formControlName="product" placeholder="Product id (optional)">
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>{{ util.appTranslate('stores_featured_slot') }} <span class="required">*</span></mat-label>
+      <input matInput formControlName="slot" placeholder="e.g. home-hero, category-top">
+      @if (f.slot.invalid && haveSubmitClicked) {
+        <mat-error>{{ util.appTranslate('ts_field_required') }}</mat-error>
+      }
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>{{ util.appTranslate('stores_featured_starts_at') }} <span class="required">*</span></mat-label>
+      <input matInput [matDatepicker]="startPicker" formControlName="startsAt">
+      <mat-datepicker-toggle matSuffix [for]="startPicker"></mat-datepicker-toggle>
+      <mat-datepicker #startPicker></mat-datepicker>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>{{ util.appTranslate('stores_featured_ends_at') }} <span class="required">*</span></mat-label>
+      <input matInput [matDatepicker]="endPicker" formControlName="endsAt">
+      <mat-datepicker-toggle matSuffix [for]="endPicker"></mat-datepicker-toggle>
+      <mat-datepicker #endPicker></mat-datepicker>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>{{ util.appTranslate('stores_featured_amount') }} <span class="required">*</span></mat-label>
+      <input matInput type="number" formControlName="amount" min="0" placeholder="Amount in rupees">
+      @if (f.amount.invalid && haveSubmitClicked) {
+        <mat-error>{{ util.appTranslate('ts_amount_required') }}</mat-error>
+      }
+    </mat-form-field>
+
+    <div mat-dialog-actions class="dialog-actions">
+      <button mat-button type="button" (click)="dialogRef.close()" cdkFocusInitial>
+        {{ util.appTranslate('common_cancel') }}
+      </button>
+      <button mat-raised-button color="primary" type="submit" [disabled]="placementForm.invalid">
+        {{ util.appTranslate('ts_add_new') }}
+      </button>
+    </div>
+  </form>
+</div>

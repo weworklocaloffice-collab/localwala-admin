@@ -1,0 +1,42 @@
+<h2 mat-dialog-title class="dialog-title">
+  <span class="title-text">
+    {{util.appTranslate('detail')}}
+  </span>
+  <button mat-icon-button mat-dialog-close class="close-btn">
+    <mat-icon>close</mat-icon>
+  </button>
+</h2>
+<div mat-dialog-content style="max-width: 600px;max-height: max-content;" class="m-t-12 p-t-12">
+
+  <mat-card class="cardWithShadow theme-card">
+    <mat-card-content class="text-center p-24">
+      <div class="d-flex align-items-center">
+        <img [src]="api.mediaUrl+image" alt="users" width="40" height="40" class="rounded-circle"
+          onError="this.src='assets/images/placeholder.png'" />
+        <div class="m-l-16 d-flex flex-column align-items-start justify-content-start">
+          <h6 class="mat-subtitle-1 f-s-14 f-w-600 lh-sm">
+            {{ name }}
+          </h6>
+          <span class="mat-body-1 f-s-12">
+            {{ role }}
+          </span>
+        </div>
+      </div>
+
+      <div class="m-t-30 d-flex flex-column align-items-start justify-content-start">
+        <a href="mailto:{{email}}"
+          class="mat-subtitle-1 f-s-18 f-w-600 text-decoration-none d-flex justify-content-center align-items-center m-t-20 m-b-20">
+           <ng-icon name="tablerMail" class="icon-20 m-r-8"></ng-icon>
+           {{ email }}
+        </a>
+
+        <a href="tel:{{fullMobile}}"
+          class="mat-subtitle-1 f-s-18 f-w-600 text-decoration-none d-flex justify-content-center align-items-center m-t-20 m-b-20">
+           <ng-icon name="tablerPhone" class="icon-20 m-r-8"></ng-icon>
+           {{ mobile }}
+        </a>
+
+      </div>
+    </mat-card-content>
+  </mat-card>
+</div>

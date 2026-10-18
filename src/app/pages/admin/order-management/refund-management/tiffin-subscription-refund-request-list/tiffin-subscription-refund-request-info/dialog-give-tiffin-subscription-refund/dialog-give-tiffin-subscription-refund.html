@@ -1,0 +1,78 @@
+<h2 mat-dialog-title class="dialog-title">
+  <span class="title-text">{{util.appTranslate('approve_refund_request')}}</span>
+  <button mat-icon-button mat-dialog-close class="close-btn">
+    <mat-icon>close</mat-icon>
+  </button>
+</h2>
+<div mat-dialog-content style="max-width: 600px;max-height: max-content;" class="m-t-12 p-t-12">
+  <form name="eventForm" [formGroup]="refundForm" class="event-form" (ngSubmit)="onSubmit()">
+    <div class="row">
+      <div class="col-12">
+        <mat-label class="mat-subtitle-2 f-w-600 m-b-8 d-block">{{util.appTranslate('refund_to')}}</mat-label>
+        <mat-form-field appearance="outline" class="w-100">
+          <mat-select formControlName="refundTo" name="refundTo">
+            <mat-option value="wallet">{{util.appTranslate('wallet')}}</mat-option>
+            <mat-option value="payment">{{util.appTranslate('source_payment')}}</mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
+      <div class="col-12">
+        <mat-label class="mat-subtitle-2 f-w-600 m-b-8 d-block">{{util.appTranslate('refund_to')}}</mat-label>
+        <mat-form-field appearance="outline" class="w-100">
+          <mat-select formControlName="refundType" name="refundType"
+            (selectionChange)="onRefundTypeChangeEvent($event)">
+            <mat-option value="full">{{util.appTranslate('full_refund')}}</mat-option>
+            <mat-option value="partial">{{util.appTranslate('partial_refund')}}</mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
+
+      <div class="col-12">
+        <mat-form-field appearance="outline" class="w-100" color="primary">
+          <mat-label>{{util.appTranslate('order_grand_total')}}</mat-label>
+          <input matInput [(ngModel)]="grandTotal" [disabled]="true" type="number"
+            [ngModelOptions]="{standalone: true}" />
+        </mat-form-field>
+      </div>
+
+      @if(f['refundType'].value == 'partial'){
+      <div class="col-12">
+        <mat-form-field appearance="outline" class="w-100" color="primary">
+          <mat-label>{{util.appTranslate('refund_partial_amount')}}</mat-label>
+          <input matInput formControlName="refundAmount" type="number" />
+          @if(isFormSubmit == true && f['refundAmount'].invalid){
+          <mat-hint class="m-b-16 error-msg">
+            @if(f['refundAmount'].errors && f['refundAmount'].errors['required']){
+            <div class="text-error">
+              {{util.appTranslate('form_required')}}
+            </div>
+            }
+          </mat-hint>
+          }
+        </mat-form-field>
+      </div>
+      }
+
+    </div>
+    <div mat-dialog-actions class="p-b-24">
+      <button mat-button mat-flat-button color="primary" type="submit" [disabled]="isSubmit == true">
+        @if(isSubmit == true){
+        <mat-icon>
+          <mat-spinner diameter="15"></mat-spinner>
+        </mat-icon>
+        }
+        {{util.appTranslate('refund')}}
+      </button>
+      <button mat-button mat-flat-button class="bg-secondary text-white" type="button" [disabled]="isSubmit == true"
+        (click)="onRefundFromMerchant()">
+        @if(isSubmit == true){
+        <mat-icon>
+          <mat-spinner diameter="15"></mat-spinner>
+        </mat-icon>
+        }
+        {{util.appTranslate('refund_from_merchant')}}
+      </button>
+      <button mat-button mat-dialog-close class="m-l-8 bg-secondary text-white">{{util.appTranslate('cancel_btn')}}</button>
+    </div>
+  </form>
+</div>

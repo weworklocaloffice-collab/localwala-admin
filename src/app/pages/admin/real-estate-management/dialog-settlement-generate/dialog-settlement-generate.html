@@ -1,0 +1,28 @@
+<h2 mat-dialog-title>{{ util.appTranslate('realEstate_generate_settlement') }}</h2>
+
+<mat-dialog-content>
+  <p class="f-s-14 text-muted">{{ util.appTranslate('realEstate_generate_hint') }}</p>
+  <mat-form-field appearance="outline" class="w-100 m-b-16">
+    <mat-label>{{ util.appTranslate('th_party') }}</mat-label>
+    <mat-select [(ngModel)]="partyType">
+      @for (p of partyTypes; track p) {
+        <mat-option [value]="p">{{ p }}</mat-option>
+      }
+    </mat-select>
+  </mat-form-field>
+  <mat-form-field appearance="outline" class="w-100 m-b-16">
+    <mat-label>{{ util.appTranslate('realEstate_entry_ids') }}</mat-label>
+    <textarea matInput rows="4" [(ngModel)]="entryIdsRaw" placeholder="ObjectId, one per line or comma-separated"></textarea>
+  </mat-form-field>
+  <mat-form-field appearance="outline" class="w-100">
+    <mat-label>{{ util.appTranslate('th_tds') }} %</mat-label>
+    <input matInput type="number" [(ngModel)]="tdsPercent" />
+  </mat-form-field>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button (click)="onClose()">{{ util.appTranslate('th_cancel') }}</button>
+  <button mat-flat-button color="primary" [disabled]="isSaving || !entryIdsRaw.trim()" (click)="onSubmit()">
+    {{ util.appTranslate('th_create') }}
+  </button>
+</mat-dialog-actions>

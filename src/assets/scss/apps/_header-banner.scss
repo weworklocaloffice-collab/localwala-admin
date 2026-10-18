@@ -1,0 +1,1071 @@
+// Promotions -> Header Banner ("Silver App Bar" + promotional banner slot).
+//
+// Feature-scoped styles. Every class here is namespaced under .header-banner,
+// .color-picker or .drag-drop-upload so nothing leaks into the rest of the admin.
+
+@use "../variables" as *;
+
+// ------------------------------------------------------------ layout helpers
+//
+// The theme ships a `g-4` gap utility and nothing else in that family, and its own
+// templates reference classes (`cardWithShadow`, `text-muted`, `w-full`) that are not
+// compiled at all. Rather than depend on those, the helpers actually used by the
+// header banner live here.
+
+.g-6 {
+  gap: 6px;
+}
+
+.g-8 {
+  gap: 8px;
+}
+
+.g-10 {
+  gap: 10px;
+}
+
+.g-12 {
+  gap: 12px;
+}
+
+.g-16 {
+  gap: 16px;
+}
+
+.hb-between {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.hb-scroll {
+  overflow: auto;
+}
+
+.hb-w-250 {
+  width: 250px;
+}
+
+.card-surface {
+  border-radius: $border-radius;
+  border: 1px solid $borderColor;
+  background: $light;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+}
+
+// ---------------------------------------------------------------- page shell
+
+.header-banner {
+  &__topbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    flex-wrap: wrap;
+    padding: 16px 20px;
+    background: $light;
+    border-bottom: 1px solid $borderColor;
+  }
+
+  &__chip {
+    display: inline-flex;
+    align-items: center;
+    padding: 4px 12px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+    color: $secondary;
+    background: rgba(255, 174, 31, 0.16);
+
+    &--active {
+      color: $success;
+      background: rgba(19, 222, 185, 0.16);
+    }
+  }
+
+  // Small filled circle in the top bar showing save state.
+  &__dot {
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    margin-right: 6px;
+    border-radius: 50%;
+    vertical-align: middle;
+
+    &--saved {
+      background: $success;
+    }
+
+    &--dirty {
+      background: $warning;
+    }
+  }
+
+  &__tabs {
+    ::ng-deep {
+      .mat-mdc-tab-header {
+        padding: 0 8px;
+        border-bottom: 1px solid $borderColor;
+      }
+
+      .mat-mdc-tab-labels {
+        gap: 4px;
+      }
+    }
+  }
+
+  &__swatch {
+    display: inline-block;
+    width: 32px;
+    height: 32px;
+    border-radius: 6px;
+    border: 1px solid $borderColor;
+  }
+
+  // Rendered Lottie JSON. The browser shows the document rather than animating it,
+  // so it is framed and scrollable rather than given an animation-sized box.
+  &__object {
+    width: 100%;
+    min-height: 180px;
+    max-height: 320px;
+    border: 1px solid $borderColor;
+    border-radius: $border-radius;
+    background: $white;
+  }
+
+  &__row {
+    border-bottom: 1px solid $borderColor;
+
+    th,
+    td {
+      padding: 10px 12px;
+      text-align: left;
+      font-size: 13px;
+    }
+
+    &--head th {
+      color: $secondary;
+      font-weight: 600;
+      text-transform: uppercase;
+      font-size: 11px;
+      letter-spacing: 0.4px;
+    }
+  }
+}
+
+// Two-column panel layout used by every config tab.
+.grid-2 {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+  align-items: start;
+
+  @media (max-width: 1100px) {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+// -------------------------------------------------------------- list screen
+
+.header-banner-list {
+  &__thumb {
+    width: 56px;
+    height: 34px;
+    object-fit: cover;
+    border-radius: 5px;
+    border: 1px solid $borderColor;
+    flex: 0 0 auto;
+
+    &--empty {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: $secondary;
+      background: $light;
+    }
+  }
+
+  &__badge {
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: 999px;
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+
+    &--active {
+      color: $success;
+      background: rgba(19, 222, 185, 0.16);
+    }
+
+    &--scheduled {
+      color: $warning;
+      background: rgba(255, 174, 31, 0.16);
+    }
+
+    &--inactive {
+      color: $error;
+      background: rgba(244, 67, 54, 0.14);
+    }
+  }
+}
+
+// ------------------------------------------------------------ live preview
+
+.header-banner__preview-frame {
+  padding: 12px;
+  border-radius: 14px;
+  background: $light;
+  border: 1px solid $borderColor;
+}
+
+.header-banner__phone {
+  margin: 0 auto;
+  border-radius: 18px;
+  overflow: hidden;
+  background: $white;
+  border: 1px solid $borderColor;
+  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.12);
+  transition: width 0.15s ease;
+}
+
+.header-banner__preview-appbar {
+  position: relative;
+  overflow: hidden;
+  padding: 10px 14px;
+  transition: height 0.2s ease;
+  color: $text-color;
+}
+
+/* The height transition is what makes a collapsed/expanded toggle feel right, but
+   mid-drag it leaves the edge trailing behind the pointer. */
+.header-banner__preview-appbar--resizing {
+  transition: none;
+}
+
+.header-banner__preview-loc {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.header-banner__preview-pin {
+  width: 10px;
+  height: 10px;
+  border-radius: 50% 50% 50% 0;
+  transform: rotate(-45deg);
+  background: $primary;
+}
+
+.header-banner__preview-sub {
+  font-size: 11px;
+  opacity: 0.75;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.header-banner__preview-gap {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 64px;
+}
+
+.header-banner__preview-banner {
+  position: relative;
+  overflow: hidden;
+  background-color: $light;
+  display: flex;
+  align-items: flex-end;
+  transition: height 0.2s ease;
+  // The banner is the drag handle for placing its media, so it advertises the
+  // grab and owns the pointer capture while dragging.
+  cursor: grab;
+  touch-action: none;
+  user-select: none;
+}
+
+.header-banner__preview-banner--dragging {
+  cursor: grabbing;
+}
+
+.header-banner__preview-banner--resizing {
+  transition: none;
+}
+
+/* Absolutely positioned so a drag can translate it. A CSS `background-image`
+   cannot be transformed, which is why the artwork is an element. */
+.header-banner__preview-media {
+  position: absolute;
+  inset: 0;
+  display: block;
+  pointer-events: none;
+  transition: transform 0.12s ease-out;
+}
+
+.header-banner__preview-banner--dragging .header-banner__preview-media {
+  transition: none;
+}
+
+.header-banner__preview-media-img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* The standalone Lottie panel is a bordered card; inside the phone frame it has to
+   blend into the banner instead, so the card chrome is dropped here. */
+.header-banner__preview-media .lottie-preview {
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  height: 100%;
+}
+
+.header-banner__offset-chip {
+  font-family: $font-family;
+  font-variant-numeric: tabular-nums;
+  font-size: 12px;
+  padding: 3px 8px;
+  border-radius: 6px;
+  border: 1px solid $borderColor;
+  color: $text-color;
+}
+
+// ------------------------------------------------------- drag to resize handles
+
+/* A grab bar on the edge of a region that resizes when you pull it, the way a
+   design tool behaves. Sits inside the region it resizes so the drag and the box
+   are always visibly attached, and stays fully inside the box because both the
+   app bar and the banner clip their overflow. */
+.header-banner__preview-handle {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 26px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  // Overrides the `grab` the banner frame sets for its media drag.
+  cursor: ns-resize;
+  touch-action: none;
+  user-select: none;
+  z-index: 3;
+  border-top: 1px dashed rgba(255, 255, 255, 0.75);
+
+  &:hover,
+  &:focus-visible {
+    background: rgba(13, 110, 253, 0.16);
+    outline: none;
+  }
+}
+
+/* Solid, always-on and centred on the edge. A translucent bar was invisible over
+   a light banner and over a photo alike, which made the whole feature undiscoverable
+   - so the pill carries its own contrast and doubles as the live pixel readout. */
+.header-banner__preview-handle-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 9px;
+  border-radius: 999px;
+  background: rgba(13, 110, 253, 0.94);
+  color: #fff;
+  font-size: 11px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  line-height: 1;
+  white-space: nowrap;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.4);
+  transition: transform 0.15s ease;
+}
+
+.header-banner__preview-handle-icon {
+  width: 14px;
+  height: 14px;
+  font-size: 14px;
+  line-height: 14px;
+}
+
+.header-banner__preview-handle:hover .header-banner__preview-handle-pill,
+.header-banner__preview-handle:focus-visible .header-banner__preview-handle-pill,
+.header-banner__preview-handle--active .header-banner__preview-handle-pill {
+  transform: scale(1.12);
+  background: $primary;
+}
+
+/* A media drag and a resize drag are different gestures on the same box. While the
+   artwork is being nudged the pill would be dead - and its own drag suppressed -
+   so it is hidden rather than left there looking grabbable. */
+.header-banner__preview-banner--dragging .header-banner__preview-handle {
+  opacity: 0;
+  pointer-events: none;
+}
+
+// --------------------------------------------------------------- media zoom rail
+
+/* The zoom control, laid out as a rail under the phone frame.
+   Horizontal by design: this drives the crop width, so the gesture runs along the
+   same axis as the thing being changed and is far easier to hit than a thin strip
+   on an edge of the banner itself. */
+.header-banner__zoom {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  max-width: 560px;
+  padding: 10px 14px;
+  border-radius: 12px;
+  border: 1px solid $borderColor;
+  background: $white;
+}
+
+.header-banner__zoom-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  color: $text-color;
+  white-space: nowrap;
+}
+
+.header-banner__zoom-icon {
+  width: 16px;
+  height: 16px;
+  font-size: 16px;
+  line-height: 16px;
+  color: $primary;
+}
+
+.header-banner__zoom-track {
+  position: relative;
+  flex: 1 1 auto;
+  height: 8px;
+  border-radius: 999px;
+  background: $light;
+  border: 1px solid $borderColor;
+  cursor: ew-resize;
+  touch-action: none;
+  user-select: none;
+
+  &:hover,
+  &:focus-visible {
+    outline: none;
+    border-color: $primary;
+  }
+}
+
+/* Only the thumb animates. The fill tracks the pointer exactly, the same reason
+   the media layer drops its transition while it is being dragged. */
+.header-banner__zoom-fill {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  border-radius: 999px;
+  background: $primary;
+  opacity: 0.35;
+}
+
+.header-banner__zoom-thumb {
+  position: absolute;
+  top: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  margin-left: -12px;
+  border-radius: 50%;
+  background: $primary;
+  color: $white;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.28);
+  transform: translateY(-50%);
+  pointer-events: none;
+  transition: transform 0.15s ease;
+
+  mat-icon {
+    width: 14px;
+    height: 14px;
+    font-size: 14px;
+    line-height: 14px;
+  }
+}
+
+.header-banner__zoom-track:hover .header-banner__zoom-thumb,
+.header-banner__zoom-track:focus-visible .header-banner__zoom-thumb,
+.header-banner__zoom-track--active .header-banner__zoom-thumb {
+  transform: translateY(-50%) scale(1.15);
+}
+
+.header-banner__offset-chip--wide {
+  min-width: 58px;
+  text-align: center;
+}
+
+/* The preview surface controls sit directly above the phone mockup, so the two gradient
+   stops share one row and grow to fill it. Stacked full-width pickers would push the
+   mockup off the fold, which defeats the point of editing them next to it. */
+.header-banner__preview-colours {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+
+  app-color-picker {
+    flex: 1 1 220px;
+    min-width: 0;
+  }
+}
+
+.header-banner__preview-overlay {
+  width: 100%;
+  padding: 14px;
+  color: $white;
+  background: linear-gradient(180deg, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0.66) 100%);
+}
+
+.header-banner__preview-title {
+  font-size: 17px;
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+.header-banner__preview-text {
+  font-size: 12px;
+  opacity: 0.9;
+  margin-top: 4px;
+}
+
+/* The title/subtitle block and the CTA each get their own positioned layer so they can be
+   dragged independently of the artwork. They start where the client paints them and only
+   move once an operator drags, which keeps the default render untouched. */
+.header-banner__preview-overlay-layer {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  cursor: grab;
+  touch-action: none;
+}
+
+/* The CTA sits in its own absolutely positioned layer so it survives "Show Banner
+   Content" being switched off. Pinned to the bottom-left with the same inset the content
+   block uses, so it occupies the same spot whether or not the title is present. */
+.header-banner__preview-cta-layer {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  padding: 14px;
+  cursor: grab;
+  touch-action: none;
+}
+
+/* Shared hover/active feedback for the two copy layers. The media layer keeps its own
+   highlight on the frame, because it is grabbed by clicking bare artwork. */
+.header-banner__preview-overlay-layer:hover,
+.header-banner__preview-cta-layer:hover {
+  outline: 1px dashed rgba(255, 255, 255, 0.65);
+  outline-offset: -1px;
+}
+
+.header-banner__preview-layer--dragging {
+  cursor: grabbing;
+}
+
+/* Half-width columns inside the CTA settings grid. `flex: 1 1 160px` keeps two per row on a
+   wide form and collapses to one on a narrow panel without a breakpoint. */
+.hb-cta-half {
+  flex: 1 1 160px;
+  min-width: 0;
+}
+
+/* CTA motion.
+ *
+ * These approximate the client's Flutter effects so an operator can see roughly what will
+ * play; they are not frame-accurate against Flutter's Curves, and the duration is bound
+ * inline from the form so the preview respects the stored value.
+ *
+ * Kept transform-only so a looping effect stays on the compositor and cannot repaint the
+ * banner media on every frame. */
+@keyframes hb-cta-pulse {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.06);
+  }
+}
+
+/* Two thumps per cycle, so it reads as a heartbeat rather than one long swell. */
+@keyframes hb-cta-heartbeat {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  8% {
+    transform: scale(1.08);
+  }
+  16% {
+    transform: scale(1);
+  }
+  25% {
+    transform: scale(1.06);
+  }
+  50% {
+    transform: scale(1);
+  }
+}
+
+@keyframes hb-cta-wiggle {
+  0%,
+  100% {
+    transform: rotate(0deg);
+  }
+  25% {
+    transform: rotate(2.8deg);
+  }
+  75% {
+    transform: rotate(-2.8deg);
+  }
+}
+
+/* Damped: firm first swing, settled by the end of the cycle. */
+@keyframes hb-cta-shake {
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+  12% {
+    transform: translateX(-4px);
+  }
+  28% {
+    transform: translateX(4px);
+  }
+  44% {
+    transform: translateX(-2.5px);
+  }
+  60% {
+    transform: translateX(2px);
+  }
+  80% {
+    transform: translateX(-1px);
+  }
+}
+
+@keyframes hb-cta-glow {
+  0%,
+  100% {
+    box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.08);
+  }
+  50% {
+    box-shadow: 0 0 18px 4px rgba(255, 255, 255, 0.45);
+  }
+}
+
+@keyframes hb-cta-shimmer {
+  0% {
+    background-position: -220% 0;
+  }
+  100% {
+    background-position: 220% 0;
+  }
+}
+
+/* The client moves only the arrow glyph; the preview nudges the whole chip because a CSS
+   transform cannot target a single glyph inside a text node. */
+@keyframes hb-cta-arrowSlide {
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+  50% {
+    transform: translateX(3px);
+  }
+}
+
+/* Approximation only: the client traces the stroke with a CustomPainter, which CSS
+   cannot do for a rounded outline. This flashes a border instead. */
+@keyframes hb-cta-borderRunner {
+  0%,
+  100% {
+    box-shadow: inset 0 0 0 0 rgba(255, 255, 255, 0);
+  }
+  50% {
+    box-shadow: inset 0 0 0 2px rgba(255, 255, 255, 0.85);
+  }
+}
+
+@keyframes hb-cta-bounce {
+  0% {
+    transform: translateY(-9px);
+  }
+  45% {
+    transform: translateY(0);
+  }
+  60% {
+    transform: translateY(-2px);
+  }
+  75% {
+    transform: translateY(0);
+  }
+}
+
+@keyframes hb-cta-fadeIn {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+@keyframes hb-cta-slideUp {
+  0% {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes hb-cta-zoomIn {
+  0% {
+    opacity: 0;
+    transform: scale(0.72);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes hb-cta-flipIn {
+  0% {
+    opacity: 0;
+    transform: perspective(320px) rotateY(90deg);
+  }
+  100% {
+    opacity: 1;
+    transform: perspective(320px) rotateY(0deg);
+  }
+}
+
+/* Approximation of the client's animated spectrum stroke. */
+@keyframes hb-cta-rainbow {
+  0%,
+  100% {
+    box-shadow: inset 0 0 0 2px rgba(255, 77, 77, 0.9);
+  }
+  33% {
+    box-shadow: inset 0 0 0 2px rgba(77, 210, 255, 0.9);
+  }
+  66% {
+    box-shadow: inset 0 0 0 2px rgba(184, 77, 255, 0.9);
+  }
+}
+
+@keyframes hb-cta-goldenShine {
+  0% {
+    background-position: -220% 0;
+  }
+  100% {
+    background-position: 220% 0;
+  }
+}
+
+/* `background-position` needs a gradient to move across; these two effects rely on the
+   chip having one, so a solid fill gets a soft metallic sweep instead of nothing. */
+.header-banner__preview-cta {
+  background-image: linear-gradient(
+    100deg,
+    rgba(255, 255, 255, 0) 35%,
+    rgba(255, 255, 255, 0.45) 50%,
+    rgba(255, 255, 255, 0) 65%
+  );
+  background-size: 220% 100%;
+  background-repeat: no-repeat;
+}
+
+.header-banner__preview-cta-layer {
+  padding: 14px;
+}
+.header-banner__preview-cta {
+  display: inline-block;
+  margin-top: 10px;
+  padding: 7px 14px;
+  border-radius: 5px;
+  font-size: 12px;
+  font-weight: 600;
+  color: $white;
+  background: #ef6c00;
+}
+
+.header-banner__preview-search {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 12px 14px;
+  padding: 9px 12px;
+  border-radius: 10px;
+  border: 1px solid $borderColor;
+  background: $light;
+  font-size: 13px;
+  color: $secondary;
+}
+
+.header-banner__preview-content {
+  padding: 8px 14px 18px;
+}
+
+// ------------------------------------------------------------- color picker
+
+.color-picker {
+  &__row {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+
+  &__swatch {
+    flex: 0 0 auto;
+    width: 46px;
+    height: 46px;
+    margin-top: 4px;
+    padding: 0;
+    border: 1px solid $borderColor;
+    border-radius: 8px;
+    background: none;
+    cursor: pointer;
+
+    &::-webkit-color-swatch-wrapper {
+      padding: 2px;
+    }
+
+    &::-webkit-color-swatch {
+      border: none;
+      border-radius: 6px;
+    }
+
+    &:disabled {
+      cursor: not-allowed;
+      opacity: 0.6;
+    }
+  }
+
+  &__field {
+    flex: 1 1 160px;
+    min-width: 140px;
+  }
+
+  &__clear {
+    margin-top: 4px;
+  }
+
+  &__hint {
+    margin: 6px 0 0;
+  }
+
+  &__palette {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-top: 10px;
+  }
+
+  &__chip {
+    width: 28px;
+    height: 28px;
+    padding: 0;
+    border: 1px solid $borderColor;
+    border-radius: 6px;
+    cursor: pointer;
+
+    &:hover {
+      outline: 2px solid $primary;
+      outline-offset: 1px;
+    }
+
+    &:disabled {
+      cursor: not-allowed;
+      opacity: 0.6;
+    }
+  }
+}
+
+// ----------------------------------------------------------- drag and drop
+
+.drag-drop-upload {
+  &__input {
+    display: none;
+  }
+
+  &__zone {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    padding: 26px 18px;
+    text-align: center;
+    border: 2px dashed $borderColor;
+    border-radius: 10px;
+    background: $light;
+    transition: border-color 0.15s ease, background 0.15s ease;
+
+    &--active {
+      border-color: $primary;
+      background: rgba(239, 108, 0, 0.06);
+    }
+
+    &--disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+  }
+
+  &__label {
+    margin: 0;
+    font-size: 13px;
+    font-weight: 600;
+    color: $secondary;
+  }
+
+  &__hint {
+    margin: 0;
+  }
+
+  &__error {
+    margin: 8px 0 0;
+  }
+
+  &__preview {
+    margin-top: 14px;
+  }
+
+  &__image {
+    display: block;
+    width: 100%;
+    max-width: 320px;
+    height: 180px;
+    object-fit: cover;
+    border-radius: 8px;
+    border: 1px solid $borderColor;
+    background: $light;
+  }
+
+  &__meta {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-top: 8px;
+    color: $secondary;
+  }
+
+  &__actions {
+    display: flex;
+    gap: 8px;
+    margin-top: 12px;
+  }
+
+  &__icon {
+    width: 34px;
+    height: 34px;
+    font-size: 34px;
+    line-height: 34px;
+    color: $primary;
+  }
+
+  // Lottie is JSON, so an uploaded animation gets a file card instead of an <img>.
+  &__file {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 14px;
+    border: 1px solid $borderColor;
+    border-radius: 8px;
+    background: $light;
+
+    mat-icon {
+      color: $primary;
+    }
+  }
+
+  &__file-name {
+    font-size: 13px;
+    font-weight: 600;
+    color: $secondary;
+    word-break: break-all;
+  }
+}
+
+// ----------------------------------------------------------- lottie preview
+
+.lottie-preview {
+  position: relative;
+  display: flex;
+  width: 100%;
+  overflow: hidden;
+  border-radius: 8px;
+  background: $light;
+  border: 1px solid $borderColor;
+
+  &__stage {
+    // Sized in px by the component to mirror the client's BoxFit semantics. The stage is
+    // given the animation's own aspect ratio, so `meet` never letterboxes it again.
+    flex: 0 0 auto;
+
+    svg {
+      display: block;
+      width: 100%;
+      height: 100%;
+    }
+  }
+
+  // Loading and error states sit over the stage so the stage itself can stay mounted and
+  // available as the render target.
+  &__overlay {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(255, 255, 255, 0.9);
+  }
+
+  &__notice {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 18px;
+    text-align: center;
+
+    mat-icon {
+      color: $secondary;
+    }
+
+    p {
+      margin: 0;
+    }
+  }
+}
+
+// Utility used by the city "make global" button.
+.hb-self-start {
+  align-self: flex-start;
+}

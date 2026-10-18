@@ -1,0 +1,22 @@
+<h2 mat-dialog-title>New facet</h2>
+<mat-dialog-content>
+  <form [formGroup]="form" class="d-flex flex-column gap-12">
+    <mat-form-field appearance="outline"><mat-label>Key</mat-label><input matInput formControlName="key" /></mat-form-field>
+    <mat-form-field appearance="outline"><mat-label>Label</mat-label><input matInput formControlName="label" /></mat-form-field>
+    <mat-form-field appearance="outline">
+      <mat-label>Type</mat-label>
+      <mat-select formControlName="dataType">
+        <mat-option value="TEXT">TEXT</mat-option>
+        <mat-option value="NUMBER">NUMBER</mat-option>
+        <mat-option value="BOOLEAN">BOOLEAN</mat-option>
+        <mat-option value="ENUM">ENUM</mat-option>
+        <mat-option value="MULTI_ENUM">MULTI_ENUM</mat-option>
+      </mat-select>
+    </mat-form-field>
+    <mat-form-field appearance="outline"><mat-label>Options (comma separated, for ENUM)</mat-label><input matInput formControlName="optionsText" /></mat-form-field>
+  </form>
+</mat-dialog-content>
+<mat-dialog-actions align="end">
+  <button mat-button (click)="onCancel()">Cancel</button>
+  <button mat-flat-button color="primary" (click)="onConfirm()" [disabled]="isSubmit">Create</button>
+</mat-dialog-actions>

@@ -1,0 +1,15 @@
+<h2 mat-dialog-title>{{ util.appTranslate('bank_disburse_title') }}</h2>
+
+<mat-dialog-content>
+  <mat-form-field appearance="outline" class="w-100">
+    <mat-label>{{ util.appTranslate('th_disbursed_amount') }} ₹</mat-label>
+    <input matInput type="number" [(ngModel)]="disbursedAmount" />
+  </mat-form-field>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button (click)="onClose()">{{ util.appTranslate('th_cancel') }}</button>
+  <button mat-flat-button color="primary" [disabled]="disbursedAmount === null" (click)="onConfirm()">
+    {{ util.appTranslate('th_disburse') }}
+  </button>
+</mat-dialog-actions>

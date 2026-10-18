@@ -1,0 +1,148 @@
+<h2 mat-dialog-title class="dialog-title">
+  <span class="title-text">
+    {{action == 'add' ? util.appTranslate('add_payout_method') : util.appTranslate('update_payout_method')}}
+  </span>
+  <button mat-icon-button mat-dialog-close class="close-btn">
+    <mat-icon>close</mat-icon>
+  </button>
+</h2>
+<div mat-dialog-content class="m-t-12 p-t-12">
+  @if (action == 'add') {
+  <div class="row">
+    <div class="col-lg-12 col-sm-12 p-b-8">
+      <mat-form-field appearance="outline" class="w-100">
+        <mat-label>{{util.appTranslate('payout_method')}}</mat-label>
+        <mat-select [(ngModel)]="selectedMethod" (selectionChange)="onMethodChangeEvent($event)">
+          @for (item of methods; track $index) {
+          <mat-option [value]="item.id">{{item.displayName}}</mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+    </div>
+  </div>
+  }
+
+  <div class="row">
+    <div class="col-lg-12 col-sm-12 p-b-16">
+      <span class="f-s-14 mat-subtitle-1 f-w-600">
+        {{util.appTranslate('payout_account_instruction')}}
+      </span>
+    </div>
+  </div>
+
+  <div class="row">
+    @for (item of inputElements; track $index; let i = $index) {
+    <div class="col-lg-6 col-sm-12 p-b-8">
+      @if (item.fieldType == 'text') {
+      <mat-form-field appearance="outline" class="w-100" color="primary">
+        <mat-label>{{item.fieldName}}</mat-label>
+        <input matInput type="text" [(ngModel)]="item.value" />
+        @if (haveSubmitClicked == true && item.isRequired == true && item.value == '') {
+        <mat-hint class="m-b-16 error-msg">
+          <div class="text-error">
+            {{item.fieldName}} {{util.appTranslate('form_required_lbl')}}
+          </div>
+        </mat-hint>
+        }
+      </mat-form-field>
+      }
+
+      @if (item.fieldType == 'number') {
+      <mat-form-field appearance="outline" class="w-100" color="primary">
+        <mat-label>{{item.fieldName}}</mat-label>
+        <input matInput type="number" [(ngModel)]="item.value" />
+        @if (haveSubmitClicked == true && item.isRequired == true && item.value == '') {
+        <mat-hint class="m-b-16 error-msg">
+          <div class="text-error">
+            {{item.fieldName}} {{util.appTranslate('form_required_lbl')}}
+          </div>
+        </mat-hint>
+        }
+      </mat-form-field>
+      }
+
+      @if (item.fieldType == 'phone') {
+      <div class="row">
+        <div class="col-lg-3 col-sm-12 p-b-16">
+          <mat-form-field class="w-100" appearance="outline">
+            <mat-label>{{util.appTranslate('country_lbl')}}</mat-label>
+            <input type="text" [placeholder]="util.appTranslate('choose_country')" matInput name="countryCode"
+              [formControl]="countryCodeCtrl" [matAutocomplete]="autoCountryCode" />
+            <mat-autocomplete autoActiveFirstOption #autoCountryCode="matAutocomplete"
+              (optionSelected)="onCountryCodeSelect($event,i)">
+              @for (item of countryCodes | async; track $index) {
+              <mat-option [value]="item.flag +' '+ item.dial_code +' '+ item.name">
+                {{item.flag +' '+ item.dial_code + ' '+ item.name }}
+              </mat-option>
+              }
+            </mat-autocomplete>
+            @if (haveSubmitClicked == true && item.isRequired == true && item.extraValue == '') {
+            <mat-hint class="m-b-16 error-msg">
+              <div class="text-error">
+                {{util.appTranslate('form_required')}}
+              </div>
+            </mat-hint>
+            }
+          </mat-form-field>
+        </div>
+        <div class="col-lg-9 col-sm-12 p-b-16">
+          <mat-form-field appearance="outline" class="w-100" color="primary">
+            <mat-label>{{item.fieldName}}</mat-label>
+            <input matInput type="number" [(ngModel)]="item.value" />
+            @if (haveSubmitClicked == true && item.isRequired == true && item.value == '') {
+            <mat-hint class="m-b-16 error-msg">
+              <div class="text-error">
+                {{item.fieldName}} {{util.appTranslate('form_required_lbl')}}
+              </div>
+            </mat-hint>
+            }
+          </mat-form-field>
+        </div>
+      </div>
+      }
+
+      @if (item.fieldType == 'email') {
+      <mat-form-field appearance="outline" class="w-100" color="primary">
+        <mat-label>{{item.fieldName}}</mat-label>
+        <input matInput type="email" [(ngModel)]="item.value" />
+        @if (haveSubmitClicked == true && item.isRequired == true && item.value == '') {
+        <mat-hint class="m-b-16 error-msg">
+          <div class="text-error">
+            {{item.fieldName}} {{util.appTranslate('form_required_lbl')}}
+          </div>
+        </mat-hint>
+        }
+      </mat-form-field>
+      }
+
+      @if (item.fieldType == 'date') {
+      <mat-form-field appearance="outline" class="w-100" color="primary">
+        <mat-label>{{item.fieldName}}</mat-label>
+        <input matInput [matDatepicker]="picker" [(ngModel)]="item.value" />
+        <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+        <mat-datepicker #picker></mat-datepicker>
+        @if (haveSubmitClicked == true && item.isRequired == true && item.value == '') {
+        <mat-hint class="m-b-16 error-msg">
+          <div class="text-error">
+            {{item.fieldName}} {{util.appTranslate('form_required_lbl')}}
+          </div>
+        </mat-hint>
+        }
+      </mat-form-field>
+      }
+    </div>
+    }
+  </div>
+
+</div>
+<mat-dialog-actions align="end">
+  <button mat-flat-button class="bg-secondary text-white" mat-dialog-close>{{util.appTranslate('cancel_btn')}}</button>
+  <button mat-flat-button color="primary" cdkFocusInitial (click)="onSubmit()" [disabled]="isSubmit == true">
+    @if (isSubmit == true) {
+    <mat-icon>
+      <mat-spinner diameter="15"></mat-spinner>
+    </mat-icon>
+    }
+    {{util.appTranslate('save_btn')}}
+  </button>
+</mat-dialog-actions>

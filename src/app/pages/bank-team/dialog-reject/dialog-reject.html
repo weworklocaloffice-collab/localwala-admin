@@ -1,0 +1,15 @@
+<h2 mat-dialog-title>{{ util.appTranslate('bank_reject_title') }}</h2>
+
+<mat-dialog-content>
+  <mat-form-field appearance="outline" class="w-100">
+    <mat-label>{{ util.appTranslate('th_rejection_reason') }}</mat-label>
+    <input matInput [(ngModel)]="rejectionReason" />
+  </mat-form-field>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button (click)="onClose()">{{ util.appTranslate('th_cancel') }}</button>
+  <button mat-flat-button color="warn" [disabled]="!rejectionReason.trim()" (click)="onConfirm()">
+    {{ util.appTranslate('th_reject') }}
+  </button>
+</mat-dialog-actions>

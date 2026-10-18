@@ -1,0 +1,52 @@
+<!--
+  A read-only consistency check. It reports; it does not fix. Anything it finds is
+  cleaned up by editing the affected records, so there is deliberately no "repair"
+  button here — an automatic repair across a live catalog is not something to
+  trigger from a diagnostics panel.
+
+  Rendered as a strip rather than a page because it answers "is the catalog sane",
+  which is a question asked while looking at the categories below it.
+-->
+@if (isLoaded && health) {
+  <div class="p-16" style="background: #f5f5f5">
+    <div class="d-flex align-center justify-content-between mb-12">
+      <span class="f-w-600 f-s-14">{{ util.appTranslate('dairy_catalog_health') }}</span>
+
+      @if (issueCount > 0) {
+        <span class="f-s-12 text-error f-w-600">
+          {{ issueCount }} {{ util.appTranslate('dairy_health_issue') }}
+        </span>
+      } @else {
+        <span class="f-s-12 text-success f-w-600">{{ util.appTranslate('dairy_health_ok') }}</span>
+      }
+    </div>
+
+    <div class="d-flex flex-wrap gap-24">
+      <div>
+        <div class="f-s-12 text-muted">{{ util.appTranslate('dairy_categories') }}</div>
+        <div class="f-s-14 f-w-600">{{ health.totalCategories }}</div>
+      </div>
+      <div>
+        <div class="f-s-12 text-muted">{{ util.appTranslate('dairy_sub_categories') }}</div>
+        <div class="f-s-14 f-w-600">{{ health.totalSubCategories }}</div>
+      </div>
+      <div>
+        <div class="f-s-12 text-muted">{{ util.appTranslate('dairy_products') }}</div>
+        <div class="f-s-14 f-w-600">{{ health.totalProducts }}</div>
+      </div>
+      <div>
+        <div class="f-s-12 text-muted">{{ util.appTranslate('dairy_skus') }}</div>
+        <div class="f-s-14 f-w-600">{{ health.totalSkus }}</div>
+      </div>
+
+      @for (issue of issues; track issue.key) {
+        <div>
+          <div class="f-s-12 text-muted">{{ issue.label }}</div>
+          <div class="f-s-14 f-w-600" [ngClass]="issue.value > 0 ? 'text-error' : 'text-success'">
+            {{ issue.value }}
+          </div>
+        </div>
+      }
+    </div>
+  </div>
+}

@@ -1,0 +1,70 @@
+<h2 mat-dialog-title class="dialog-title">
+  <span class="title-text">{{ util.appTranslate('dairy_generate_settlement') }}</span>
+  <button mat-icon-button mat-dialog-close class="close-btn">
+    <mat-icon>close</mat-icon>
+  </button>
+</h2>
+
+<mat-dialog-content>
+  <form [formGroup]="generateForm" class="pt-8">
+    <mat-form-field appearance="outline" class="w-100">
+      <mat-label>{{ util.appTranslate('th_settled_with') }}</mat-label>
+      <!--
+        The kind is chosen first because the API accepts exactly one of partner or
+        franchise. Choosing here makes it impossible to send both.
+      -->
+      <mat-select formControlName="partyType" (selectionChange)="onPartyTypeChange()">
+        <mat-option value="partner">{{ util.appTranslate('dairy_type_partner') }}</mat-option>
+        <mat-option value="franchise">{{ util.appTranslate('dairy_type_franchisee') }}</mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="w-100">
+      <mat-label>{{ util.appTranslate('th_party') }}</mat-label>
+      <mat-select formControlName="partyId">
+        @for (option of parties; track option._id) {
+          <mat-option [value]="option._id">
+            {{ option.name }}
+            @if (option.partnerCode) {
+              ({{ option.partnerCode }})
+            }
+            @if (option.franchiseCode) {
+              ({{ option.franchiseCode }})
+            }
+          </mat-option>
+        }
+      </mat-select>
+      @if (haveSubmitClicked && f['partyId'].invalid) {
+        <mat-hint class="m-b-16 error-msg">
+          <div class="text-error">{{ util.appTranslate('form_required') }}</div>
+        </mat-hint>
+      }
+    </mat-form-field>
+
+    <div class="d-flex gap-16">
+      <mat-form-field appearance="outline" class="w-100">
+        <mat-label>{{ util.appTranslate('th_period') }}</mat-label>
+        <mat-select formControlName="period">
+          <mat-option value="daily">{{ util.appTranslate('dairy_period_daily') }}</mat-option>
+          <mat-option value="weekly">{{ util.appTranslate('dairy_period_weekly') }}</mat-option>
+          <mat-option value="monthly">{{ util.appTranslate('dairy_period_monthly') }}</mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="w-100">
+        <mat-label>{{ util.appTranslate('th_reference_date') }}</mat-label>
+        <input matInput type="date" formControlName="reference" />
+        <mat-hint>{{ util.appTranslate('ph_reference_date_hint') }}</mat-hint>
+      </mat-form-field>
+    </div>
+
+    <p class="m-b-8 f-s-14 text-muted">{{ util.appTranslate('ts_generate_settlement_body') }}</p>
+  </form>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-stroked-button (click)="onCancel()">{{ util.appTranslate('ts_cancel') }}</button>
+  <button mat-flat-button color="primary" [disabled]="isSubmit" (click)="onGenerate()">
+    {{ util.appTranslate('dairy_generate_settlement') }}
+  </button>
+</mat-dialog-actions>

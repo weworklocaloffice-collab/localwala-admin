@@ -1,0 +1,43 @@
+<mat-card class="cardWithShadow theme-card">
+  <mat-card-header>
+    <mat-card-title class="m-b-0">
+      {{util.appTranslate('refund_request')}}
+    </mat-card-title>
+  </mat-card-header>
+
+  <mat-card-content class="b-t-0">
+    <mat-tab-group mat-stretch-tabs="false" [selectedIndex]="tabIndex" mat-align-tabs="start"
+      (selectedTabChange)="tabChanged($event)">
+      <mat-tab [label]="util.appTranslate('order_refund_request')"></mat-tab>
+      <mat-tab [label]="util.appTranslate('tiffin_subscription_refund_request')"></mat-tab>
+      <mat-tab [label]="util.appTranslate('dining_booking_refund_request')"></mat-tab>
+      <mat-tab [label]="util.appTranslate('order_refund_reason')"></mat-tab>
+      <mat-tab [label]="util.appTranslate('tiffin_refund_reason')"></mat-tab>
+      <mat-tab [label]="util.appTranslate('dining_refund_reason')"></mat-tab>
+    </mat-tab-group>
+  </mat-card-content>
+</mat-card>
+
+@if(tabIndex == 0){
+<app-order-refund-request></app-order-refund-request>
+}
+
+@if(tabIndex == 1){
+<app-tiffin-subscription-refund-request-list></app-tiffin-subscription-refund-request-list>
+}
+
+@if(tabIndex == 2){
+<app-dining-booking-refund-request-list></app-dining-booking-refund-request-list>
+}
+
+@if(tabIndex == 3){
+<app-refund-request-reason></app-refund-request-reason>
+}
+
+@if(tabIndex == 4){
+<app-tiffin-subscription-refund-request-reason></app-tiffin-subscription-refund-request-reason>
+}
+
+@if(tabIndex == 5){
+<app-dining-booking-refund-request-reason></app-dining-booking-refund-request-reason>
+}

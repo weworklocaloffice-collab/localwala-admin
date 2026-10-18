@@ -1,0 +1,36 @@
+<mat-card class="cardWithShadow m-b-16">
+  <mat-card-header class="m-b-16">
+    <mat-card-title>{{ util.appTranslate('realEstate_dashboard') }}</mat-card-title>
+    <mat-card-subtitle>{{ util.appTranslate('realEstate_dashboard_subtitle') }}</mat-card-subtitle>
+  </mat-card-header>
+
+  <mat-card-content>
+    @if (!isLoaded) {
+      <div class="p-24 text-center text-muted">{{ util.appTranslate('ts_loading') }}</div>
+    } @else {
+      <div class="d-flex flex-wrap gap-16">
+        <div class="p-16" style="min-width: 200px; flex: 1; background: #f5f5f5">
+          <div class="f-s-12 text-muted">{{ util.appTranslate('realEstate_published') }}</div>
+          <div class="f-w-600 f-s-16">{{ published }}</div>
+        </div>
+        <div class="p-16" style="min-width: 200px; flex: 1; background: #fff8e1">
+          <div class="f-s-12 text-muted">{{ util.appTranslate('realEstate_hold_exposure') }}</div>
+          <div class="f-w-600 f-s-16">₹{{ holdExposure | number: '1.2-2' }}</div>
+          <div class="f-s-12 text-muted">{{ activeHolds }} {{ util.appTranslate('realEstate_active_holds') }}</div>
+        </div>
+        <div class="p-16" style="min-width: 200px; flex: 1; background: #f5f5f5">
+          <div class="f-s-12 text-muted">{{ util.appTranslate('realEstate_pending_refunds') }}</div>
+          <div class="f-w-600 f-s-16">{{ pendingRefunds }}</div>
+        </div>
+        <div class="p-16" style="min-width: 200px; flex: 1; background: #f5f5f5">
+          <div class="f-s-12 text-muted">{{ util.appTranslate('realEstate_pending_settlements') }}</div>
+          <div class="f-w-600 f-s-16">{{ pendingSettlements }}</div>
+        </div>
+        <div class="p-16" style="min-width: 200px; flex: 1; background: #f5f5f5">
+          <div class="f-s-12 text-muted">{{ util.appTranslate('realEstate_leads') }}</div>
+          <div class="f-w-600 f-s-16">{{ activeLeads }}</div>
+        </div>
+      </div>
+    }
+  </mat-card-content>
+</mat-card>

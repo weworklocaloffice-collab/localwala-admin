@@ -1,0 +1,46 @@
+<h2 mat-dialog-title class="dialog-title">
+  <span class="title-text f-s-14 p-0">{{util.appTranslate('repeat_last_used_customization')}}</span>
+  <button mat-icon-button mat-dialog-close class="close-btn">
+    <mat-icon>close</mat-icon>
+  </button>
+</h2>
+
+<mat-dialog-content class="mat-typography w-100 p-b-0 p-t-0 p-l-0 p-r-0">
+  <div class="dialog-repeat-customization">
+    @for (item of cartItem; track $index) {
+    <div>
+      @if (item.quantity != 0) {
+      <div class="food-item-container row b-b-1">
+        <div class="col-8 col-md-8">
+          <div class="name-container">
+            <p class="food-name-lbl"> {{ util.trimText(item.displayName, 30) }} </p>
+            <p class="price-lbl"> {{ util.priceFormat(item.totalPrice) }} </p>
+            <p class="option-lbl"> {{ util.trimText(item.optionName, 40) }} </p>
+          </div>
+        </div>
+        <div class="col-4 col-md-4">
+          <div class="cart-container">
+            <ng-icon name="tablerMinus" class="icon-12 d-flex icon-lbl"
+              (click)="quantityCartItemEvent(item.uuid,'decrease')"></ng-icon>
+            <p class="f-s-10 f-w-500 lbl">{{ item.quantity }}</p>
+            <ng-icon name="tablerPlus" class="icon-12 d-flex icon-lbl"
+              (click)="quantityCartItemEvent(item.uuid,'increase')"></ng-icon>
+          </div>
+        </div>
+      </div>
+      }
+    </div>
+    }
+  </div>
+</mat-dialog-content>
+
+<mat-dialog-actions class="p-r-8 p-l-8">
+  <div class="d-flex align-items-center justify-content-between w-100">
+    <button mat-button mat-flat-button class="bg-secondary text-white" type="submit" (click)="onNewCustomisation()">
+      {{util.appTranslate('new_customization')}}
+    </button>
+    <button mat-button mat-flat-button color="primary" type="submit" (click)="onUpdateCart()">
+      {{util.appTranslate('update_cart')}}
+    </button>
+  </div>
+</mat-dialog-actions>

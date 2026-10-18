@@ -1,0 +1,119 @@
+<h2 mat-dialog-title class="dialog-title">
+  <span class="title-text">{{util.appTranslate('complete_dining_booking')}}</span>
+  <button mat-icon-button mat-dialog-close class="close-btn">
+    <mat-icon>close</mat-icon>
+  </button>
+</h2>
+<div mat-dialog-content style="max-width: 600px;max-height: max-content;" class="m-t-12 p-t-12">
+  <form name="eventForm" [formGroup]="completeForm" class="event-form" (ngSubmit)="onSubmit()">
+    <div class="row">
+      <div class="col-lg-12 col-sm-12 p-b-10">
+        <div class="row">
+          <div class="col-lg-6 col-sm-12">
+            <h6 class="text-muted mat-body-1 m-b-5">{{util.appTranslate('th_id')}}: <span
+                class="f-w-500 mat-body-1 m-t-0">
+                {{bookingId | uppercase}}</span>
+            </h6>
+          </div>
+          <div class="col-lg-6 col-sm-12">
+            <h6 class="text-muted mat-body-1 m-b-5 text-right">{{util.appTranslate('th_date')}}: <span
+                class="f-w-500 mat-body-1 m-t-0">
+                {{bookingDate}}</span>
+            </h6>
+          </div>
+
+          <div class="col-lg-6 col-sm-12">
+            <h6 class="text-muted mat-body-1 m-b-5">{{util.appTranslate('th_customer')}}: <span
+                class="f-w-500 mat-body-1 m-t-0">
+                {{userName}}</span>
+            </h6>
+          </div>
+          <div class="col-lg-6 col-sm-12">
+            <h6 class="text-muted mat-body-1 m-b-5 text-right">{{util.appTranslate('contact_no')}}: <span
+                class="f-w-500 mat-body-1 m-t-0">
+                {{contactNumber}}</span> </h6>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-lg-12 col-sm-12 p-b-16 p-t-16">
+        <mat-form-field appearance="outline" class="w-100" color="primary"
+          [matTooltip]="util.appTranslate('enter_billing_total_amount')">
+          <mat-label>{{util.appTranslate('billing_total_amount')}}</mat-label>
+          <input matInput [(ngModel)]="diningItemTotalAmount" [ngModelOptions]="{standalone: true}" type="number"
+            (keyup)="onItemTotalChangeEvent($event)" />
+        </mat-form-field>
+      </div>
+
+      <div class="col-lg-12 col-sm-12">
+        <div class="row">
+          <div class="col-lg-6 col-sm-12 p-b-10">
+            <mat-form-field appearance="outline" class="w-100" color="primary">
+              <mat-label>{{util.appTranslate('th_discount')}}</mat-label>
+              <input matInput type="number" [(ngModel)]="diningItemDiscountValue" [ngModelOptions]="{standalone: true}"
+                (keyup)="onDiscountChangeEvent($event)" />
+            </mat-form-field>
+          </div>
+
+          <div class="col-lg-6 col-sm-12 p-b-10">
+            <mat-form-field appearance="outline" class="w-100">
+              <mat-label>{{util.appTranslate('discount_type')}}</mat-label>
+              <mat-select (selectionChange)="onDiscountTypeChangeEvent($event)" [(ngModel)]="discountType"
+                [ngModelOptions]="{standalone: true}">
+                <mat-option value="per">{{util.appTranslate('percentage')}}</mat-option>
+                <mat-option value="amount">{{util.appTranslate('amount')}}</mat-option>
+              </mat-select>
+            </mat-form-field>
+          </div>
+        </div>
+      </div>
+
+      @if (couponId != '' && couponDiscountType == 'amount') {
+      <div class="col-lg-12 col-sm-12 p-b-10">
+        <mat-form-field appearance="outline" class="w-100" color="primary"
+          [matTooltip]="util.appTranslate('enter_billing_total_amount')">
+          <mat-label>{{util.appTranslate('coupon_discount_amount')}}</mat-label>
+          <input matInput [(ngModel)]="couponSelectedPercentageDiscount" [disabled]="true"
+            [ngModelOptions]="{standalone: true}" type="number" />
+        </mat-form-field>
+      </div>
+      }
+
+      @if (couponId != '' && couponDiscountType == 'percentage') {
+      <div class="col-lg-12 col-sm-12 p-b-6">
+        <mat-label>{{util.appTranslate('select_dining_coupon_discount')}}</mat-label>
+      </div>
+      }
+
+      @if (couponId != '' && couponDiscountType == 'percentage') {
+      <div class="col-lg-12 col-sm-12 p-b-10">
+        <mat-button-toggle-group [(ngModel)]="couponSelectedPercentageDiscount" [ngModelOptions]="{standalone: true}"
+          (change)="onDiscountValueChange($event)">
+          <mat-button-toggle [value]="couponMinDiscount">{{couponMinDiscount}}%</mat-button-toggle>
+          <mat-button-toggle [value]="couponMaxDiscount">{{couponMaxDiscount}}%</mat-button-toggle>
+        </mat-button-toggle-group>
+      </div>
+      }
+    </div>
+
+    <div class="row">
+      <div class="col-lg-12 col-sm-12 p-b-6">
+        <h6 class="f-s-14 mat-subtitle-1 f-w-600 text-primary">{{util.appTranslate('total_billing')}}
+          {{util.priceFormat(billTotal)}}</h6>
+      </div>
+    </div>
+
+    <div mat-dialog-actions class="p-b-24">
+      <button mat-button mat-flat-button color="primary" type="submit" [disabled]="isSubmit == true">
+        @if (isSubmit == true) {
+        <mat-icon>
+          <mat-spinner diameter="15"></mat-spinner>
+        </mat-icon>
+        }
+        {{util.appTranslate('save_btn')}}
+      </button>
+      <button mat-button mat-dialog-close class="m-l-8 bg-secondary text-white">{{util.appTranslate('cancel_btn')}}</button>
+    </div>
+
+  </form>
+</div>

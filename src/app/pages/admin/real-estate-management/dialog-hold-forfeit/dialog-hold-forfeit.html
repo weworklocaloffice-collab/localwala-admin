@@ -1,0 +1,20 @@
+<h2 mat-dialog-title>{{ util.appTranslate('realEstate_forfeit_hold') }}</h2>
+
+<mat-dialog-content>
+  <p class="f-s-14 text-muted">{{ util.appTranslate('realEstate_forfeit_hint') }}</p>
+  <mat-form-field appearance="outline" class="w-100 m-b-16">
+    <mat-label>{{ util.appTranslate('realEstate_requested_by') }}</mat-label>
+    <input matInput [(ngModel)]="requestedBy" placeholder="User ObjectId" />
+  </mat-form-field>
+  <mat-form-field appearance="outline" class="w-100">
+    <mat-label>{{ util.appTranslate('th_reason') }}</mat-label>
+    <textarea matInput rows="3" [(ngModel)]="reason"></textarea>
+  </mat-form-field>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button (click)="onClose()">{{ util.appTranslate('th_cancel') }}</button>
+  <button mat-flat-button color="warn" [disabled]="isSaving || !requestedBy || !reason" (click)="onSubmit()">
+    {{ util.appTranslate('realEstate_forfeit') }}
+  </button>
+</mat-dialog-actions>

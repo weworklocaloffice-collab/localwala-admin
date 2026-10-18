@@ -1,0 +1,692 @@
+<form name="eventForm" [formGroup]="settingForm" class="event-form" (ngSubmit)="onSubmit()" id="topContent">
+  <div class="row">
+    <div class="col-lg-8 col-sm-12 p-b-16">
+      <mat-card class="cardWithShadow theme-card">
+        <mat-card-header>
+          <mat-card-title class="m-b-0">
+            {{util.appTranslate('version_control_information')}}
+          </mat-card-title>
+        </mat-card-header>
+
+        <mat-card-content class="b-t-0">
+          <!-- User App -->
+          <div class="row">
+            <div class="col-lg-6 col-sm-12 p-b-16">
+              <mat-card class="b-1 shadow-none theme-card">
+                <mat-card-header>
+                  <mat-card-title class="m-b-0">
+                    <img src="assets/images/google-play.png" alt="google play" class="cart-title-img">
+                    {{util.appTranslate('user_android_version')}}
+                  </mat-card-title>
+                </mat-card-header>
+
+                <mat-card-content class="b-t-0">
+                  <div class="row">
+                    <div class="col-lg-12 col-sm-12 p-b-16">
+                      <mat-form-field appearance="outline" class="w-100" color="primary"
+                        [matTooltip]="util.appTranslate('user_android_tooltip')">
+                        <mat-label>{{util.appTranslate('min_user_app_force_update_android')}}</mat-label>
+                        <input matInput formControlName="userAndroidForceUpdateVersion"
+                          name="userAndroidForceUpdateVersion" type="text"
+                          [placeholder]="util.appTranslate('app_min_version')" />
+                        @if(haveSubmitClicked == true && f['userAndroidForceUpdateVersion'].invalid){
+                        <mat-hint class="m-b-16 error-msg">
+                          @if(f['userAndroidForceUpdateVersion'].errors &&
+                          f['userAndroidForceUpdateVersion'].errors['required']){
+                          <div class="text-error">
+                            {{util.appTranslate('form_required')}}
+                          </div>
+                          }
+                        </mat-hint>
+                        }
+                      </mat-form-field>
+                    </div>
+
+                    <div class="col-lg-12 col-sm-12 p-b-16">
+                      <mat-form-field appearance="outline" class="w-100" color="primary"
+                        [matTooltip]="util.appTranslate('user_ios_tooltip')">
+                        <mat-label>{{util.appTranslate('download_user_app_android')}}</mat-label>
+                        <input matInput formControlName="userAndroidUpdateUrl" name="userAndroidUpdateUrl" type="text"
+                          [placeholder]="util.appTranslate('download_url')" />
+                        @if(haveSubmitClicked == true && f['userAndroidUpdateUrl'].invalid){
+                        <mat-hint class="m-b-16 error-msg">
+                          @if(f['userAndroidUpdateUrl'].errors &&
+                          f['userAndroidUpdateUrl'].errors['required']){
+                          <div class="text-error">
+                            {{util.appTranslate('form_required')}}
+                          </div>
+                          }
+                        </mat-hint>
+                        }
+                      </mat-form-field>
+                    </div>
+
+                  </div>
+                </mat-card-content>
+              </mat-card>
+            </div>
+
+            <div class="col-lg-6 col-sm-12 p-b-16">
+              <mat-card class="b-1 shadow-none theme-card">
+                <mat-card-header>
+                  <mat-card-title class="m-b-0">
+                    <img src="assets/images/apple.png" alt="google play" class="cart-title-img">
+                    {{util.appTranslate('user_ios_version')}}
+                  </mat-card-title>
+                </mat-card-header>
+
+                <mat-card-content class="b-t-0">
+                  <div class="row">
+                    <div class="col-lg-12 col-sm-12 p-b-16">
+                      <mat-form-field appearance="outline" class="w-100" color="primary"
+                        [matTooltip]="util.appTranslate('user_android_tooltip')">
+                        <mat-label>{{util.appTranslate('min_user_app_force_update_ios')}}</mat-label>
+                        <input matInput formControlName="useriOSForceUpdateVersion" name="useriOSForceUpdateVersion"
+                          type="text" [placeholder]="util.appTranslate('app_min_version')" />
+                        @if(haveSubmitClicked == true && f['useriOSForceUpdateVersion'].invalid){
+                        <mat-hint class="m-b-16 error-msg">
+                          @if(f['useriOSForceUpdateVersion'].errors &&
+                          f['useriOSForceUpdateVersion'].errors['required']){
+                          <div class="text-error">
+                            {{util.appTranslate('form_required')}}
+                          </div>
+                          }
+                        </mat-hint>
+                        }
+                      </mat-form-field>
+                    </div>
+
+                    <div class="col-lg-12 col-sm-12 p-b-16">
+                      <mat-form-field appearance="outline" class="w-100" color="primary"
+                        [matTooltip]="util.appTranslate('user_ios_tooltip')">
+                        <mat-label>{{util.appTranslate('download_user_app_ios')}}</mat-label>
+                        <input matInput formControlName="useriOSUpdateUrl" name="useriOSUpdateUrl" type="text"
+                          [placeholder]="util.appTranslate('download_url')" />
+                        @if(haveSubmitClicked == true && f['useriOSUpdateUrl'].invalid){
+                        <mat-hint class="m-b-16 error-msg">
+                          @if(f['useriOSUpdateUrl'].errors &&
+                          f['useriOSUpdateUrl'].errors['required']){
+                          <div class="text-error">
+                            {{util.appTranslate('form_required')}}
+                          </div>
+                          }
+                        </mat-hint>
+                        }
+                      </mat-form-field>
+                    </div>
+
+                  </div>
+                </mat-card-content>
+              </mat-card>
+            </div>
+          </div>
+          <!-- User App -->
+
+          <!-- Vendor App -->
+          <div class="row">
+            <div class="col-lg-6 col-sm-12 p-b-16">
+              <mat-card class="b-1 shadow-none theme-card">
+                <mat-card-header>
+                  <mat-card-title class="m-b-0">
+                    <img src="assets/images/google-play.png" alt="google play" class="cart-title-img">
+                    {{util.appTranslate('vendor_android_version')}}
+                  </mat-card-title>
+                </mat-card-header>
+
+                <mat-card-content class="b-t-0">
+                  <div class="row">
+                    <div class="col-lg-12 col-sm-12 p-b-16">
+                      <mat-form-field appearance="outline" class="w-100" color="primary"
+                        [matTooltip]="util.appTranslate('vendor_android_tooltip')">
+                        <mat-label>{{util.appTranslate('min_vendor_app_force_update_android')}}</mat-label>
+                        <input matInput formControlName="vendorAndroidForceUpdateVersion"
+                          name="vendorAndroidForceUpdateVersion" type="text"
+                          [placeholder]="util.appTranslate('app_min_version')" />
+                        @if(haveSubmitClicked == true && f['vendorAndroidForceUpdateVersion'].invalid){
+                        <mat-hint class="m-b-16 error-msg">
+                          @if(f['vendorAndroidForceUpdateVersion'].errors &&
+                          f['vendorAndroidForceUpdateVersion'].errors['required']){
+                          <div class="text-error">
+                            {{util.appTranslate('form_required')}}
+                          </div>
+                          }
+                        </mat-hint>
+                        }
+                      </mat-form-field>
+                    </div>
+
+                    <div class="col-lg-12 col-sm-12 p-b-16">
+                      <mat-form-field appearance="outline" class="w-100" color="primary"
+                        [matTooltip]="util.appTranslate('vendor_ios_tooltip')">
+                        <mat-label>{{util.appTranslate('download_vendor_app_android')}}</mat-label>
+                        <input matInput formControlName="vendorAndroidUpdateUrl" name="vendorAndroidUpdateUrl"
+                          type="text" [placeholder]="util.appTranslate('download_url')" />
+                        @if(haveSubmitClicked == true && f['vendorAndroidUpdateUrl'].invalid){
+                        <mat-hint class="m-b-16 error-msg">
+                          @if(f['vendorAndroidUpdateUrl'].errors &&
+                          f['vendorAndroidUpdateUrl'].errors['required']){
+                          <div class="text-error">
+                            {{util.appTranslate('form_required')}}
+                          </div>
+                          }
+                        </mat-hint>
+                        }
+                      </mat-form-field>
+                    </div>
+
+                  </div>
+                </mat-card-content>
+              </mat-card>
+            </div>
+
+            <div class="col-lg-6 col-sm-12 p-b-16">
+              <mat-card class="b-1 shadow-none theme-card">
+                <mat-card-header>
+                  <mat-card-title class="m-b-0">
+                    <img src="assets/images/apple.png" alt="google play" class="cart-title-img">
+                    {{util.appTranslate('vendor_ios_version')}}
+                  </mat-card-title>
+                </mat-card-header>
+
+                <mat-card-content class="b-t-0">
+                  <div class="row">
+                    <div class="col-lg-12 col-sm-12 p-b-16">
+                      <mat-form-field appearance="outline" class="w-100" color="primary"
+                        [matTooltip]="util.appTranslate('vendor_android_tooltip')">
+                        <mat-label>{{util.appTranslate('min_vendor_app_force_update_ios')}}</mat-label>
+                        <input matInput formControlName="vendoriOSForceUpdateVersion" name="vendoriOSForceUpdateVersion"
+                          type="text" [placeholder]="util.appTranslate('app_min_version')" />
+                        @if(haveSubmitClicked == true && f['vendoriOSForceUpdateVersion'].invalid){
+                        <mat-hint class="m-b-16 error-msg">
+                          @if(f['vendoriOSForceUpdateVersion'].errors &&
+                          f['vendoriOSForceUpdateVersion'].errors['required']){
+                          <div class="text-error">
+                            {{util.appTranslate('form_required')}}
+                          </div>
+                          }
+                        </mat-hint>
+                        }
+                      </mat-form-field>
+                    </div>
+
+                    <div class="col-lg-12 col-sm-12 p-b-16">
+                      <mat-form-field appearance="outline" class="w-100" color="primary"
+                        [matTooltip]="util.appTranslate('vendor_ios_app_tooltip')">
+                        <mat-label>{{util.appTranslate('download_vendor_app_ios')}}</mat-label>
+                        <input matInput formControlName="vendoriOSUpdateUrl" name="vendoriOSUpdateUrl" type="text"
+                          [placeholder]="util.appTranslate('download_url')" />
+                        @if(haveSubmitClicked == true && f['vendoriOSUpdateUrl'].invalid){
+                        <mat-hint class="m-b-16 error-msg">
+                          @if(f['vendoriOSUpdateUrl'].errors &&
+                          f['vendoriOSUpdateUrl'].errors['required']){
+                          <div class="text-error">
+                            {{util.appTranslate('form_required')}}
+                          </div>
+                          }
+                        </mat-hint>
+                        }
+                      </mat-form-field>
+                    </div>
+
+                  </div>
+                </mat-card-content>
+              </mat-card>
+            </div>
+          </div>
+          <!-- Vendor App -->
+
+          <!-- Delivery Man App -->
+          <div class="row">
+            <div class="col-lg-6 col-sm-12 p-b-16">
+              <mat-card class="b-1 shadow-none theme-card">
+                <mat-card-header>
+                  <mat-card-title class="m-b-0">
+                    <img src="assets/images/google-play.png" alt="google play" class="cart-title-img">
+                    {{util.appTranslate('deliveryman_android_version')}}
+                  </mat-card-title>
+                </mat-card-header>
+
+                <mat-card-content class="b-t-0">
+                  <div class="row">
+                    <div class="col-lg-12 col-sm-12 p-b-16">
+                      <mat-form-field appearance="outline" class="w-100" color="primary"
+                        [matTooltip]="util.appTranslate('deliveryman_android_tooltip')">
+                        <mat-label>{{util.appTranslate('min_deliveryman_app_force_update_android')}}</mat-label>
+                        <input matInput formControlName="deliveryManAndroidForceUpdateVersion"
+                          name="deliveryManAndroidForceUpdateVersion" type="text"
+                          [placeholder]="util.appTranslate('app_min_version')" />
+                        @if(haveSubmitClicked == true && f['deliveryManAndroidForceUpdateVersion'].invalid){
+                        <mat-hint class="m-b-16 error-msg">
+                          @if(f['deliveryManAndroidForceUpdateVersion'].errors &&
+                          f['deliveryManAndroidForceUpdateVersion'].errors['required']){
+                          <div class="text-error">
+                            {{util.appTranslate('form_required')}}
+                          </div>
+                          }
+                        </mat-hint>
+                        }
+                      </mat-form-field>
+                    </div>
+
+                    <div class="col-lg-12 col-sm-12 p-b-16">
+                      <mat-form-field appearance="outline" class="w-100" color="primary"
+                        [matTooltip]="util.appTranslate('deliveryman_android_app_tooltip')">
+                        <mat-label>{{util.appTranslate('download_deliveryman_app_android')}}</mat-label>
+                        <input matInput formControlName="deliveryManAndroidUpdateUrl" name="deliveryManAndroidUpdateUrl"
+                          type="text" [placeholder]="util.appTranslate('download_url')" />
+                        @if(haveSubmitClicked == true && f['deliveryManAndroidUpdateUrl'].invalid){
+                        <mat-hint class="m-b-16 error-msg">
+                          @if(f['deliveryManAndroidUpdateUrl'].errors &&
+                          f['deliveryManAndroidUpdateUrl'].errors['required']){
+                          <div class="text-error">
+                            {{util.appTranslate('form_required')}}
+                          </div>
+                          }
+                        </mat-hint>
+                        }
+                      </mat-form-field>
+                    </div>
+
+                  </div>
+                </mat-card-content>
+              </mat-card>
+            </div>
+
+            <div class="col-lg-6 col-sm-12 p-b-16">
+              <mat-card class="b-1 shadow-none theme-card">
+                <mat-card-header>
+                  <mat-card-title class="m-b-0">
+                    <img src="assets/images/apple.png" alt="google play" class="cart-title-img">
+                    {{util.appTranslate('deliveryman_ios_version')}}
+                  </mat-card-title>
+                </mat-card-header>
+
+                <mat-card-content class="b-t-0">
+                  <div class="row">
+                    <div class="col-lg-12 col-sm-12 p-b-16">
+                      <mat-form-field appearance="outline" class="w-100" color="primary"
+                        [matTooltip]="util.appTranslate('deliveryman_android_tooltip')">
+                        <mat-label>{{util.appTranslate('min_deliveryman_app_force_update_ios')}}</mat-label>
+                        <input matInput formControlName="deliveryManiOSForceUpdateVersion"
+                          name="deliveryManiOSForceUpdateVersion" type="text"
+                          [placeholder]="util.appTranslate('app_min_version')" />
+                        @if(haveSubmitClicked == true && f['deliveryManiOSForceUpdateVersion'].invalid){
+                        <mat-hint class="m-b-16 error-msg">
+                          @if(f['deliveryManiOSForceUpdateVersion'].errors &&
+                          f['deliveryManiOSForceUpdateVersion'].errors['required']){
+                          <div class="text-error">
+                            {{util.appTranslate('form_required')}}
+                          </div>
+                          }
+                        </mat-hint>
+                        }
+                      </mat-form-field>
+                    </div>
+
+                    <div class="col-lg-12 col-sm-12 p-b-16">
+                      <mat-form-field appearance="outline" class="w-100" color="primary"
+                        [matTooltip]="util.appTranslate('deliveryman_android_app_tooltip')">
+                        <mat-label>{{util.appTranslate('download_deliveryman_app_ios')}}</mat-label>
+                        <input matInput formControlName="deliveryManiOSUpdateUrl" name="deliveryManiOSUpdateUrl"
+                          type="text" [placeholder]="util.appTranslate('download_url')" />
+                        @if(haveSubmitClicked == true && f['deliveryManiOSUpdateUrl'].invalid){
+                        <mat-hint class="m-b-16 error-msg">
+                          @if(f['deliveryManiOSUpdateUrl'].errors &&
+                          f['deliveryManiOSUpdateUrl'].errors['required']){
+                          <div class="text-error">
+                            {{util.appTranslate('form_required')}}
+                          </div>
+                          }
+                        </mat-hint>
+                        }
+                      </mat-form-field>
+                    </div>
+
+                  </div>
+                </mat-card-content>
+              </mat-card>
+            </div>
+          </div>
+          <!-- Delivery Man App -->
+
+          <!-- Waiter App -->
+          <div class="row">
+            <div class="col-lg-6 col-sm-12 p-b-16">
+              <mat-card class="b-1 shadow-none theme-card">
+                <mat-card-header>
+                  <mat-card-title class="m-b-0">
+                    <img src="assets/images/google-play.png" alt="google play" class="cart-title-img">
+                    {{util.appTranslate('waiter_android_version')}}
+                  </mat-card-title>
+                </mat-card-header>
+
+                <mat-card-content class="b-t-0">
+                  <div class="row">
+                    <div class="col-lg-12 col-sm-12 p-b-16">
+                      <mat-form-field appearance="outline" class="w-100" color="primary"
+                        [matTooltip]="util.appTranslate('waiter_force_version_tooltip')">
+                        <mat-label>{{util.appTranslate('min_waiter_app_force_update_android')}}</mat-label>
+                        <input matInput formControlName="waiterAndroidForceUpdateVersion"
+                          name="waiterAndroidForceUpdateVersion" type="text"
+                          [placeholder]="util.appTranslate('app_min_version')" />
+                        @if(haveSubmitClicked == true && f['waiterAndroidForceUpdateVersion'].invalid){
+                        <mat-hint class="m-b-16 error-msg">
+                          @if(f['waiterAndroidForceUpdateVersion'].errors &&
+                          f['waiterAndroidForceUpdateVersion'].errors['required']){
+                          <div class="text-error">
+                            {{util.appTranslate('form_required')}}
+                          </div>
+                          }
+                        </mat-hint>
+                        }
+                      </mat-form-field>
+                    </div>
+
+                    <div class="col-lg-12 col-sm-12 p-b-16">
+                      <mat-form-field appearance="outline" class="w-100" color="primary"
+                        [matTooltip]="util.appTranslate('waiter_android_tooltip')">
+                        <mat-label>{{util.appTranslate('download_waiter_app_android')}}</mat-label>
+                        <input matInput formControlName="waiterAndroidUpdateUrl" name="waiterAndroidUpdateUrl"
+                          type="text" [placeholder]="util.appTranslate('download_url')" />
+                        @if(haveSubmitClicked == true && f['waiterAndroidUpdateUrl'].invalid){
+                        <mat-hint class="m-b-16 error-msg">
+                          @if(f['waiterAndroidUpdateUrl'].errors &&
+                          f['waiterAndroidUpdateUrl'].errors['required']){
+                          <div class="text-error">
+                            {{util.appTranslate('form_required')}}
+                          </div>
+                          }
+                        </mat-hint>
+                        }
+                      </mat-form-field>
+                    </div>
+
+                  </div>
+                </mat-card-content>
+              </mat-card>
+            </div>
+
+            <div class="col-lg-6 col-sm-12 p-b-16">
+              <mat-card class="b-1 shadow-none theme-card">
+                <mat-card-header>
+                  <mat-card-title class="m-b-0">
+                    <img src="assets/images/apple.png" alt="google play" class="cart-title-img">
+                    {{util.appTranslate('waiter_ios_version')}}
+                  </mat-card-title>
+                </mat-card-header>
+
+                <mat-card-content class="b-t-0">
+                  <div class="row">
+                    <div class="col-lg-12 col-sm-12 p-b-16">
+                      <mat-form-field appearance="outline" class="w-100" color="primary"
+                        [matTooltip]="util.appTranslate('waiter_force_version_tooltip')">
+                        <mat-label>{{util.appTranslate('min_waiter_app_force_update_ios')}}</mat-label>
+                        <input matInput formControlName="waiteriOSForceUpdateVersion" name="waiteriOSForceUpdateVersion"
+                          type="text" [placeholder]="util.appTranslate('app_min_version')" />
+                        @if(haveSubmitClicked == true && f['waiteriOSForceUpdateVersion'].invalid){
+                        <mat-hint class="m-b-16 error-msg">
+                          @if(f['waiteriOSForceUpdateVersion'].errors &&
+                          f['waiteriOSForceUpdateVersion'].errors['required']){
+                          <div class="text-error">
+                            {{util.appTranslate('form_required')}}
+                          </div>
+                          }
+                        </mat-hint>
+                        }
+                      </mat-form-field>
+                    </div>
+
+                    <div class="col-lg-12 col-sm-12 p-b-16">
+                      <mat-form-field appearance="outline" class="w-100" color="primary"
+                        [matTooltip]="util.appTranslate('waiter_android_tooltip')">
+                        <mat-label>{{util.appTranslate('download_waiter_app_ios')}}</mat-label>
+                        <input matInput formControlName="waiteriOSUpdateUrl" name="waiteriOSUpdateUrl" type="text"
+                          [placeholder]="util.appTranslate('download_url')" />
+                        @if(haveSubmitClicked == true && f['waiteriOSUpdateUrl'].invalid){
+                        <mat-hint class="m-b-16 error-msg">
+                          @if(f['waiteriOSUpdateUrl'].errors &&
+                          f['waiteriOSUpdateUrl'].errors['required']){
+                          <div class="text-error">
+                            {{util.appTranslate('form_required')}}
+                          </div>
+                          }
+                        </mat-hint>
+                        }
+                      </mat-form-field>
+                    </div>
+
+                  </div>
+                </mat-card-content>
+              </mat-card>
+            </div>
+          </div>
+          <!-- Waiter App -->
+
+          <!-- Kitchen App -->
+          <div class="row">
+            <div class="col-lg-6 col-sm-12 p-b-16">
+              <mat-card class="b-1 shadow-none theme-card">
+                <mat-card-header>
+                  <mat-card-title class="m-b-0">
+                    <img src="assets/images/google-play.png" alt="google play" class="cart-title-img">
+                    {{util.appTranslate('kitchen_android_version')}}
+                  </mat-card-title>
+                </mat-card-header>
+
+                <mat-card-content class="b-t-0">
+                  <div class="row">
+                    <div class="col-lg-12 col-sm-12 p-b-16">
+                      <mat-form-field appearance="outline" class="w-100" color="primary"
+                        [matTooltip]="util.appTranslate('kitchen_force_version_tooltip')">
+                        <mat-label>{{util.appTranslate('min_kitchen_app_force_update_android')}}</mat-label>
+                        <input matInput formControlName="kitchenAndroidForceUpdateVersion"
+                          name="kitchenAndroidForceUpdateVersion" type="text"
+                          [placeholder]="util.appTranslate('app_min_version')" />
+                        @if(haveSubmitClicked == true && f['kitchenAndroidForceUpdateVersion'].invalid){
+                        <mat-hint class="m-b-16 error-msg">
+                          @if(f['kitchenAndroidForceUpdateVersion'].errors &&
+                          f['kitchenAndroidForceUpdateVersion'].errors['required']){
+                          <div class="text-error">
+                            {{util.appTranslate('form_required')}}
+                          </div>
+                          }
+                        </mat-hint>
+                        }
+                      </mat-form-field>
+                    </div>
+
+                    <div class="col-lg-12 col-sm-12 p-b-16">
+                      <mat-form-field appearance="outline" class="w-100" color="primary"
+                        [matTooltip]="util.appTranslate('kitchen_android_tooltip')">
+                        <mat-label>{{util.appTranslate('download_kitchen_app_android')}}</mat-label>
+                        <input matInput formControlName="kitchenAndroidUpdateUrl" name="kitchenAndroidUpdateUrl"
+                          type="text" [placeholder]="util.appTranslate('download_url')" />
+                        @if(haveSubmitClicked == true && f['kitchenAndroidUpdateUrl'].invalid){
+                        <mat-hint class="m-b-16 error-msg">
+                          @if(f['kitchenAndroidUpdateUrl'].errors &&
+                          f['kitchenAndroidUpdateUrl'].errors['required']){
+                          <div class="text-error">
+                            {{util.appTranslate('form_required')}}
+                          </div>
+                          }
+                        </mat-hint>
+                        }
+                      </mat-form-field>
+                    </div>
+
+                  </div>
+                </mat-card-content>
+              </mat-card>
+            </div>
+
+            <div class="col-lg-6 col-sm-12 p-b-16">
+              <mat-card class="b-1 shadow-none theme-card">
+                <mat-card-header>
+                  <mat-card-title class="m-b-0">
+                    <img src="assets/images/apple.png" alt="google play" class="cart-title-img">
+                    {{util.appTranslate('kitchen_ios_version')}}
+                  </mat-card-title>
+                </mat-card-header>
+
+                <mat-card-content class="b-t-0">
+                  <div class="row">
+                    <div class="col-lg-12 col-sm-12 p-b-16">
+                      <mat-form-field appearance="outline" class="w-100" color="primary"
+                        [matTooltip]="util.appTranslate('kitchen_force_version_tooltip')">
+                        <mat-label>{{util.appTranslate('min_kitchen_app_force_update_ios')}}</mat-label>
+                        <input matInput formControlName="kitcheniOSForceUpdateVersion"
+                          name="kitcheniOSForceUpdateVersion" type="text"
+                          [placeholder]="util.appTranslate('app_min_version')" />
+                        @if(haveSubmitClicked == true && f['kitcheniOSForceUpdateVersion'].invalid){
+                        <mat-hint class="m-b-16 error-msg">
+                          @if(f['kitcheniOSForceUpdateVersion'].errors &&
+                          f['kitcheniOSForceUpdateVersion'].errors['required']){
+                          <div class="text-error">
+                            {{util.appTranslate('form_required')}}
+                          </div>
+                          }
+                        </mat-hint>
+                        }
+                      </mat-form-field>
+                    </div>
+
+                    <div class="col-lg-12 col-sm-12 p-b-16">
+                      <mat-form-field appearance="outline" class="w-100" color="primary"
+                        [matTooltip]="util.appTranslate('kitchen_android_tooltip')">
+                        <mat-label>{{util.appTranslate('download_kitchen_app_ios')}}</mat-label>
+                        <input matInput formControlName="kitcheniOSUpdateUrl" name="kitcheniOSUpdateUrl" type="text"
+                          [placeholder]="util.appTranslate('download_url')" />
+                        @if(haveSubmitClicked == true && f['kitcheniOSUpdateUrl'].invalid){
+                        <mat-hint class="m-b-16 error-msg">
+                          @if(f['kitcheniOSUpdateUrl'].errors &&
+                          f['kitcheniOSUpdateUrl'].errors['required']){
+                          <div class="text-error">
+                            {{util.appTranslate('form_required')}}
+                          </div>
+                          }
+                        </mat-hint>
+                        }
+                      </mat-form-field>
+                    </div>
+
+                  </div>
+                </mat-card-content>
+              </mat-card>
+            </div>
+          </div>
+          <!-- Kitchen App -->
+        </mat-card-content>
+      </mat-card>
+    </div>
+
+    <div class="col-lg-4 col-sm-12 p-b-16">
+      <mat-card class="cardWithShadow theme-card">
+        <mat-card-header>
+          <mat-card-title class="m-b-0">
+            {{util.appTranslate('app_web_information')}}
+          </mat-card-title>
+        </mat-card-header>
+
+        <mat-card-content class="b-t-0">
+          <div class="row">
+            <div class="col-lg-12 col-sm-12 p-b-16">
+              <mat-form-field appearance="outline" class="w-100"
+                [matTooltip]="util.appTranslate('popular_food_tooltip')">
+                <mat-label>{{util.appTranslate('show_popular_foods')}}</mat-label>
+                <mat-select formControlName="showPopularFood" name="showPopularFood">
+                  <mat-option [value]="true">{{util.appTranslate('dd_yes')}}</mat-option>
+                  <mat-option [value]="false">{{util.appTranslate('dd_no')}}</mat-option>
+                </mat-select>
+              </mat-form-field>
+            </div>
+
+            <div class="col-lg-12 col-sm-12 p-b-16">
+              <mat-form-field appearance="outline" class="w-100"
+                [matTooltip]="util.appTranslate('most_reviewed_foods_tooltip')">
+                <mat-label>{{util.appTranslate('show_most_reviewed_foods')}}</mat-label>
+                <mat-select formControlName="showMostReviewedFood" name="showMostReviewedFood">
+                  <mat-option [value]="true">{{util.appTranslate('dd_yes')}}</mat-option>
+                  <mat-option [value]="false">{{util.appTranslate('dd_no')}}</mat-option>
+                </mat-select>
+              </mat-form-field>
+            </div>
+
+            <div class="col-lg-12 col-sm-12 p-b-16">
+              <mat-form-field appearance="outline" class="w-100"
+                [matTooltip]="util.appTranslate('today_trending_food_tooltip')">
+                <mat-label>{{util.appTranslate('show_todays_trending_foods')}}</mat-label>
+                <mat-select formControlName="showTodaysTrendingFood" name="showTodaysTrendingFood">
+                  <mat-option [value]="true">{{util.appTranslate('dd_yes')}}</mat-option>
+                  <mat-option [value]="false">{{util.appTranslate('dd_no')}}</mat-option>
+                </mat-select>
+              </mat-form-field>
+            </div>
+
+            <div class="col-lg-12 col-sm-12 p-b-16">
+              <mat-form-field appearance="outline" class="w-100"
+                [matTooltip]="util.appTranslate('popular_restaurant_tooltip')">
+                <mat-label>{{util.appTranslate('show_popular_restaurants')}}</mat-label>
+                <mat-select formControlName="showPopularRestaurant" name="showPopularRestaurant">
+                  <mat-option [value]="true">{{util.appTranslate('dd_yes')}}</mat-option>
+                  <mat-option [value]="false">{{util.appTranslate('dd_no')}}</mat-option>
+                </mat-select>
+              </mat-form-field>
+            </div>
+
+            <div class="col-lg-12 col-sm-12 p-b-16">
+              <mat-form-field appearance="outline" class="w-100"
+                [matTooltip]="util.appTranslate('new_restaurant_tooltip')">
+                <mat-label>{{util.appTranslate('show_new_restaurants')}}</mat-label>
+                <mat-select formControlName="showNewRestaurant" name="showNewRestaurant">
+                  <mat-option [value]="true">{{util.appTranslate('dd_yes')}}</mat-option>
+                  <mat-option [value]="false">{{util.appTranslate('dd_no')}}</mat-option>
+                </mat-select>
+              </mat-form-field>
+            </div>
+
+            <div class="col-lg-12 col-sm-12 p-b-16">
+              <mat-form-field appearance="outline" class="w-100"
+                [matTooltip]="util.appTranslate('tiffin_packages_tooltip')">
+                <mat-label>{{util.appTranslate('show_subscription_tiffin_packages')}}</mat-label>
+                <mat-select formControlName="showTiffinSubscriptionPackages" name="showTiffinSubscriptionPackages">
+                  <mat-option [value]="true">{{util.appTranslate('dd_yes')}}</mat-option>
+                  <mat-option [value]="false">{{util.appTranslate('dd_no')}}</mat-option>
+                </mat-select>
+              </mat-form-field>
+            </div>
+
+            <div class="col-lg-12 col-sm-12 p-b-16">
+              <mat-form-field appearance="outline" class="w-100"
+                [matTooltip]="util.appTranslate('popular_dining_restaurant_tooltip')">
+                <mat-label>{{util.appTranslate('show_popular_dining_restaurant')}}</mat-label>
+                <mat-select formControlName="showPopularDiningRestaurant" name="showPopularDiningRestaurant">
+                  <mat-option [value]="true">{{util.appTranslate('dd_yes')}}</mat-option>
+                  <mat-option [value]="false">{{util.appTranslate('dd_no')}}</mat-option>
+                </mat-select>
+              </mat-form-field>
+            </div>
+
+            <div class="col-lg-12 col-sm-12 p-b-16">
+              <mat-form-field appearance="outline" class="w-100"
+                [matTooltip]="util.appTranslate('new_dining_restaurant_tooltip')">
+                <mat-label>{{util.appTranslate('show_new_dining_restaurant')}}</mat-label>
+                <mat-select formControlName="showNewDiningRestaurant" name="showNewDiningRestaurant">
+                  <mat-option [value]="true">{{util.appTranslate('dd_yes')}}</mat-option>
+                  <mat-option [value]="false">{{util.appTranslate('dd_no')}}</mat-option>
+                </mat-select>
+              </mat-form-field>
+            </div>
+
+          </div>
+        </mat-card-content>
+        <mat-card-actions class="b-t-1">
+          <button mat-flat-button color="primary" type="submit">
+            {{ action == 'add' ? util.appTranslate('submit_btn') : util.appTranslate('update_btn')}}
+          </button>
+          <button mat-flat-button class="m-l-8 bg-secondary text-white" type="button"
+            (click)="onReset()">{{util.appTranslate('reset_btn')}}</button>
+        </mat-card-actions>
+      </mat-card>
+    </div>
+  </div>
+</form>

@@ -1,0 +1,63 @@
+<mat-card class="cardWithShadow m-b-16">
+  <mat-card-header class="m-b-16">
+    <mat-card-title>{{ util.appTranslate('realEstate_promotions') }}</mat-card-title>
+    <mat-card-subtitle>{{ util.appTranslate('realEstate_promotions_subtitle') }}</mat-card-subtitle>
+  </mat-card-header>
+
+  <mat-card-content>
+    <div class="table-responsive">
+      <table mat-table [dataSource]="list" class="w-100">
+        <ng-container matColumnDef="property">
+          <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1">
+            {{ util.appTranslate('th_property') }}
+          </th>
+          <td mat-cell *matCellDef="let element">
+            <div class="f-s-12">{{ element.property }}</div>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="amount">
+          <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1">
+            {{ util.appTranslate('th_amount') }}
+          </th>
+          <td mat-cell *matCellDef="let element">₹{{ element.amount | number: '1.2-2' }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="period">
+          <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1">
+            {{ util.appTranslate('th_period') }}
+          </th>
+          <td mat-cell *matCellDef="let element">
+            {{ element.startsAt | date: 'dd MMM' }} – {{ element.endsAt | date: 'dd MMM yyyy' }}
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="status">
+          <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1">
+            {{ util.appTranslate('th_status') }}
+          </th>
+          <td mat-cell *matCellDef="let element">{{ element.status }}</td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="displayedColumn"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumn"></tr>
+      </table>
+
+      @if (isLoaded && !list.length) {
+        <div class="p-24 text-center text-muted">
+          {{ util.appTranslate('ts_no_records_found') }}
+        </div>
+      }
+    </div>
+
+    <mat-paginator
+      [hidden]="!isLoaded"
+      #paginator
+      [pageSizeOptions]="[5, 10, 20]"
+      [pageSize]="pageSize"
+      (page)="onPageChange($event)"
+      showFirstLastButtons
+    >
+    </mat-paginator>
+  </mat-card-content>
+</mat-card>

@@ -1,0 +1,30 @@
+<h2 mat-dialog-title>New template</h2>
+<mat-dialog-content>
+  <form [formGroup]="form" class="d-flex flex-column gap-12">
+    <mat-form-field appearance="outline"><mat-label>Key</mat-label><input matInput formControlName="key" /></mat-form-field>
+    <mat-form-field appearance="outline"><mat-label>Name</mat-label><input matInput formControlName="name" /></mat-form-field>
+    <mat-form-field appearance="outline">
+      <mat-label>Booking mode</mat-label>
+      <mat-select formControlName="bookingMode">
+        <mat-option value="INSTANT">INSTANT</mat-option>
+        <mat-option value="SLOT">SLOT</mat-option>
+        <mat-option value="REQUEST">REQUEST</mat-option>
+        <mat-option value="DATE_RANGE">DATE_RANGE</mat-option>
+        <mat-option value="RECURRING">RECURRING</mat-option>
+      </mat-select>
+    </mat-form-field>
+    <mat-form-field appearance="outline">
+      <mat-label>Pricing mode</mat-label>
+      <mat-select formControlName="pricingMode">
+        <mat-option value="FIXED">FIXED</mat-option>
+        <mat-option value="VARIANT">VARIANT</mat-option>
+        <mat-option value="HOURLY">HOURLY</mat-option>
+        <mat-option value="QUOTE">QUOTE</mat-option>
+      </mat-select>
+    </mat-form-field>
+  </form>
+</mat-dialog-content>
+<mat-dialog-actions align="end">
+  <button mat-button (click)="onCancel()">Cancel</button>
+  <button mat-flat-button color="primary" (click)="onConfirm()" [disabled]="isSubmit">Create draft</button>
+</mat-dialog-actions>

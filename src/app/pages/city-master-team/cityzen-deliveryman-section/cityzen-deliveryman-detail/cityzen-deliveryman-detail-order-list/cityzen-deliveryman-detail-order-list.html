@@ -1,0 +1,205 @@
+<div class="table-responsive">
+  @if (!isLoaded) {
+  <table mat-table [dataSource]="util.dummyArray" class="w-100">
+    <ng-container matColumnDef="id">
+      <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1 p-l-0">
+        {{util.appTranslate('th_order_id')}}
+      </th>
+      <td mat-cell *matCellDef="let element" class="p-l-0">
+        <mat-progress-bar mode="indeterminate" color="light"></mat-progress-bar>
+      </td>
+    </ng-container>
+    <ng-container matColumnDef="date">
+      <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1 p-l-0">
+        {{util.appTranslate('th_order_date')}}
+      </th>
+      <td mat-cell *matCellDef="let element" class="p-l-0">
+        <mat-progress-bar mode="indeterminate" color="light"></mat-progress-bar>
+      </td>
+    </ng-container>
+    <ng-container matColumnDef="location">
+      <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1 p-l-0">
+        {{util.appTranslate('th_location')}}
+      </th>
+      <td mat-cell *matCellDef="let element" class="p-l-0">
+        <mat-progress-bar mode="indeterminate" color="light"></mat-progress-bar>
+      </td>
+    </ng-container>
+    <ng-container matColumnDef="earning">
+      <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1 p-l-0">
+        {{util.appTranslate('earning')}}
+      </th>
+      <td mat-cell *matCellDef="let element" class="p-l-0">
+        <mat-progress-bar mode="indeterminate" color="light"></mat-progress-bar>
+      </td>
+    </ng-container>
+    <ng-container matColumnDef="from">
+      <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1 p-l-0">
+        {{util.appTranslate('order_from')}}
+      </th>
+      <td mat-cell *matCellDef="let element" class="p-l-0">
+        <mat-progress-bar mode="indeterminate" color="light"></mat-progress-bar>
+      </td>
+    </ng-container>
+    <ng-container matColumnDef="status">
+      <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1 p-l-0">
+        {{util.appTranslate('th_status')}}
+      </th>
+      <td mat-cell *matCellDef="let element" class="p-l-0">
+        <mat-progress-bar mode="indeterminate" color="light"></mat-progress-bar>
+      </td>
+    </ng-container>
+    <ng-container matColumnDef="action">
+      <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1 p-l-0">
+        {{util.appTranslate('th_action')}}
+      </th>
+      <td mat-cell *matCellDef="let element" class="p-l-0">
+        <mat-progress-bar mode="indeterminate" color="light"></mat-progress-bar>
+      </td>
+    </ng-container>
+    <tr mat-header-row *matHeaderRowDef="displayedColumn"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumn"></tr>
+  </table>
+  }
+
+  @if (isLoaded) {
+  <table mat-table [dataSource]="orders" class="w-100">
+    <ng-container matColumnDef="id">
+      <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1 p-l-0">
+        {{util.appTranslate('th_order_id')}}
+      </th>
+      <td mat-cell *matCellDef="let element" class="f-s-14">
+        <h6 class="mat-subtitle-1 f-s-14 f-w-600">
+          {{ element.orderInfo.orderNo }}
+        </h6>
+        <span class="mat-body-1 f-s-10">
+          {{util.appTranslate('ref')}}: {{ util.refId(element.orderInfo.id) }}
+        </span>
+      </td>
+    </ng-container>
+    <ng-container matColumnDef="date">
+      <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1 p-l-0">
+        {{util.appTranslate('th_order_date')}}
+      </th>
+      <td mat-cell *matCellDef="let element" class="f-s-14">
+        {{ getDate(element.createdAt) }}
+      </td>
+    </ng-container>
+    <ng-container matColumnDef="location">
+      <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1 p-l-0">
+        {{util.appTranslate('th_location')}}
+      </th>
+      <td mat-cell *matCellDef="let element" class="p-l-0">
+        <div class="timeline">
+          <div class="timeline-item d-flex overflow-hidden  cursor-pointer" (click)="onUserInfo(element)">
+            <div class="point d-flex align-items-center">
+              <span class="timeline-badge border-primary m-y-8"></span>
+              <span class="timline-border d-block"></span>
+            </div>
+            <div class="desc">
+              <h6 class="f-s-14 mat-subtitle-1 f-w-600">
+                {{ element.deliveryAddressRaw.receiverName}}
+              </h6>
+              <span class="mat-body-1 f-s-12">
+                {{ element.deliveryAddressRaw.flatHouse + ','+ element.deliveryAddressRaw.locality
+                +','+element.deliveryAddressRaw.landmark }}
+              </span>
+            </div>
+          </div>
+          <div class="timeline-item d-flex overflow-hidden  cursor-pointer" (click)="onRestaurantDetail(element)">
+            <div class="point d-flex align-items-center">
+              <span class="timeline-badge border-secondary m-y-8"></span>
+              <span class="timline-border d-block"></span>
+            </div>
+            <div class="desc">
+              <h6 class="f-s-14 mat-subtitle-1 f-w-600">
+                {{element.restaurant.displayName}}
+              </h6>
+              <span class="mat-body-1 f-s-12">
+                {{element.restaurant.displayAddress}}
+              </span>
+            </div>
+          </div>
+        </div>
+      </td>
+    </ng-container>
+    <ng-container matColumnDef="earning">
+      <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1 p-l-0">
+        {{util.appTranslate('earning')}}
+      </th>
+      <td mat-cell *matCellDef="let element" class="f-s-14">
+        <ul>
+          <li>
+            <p class="mat-body-1 f-s-12">
+              {{util.appTranslate('order_earnings')}}: <span
+                class="mat-subtitle-1 f-s-12 f-w-600">{{util.priceFormat(element.earning)}}</span>
+            </p>
+          </li>
+          <li>
+            <p class="mat-body-1 f-s-12">
+              {{util.appTranslate('tips')}} : <span
+                class="mat-subtitle-1 f-s-12 f-w-600">{{util.priceFormat(element.tipAmount)}}</span>
+            </p>
+          </li>
+          <li>
+            <p class="mat-body-1 f-s-12">
+              {{util.appTranslate('incentive_earnings')}} : <span
+                class="mat-subtitle-1 f-s-12 f-w-600">{{util.priceFormat(element.incentiveAmount)}}</span>
+            </p>
+          </li>
+          <li>
+            <p class="mat-body-1 f-s-12">
+              {{util.appTranslate('extra_shift_earnings')}} : <span
+                class="mat-subtitle-1 f-s-12 f-w-600">{{util.priceFormat(element.extraEarningOnShiftAmount)}}</span>
+            </p>
+          </li>
+        </ul>
+      </td>
+    </ng-container>
+    <ng-container matColumnDef="from">
+      <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1 p-l-0">
+        {{util.appTranslate('order_from')}}
+      </th>
+      <td mat-cell *matCellDef="let element" class="f-s-14">
+        {{ element.orderFrom == 'auto' ? util.appTranslate('system_assigned') : util.appTranslate('manually_assigned')
+        }}
+      </td>
+    </ng-container>
+    <ng-container matColumnDef="status">
+      <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1 p-l-0">
+        {{util.appTranslate('th_status')}}
+      </th>
+      <td mat-cell *matCellDef="let element">
+        <span
+          class="bg-light-{{getStatusColor(element.driverOrderStatus)}} text-{{getStatusColor(element.driverOrderStatus)}} rounded f-w-600 p-6 p-y-4 f-s-12">
+          {{ util.appTranslate(element.driverOrderStatus) }}
+        </span>
+      </td>
+    </ng-container>
+    <ng-container matColumnDef="action">
+      <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1 p-l-0">
+        {{util.appTranslate('th_action')}}
+      </th>
+      <td mat-cell *matCellDef="let element" class="f-w-500 text-right p-r-0">
+        <a (click)="onOrderDetailPage(element)" class="m-r-10 cursor-pointer text-error"
+          [matTooltip]="util.appTranslate('click_to_view')">
+          <mat-icon>info</mat-icon>
+        </a>
+        <a (click)="onOrderPrint(element)" class="m-r-10 cursor-pointer text-error"
+          [matTooltip]="util.appTranslate('click_to_print')">
+          <mat-icon>print</mat-icon>
+        </a>
+      </td>
+    </ng-container>
+    <tr mat-header-row *matHeaderRowDef="displayedColumn"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumn"></tr>
+
+    <tr *matNoDataRow>
+      <td colspan="7" class="m-b-16 m-t-16 text-center">{{util.appTranslate('table_no_data_found')}}</td>
+    </tr>
+  </table>
+  }
+
+  <mat-paginator [hidden]="!isLoaded" #paginator [pageSizeOptions]="[5,10, 20]" [pageSize]="pageSize"
+    (page)="onPageChange($event)" showFirstLastButtons></mat-paginator>
+</div>

@@ -1,0 +1,63 @@
+<div mat-dialog-content class="dialog-form">
+  <form [formGroup]="brandForm" (ngSubmit)="onSubmit()">
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>{{ util.appTranslate('th_name') }} <span class="required">*</span></mat-label>
+      <input matInput formControlName="name" placeholder="e.g. Nike">
+      @if (f.name.invalid && haveSubmitClicked) {
+        <mat-error>{{ util.appTranslate('ts_field_required') }}</mat-error>
+      }
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>{{ util.appTranslate('stores_aliases') }}</mat-label>
+      <input matInput formControlName="aliasesText" placeholder="Comma-separated, e.g. SAMSUNG, Samsung India">
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>{{ util.appTranslate('stores_categories') }}</mat-label>
+      <mat-select formControlName="categories" multiple>
+        @for (c of categories; track c._id) {
+          <mat-option [value]="c._id">{{ c.name }}</mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>{{ util.appTranslate('stores_brand_origin') }}</mat-label>
+      <input matInput formControlName="originCountry" placeholder="e.g. India">
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>{{ util.appTranslate('stores_brand_website') }}</mat-label>
+      <input matInput formControlName="website" placeholder="https://">
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>{{ util.appTranslate('common_description') }}</mat-label>
+      <textarea matInput formControlName="description" rows="3"></textarea>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>{{ util.appTranslate('stores_brand_logo') }}</mat-label>
+      <input matInput formControlName="logo" placeholder="Image URL">
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>{{ util.appTranslate('th_status') }}</mat-label>
+      <mat-select formControlName="status">
+        @for (s of statuses; track s) {
+          <mat-option [value]="s">{{ s }}</mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+
+    <div mat-dialog-actions class="dialog-actions">
+      <button mat-button type="button" (click)="dialogRef.close()" cdkFocusInitial>
+        {{ util.appTranslate('common_cancel') }}
+      </button>
+      <button mat-raised-button color="primary" type="submit" [disabled]="brandForm.invalid">
+        {{ util.appTranslate('ts_add_new') }}
+      </button>
+    </div>
+  </form>
+</div>

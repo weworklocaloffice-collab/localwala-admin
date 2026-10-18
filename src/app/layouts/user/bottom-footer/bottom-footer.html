@@ -1,0 +1,122 @@
+<footer class="customer-footer-section bg-light-primary">
+  <div class="container p-b-24">
+    <div class="row p-b-24">
+      <div class="col-lg-3 col-sm-4 col-6">
+        <div class="d-flex flex-column align-items-start justify-content-start p-l-8">
+          <a [routerLink]="['/']" class="m-b-4 d-inline-block m-t-20">
+            <img [src]="logoUrl()" alt="LocalwalaLOGO" height="38" width="106" class="branding-logo"
+              onError="this.src='assets/images/logos/logo.png'">
+          </a>
+          <p class="f-s-12 m-b-8 m-t-8">
+            <span>&#169;</span> {{currentYear}} {{appName()}}
+          </p>
+        </div>
+      </div>
+      <div class="col-lg-3 col-sm-4 col-6">
+        <h5 class="mat-subtitle-1 f-s-18 m-t-20 m-b-10 p-l-8">{{ util.appTranslate('company') }}</h5>
+        <div class="d-flex flex-column align-items-start justify-content-start p-l-8">
+          <a [routerLink]="['/pages/about-us']" class="mat-body-1 f-s-14 m-b-8 text-decoration-none">
+            {{ util.appTranslate('about_us') }}
+          </a>
+          <a [routerLink]="['/pages/shipping-policy']" class="mat-body-1 f-s-14 m-b-8 text-decoration-none">
+            {{ util.appTranslate('shipping_policy') }}
+          </a>
+          <a [routerLink]="['/pages/refund-policy']" class="mat-body-1 f-s-14 m-b-8 text-decoration-none">
+            {{ util.appTranslate('refund_policy') }}
+          </a>
+          <a [routerLink]="['/pages/frequently-asked-questions']" class="mat-body-1 f-s-14 m-b-8 text-decoration-none">
+            {{ util.appTranslate('faqs') }}
+          </a>
+          <a [routerLink]="['/pages/dining-frequently-asked-questions']"
+            class="mat-body-1 f-s-14 m-b-8 text-decoration-none">
+            {{ util.appTranslate('dining_faqs') }}
+          </a>
+        </div>
+      </div>
+      <div class="col-lg-3 col-sm-4 col-6">
+        <h5 class="mat-subtitle-1 f-s-18 m-t-20 m-b-10 p-l-8">{{ util.appTranslate('contact_us') }}</h5>
+        <div class="d-flex flex-column align-items-start justify-content-start p-l-8">
+          <a [routerLink]="['/contact-us']" class="mat-body-1 f-s-14 m-b-8 text-decoration-none">
+            {{ util.appTranslate('connect_with_us') }}
+          </a>
+          <a [routerLink]="['/help-support']" class="mat-body-1 f-s-14 m-b-8 text-decoration-none">
+            {{ util.appTranslate('help_and_support') }}
+          </a>
+          <a [routerLink]="['/restaurant-register-request']" class="mat-body-1 f-s-14 m-b-8 text-decoration-none">
+            {{ util.appTranslate('partner_with_us') }}
+          </a>
+          <a [routerLink]="['/deliveryman-register-request']" class="mat-body-1 f-s-14 m-b-8 text-decoration-none">
+            {{ util.appTranslate('ride_with_us') }}
+          </a>
+        </div>
+
+        <h5 class="mat-subtitle-1 f-s-18 m-t-20 m-b-10 p-l-8">{{ util.appTranslate('social_links') }}</h5>
+
+        <div class="d-flex align-items-start justify-content-start p-l-8">
+          <a [href]="getHyperLink('_facebook')" target="_blank" class="mat-subtitle-2 text-decoration-none m-r-4">
+            <ng-icon name="tablerBrandFacebook" class="icon-14 d-flex"></ng-icon>
+          </a>
+          <a [href]="getHyperLink('_linked')" target="_blank" class="mat-subtitle-2 text-decoration-none m-r-4">
+            <ng-icon name="tablerBrandLinkedin" class="icon-14 d-flex"></ng-icon>
+          </a>
+          <a [href]="getHyperLink('_instagram')" target="_blank" class="mat-subtitle-2 text-decoration-none m-r-4">
+            <ng-icon name="tablerBrandInstagram" class="icon-14 d-flex"></ng-icon>
+          </a>
+          <a [href]="getHyperLink('_x')" target="_blank" class="mat-subtitle-2 text-decoration-none m-r-4">
+            <ng-icon name="tablerBrandX" class="icon-14 d-flex"></ng-icon>
+          </a>
+          <a [href]="getHyperLink('_youtube')" target="_blank" class="mat-subtitle-2 text-decoration-none m-r-4">
+            <ng-icon name="tablerBrandYoutube" class="icon-14 d-flex"></ng-icon>
+          </a>
+          <a [href]="getHyperLink('_vimeo')" target="_blank" class="mat-subtitle-2 text-decoration-none m-r-4">
+            <ng-icon name="tablerBrandVimeo" class="icon-14 d-flex"></ng-icon>
+          </a>
+          <a [href]="getHyperLink('_pinterest')" target="_blank" class="mat-subtitle-2 text-decoration-none m-r-4">
+            <ng-icon name="tablerBrandPinterest" class="icon-14 d-flex"></ng-icon>
+          </a>
+        </div>
+      </div>
+      <div class="col-lg-3 col-sm-4 col-6">
+        <h5 class="mat-subtitle-1 f-s-18 m-t-20 m-b-10 p-l-8">{{ util.appTranslate('legal') }}</h5>
+        <div class="d-flex flex-column align-items-start justify-content-start p-l-8">
+          <a [routerLink]="['/pages/terms-and-conditions']" class="mat-body-1 f-s-14 m-b-8 text-decoration-none">
+            {{ util.appTranslate('terms_condition') }}
+          </a>
+          <a [routerLink]="['/pages/cookies']" class="mat-body-1 f-s-14 m-b-8 text-decoration-none">
+            {{ util.appTranslate('cookies_policy') }}
+          </a>
+          <a [routerLink]="['/pages/cancellation-policy']" class="mat-body-1 f-s-14 m-b-8 text-decoration-none">
+            {{ util.appTranslate('cancellation_policy') }}
+          </a>
+          <a [routerLink]="['/pages/privacy-policy']" class="mat-body-1 f-s-14 m-b-8 text-decoration-none">
+            {{ util.appTranslate('privacy_policy') }}
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <div class="row p-y-24 border-top-separator">
+      <div class="col-lg-6 col-sm-6 col-12 p-y-10">
+        <div class="d-flex align-items-center justify-content-center p-l-8">
+          <h5 class="mat-subtitle-1 f-s-18">
+            {{ util.appTranslate('better_experience_lbl') }} {{appName()}} {{ util.appTranslate('app_now') }}
+          </h5>
+        </div>
+      </div>
+      <div class="col-lg-6 col-sm-6 col-12 p-y-10">
+        <div class="d-flex align-items-center justify-content-center">
+          <a [href]="getHyperLink('_playstore')" target="_blank"
+            class="text-decoration-none m-r-10 position-relative card-hover">
+            <img src="assets/images/playstore.png" alt="appstorelink" height="38" width="106" class="branding-logo"
+              onError="this.src='assets/images/logos/logo.png'">
+          </a>
+          <a [href]="getHyperLink('_appstore')" target="_blank"
+            class="text-decoration-none position-relative card-hover">
+            <img src="assets/images/appstore.png" alt="appstorelink" height="38" width="106" class="branding-logo"
+              onError="this.src='assets/images/logos/logo.png'">
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</footer>

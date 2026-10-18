@@ -1,0 +1,8 @@
+@if(!item.navCap) {
+<a class="cursor-pointer menuLink" (click)="onItemSelected(item)" [ngClass]="{
+    activeMenu: item.route ? router.isActive(item.route, true) : false
+  }">
+  <ng-icon name="{{ item.iconName }}" class="routeIcon icon-18"></ng-icon>
+  {{ util.appTranslate(item.displayName) }}
+</a>
+}

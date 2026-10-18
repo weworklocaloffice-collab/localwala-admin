@@ -1,0 +1,70 @@
+<div class="table-responsive">
+  @if(!isLoaded){
+  <table mat-table [dataSource]="util.dummyArray" class="w-100">
+    <ng-container matColumnDef="name">
+      <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1 p-l-0 text-left">
+        {{util.appTranslate('th_name')}}
+      </th>
+      <td mat-cell *matCellDef="let element" class="p-l-0">
+        <mat-progress-bar mode="indeterminate" color="light"></mat-progress-bar>
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="credential">
+      <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1 p-l-0 text-left">
+        {{util.appTranslate('credential')}}
+      </th>
+      <td mat-cell *matCellDef="let element" class="p-l-0">
+        <mat-progress-bar mode="indeterminate" color="light"></mat-progress-bar>
+      </td>
+    </ng-container>
+
+    <tr mat-header-row *matHeaderRowDef="displayedColumn"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumn"></tr>
+
+  </table>
+  }
+
+  @if(isLoaded){
+  <table mat-table [dataSource]="methods" class="w-100">
+    <ng-container matColumnDef="name">
+      <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1 p-l-0 text-left">
+        {{util.appTranslate('th_name')}}
+      </th>
+      <td mat-cell *matCellDef="let element" class="p-l-0">
+        <div class="m-l-0">
+          <h6 class="mat-subtitle-1 f-s-14 f-w-600">
+            {{element.method.displayName}}
+          </h6>
+        </div>
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="credential">
+      <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1 p-r-0 text-left">
+        {{util.appTranslate('credential')}}
+      </th>
+      <td mat-cell *matCellDef="let element" class="f-w-500 text-right p-r-0">
+        @for (item of element.formElement; track $index) {
+        <div class="d-flex align-items-center justify-content-between">
+          <span class="mat-body-1 f-s-12">{{item.fieldName}}:</span>
+          <span class="f-s-14 mat-subtitle-1 f-w-600 m-l-4">{{item.fieldValue}}</span>
+        </div>
+        }
+      </td>
+    </ng-container>
+
+    <tr mat-header-row *matHeaderRowDef="displayedColumn"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumn"></tr>
+
+    <tr *matNoDataRow>
+      <td colspan="2" class="m-b-16 m-t-16 text-center">{{util.appTranslate('table_no_data_found')}}</td>
+    </tr>
+
+  </table>
+  }
+
+  <mat-paginator [hidden]="!isLoaded" #paginator [pageSizeOptions]="[5,10, 20]" [pageSize]="pageSize"
+    (page)="onPageChange($event)" showFirstLastButtons></mat-paginator>
+
+</div>

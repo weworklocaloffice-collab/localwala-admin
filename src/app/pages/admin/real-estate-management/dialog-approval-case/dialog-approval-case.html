@@ -1,0 +1,79 @@
+<h2 mat-dialog-title>{{ kase.caseNo }} · {{ kase.status }}</h2>
+
+<mat-dialog-content>
+  <p class="f-s-13 text-muted">
+    {{ kase.category }}{{ kase.detail ? ' · ' + kase.detail : '' }}
+    @if (kase.changeReason) {
+      — {{ kase.changeReason }}
+    }
+  </p>
+
+  @if (kase.supportingDocuments?.length) {
+    <p class="f-s-13">Evidence: {{ kase.supportingDocuments.join(', ') }}</p>
+  }
+
+  <h4>Proposed changes (frozen at request)</h4>
+  @if (!diff.length) {
+    <p class="f-s-13 text-muted">No field differences captured.</p>
+  } @else {
+    <table class="w-100 f-s-12">
+      <tr><th>Field</th><th>Before</th><th>After</th></tr>
+      @for (r of diff; track r.path) {
+        <tr>
+          <td class="f-w-600">{{ r.path }}</td>
+          <td>{{ r.before }}</td>
+          <td class="text-success">{{ r.after }}</td>
+        </tr>
+      }
+    </table>
+  }
+
+  @if (kase.decisionNote) {
+    <p class="f-s-13 m-t-12">Decision: {{ kase.decisionNote }}</p>
+  }
+  @if (kase.approvalReference) {
+    <p class="f-s-13">Reference: {{ kase.approvalReference }}</p>
+  }
+
+  <h4 class="m-t-16">Comments</h4>
+  @if (!kase.comments?.length) {
+    <p class="f-s-13 text-muted">No comments yet.</p>
+  } @else {
+    @for (c of kase.comments; track c.createdAt) {
+      <p class="f-s-13">{{ c.text }}</p>
+    }
+  }
+  <div class="d-flex gap-12 m-b-16">
+    <mat-form-field appearance="outline" class="w-100">
+      <mat-label>Add a comment</mat-label>
+      <input matInput [(ngModel)]="commentText" />
+    </mat-form-field>
+    <button mat-button [disabled]="!commentText.trim()" (click)="onComment()">Post</button>
+  </div>
+
+  @if (isOpen) {
+    <mat-form-field appearance="outline" class="w-100">
+      <mat-label>Decision note (required to reject)</mat-label>
+      <textarea matInput rows="2" [(ngModel)]="note"></textarea>
+    </mat-form-field>
+    <mat-form-field appearance="outline" class="w-100">
+      <mat-label>Approval reference</mat-label>
+      <input matInput [(ngModel)]="approvalReference" />
+    </mat-form-field>
+  }
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button (click)="onClose()">{{ util.appTranslate('th_cancel') }}</button>
+  @if (isOpen && canManage()) {
+    <button mat-button [disabled]="isSaving" (click)="onCancel()">Cancel case</button>
+  }
+  @if (isOpen && canApprove()) {
+    <button mat-flat-button color="warn" [disabled]="isSaving || !note.trim()" (click)="onReject()">
+      Reject
+    </button>
+    <button mat-flat-button color="primary" [disabled]="isSaving" (click)="onApprove()">
+      Approve
+    </button>
+  }
+</mat-dialog-actions>

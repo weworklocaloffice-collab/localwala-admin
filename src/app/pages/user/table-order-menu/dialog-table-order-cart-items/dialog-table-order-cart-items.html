@@ -1,0 +1,74 @@
+<h2 mat-dialog-title class="dialog-title">
+  <span class="title-text p-0">{{util.appTranslate('place_order')}}</span>
+  <button mat-icon-button mat-dialog-close class="close-btn">
+    <mat-icon>close</mat-icon>
+  </button>
+</h2>
+
+<mat-dialog-content class="mat-typography w-100 p-b-0 p-t-0 p-l-0 p-r-0">
+  <div class="dialog-repeat-customization">
+    @if (cartItem.length > 0) {
+    <mat-label class="mat-subtitle-2 f-w-600 m-b-8 d-block m-b-10 p-y-0 p-x-16">
+      {{util.appTranslate('item_to_order')}}
+    </mat-label>
+    }
+
+    @for (item of cartItem; track $index) {
+    <div>
+      @if (item.quantity != 0) {
+      <div class="food-item-container row b-b-1">
+        <div class="col-8 col-md-8">
+          <div class="name-container">
+            <p class="food-name-lbl"> {{ util.trimText(item.displayName, 30) }} </p>
+            <p class="price-lbl"> {{ util.priceFormat(item.totalPrice) }} </p>
+            <p class="option-lbl"> {{ util.trimText(item.optionName, 40) }} </p>
+          </div>
+        </div>
+        <div class="col-4 col-md-4">
+          <div class="cart-container">
+            <ng-icon name="tablerMinus" class="icon-12 d-flex icon-lbl"
+              (click)="quantityCartItemEvent(item.uuid,'decrease')">
+            </ng-icon>
+            <p class="f-s-10 f-w-500 lbl">{{ item.quantity }}</p>
+            <ng-icon name="tablerPlus" class="icon-12 d-flex icon-lbl"
+              (click)="quantityCartItemEvent(item.uuid,'increase')">
+            </ng-icon>
+          </div>
+        </div>
+      </div>
+      }
+    </div>
+    }
+
+    <div class="spacer"></div>
+
+    @if (ongoingItem.length > 0) {
+    <mat-label class="mat-subtitle-2 f-w-600 m-b-8 d-block m-b-10 p-y-0 p-x-16">
+      {{util.appTranslate('already_order_items')}}
+    </mat-label>
+    }
+
+    @for (item of ongoingItem; track $index) {
+    <div class="food-item-container row b-b-1">
+      <div class="col-8 col-md-8">
+        <div class="name-container">
+          <p class="food-name-lbl">{{item.quantity}} X {{ util.trimText(item.foodInfo.displayName, 30) }} </p>
+          <p class="option-lbl"> {{ util.trimText(item.optionName, 40) }} </p>
+        </div>
+      </div>
+      <div class="col-4 col-md-4">
+        <p class="ongoing-order-price">{{ util.priceFormat(item.itemPrice) }}</p>
+      </div>
+    </div>
+    }
+
+  </div>
+</mat-dialog-content>
+
+@if (cartItem.length > 0) {
+<mat-dialog-actions class="p-r-8 p-l-8">
+  <button mat-button mat-flat-button color="primary" type="submit" class="w-100" (click)="onPlaceOrder()">
+    {{util.appTranslate('place_order')}}
+  </button>
+</mat-dialog-actions>
+}

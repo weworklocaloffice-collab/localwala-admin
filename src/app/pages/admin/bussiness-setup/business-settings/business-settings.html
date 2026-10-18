@@ -1,0 +1,1024 @@
+<form name="eventForm" [formGroup]="settingForm" class="event-form" (ngSubmit)="onSubmit()" id="topContent">
+  <div class="row">
+    <div class="col-lg-8 col-sm-12 p-b-16">
+      <mat-card class="cardWithShadow theme-card">
+        <mat-card-header>
+          <mat-card-title class="m-b-0">
+            {{util.appTranslate('business_information')}}
+          </mat-card-title>
+        </mat-card-header>
+
+        <mat-card-content class="b-t-0">
+          <div class="row p-b-16">
+            <div class="col-lg-3 col-sm-12 p-b-16">
+              <mat-form-field appearance="outline" class="w-100" color="primary">
+                <mat-label>{{util.appTranslate('company_name')}}</mat-label>
+                <input matInput formControlName="companyName" type="text" />
+                @if(haveSubmitClicked == true && f['companyName'].invalid){
+                <mat-hint class="m-b-16 error-msg">
+                  @if(f['companyName'].errors && f['companyName'].errors['required']){
+                  <div class="text-error">
+                    {{util.appTranslate('form_required')}}
+                  </div>
+                  }
+                </mat-hint>
+                }
+              </mat-form-field>
+            </div>
+
+            <div class="col-lg-3 col-sm-12 p-b-16">
+              <mat-form-field appearance="outline" class="w-100" color="primary">
+                <mat-label>{{util.appTranslate('email_lbl')}}</mat-label>
+                <input matInput formControlName="email" type="email" />
+                @if(haveSubmitClicked == true && f['email'].invalid){
+                <mat-hint class="m-b-16 error-msg">
+                  @if(f['email'].errors && f['email'].errors['required']){
+                  <div class="text-error">
+                    {{util.appTranslate('form_required')}}
+                  </div>
+                  }
+                  @if(f['email'].errors && f['email'].errors['pattern']){
+                  <div class="text-error">
+                    {{util.appTranslate('email_validation')}}
+                  </div>
+                  }
+                </mat-hint>
+                }
+              </mat-form-field>
+            </div>
+
+            <div class="col-lg-3 col-sm-12 p-b-16">
+              <mat-form-field appearance="outline" class="w-100" color="primary">
+                <mat-label>{{util.appTranslate('mobile_number')}}</mat-label>
+                <input matInput formControlName="mobile" type="number" />
+                @if(haveSubmitClicked == true && f['mobile'].invalid){
+                <mat-hint class="m-b-16 error-msg">
+                  @if(f['mobile'].errors && f['mobile'].errors['required']){
+                  <div class="text-error">
+                    {{util.appTranslate('form_required')}}
+                  </div>
+                  }
+                </mat-hint>
+                }
+              </mat-form-field>
+            </div>
+
+            <div class="col-lg-3 col-sm-12 p-b-16">
+              <mat-form-field class="w-100" appearance="outline">
+                <mat-label>{{util.appTranslate('country_lbl')}}</mat-label>
+                <input type="text" [placeholder]="util.appTranslate('country_lbl')" matInput name="country"
+                  formControlName="country" [formControl]="countryCodeCtrl" [matAutocomplete]="autoCountryCode" />
+                <mat-autocomplete autoActiveFirstOption #autoCountryCode="matAutocomplete"
+                  (optionSelected)="onCountryCodeSelect($event)">
+                  @for (item of countryCodes | async; track $index) {
+                  <mat-option [value]="item.flag +' '+ item.dial_code +' '+ item.name">
+                    {{item.flag +' '+ item.dial_code + ' '+ item.name }}
+                  </mat-option>
+                  }
+                </mat-autocomplete>
+                @if(haveSubmitClicked == true && f['country'].invalid ){
+                <mat-hint class="m-b-16 error-msg">
+                  @if(f['country'].errors && f['country'].errors['required']){
+                  <div class="text-error">
+                    {{util.appTranslate('form_required')}}
+                  </div>
+                  }
+                </mat-hint>
+                }
+              </mat-form-field>
+            </div>
+
+          </div>
+
+          <div class="row p-b-16">
+            <div class="col-lg-6 col-sm-12 p-b-16">
+              <div class="row">
+                <div class="col-lg-12 col-sm-12 p-b-16">
+                  <mat-form-field appearance="outline" class="w-100" color="primary">
+                    <mat-label>{{util.appTranslate('company_address')}}</mat-label>
+                    <textarea matInput formControlName="address" type="text" rows="3" (input)="onAddressInput($event)"></textarea>
+                    <button mat-icon-button matSuffix type="button" (click)="getCurrentLocation()" matTooltip="{{util.appTranslate('use_current_location')}}">
+                      <ng-icon name="tablerCurrentLocation" class="icon-20"></ng-icon>
+                    </button>
+                    @if(addressSuggestions && addressSuggestions.length > 0){
+                    <mat-card class="address-suggestions-card">
+                      @for(suggestion of addressSuggestions; track suggestion.place_id){
+                      <div class="suggestion-item p-8" (click)="onAddressSelect(suggestion)">
+                        {{suggestion.description}}
+                      </div>
+                      }
+                    </mat-card>
+                    }
+                    @if(haveSubmitClicked == true && f['address'].invalid){
+                    <mat-hint class="m-b-16 error-msg">
+                      @if(f['address'].errors && f['address'].errors['required']){
+                      <div class="text-error">
+                        {{util.appTranslate('form_required')}}
+                      </div>
+                      }
+                    </mat-hint>
+                    }
+                  </mat-form-field>
+                </div>
+
+                <div class="col-lg-6 col-sm-12 p-b-16">
+                  <mat-form-field appearance="outline" class="w-100" color="primary"
+                    [matTooltip]="util.appTranslate('drag_restaurant_location_marker')">
+                    <mat-label>{{util.appTranslate('latitude_lbl')}}</mat-label>
+                    <input matInput formControlName="latitude" type="number" />
+                    @if(haveSubmitClicked == true && f['latitude'].invalid){
+                    <mat-hint class="m-b-16 error-msg">
+                      @if(f['latitude'].errors && f['latitude'].errors['required']){
+                      <div class="text-error">
+                        {{util.appTranslate('form_required')}}
+                      </div>
+                      }
+                    </mat-hint>
+                    }
+                  </mat-form-field>
+                </div>
+
+                <div class="col-lg-6 col-sm-12 p-b-16">
+                  <mat-form-field appearance="outline" class="w-100" color="primary"
+                    [matTooltip]="util.appTranslate('drag_restaurant_location_marker')">
+                    <mat-label>{{util.appTranslate('longitude_lbl')}}</mat-label>
+                    <input matInput formControlName="longitude" type="number" />
+                    @if(haveSubmitClicked == true && f['longitude'].invalid){
+                    <mat-hint class="m-b-16 error-msg">
+                      @if(f['longitude'].errors && f['longitude'].errors['required']){
+                      <div class="text-error">
+                        {{util.appTranslate('form_required')}}
+                      </div>
+                      }
+                    </mat-hint>
+                    }
+                  </mat-form-field>
+                </div>
+
+              </div>
+            </div>
+            <div class="col-lg-6 col-sm-12 p-b-16">
+              <google-map [center]="mapCenterLocation" [zoom]="14" [options]="mapOptions" width="100%" height="180px"
+                (mapClick)="moveMap($event)">
+                <map-marker [position]="markerPosition" [options]="markerOptions"
+                  (mapDragend)="onMarkerDragEnd($event)"></map-marker>
+              </google-map>
+            </div>
+          </div>
+
+          <div class="row p-b-16">
+            <div class="col-lg-12 col-sm-12 p-b-16">
+              <mat-form-field appearance="outline" class="w-100" color="primary">
+                <mat-label>{{util.appTranslate('cookie_text')}}</mat-label>
+                <textarea matInput formControlName="cookiesText" type="text" rows="3"></textarea>
+                @if(haveSubmitClicked == true && f['cookiesText'].invalid){
+                <mat-hint class="m-b-16 error-msg">
+                  @if(f['cookiesText'].errors && f['cookiesText'].errors['required']){
+                  <div class="text-error">
+                    {{util.appTranslate('form_required')}}
+                  </div>
+                  }
+                </mat-hint>
+                }
+              </mat-form-field>
+            </div>
+          </div>
+        </mat-card-content>
+      </mat-card>
+
+      <mat-card class="cardWithShadow theme-card">
+        <mat-card-header>
+          <mat-card-title class="m-b-0">
+            {{util.appTranslate('business_rule_setting')}}
+          </mat-card-title>
+        </mat-card-header>
+
+        <mat-card-content class="b-t-0">
+          <div class="row p-b-16">
+            <div class="col-lg-6 col-sm-12 p-b-16">
+              <mat-form-field appearance="outline" class="w-100" color="primary">
+                <mat-label>{{util.appTranslate('default_restaurant_commission')}}</mat-label>
+                <input matInput formControlName="commission" type="number" />
+                @if(haveSubmitClicked == true && f['commission'].invalid){
+                <mat-hint class="m-b-16 error-msg">
+                  @if(f['commission'].errors && f['commission'].errors['required']){
+                  <div class="text-error">
+                    {{util.appTranslate('form_required')}}
+                  </div>
+                  }
+                </mat-hint>
+                }
+              </mat-form-field>
+            </div>
+
+            <div class="col-lg-6 col-sm-12 p-b-16">
+              <mat-form-field appearance="outline" class="w-100" color="primary">
+                <mat-label>{{util.appTranslate('commission_on_delivery_charge')}}</mat-label>
+                <input matInput formControlName="commissionDelivery" type="number" />
+                @if(haveSubmitClicked == true && f['commissionDelivery'].invalid){
+                <mat-hint class="m-b-16 error-msg">
+                  @if(f['commissionDelivery'].errors && f['commissionDelivery'].errors['required']){
+                  <div class="text-error">
+                    {{util.appTranslate('form_required')}}
+                  </div>
+                  }
+                </mat-hint>
+                }
+              </mat-form-field>
+            </div>
+
+          </div>
+
+          <div class="row p-b-16">
+            <div class="col-lg-4 col-sm-12 p-b-16 d-flex align-items-center">
+              <mat-form-field appearance="outline" class="w-100"
+                [matTooltip]="util.appTranslate('additional_extra_charge_tooltip')">
+                <mat-label>{{util.appTranslate('additional_service_charge')}}</mat-label>
+                <mat-select formControlName="additionalServiceCharge" name="additionalServiceCharge"
+                  (selectionChange)="onAdditionalServiceChargeChanged($event)">
+                  <mat-option [value]="true">{{util.appTranslate('dd_yes')}}</mat-option>
+                  <mat-option [value]="false">{{util.appTranslate('dd_no')}}</mat-option>
+                </mat-select>
+                @if(haveSubmitClicked == true && f['additionalServiceCharge'].invalid){
+                <mat-hint class="m-b-16 error-msg">
+                  @if(f['additionalServiceCharge'].errors && f['additionalServiceCharge'].errors['required']){
+                  <div class="text-error">
+                    {{util.appTranslate('form_required')}}
+                  </div>
+                  }
+                </mat-hint>
+                }
+              </mat-form-field>
+            </div>
+
+            <div class="col-lg-4 col-sm-12 p-b-16">
+              <mat-form-field appearance="outline" class="w-100" color="primary"
+                [matTooltip]="util.appTranslate('additional_charge_name_tooltip')">
+                <mat-label>{{util.appTranslate('additional_charge_name')}}</mat-label>
+                <input matInput formControlName="additionalServiceName" type="text" />
+                @if(haveSubmitClicked == true && f['additionalServiceName'].invalid){
+                <mat-hint class="m-b-16 error-msg">
+                  @if(f['additionalServiceName'].errors && f['additionalServiceName'].errors['required']){
+                  <div class="text-error">
+                    {{util.appTranslate('form_required')}}
+                  </div>
+                  }
+                </mat-hint>
+                }
+              </mat-form-field>
+            </div>
+
+            <div class="col-lg-4 col-sm-12 p-b-16">
+              <mat-form-field appearance="outline" class="w-100" color="primary"
+                [matTooltip]="util.appTranslate('additional_charge_amount_tooltip')">
+                <mat-label>{{util.appTranslate('charge_amount')}}</mat-label>
+                <input matInput formControlName="additionalServiceAmount" type="number" />
+                @if(haveSubmitClicked == true && f['additionalServiceAmount'].invalid){
+                <mat-hint class="m-b-16 error-msg">
+                  @if(f['additionalServiceAmount'].errors && f['additionalServiceAmount'].errors['required']){
+                  <div class="text-error">
+                    {{util.appTranslate('form_required')}}
+                  </div>
+                  }
+                </mat-hint>
+                }
+              </mat-form-field>
+            </div>
+          </div>
+
+          <div class="row p-b-16">
+            <div class="col-lg-3 col-sm-12 p-b-16">
+              <mat-form-field appearance="outline" class="w-100"
+                [matTooltip]="util.appTranslate('tax_enabled_tooltip')">
+                <mat-label>{{util.appTranslate('include_tax_amount')}}</mat-label>
+                <mat-select formControlName="includeTaxOnFood" name="includeTaxOnFood"
+                  (selectionChange)="onFoodTaxChanged($event)">
+                  <mat-option [value]="true">{{util.appTranslate('dd_yes')}}</mat-option>
+                  <mat-option [value]="false">{{util.appTranslate('dd_no')}}</mat-option>
+                </mat-select>
+              </mat-form-field>
+            </div>
+            <div class="col-lg-3 col-sm-12 p-b-16">
+              <mat-form-field appearance="outline" class="w-100" color="primary"
+                [matTooltip]="util.appTranslate('food_name_tooltip')">
+                <mat-label>{{util.appTranslate('food_tax_name')}}</mat-label>
+                <input matInput formControlName="foodTaxName" type="text" />
+                @if(haveSubmitClicked == true && f['foodTaxName'].invalid){
+                <mat-hint class="m-b-16 error-msg">
+                  @if(f['foodTaxName'].errors && f['foodTaxName'].errors['required']){
+                  <div class="text-error">
+                    {{util.appTranslate('form_required')}}
+                  </div>
+                  }
+                </mat-hint>
+                }
+              </mat-form-field>
+            </div>
+
+            <div class="col-lg-3 col-sm-12 p-b-16">
+              <mat-form-field appearance="outline" class="w-100" color="primary"
+                [matTooltip]="util.appTranslate('food_tax_amount_tooltip')">
+                <mat-label>{{util.appTranslate('food_tax_amount')}}
+                  @if(f['foodTaxType'].value == 'fixed'){
+                  <span>($)</span>
+                  }
+                  @if(f['foodTaxType'].value == 'per'){
+                  <span>(%)</span>
+                  }
+                </mat-label>
+                <input matInput formControlName="foodTaxAmount" type="number" />
+                @if(haveSubmitClicked == true && f['foodTaxAmount'].invalid){
+                <mat-hint class="m-b-16 error-msg">
+                  @if(f['foodTaxAmount'].errors && f['foodTaxAmount'].errors['required']){
+                  <div class="text-error">
+                    {{util.appTranslate('form_required')}}
+                  </div>
+                  }
+                </mat-hint>
+                }
+              </mat-form-field>
+            </div>
+
+            <div class="col-lg-3 col-sm-12 p-b-16">
+              <mat-form-field appearance="outline" class="w-100"
+                [matTooltip]="util.appTranslate('food_tax_type_tooltip')">
+                <mat-label>{{util.appTranslate('food_tax_type')}}</mat-label>
+                <mat-select formControlName="foodTaxType" name="foodTaxType">
+                  <mat-option value="per">{{util.appTranslate('percentage')}}</mat-option>
+                  <mat-option value="fixed">{{util.appTranslate('fixed_amount_price')}}</mat-option>
+                </mat-select>
+              </mat-form-field>
+            </div>
+          </div>
+
+          <div class="row p-b-16">
+            <div class="col-lg-6 col-sm-12 p-b-16">
+              <div class="row">
+                <div class="col-lg-6 col-sm-6 p-b-16 d-flex align-items-center">
+                  <mat-form-field appearance="outline" class="w-100"
+                    [matTooltip]="util.appTranslate('free_delivery_on_amount_tooltip')">
+                    <mat-label>{{util.appTranslate('free_delivery_over')}}</mat-label>
+                    <mat-select formControlName="haveFreeDeliveryInTotal" name="haveFreeDeliveryInTotal"
+                      (selectionChange)="onFreeDeliveryOnPriceChanged($event)">
+                      <mat-option [value]="true">{{util.appTranslate('dd_yes')}}</mat-option>
+                      <mat-option [value]="false">{{util.appTranslate('dd_no')}}</mat-option>
+                    </mat-select>
+                    @if(haveSubmitClicked == true && f['haveFreeDeliveryInTotal'].invalid){
+                    <mat-hint class="m-b-16 error-msg">
+                      @if(f['haveFreeDeliveryInTotal'].errors && f['haveFreeDeliveryInTotal'].errors['required']){
+                      <div class="text-error">
+                        {{util.appTranslate('form_required')}}
+                      </div>
+                      }
+                    </mat-hint>
+                    }
+                  </mat-form-field>
+                </div>
+                <div class="col-lg-6 col-sm-6 p-b-16">
+                  <mat-form-field appearance="outline" class="w-100" color="primary"
+                    [matTooltip]="util.appTranslate('min_order_amount_checkout_tooltip')">
+                    <mat-label>{{util.appTranslate('min_order_value')}}</mat-label>
+                    <input matInput formControlName="freeDelivery" type="number" />
+                    @if(haveSubmitClicked == true && f['freeDelivery'].invalid){
+                    <mat-hint class="m-b-16 error-msg">
+                      @if(f['freeDelivery'].errors && f['freeDelivery'].errors['required']){
+                      <div class="text-error">
+                        {{util.appTranslate('form_required')}}
+                      </div>
+                      }
+                    </mat-hint>
+                    }
+                  </mat-form-field>
+                </div>
+              </div>
+            </div>
+
+            <div class="col-lg-6 col-sm-12 p-b-16">
+              <div class="row">
+                <div class="col-lg-6 col-sm-6 p-b-16 d-flex align-items-center">
+                  <mat-form-field appearance="outline" class="w-100"
+                    [matTooltip]="util.appTranslate('free_delivery_distance_tooltip')">
+                    <mat-label>{{util.appTranslate('free_delivery_distance')}}</mat-label>
+                    <mat-select formControlName="haveFreeDeliveryInDistance" name="haveFreeDeliveryInDistance"
+                      (selectionChange)="onFreeDeliveryOnDistanceChanged($event)">
+                      <mat-option [value]="true">{{util.appTranslate('dd_yes')}}</mat-option>
+                      <mat-option [value]="false">{{util.appTranslate('dd_no')}}</mat-option>
+                    </mat-select>
+                    @if(haveSubmitClicked == true && f['haveFreeDeliveryInDistance'].invalid){
+                    <mat-hint class="m-b-16 error-msg">
+                      @if(f['haveFreeDeliveryInDistance'].errors && f['haveFreeDeliveryInDistance'].errors['required']){
+                      <div class="text-error">
+                        {{util.appTranslate('form_required')}}
+                      </div>
+                      }
+                    </mat-hint>
+                    }
+                  </mat-form-field>
+                </div>
+                <div class="col-lg-6 col-sm-6 p-b-16">
+                  <mat-form-field appearance="outline" class="w-100" color="primary"
+                    [matTooltip]="util.appTranslate('free_delivery_distance_tooltip')">
+                    <mat-label>{{util.appTranslate('min_km_distance')}}</mat-label>
+                    <input matInput formControlName="freeDeliveryInDistance" type="number" />
+                    @if(haveSubmitClicked == true && f['freeDeliveryInDistance'].invalid){
+                    <mat-hint class="m-b-16 error-msg">
+                      @if(f['freeDeliveryInDistance'].errors && f['freeDeliveryInDistance'].errors['required']){
+                      <div class="text-error">
+                        {{util.appTranslate('form_required')}}
+                      </div>
+                      }
+                    </mat-hint>
+                    }
+                  </mat-form-field>
+                </div>
+              </div>
+            </div>
+
+            <div class="col-lg-6 col-sm-12 p-b-16">
+              <div class="row">
+                <div class="col-lg-6 col-sm-12 p-b-16 d-flex align-items-center">
+                  <mat-form-field appearance="outline" class="w-100"
+                    [matTooltip]="util.appTranslate('calculate_delivery_charge_method_tooltip')">
+                    <mat-label>{{util.appTranslate('delivery_charge_method')}}</mat-label>
+                    <mat-select formControlName="deliveryChargeMethod" name="deliveryChargeMethod">
+                      <mat-option value="distance">{{util.appTranslate('distance')}}</mat-option>
+                      <mat-option value="fixed">{{util.appTranslate('fixed')}}</mat-option>
+                    </mat-select>
+                    @if(haveSubmitClicked == true && f['deliveryChargeMethod'].invalid){
+                    <mat-hint class="m-b-16 error-msg">
+                      @if(f['deliveryChargeMethod'].errors && f['deliveryChargeMethod'].errors['required']){
+                      <div class="text-error">
+                        {{util.appTranslate('form_required')}}
+                      </div>
+                      }
+                    </mat-hint>
+                    }
+                  </mat-form-field>
+                </div>
+
+                <div class="col-lg-6 col-sm-6 p-b-16">
+                  <mat-form-field appearance="outline" class="w-100" color="primary"
+                    [matTooltip]="util.appTranslate('calculate_distance_fixed_charge_tooltip')">
+                    <mat-label>{{util.appTranslate('delivery_charge_amount')}}</mat-label>
+                    <input matInput formControlName="deliveryChargeAmount" type="number" />
+                    @if(haveSubmitClicked == true && f['deliveryChargeAmount'].invalid){
+                    <mat-hint class="m-b-16 error-msg">
+                      @if(f['deliveryChargeAmount'].errors && f['deliveryChargeAmount'].errors['required']){
+                      <div class="text-error">
+                        {{util.appTranslate('form_required')}}
+                      </div>
+                      }
+                    </mat-hint>
+                    }
+                  </mat-form-field>
+                </div>
+
+              </div>
+            </div>
+
+          </div>
+
+        </mat-card-content>
+      </mat-card>
+
+      <mat-card class="cardWithShadow theme-card">
+        <mat-card-header>
+          <mat-card-title class="m-b-0">
+            {{util.appTranslate('more_setting')}}
+          </mat-card-title>
+        </mat-card-header>
+
+        <mat-card-content class="b-t-0">
+          <div class="row p-b-16">
+            <div class="col-lg-4 col-sm-12 p-b-16">
+              <mat-form-field appearance="outline" class="w-100"
+                [matTooltip]="util.appTranslate('food_filter_tooltip')">
+                <mat-label>{{util.appTranslate('veg_nog_veg_option')}}</mat-label>
+                <mat-select formControlName="vegNonVegOption" name="vegNonVegOption">
+                  <mat-option [value]="true">{{util.appTranslate('dd_yes')}}</mat-option>
+                  <mat-option [value]="false">{{util.appTranslate('dd_no')}}</mat-option>
+                </mat-select>
+              </mat-form-field>
+            </div>
+            <div class="col-lg-4 col-sm-12 p-b-16">
+              <mat-form-field appearance="outline" class="w-100"
+                [matTooltip]="util.appTranslate('commission_based_business_tooltip')">
+                <mat-label>{{util.appTranslate('comission_model')}}</mat-label>
+                <mat-select formControlName="commissionBasedSystem" name="commissionBasedSystem">
+                  <mat-option [value]="true">{{util.appTranslate('dd_yes')}}</mat-option>
+                  <mat-option [value]="false">{{util.appTranslate('dd_no')}}</mat-option>
+                </mat-select>
+              </mat-form-field>
+            </div>
+            <div class="col-lg-4 col-sm-12 p-b-16">
+              <mat-form-field appearance="outline" class="w-100"
+                [matTooltip]="util.appTranslate('subscription_based_business_tooltip')">
+                <mat-label>{{util.appTranslate('subscription_model')}}</mat-label>
+                <mat-select formControlName="subscriptionBasedSystem" name="subscriptionBasedSystem">
+                  <mat-option [value]="true">{{util.appTranslate('dd_yes')}}</mat-option>
+                  <mat-option [value]="false">{{util.appTranslate('dd_no')}}</mat-option>
+                </mat-select>
+              </mat-form-field>
+            </div>
+          </div>
+
+          <div class="row p-b-16">
+            <div class="col-lg-4 col-sm-12 p-b-16">
+              <mat-form-field appearance="outline" class="w-100"
+                [matTooltip]="util.appTranslate('order_update_admin_tooltip')">
+                <mat-label>{{util.appTranslate('order_notification_for_admin')}}</mat-label>
+                <mat-select formControlName="receiveNotificationAdmin" name="receiveNotificationAdmin">
+                  <mat-option [value]="true">{{util.appTranslate('dd_yes')}}</mat-option>
+                  <mat-option [value]="false">{{util.appTranslate('dd_no')}}</mat-option>
+                </mat-select>
+              </mat-form-field>
+            </div>
+            <div class="col-lg-4 col-sm-12 p-b-16">
+              <mat-form-field appearance="outline" class="w-100"
+                [matTooltip]="util.appTranslate('guest_checkout_tooltip')">
+                <mat-label>{{util.appTranslate('guest_checkout')}}</mat-label>
+                <mat-select formControlName="guestCheckout" name="guestCheckout">
+                  <mat-option [value]="true">{{util.appTranslate('dd_yes')}}</mat-option>
+                  <mat-option [value]="false">{{util.appTranslate('dd_no')}}</mat-option>
+                </mat-select>
+              </mat-form-field>
+            </div>
+          </div>
+        </mat-card-content>
+      </mat-card>
+
+      <mat-card class="cardWithShadow theme-card">
+        <mat-card-header>
+          <mat-card-title class="m-b-0">
+            {{util.appTranslate('refund_request_information')}}
+          </mat-card-title>
+        </mat-card-header>
+
+        <mat-card-content class="b-t-0">
+          <div class="row p-b-16">
+            <div class="col-lg-12 col-sm-12 p-b-16">
+              <mat-slide-toggle formControlName="refundRequest" [checked]="f['refundRequest'].value"
+                [matTooltip]="util.appTranslate('refund_request_reason_tooltip')">
+                {{util.appTranslate('refund_request_mode')}}
+              </mat-slide-toggle>
+            </div>
+          </div>
+        </mat-card-content>
+      </mat-card>
+
+      <mat-card class="cardWithShadow theme-card">
+        <mat-card-header>
+          <mat-card-title class="m-b-0">
+            {{util.appTranslate('maintenance_information')}}
+          </mat-card-title>
+        </mat-card-header>
+
+        <mat-card-content class="b-t-0">
+          <div class="row p-b-16">
+            <div class="col-lg-12 col-sm-12 p-b-16">
+              <mat-slide-toggle formControlName="maintenance" [checked]="f['maintenance'].value"
+                [matTooltip]="util.appTranslate('maintenance_mode_tooltip')">
+                {{util.appTranslate('maintenance_mode')}}
+              </mat-slide-toggle>
+            </div>
+          </div>
+        </mat-card-content>
+      </mat-card>
+
+      <mat-card class="cardWithShadow theme-card">
+        <mat-card-header>
+          <mat-card-title class="m-b-0">
+            {{util.appTranslate('otp_verification_information')}}
+          </mat-card-title>
+        </mat-card-header>
+
+        <mat-card-content class="b-t-0">
+          <div class="row p-b-16">
+            <div class="col-lg-4 col-sm-12 p-b-16">
+              <mat-form-field appearance="outline" class="w-100"
+                [matTooltip]="util.appTranslate('otp_verification_type_tooltip')">
+                <mat-label>{{util.appTranslate('otp_verification_type_tooltip')}}</mat-label>
+                <mat-select formControlName="otpType" name="otpType">
+                  <mat-option value="num">{{util.appTranslate('num_only')}}</mat-option>
+                  <mat-option value="numstr">{{util.appTranslate('num_and_str')}}</mat-option>
+                  <mat-option value="str">{{util.appTranslate('str_only')}}</mat-option>
+                </mat-select>
+              </mat-form-field>
+            </div>
+
+            <div class="col-lg-4 col-sm-12 p-b-16">
+              <mat-form-field appearance="outline" class="w-100" [matTooltip]="util.appTranslate('resend_otp_tooltip')">
+                <mat-label>{{util.appTranslate('can_resend_otp')}}</mat-label>
+                <mat-select formControlName="canResendOtp" name="canResendOtp">
+                  <mat-option [value]="true">{{util.appTranslate('dd_yes')}}</mat-option>
+                  <mat-option [value]="false">{{util.appTranslate('dd_no')}}</mat-option>
+                </mat-select>
+              </mat-form-field>
+            </div>
+
+            <div class="col-lg-4 col-sm-12 p-b-16">
+              <mat-form-field appearance="outline" class="w-100"
+                [matTooltip]="util.appTranslate('otp_length_on_verification')">
+                <mat-label>{{util.appTranslate('otp_length')}}</mat-label>
+                <mat-select formControlName="otpLength" name="otpLength">
+                  <mat-option [value]="4">{{util.appTranslate('dd_4_char_long')}}</mat-option>
+                  <mat-option [value]="6">{{util.appTranslate('dd_6_char_long')}}</mat-option>
+                  <mat-option [value]="8">{{util.appTranslate('dd_8_char_long')}}</mat-option>
+                </mat-select>
+              </mat-form-field>
+            </div>
+
+          </div>
+        </mat-card-content>
+      </mat-card>
+
+      <mat-card class="cardWithShadow theme-card">
+        <mat-card-header>
+          <mat-card-title class="m-b-0">
+            {{util.appTranslate('social_media_information')}}
+          </mat-card-title>
+        </mat-card-header>
+
+        <mat-card-content class="b-t-0">
+          <div class="row p-b-16" [formGroup]="settingForm.controls['socialLinks']">
+            <div class="col-lg-6 col-sm-12 p-b-16">
+              <mat-form-field appearance="outline" class="w-100" color="primary">
+                <mat-label>{{util.appTranslate('facebook_url')}}</mat-label>
+                <input matInput formControlName="facebook" type="text" />
+              </mat-form-field>
+            </div>
+
+            <div class="col-lg-6 col-sm-12 p-b-16">
+              <mat-form-field appearance="outline" class="w-100" color="primary">
+                <mat-label>{{util.appTranslate('instagram_url')}}</mat-label>
+                <input matInput formControlName="instagram" type="text" />
+              </mat-form-field>
+            </div>
+
+            <div class="col-lg-6 col-sm-12 p-b-16">
+              <mat-form-field appearance="outline" class="w-100" color="primary">
+                <mat-label>{{util.appTranslate('x_url')}}</mat-label>
+                <input matInput formControlName="x" type="text" />
+              </mat-form-field>
+            </div>
+
+            <div class="col-lg-6 col-sm-12 p-b-16">
+              <mat-form-field appearance="outline" class="w-100" color="primary">
+                <mat-label>{{util.appTranslate('youtube_url')}}</mat-label>
+                <input matInput formControlName="youtube" type="text" />
+              </mat-form-field>
+            </div>
+
+            <div class="col-lg-6 col-sm-12 p-b-16">
+              <mat-form-field appearance="outline" class="w-100" color="primary">
+                <mat-label>{{util.appTranslate('linkedin_url')}}</mat-label>
+                <input matInput formControlName="linked" type="text" />
+              </mat-form-field>
+            </div>
+
+            <div class="col-lg-6 col-sm-12 p-b-16">
+              <mat-form-field appearance="outline" class="w-100" color="primary">
+                <mat-label>{{util.appTranslate('pinterest_url')}}</mat-label>
+                <input matInput formControlName="pinterest" type="text" />
+              </mat-form-field>
+            </div>
+
+            <div class="col-lg-6 col-sm-12 p-b-16">
+              <mat-form-field appearance="outline" class="w-100" color="primary">
+                <mat-label>{{util.appTranslate('playstore_url')}}</mat-label>
+                <input matInput formControlName="playstore" type="text" />
+              </mat-form-field>
+            </div>
+
+            <div class="col-lg-6 col-sm-12 p-b-16">
+              <mat-form-field appearance="outline" class="w-100" color="primary">
+                <mat-label>{{util.appTranslate('appstore_url')}}</mat-label>
+                <input matInput formControlName="appstore" type="text" />
+              </mat-form-field>
+            </div>
+
+            <div class="col-lg-6 col-sm-12 p-b-16">
+              <mat-form-field appearance="outline" class="w-100" color="primary">
+                <mat-label>{{util.appTranslate('vimeo_url')}}</mat-label>
+                <input matInput formControlName="vimeo" type="text" />
+              </mat-form-field>
+            </div>
+
+          </div>
+        </mat-card-content>
+      </mat-card>
+
+      <mat-card class="cardWithShadow theme-card">
+        <mat-card-header>
+          <mat-card-title class="m-b-0">
+            {{util.appTranslate('business_food_license')}}
+          </mat-card-title>
+        </mat-card-header>
+
+        <mat-card-content class="b-t-0">
+          <div class="row">
+            <div class="col-12 text-center m-b-16 p-b-24 d-flex flex-column justify-content-center align-items-center">
+              <img [src]="api.mediaUrl+f['foodLicenseImage'].value" class="custom-image-upload border p-5 m-b-16"
+                width="100" height="100" onError="this.src='assets/images/placeholder.png'"
+                (click)="onImageClick('license')"
+                [ngStyle]="{'border': haveSubmitClicked == true &&  f['foodLicenseImage'].invalid ? '2px dashed red' : '2px dashed #e5e5e5'}" />
+              <span
+                [ngClass]="haveSubmitClicked == true &&  f['foodLicenseImage'].invalid ? 'f-s-12 text-error' :'f-s-12' "
+                [matTooltip]="util.appTranslate('upload_food_license_image_ratio_1_o_1')">{{util.appTranslate('food_license_image_ratio_1_o_1')}}</span>
+            </div>
+
+            <div class="col-lg-6 col-sm-12 p-b-16">
+              <mat-form-field appearance="outline" class="w-100" color="primary">
+                <mat-label>{{util.appTranslate('food_license_name')}}</mat-label>
+                <input matInput formControlName="foodLicenseName" type="text" />
+              </mat-form-field>
+            </div>
+            <div class="col-lg-6 col-sm-12 p-b-16">
+              <mat-form-field appearance="outline" class="w-100" color="primary">
+                <mat-label>{{util.appTranslate('food_license_website')}}</mat-label>
+                <input matInput formControlName="foodLicenseWebsite" type="url" />
+              </mat-form-field>
+            </div>
+            <div class="col-lg-6 col-sm-12 p-b-16">
+              <mat-form-field appearance="outline" class="w-100" color="primary">
+                <mat-label>{{util.appTranslate('food_license_number')}}</mat-label>
+                <input matInput formControlName="foodLicense" type="text" />
+              </mat-form-field>
+            </div>
+          </div>
+        </mat-card-content>
+      </mat-card>
+
+      <mat-card class="cardWithShadow theme-card">
+        <mat-card-header class="d-flex align-items-center justify-content-between">
+          <mat-card-title class="m-b-0">
+            {{util.appTranslate('business_compliance_forms')}}
+          </mat-card-title>
+          <button mat-button type="button" color="primary" (click)="addComplianceField()">
+            <div class="d-flex align-items-center">
+              <span>{{util.appTranslate('add_field')}}</span>
+              <ng-icon name="tablerPlus" class="icon-20 m-l-4"></ng-icon>
+            </div>
+          </button>
+        </mat-card-header>
+
+        <mat-card-content class="b-t-1" formArrayName="complianceForm">
+          @for (formField of f['complianceForm'].controls; track $index; let i = $index;) {
+          <div class="row b-b-1 p-b-16 p-t-16" [formGroupName]="i">
+            <div class="col-lg-5 col-sm-12">
+              <mat-form-field appearance="outline" class="w-100" color="primary">
+                <mat-label>{{util.appTranslate('field_name')}}</mat-label>
+                <input matInput formControlName="fieldName" type="text" />
+              </mat-form-field>
+            </div>
+            <div class="col-lg-5 col-sm-12">
+              <mat-form-field appearance="outline" class="w-100" color="primary">
+                <mat-label>{{util.appTranslate('field_value')}}</mat-label>
+                <input matInput formControlName="fieldValue" type="text" />
+              </mat-form-field>
+            </div>
+            <div class="col-lg-2 col-sm-12 d-flex flex-column align-items-center">
+              <button mat-mini-fab color="primary" type="button" (click)="removeComplianceField(i)">
+                <ng-icon name="tablerTrash" class="icon-20"></ng-icon>
+              </button>
+            </div>
+          </div>
+          }
+        </mat-card-content>
+      </mat-card>
+    </div>
+
+    <div class="col-lg-4 col-sm-12 p-b-16">
+      <mat-card class="cardWithShadow theme-card">
+        <mat-card-header>
+          <mat-card-title class="m-b-0">
+            {{util.appTranslate('meta_information')}}
+          </mat-card-title>
+        </mat-card-header>
+
+        <mat-card-content class="b-t-0">
+          <div class="row p-b-16">
+            <div class="col-lg-8 col-sm-12 p-b-16">
+              <mat-label [matTooltip]="util.appTranslate('upload_logo_ratio_1_o_1')"
+                [ngClass]="haveSubmitClicked == true && f['logo'].invalid ? 'f-s-12 text-error' :'f-s-12' ">
+                {{util.appTranslate('logo_ratio_1_o_1')}}
+              </mat-label>
+              <img [src]="api.mediaUrl+f['logo'].value" class="custom-image-upload border p-5 m-t-16 w-100"
+                (click)="onImageClick('logo')" [matTooltip]="util.appTranslate('select_logo_ratio_1_o_1')"
+                onError="this.src='assets/images/placeholder.png'"
+                [ngStyle]="{'border': haveSubmitClicked == true && f['logo'].invalid ? '2px dashed red' : '2px dashed #e5e5e5', 'height' : '120px'}" />
+            </div>
+
+            <div class="col-lg-4 col-sm-12 p-b-16">
+              <mat-label [matTooltip]="util.appTranslate('upload_favicon_ratio_1_o_1')"
+                [ngClass]="haveSubmitClicked == true && f['favicon'].invalid ? 'f-s-12 text-error' :'f-s-12' ">
+                {{util.appTranslate('favicon_image_ratio_1_o_1')}}
+              </mat-label>
+              <img [src]="api.mediaUrl+f['favicon'].value" class="custom-image-upload border p-5 m-t-16 w-100"
+                (click)="onImageClick('favicon')" [matTooltip]="util.appTranslate('favicon_ratio_1_o_1')"
+                onError="this.src='assets/images/placeholder.png'"
+                [ngStyle]="{'border': haveSubmitClicked == true && f['favicon'].invalid ? '2px dashed red' : '2px dashed #e5e5e5', 'height' : '120px'}" />
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col-lg-12 col-sm-12 p-b-16">
+              <mat-form-field class="w-100" appearance="outline">
+                <mat-label>{{util.appTranslate('timezone')}}</mat-label>
+                <input type="text" [placeholder]="util.appTranslate('timezone')" matInput name="timezone"
+                  formControlName="timezone" [formControl]="timezoneCtrl" [matAutocomplete]="autoTimezone" />
+                <mat-autocomplete autoActiveFirstOption #autoTimezone="matAutocomplete"
+                  (optionSelected)="onTimezoneSelect($event)" [displayWith]="displayTimezoneName">
+                  @for (item of timezones | async; track $index) {
+                  <mat-option [value]="item">
+                    {{ item.text }}
+                  </mat-option>
+                  }
+                </mat-autocomplete>
+                @if(haveSubmitClicked == true && f['timezone'].invalid){
+                <mat-hint class="m-b-16 error-msg">
+                  @if(f['timezone'].errors && f['timezone'].errors['required']){
+                  <div class="text-error">
+                    {{util.appTranslate('form_required')}}
+                  </div>
+                  }
+                </mat-hint>
+                }
+              </mat-form-field>
+            </div>
+
+            <div class="col-lg-12 col-sm-12 p-b-16">
+              <mat-form-field appearance="outline" class="w-100">
+                <mat-label>{{util.appTranslate('time_format')}}</mat-label>
+                <mat-select formControlName="timeFormat" name="timeFormat">
+                  <mat-option value="12">{{util.appTranslate('12_hours')}}</mat-option>
+                  <mat-option value="24">{{util.appTranslate('24_hours')}}</mat-option>
+                </mat-select>
+                @if(haveSubmitClicked == true && f['timeFormat'].invalid){
+                <mat-hint class="m-b-16 error-msg">
+                  @if(f['timeFormat'].errors && f['timeFormat'].errors['required']){
+                  <div class="text-error">
+                    {{util.appTranslate('form_required')}}
+                  </div>
+                  }
+                </mat-hint>
+                }
+              </mat-form-field>
+            </div>
+
+            <div class="col-lg-12 col-sm-12 p-b-16">
+              <mat-form-field class="w-100" appearance="outline">
+                <mat-label>{{util.appTranslate('currency_symbol')}}</mat-label>
+                <input type="text" [placeholder]="util.appTranslate('currency_symbol')" matInput name="currency"
+                  formControlName="currency" [formControl]="currencysCtrl" [matAutocomplete]="autoCurrency" />
+                <mat-autocomplete autoActiveFirstOption #autoCurrency="matAutocomplete"
+                  (optionSelected)="onCurrencySelect($event)" [displayWith]="displayCurrencyName">
+                  @for (item of currencys | async; track $index) {
+                  <mat-option [value]="item">
+                    {{ item.cc }} - ( {{item.symbol}} )
+                  </mat-option>
+                  }
+                </mat-autocomplete>
+                @if(haveSubmitClicked == true && f['currency'].invalid){
+                <mat-hint class="m-b-16 error-msg">
+                  @if(f['currency'].errors && f['currency'].errors['required']){
+                  <div class="text-error">
+                    {{util.appTranslate('form_required')}}
+                  </div>
+                  }
+                </mat-hint>
+                }
+              </mat-form-field>
+            </div>
+
+            <div class="col-lg-12 col-sm-12 p-b-16">
+              <mat-form-field appearance="outline" class="w-100">
+                <mat-label>{{util.appTranslate('currency_side')}}</mat-label>
+                <mat-select formControlName="currencySide" name="currencySide">
+                  <mat-option value="left">{{util.appTranslate('left_side')}}</mat-option>
+                  <mat-option value="right">{{util.appTranslate('right_side')}}</mat-option>
+                </mat-select>
+                @if(haveSubmitClicked == true && f['currencySide'].invalid){
+                <mat-hint class="m-b-16 error-msg">
+                  @if(f['currencySide'].errors && f['currencySide'].errors['required']){
+                  <div class="text-error">
+                    {{util.appTranslate('form_required')}}
+                  </div>
+                  }
+                </mat-hint>
+                }
+              </mat-form-field>
+            </div>
+
+            <div class="col-lg-12 col-sm-12 p-b-16">
+              <mat-form-field appearance="outline" class="w-100" color="primary">
+                <mat-label>{{util.appTranslate('digit_after_decimal')}}</mat-label>
+                <input matInput formControlName="decimalPoint" type="number" />
+                @if(haveSubmitClicked == true && f['decimalPoint'].invalid){
+                <mat-hint class="m-b-16 error-msg">
+                  @if(f['decimalPoint'].errors && f['decimalPoint'].errors['required']){
+                  <div class="text-error">
+                    {{util.appTranslate('form_required')}}
+                  </div>
+                  }
+                </mat-hint>
+                }
+              </mat-form-field>
+            </div>
+
+            <div class="col-lg-12 col-sm-12 p-b-16">
+              <mat-form-field appearance="outline" class="w-100">
+                <mat-label>{{util.appTranslate('find_mode')}}</mat-label>
+                <mat-select formControlName="findMode" name="findMode">
+                  <mat-option value="km">{{util.appTranslate('kilometers')}}</mat-option>
+                  <mat-option value="mile">{{util.appTranslate('miles')}}</mat-option>
+                </mat-select>
+                @if(haveSubmitClicked == true && f['findMode'].invalid){
+                <mat-hint class="m-b-16 error-msg">
+                  @if(f['findMode'].errors && f['findMode'].errors['required']){
+                  <div class="text-error">
+                    {{util.appTranslate('form_required')}}
+                  </div>
+                  }
+                </mat-hint>
+                }
+              </mat-form-field>
+            </div>
+
+            <div class="col-lg-12 col-sm-12 p-b-16">
+              <mat-form-field appearance="outline" class="w-100" color="primary">
+                <mat-label>{{util.appTranslate('delivery_area_in_radius')}}</mat-label>
+                <input matInput formControlName="deliveryArea" type="number" />
+                @if(haveSubmitClicked == true && f['deliveryArea'].invalid){
+                <mat-hint class="m-b-16 error-msg">
+                  @if(f['deliveryArea'].errors && f['deliveryArea'].errors['required']){
+                  <div class="text-error">
+                    {{util.appTranslate('form_required')}}
+                  </div>
+                  }
+                </mat-hint>
+                }
+              </mat-form-field>
+            </div>
+
+            <div class="col-lg-12 col-sm-12 p-b-16">
+              <mat-form-field class="w-100" appearance="outline">
+                <mat-label>{{util.appTranslate('default_country_code')}}</mat-label>
+                <input type="text" [placeholder]="util.appTranslate('default_country_code')" matInput
+                  name="defaultCountryCode" formControlName="defaultCountryCode" [formControl]="countryDialCodeCtrl"
+                  [matAutocomplete]="autoCountryDialCode" />
+                <mat-autocomplete autoActiveFirstOption #autoCountryDialCode="matAutocomplete"
+                  (optionSelected)="onCountryDialCodeSelect($event)" [displayWith]="displayCountryDialCode">
+                  @for (item of countryDialCodes | async; track $index) {
+                  <mat-option [value]="item">
+                    {{item.flag}} ( {{item.dial_code }} ) {{ item.name }}
+                  </mat-option>
+                  }
+                </mat-autocomplete>
+                @if(haveSubmitClicked == true && f['defaultCountryCode'].invalid){
+                <mat-hint class="m-b-16 error-msg">
+                  @if(f['defaultCountryCode'].errors && f['defaultCountryCode'].errors['required']){
+                  <div class="text-error">
+                    {{util.appTranslate('form_required')}}
+                  </div>
+                  }
+                </mat-hint>
+                }
+              </mat-form-field>
+            </div>
+
+            <div class="col-lg-12 col-sm-12 p-b-16">
+              <mat-form-field appearance="outline" class="w-100" color="primary">
+                <mat-label>{{util.appTranslate('website_url')}}</mat-label>
+                <input matInput formControlName="websiteUrl" type="url" />
+                @if(haveSubmitClicked == true && f['websiteUrl'].invalid){
+                <mat-hint class="m-b-16 error-msg">
+                  @if(f['websiteUrl'].errors && f['websiteUrl'].errors['required']){
+                  <div class="text-error">
+                    {{util.appTranslate('form_required')}}
+                  </div>
+                  }
+                </mat-hint>
+                }
+              </mat-form-field>
+            </div>
+
+          </div>
+
+          <div class="row">
+            <div class="col-lg-6 col-sm-12 p-b-16">
+              <button mat-flat-button color="primary" type="submit" class="w-100">
+                {{ action == 'add' ? util.appTranslate('submit_btn') : util.appTranslate('update_btn')}}
+              </button>
+            </div>
+            <div class="col-lg-6 col-sm-12 p-b-16">
+              <button mat-flat-button (click)="onReset()" class="w-100 bg-secondary text-white"
+                type="button">{{util.appTranslate('reset_btn')}}</button>
+            </div>
+          </div>
+
+        </mat-card-content>
+      </mat-card>
+    </div>
+  </div>
+</form>

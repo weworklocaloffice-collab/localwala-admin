@@ -1,0 +1,53 @@
+<h2 mat-dialog-title>{{ doc?.filename || 'Statement' }} · {{ doc?.status }}</h2>
+
+<mat-dialog-content>
+  @if (!isLoaded) {
+    <div class="p-24 text-center text-muted">{{ util.appTranslate('ts_loading') }}</div>
+  } @else if (!doc) {
+    <div class="p-24 text-center text-muted">{{ util.appTranslate('ts_no_records_found') }}</div>
+  } @else {
+    <p class="f-s-13">
+      {{ doc.rowCount }} rows ·
+      {{ match.matchedCount ?? 0 }} matched ·
+      {{ (match.unmatchedStatementRows || []).length }} unmatched statement ·
+      {{ (match.unmatchedLedgerEntries || []).length }} unmatched ledger
+    </p>
+
+    @if ((match.unmatchedStatementRows || []).length) {
+      <h4>Statement rows without a ledger twin</h4>
+      <table class="w-100 f-s-12">
+        <tr><th>#</th><th>Date</th><th>Reference</th><th>Amount</th><th>Side</th></tr>
+        @for (i of match.unmatchedStatementRows; track i) {
+          <tr>
+            <td>{{ i + 1 }}</td>
+            <td>{{ unmatchedRow(i).date | date: 'dd MMM yyyy' }}</td>
+            <td>{{ unmatchedRow(i).reference }}</td>
+            <td>{{ formatPaise(unmatchedRow(i).amountPaise) }}</td>
+            <td>{{ unmatchedRow(i).direction }}</td>
+          </tr>
+        }
+      </table>
+    }
+
+    @if ((match.unmatchedLedgerEntries || []).length) {
+      <h4 class="m-t-16">Ledger entries without a statement twin</h4>
+      <ul class="f-s-13">
+        @for (id of match.unmatchedLedgerEntries; track id) {
+          <li>{{ id }}</li>
+        }
+      </ul>
+    }
+
+    @if (doc.status === 'PENDING' && util.hasRight('realestate.admin_settlement_manage')) {
+      <div class="m-t-16">
+        <button mat-flat-button color="primary" [disabled]="isMatching" (click)="onMatch()">
+          Run match
+        </button>
+      </div>
+    }
+  }
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button (click)="onClose()">{{ util.appTranslate('th_cancel') }}</button>
+</mat-dialog-actions>

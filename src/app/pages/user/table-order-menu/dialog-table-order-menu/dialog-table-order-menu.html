@@ -1,0 +1,8 @@
+<div class="dialog-food-menu">
+  @for (item of categories; track $index) {
+  <div class="item-content" (click)="onSelect(item.id)">
+    <p class="lbl">{{ util.trimText(util.appTranslate(item.displayName),40) }}</p>
+    <p class="lbl">{{ item.items.length }}</p>
+  </div>
+  }
+</div>

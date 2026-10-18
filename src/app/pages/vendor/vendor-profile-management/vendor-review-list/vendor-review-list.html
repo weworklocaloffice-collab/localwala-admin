@@ -1,0 +1,127 @@
+<mat-card class="cardWithShadow">
+  <mat-card-content>
+    <div class="row justify-content-between m-b-8">
+      <div class="col-sm-4 col-lg-4">
+        <mat-card-title>{{util.appTranslate('reviews')}}</mat-card-title>
+      </div>
+    </div>
+
+    <div class="table-responsive">
+      @if (!isLoaded) {
+      <table mat-table [dataSource]="util.dummyArray" class="w-100">
+        <ng-container matColumnDef="name">
+          <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1 p-l-0">
+            {{util.appTranslate('th_name')}}
+          </th>
+          <td mat-cell *matCellDef="let element" class="p-l-0">
+            <mat-progress-bar mode="indeterminate" color="light"></mat-progress-bar>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="star">
+          <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1 p-l-0">
+            {{util.appTranslate('th_rating')}}
+          </th>
+          <td mat-cell *matCellDef="let element" class="f-s-14">
+            <mat-progress-bar mode="indeterminate" color="light"></mat-progress-bar>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="verified">
+          <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1 p-l-0">
+            {{util.appTranslate('verified')}}
+          </th>
+          <td mat-cell *matCellDef="let element" class="f-s-14">
+            <mat-progress-bar mode="indeterminate" color="light"></mat-progress-bar>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="action">
+          <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1 p-r-0 text-right">
+            {{util.appTranslate('th_action')}}
+          </th>
+          <td mat-cell *matCellDef="let element" class="f-w-500 text-right p-r-0">
+            <mat-progress-bar mode="indeterminate" color="light"></mat-progress-bar>
+          </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="displayedColumn"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumn"></tr>
+
+      </table>
+      }
+
+      @if (isLoaded) {
+      <table mat-table [dataSource]="reviews" class="w-100">
+        <ng-container matColumnDef="name">
+          <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1 p-l-0">
+            {{util.appTranslate('th_name')}}
+          </th>
+          <td mat-cell *matCellDef="let element" class="p-l-0">
+            <div class="d-flex align-items-center">
+              <img [src]="api.mediaUrl+element.userInfo.image" alt="users" width="40" height="40" class="rounded-circle"
+                onError="this.src='assets/images/onerror.png'" />
+              <div class="m-l-16">
+                <h6 class="f-s-14 mat-subtitle-1 f-w-600">
+                  {{ element && element.userInfo && element.userInfo.firstName ? element.userInfo.firstName +' '+
+                  element.userInfo.lastName : util.appTranslate('invalid_data') }}
+                </h6>
+                <span class="mat-body-1 f-s-12">
+                  {{ getTime(element.createdAt) }}
+                </span>
+              </div>
+            </div>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="star">
+          <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1 p-l-0">
+            {{util.appTranslate('th_rating')}}
+          </th>
+          <td mat-cell *matCellDef="let element" class="f-s-14">
+            <span class="d-flex align-items-center justify-content-center">
+              <ng-icon name="tablerStars" class="icon-12 d-flex"></ng-icon>
+              {{ element.ratingCount }}
+            </span>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="verified">
+          <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1 p-l-0">
+            {{util.appTranslate('verified')}}
+          </th>
+          <td mat-cell *matCellDef="let element" class="f-s-14">
+            <span class="d-flex align-items-center justify-content-center">
+              <ng-icon name="tablerShield" class="icon-12"></ng-icon>
+              {{ element && element.orders && element.orders !=
+              null ? util.appTranslate('verified'):util.appTranslate('unverified') }}
+            </span>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="action">
+          <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1 p-r-0 text-left">
+            {{util.appTranslate('th_action')}}
+          </th>
+          <td mat-cell *matCellDef="let element" class="p-l-0">
+            <a (click)="openDetail(element)" class="m-r-10 cursor-pointer text-secondary" [matTooltip]="util.appTranslate('click_to_view')">
+              <mat-icon>info</mat-icon>
+            </a>
+          </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="displayedColumn"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumn"></tr>
+
+        <tr *matNoDataRow>
+          <td colspan="4" class="m-b-16 m-t-16 text-center">{{util.appTranslate('table_no_data_found')}}</td>
+        </tr>
+
+      </table>
+      }
+
+      <mat-paginator [hidden]="!isLoaded" [pageSizeOptions]="[5,10, 20]" [pageSize]="pageSize"
+        (page)="onPageChange($event)" showFirstLastButtons></mat-paginator>
+    </div>
+  </mat-card-content>
+</mat-card>

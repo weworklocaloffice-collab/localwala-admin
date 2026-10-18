@@ -1,0 +1,106 @@
+<mat-card class="cardWithShadow theme-card">
+  <mat-card-header>
+    <mat-card-title class="m-b-0">
+      {{util.appTranslate('th_dining_booking')}}
+    </mat-card-title>
+  </mat-card-header>
+
+  <mat-card-content class="b-t-0">
+    <mat-tab-group mat-stretch-tabs="false" [selectedIndex]="tabIndex" mat-align-tabs="start"
+      (selectedTabChange)="tabChanged($event)">
+      <mat-tab>
+        <ng-template matTabLabel>
+          <span [matBadge]="allBooking" matBadgeOverlap="false">{{util.appTranslate('all_booking')}}</span>
+        </ng-template>
+        @if(tabIndex == 0){
+        <mat-card-content>
+          <app-dininig-booking-tab-list [status]="'all'"></app-dininig-booking-tab-list>
+        </mat-card-content>
+        }
+      </mat-tab>
+      <mat-tab>
+        <ng-template matTabLabel>
+          <span [matBadge]="freshBooking" matBadgeOverlap="false">{{util.appTranslate('new_booking')}}</span>
+        </ng-template>
+        @if(tabIndex == 1){
+        <mat-card-content>
+          <app-dininig-booking-tab-list [status]="'created'"></app-dininig-booking-tab-list>
+        </mat-card-content>
+        }
+      </mat-tab>
+      <mat-tab>
+        <ng-template matTabLabel>
+          <span [matBadge]="acceptedBooking" matBadgeOverlap="false">{{util.appTranslate('accepted_booking')}}</span>
+        </ng-template>
+        @if(tabIndex == 2){
+        <mat-card-content>
+          <app-dininig-booking-tab-list [status]="'accepted'"></app-dininig-booking-tab-list>
+        </mat-card-content>
+        }
+      </mat-tab>
+      <mat-tab>
+        <ng-template matTabLabel>
+          <span [matBadge]="completedBooking" matBadgeOverlap="false">{{util.appTranslate('completed_booking')}}</span>
+        </ng-template>
+        @if(tabIndex == 3){
+        <mat-card-content>
+          <app-dininig-booking-tab-list [status]="'completed'"></app-dininig-booking-tab-list>
+        </mat-card-content>
+        }
+      </mat-tab>
+      <mat-tab>
+        <ng-template matTabLabel>
+          <span [matBadge]="cancelledBooking" matBadgeOverlap="false">{{util.appTranslate('cancelled_booking')}}</span>
+        </ng-template>
+        @if(tabIndex == 4){
+        <mat-card-content>
+          <app-dininig-booking-tab-list [status]="'cancelled'"></app-dininig-booking-tab-list>
+        </mat-card-content>
+        }
+      </mat-tab>
+      <mat-tab>
+        <ng-template matTabLabel>
+          <span [matBadge]="rejectedBooking" matBadgeOverlap="false">{{util.appTranslate('rejected_booking')}}</span>
+        </ng-template>
+        @if(tabIndex == 5){
+        <mat-card-content>
+          <app-dininig-booking-tab-list [status]="'rejected'"></app-dininig-booking-tab-list>
+        </mat-card-content>
+        }
+      </mat-tab>
+      <mat-tab>
+        <ng-template matTabLabel>
+          <span [matBadge]="refundedBooking" matBadgeOverlap="false">{{util.appTranslate('refunded_booking')}}</span>
+        </ng-template>
+        @if(tabIndex == 6){
+        <mat-card-content>
+          <app-dininig-booking-tab-list [status]="'refunded'"></app-dininig-booking-tab-list>
+        </mat-card-content>
+        }
+      </mat-tab>
+      <mat-tab>
+        <ng-template matTabLabel>
+          <span [matBadge]="partiallyBooking"
+            matBadgeOverlap="false">{{util.appTranslate('partially_refunded_booking')}}</span>
+        </ng-template>
+        @if(tabIndex == 7){
+        <mat-card-content>
+          <app-dininig-booking-tab-list [status]="'partially_refunded'"></app-dininig-booking-tab-list>
+        </mat-card-content>
+        }
+      </mat-tab>
+      <mat-tab>
+        <ng-template matTabLabel>
+          <span [matBadge]="pendingBooking"
+            matBadgeOverlap="false">{{util.appTranslate('pending_payment_booking')}}</span>
+        </ng-template>
+        @if(tabIndex == 8){
+        <mat-card-content>
+          <app-dininig-booking-tab-list [status]="'pending_payments'"></app-dininig-booking-tab-list>
+        </mat-card-content>
+        }
+      </mat-tab>
+
+    </mat-tab-group>
+  </mat-card-content>
+</mat-card>

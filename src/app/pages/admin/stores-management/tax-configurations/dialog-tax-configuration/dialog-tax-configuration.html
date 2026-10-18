@@ -1,0 +1,47 @@
+<div mat-dialog-content class="dialog-form">
+  <form [formGroup]="taxConfigForm" (ngSubmit)="onSubmit()">
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>{{ util.appTranslate('tax_code_hsn') }} <span class="required">*</span></mat-label>
+      <input matInput formControlName="code" placeholder="e.g. 1006">
+      @if (f.code.invalid && haveSubmitClicked) {
+        <mat-error>{{ util.appTranslate('tax_code_required') }}</mat-error>
+      }
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>{{ util.appTranslate('common_description') }}</mat-label>
+      <input matInput formControlName="description" placeholder="e.g. Rice">
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>{{ util.appTranslate('tax_percentage') }} <span class="required">*</span></mat-label>
+      <input matInput type="number" formControlName="gstRate" min="0" max="100" placeholder="e.g. 5">
+      @if (f.gstRate.invalid && haveSubmitClicked) {
+        <mat-error>{{ util.appTranslate('tax_rate_required') }}</mat-error>
+      }
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>{{ util.appTranslate('effective_from') }} <span class="required">*</span></mat-label>
+      <input matInput [matDatepicker]="startPicker" formControlName="effectiveFrom">
+      <mat-datepicker-toggle matSuffix [for]="startPicker"></mat-datepicker-toggle>
+      <mat-datepicker #startPicker></mat-datepicker>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>{{ util.appTranslate('effective_to') }}</mat-label>
+      <input matInput [matDatepicker]="endPicker" formControlName="effectiveTo">
+      <mat-datepicker-toggle matSuffix [for]="endPicker"></mat-datepicker-toggle>
+      <mat-datepicker #endPicker></mat-datepicker>
+    </mat-form-field>
+
+    <div mat-dialog-actions class="dialog-actions">
+      <button mat-button type="button" (click)="dialogRef.close()" cdkFocusInitial>
+        {{ util.appTranslate('common_cancel') }}
+      </button>
+      <button mat-raised-button color="primary" type="submit" [disabled]="taxConfigForm.invalid">
+        {{ util.appTranslate('ts_add_new') }}
+      </button>
+    </div>
+  </form>
+</div>

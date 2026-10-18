@@ -1,0 +1,169 @@
+<mat-card class="cardWithShadow theme-card overflow-hidden">
+  <mat-card-header class="d-sm-flex">
+    <div class="m-r-auto">
+      <mat-card-title class="m-0">{{util.appTranslate('regular_order_earning_stats')}}</mat-card-title>
+    </div>
+    <div class="d-flex align-items-center">
+      <div class="d-flex align-items-center text-secondary">
+        <ng-icon name="tablerPoint" class="icon-12 d-flex"></ng-icon>
+        <div class="m-l-12 d-flex">
+          <span class="f-s-14">{{util.appTranslate('order_total')}}: {{util.priceFormatString(orderGrandTotal)}}</span>
+        </div>
+      </div>
+      <div class="d-flex m-l-16 align-items-center text-primary">
+        <ng-icon name="tablerPoint" class="icon-12 d-flex"></ng-icon>
+        <div class="m-l-12 d-flex">
+          <span class="f-s-14">{{util.appTranslate('th_admin_commission')}}:
+            {{util.priceFormatString(orderTotalCommission)}}</span>
+        </div>
+      </div>
+      <div class="d-flex m-l-16 align-items-center text-error">
+        <ng-icon name="tablerPoint" class="icon-12 d-flex"></ng-icon>
+        <div class="m-l-12 d-flex">
+          <span class="f-s-14">{{util.appTranslate('total_orders')}}: {{util.numberFormat(orderTotalSold)}}</span>
+        </div>
+      </div>
+    </div>
+  </mat-card-header>
+  <mat-card-content class="p-32">
+    <apx-chart #orderEarningChart [series]="orderEarningChartOption.series" [chart]="orderEarningChartOption.chart"
+      [xaxis]="orderEarningChartOption.xaxis" [yaxis]="orderEarningChartOption.yaxis"
+      [grid]="orderEarningChartOption.grid" [stroke]="orderEarningChartOption.stroke"
+      [tooltip]="orderEarningChartOption.tooltip" [dataLabels]="orderEarningChartOption.dataLabels"
+      [legend]="orderEarningChartOption.legend" [colors]="orderEarningChartOption.colors"
+      [markers]="orderEarningChartOption.markers">
+    </apx-chart>
+  </mat-card-content>
+</mat-card>
+
+<mat-card class="cardWithShadow theme-card overflow-hidden">
+  <mat-card-header class="d-sm-flex">
+    <div class="m-r-auto">
+      <mat-card-title class="m-0">{{util.appTranslate('pos_earning_stats')}}</mat-card-title>
+    </div>
+    <div class="d-flex align-items-center">
+      <div class="d-flex align-items-center text-secondary">
+        <ng-icon name="tablerPoint" class="icon-12 d-flex"></ng-icon>
+        <div class="m-l-12 d-flex">
+          <span class="f-s-14">{{util.appTranslate('order_total')}}: {{util.priceFormatString(posGrandTotal)}}</span>
+        </div>
+      </div>
+      <div class="d-flex m-l-16 align-items-center text-primary">
+        <ng-icon name="tablerPoint" class="icon-12 d-flex"></ng-icon>
+        <div class="m-l-12 d-flex">
+          <span class="f-s-14">{{util.appTranslate('th_admin_commission')}}:
+            {{util.priceFormatString(posTotalCommission)}}</span>
+        </div>
+      </div>
+      <div class="d-flex m-l-16 align-items-center text-error">
+        <ng-icon name="tablerPoint" class="icon-12 d-flex"></ng-icon>
+        <div class="m-l-12 d-flex">
+          <span class="f-s-14">{{util.appTranslate('total_orders')}}: {{util.numberFormat(posTotalSold)}}</span>
+        </div>
+      </div>
+    </div>
+  </mat-card-header>
+  <mat-card-content class="p-32">
+    <apx-chart #posEarningChart [series]="posEarningChartOption.series" [chart]="posEarningChartOption.chart"
+      [xaxis]="posEarningChartOption.xaxis" [yaxis]="posEarningChartOption.yaxis" [grid]="posEarningChartOption.grid"
+      [stroke]="posEarningChartOption.stroke" [tooltip]="posEarningChartOption.tooltip"
+      [dataLabels]="posEarningChartOption.dataLabels" [legend]="posEarningChartOption.legend"
+      [colors]="posEarningChartOption.colors" [markers]="posEarningChartOption.markers">
+    </apx-chart>
+  </mat-card-content>
+</mat-card>
+
+<mat-card class="cardWithShadow theme-card overflow-hidden">
+  <mat-card-header class="d-sm-flex">
+    <div class="m-r-auto">
+      <mat-card-title class="m-0">{{util.appTranslate('table_order_earning_stats')}}</mat-card-title>
+    </div>
+    <div class="d-flex align-items-center">
+      <div class="d-flex align-items-center text-secondary">
+        <ng-icon name="tablerPoint" class="icon-12 d-flex"></ng-icon>
+        <div class="m-l-12 d-flex">
+          <span class="f-s-14">{{util.appTranslate('order_total')}}:
+            {{util.priceFormatString(tableOrderGrandTotal)}}</span>
+        </div>
+      </div>
+      <div class="d-flex m-l-16 align-items-center text-primary">
+        <ng-icon name="tablerPoint" class="icon-12 d-flex"></ng-icon>
+        <div class="m-l-12 d-flex">
+          <span class="f-s-14">{{util.appTranslate('th_admin_commission')}}:
+            {{util.priceFormatString(tableOrderTotalCommission)}}</span>
+        </div>
+      </div>
+      <div class="d-flex m-l-16 align-items-center text-error">
+        <ng-icon name="tablerPoint" class="icon-12 d-flex"></ng-icon>
+        <div class="m-l-12 d-flex">
+          <span class="f-s-14">{{util.appTranslate('total_orders')}}: {{util.numberFormat(tableOrderTotalSold)}}</span>
+        </div>
+      </div>
+    </div>
+  </mat-card-header>
+  <mat-card-content class="p-32">
+    <apx-chart #tableOrderEarningChart [series]="tableOrderEarningChartOption.series"
+      [chart]="tableOrderEarningChartOption.chart" [xaxis]="tableOrderEarningChartOption.xaxis"
+      [yaxis]="tableOrderEarningChartOption.yaxis" [grid]="tableOrderEarningChartOption.grid"
+      [stroke]="tableOrderEarningChartOption.stroke" [tooltip]="tableOrderEarningChartOption.tooltip"
+      [dataLabels]="tableOrderEarningChartOption.dataLabels" [legend]="tableOrderEarningChartOption.legend"
+      [colors]="tableOrderEarningChartOption.colors" [markers]="tableOrderEarningChartOption.markers">
+    </apx-chart>
+  </mat-card-content>
+</mat-card>
+
+<mat-card class="cardWithShadow theme-card overflow-hidden">
+  <mat-card-header class="d-sm-flex">
+    <div class="m-r-auto">
+      <mat-card-title class="m-0">{{util.appTranslate('dining_booking_earning_stats')}}</mat-card-title>
+    </div>
+    <div class="d-flex align-items-center">
+      <div class="d-flex align-items-center text-secondary">
+        <ng-icon name="tablerPoint" class="icon-12 d-flex"></ng-icon>
+        <div class="m-l-12 d-flex">
+          <span class="f-s-14">{{util.appTranslate('booking_total')}}:
+            {{util.priceFormatString(bookingGrandTotal)}}</span>
+        </div>
+      </div>
+      <div class="d-flex m-l-16 align-items-center text-primary">
+        <ng-icon name="tablerPoint" class="icon-12 d-flex"></ng-icon>
+        <div class="m-l-12 d-flex">
+          <span class="f-s-14">{{util.appTranslate('th_admin_commission')}}:
+            {{util.priceFormatString(bookingTotalCommission)}}</span>
+        </div>
+      </div>
+      <div class="d-flex m-l-16 align-items-center text-error">
+        <ng-icon name="tablerPoint" class="icon-12 d-flex"></ng-icon>
+        <div class="m-l-12 d-flex">
+          <span class="f-s-14">{{util.appTranslate('total_bookings')}}: {{util.numberFormat(bookingTotalSold)}}</span>
+        </div>
+      </div>
+    </div>
+  </mat-card-header>
+  <mat-card-content class="p-32">
+    <apx-chart #bookingEarningChart [series]="bookingEarningChartOption.series"
+      [chart]="bookingEarningChartOption.chart" [xaxis]="bookingEarningChartOption.xaxis"
+      [yaxis]="bookingEarningChartOption.yaxis" [grid]="bookingEarningChartOption.grid"
+      [stroke]="bookingEarningChartOption.stroke" [tooltip]="bookingEarningChartOption.tooltip"
+      [dataLabels]="bookingEarningChartOption.dataLabels" [legend]="bookingEarningChartOption.legend"
+      [colors]="bookingEarningChartOption.colors" [markers]="bookingEarningChartOption.markers">
+    </apx-chart>
+  </mat-card-content>
+</mat-card>
+
+<mat-card class="cardWithShadow theme-card">
+  <mat-card-header>
+    <mat-card-title class="m-b-0">
+      {{util.appTranslate('expense_stats')}}
+    </mat-card-title>
+  </mat-card-header>
+  <mat-card-content class="p-32">
+    <div id="chart" class="d-flex flex-column m-t-30 position-relative">
+      <apx-chart #expenseChart [series]="expenseChartOptions.series" [chart]="expenseChartOptions.chart"
+        [legend]="expenseChartOptions.legend" [labels]="expenseChartOptions.labels"
+        [dataLabels]="expenseChartOptions.dataLabels" [colors]="expenseChartOptions.colors"
+        [stroke]="expenseChartOptions.stroke" [tooltip]="expenseChartOptions.tooltip"
+        [plotOptions]="expenseChartOptions.plotOptions"></apx-chart>
+    </div>
+  </mat-card-content>
+</mat-card>

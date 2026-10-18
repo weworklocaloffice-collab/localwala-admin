@@ -1,0 +1,103 @@
+<div class="table-responsive m-t-10">
+  @if (!isLoaded) {
+  <table mat-table [dataSource]="util.dummyArray" class="w-100">
+    <ng-container matColumnDef="name">
+      <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1 p-l-0">
+        {{util.appTranslate('information')}}
+      </th>
+      <td mat-cell *matCellDef="let element" class="p-l-0">
+        <mat-progress-bar mode="indeterminate" color="light"></mat-progress-bar>
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="type">
+      <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1 p-l-0">
+        {{util.appTranslate('from')}}
+      </th>
+      <td mat-cell *matCellDef="let element" class="p-l-0">
+        <mat-progress-bar mode="indeterminate" color="light"></mat-progress-bar>
+      </td>
+    </ng-container>
+
+
+    <ng-container matColumnDef="total">
+      <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1 p-r-0 text-right">
+        {{util.appTranslate('total')}}
+      </th>
+      <td mat-cell *matCellDef="let element" class="f-w-500 text-right p-r-0">
+        <mat-progress-bar mode="indeterminate" color="light"></mat-progress-bar>
+      </td>
+    </ng-container>
+
+
+    <tr mat-header-row *matHeaderRowDef="displayedColumn"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumn"></tr>
+
+  </table>
+  }
+
+  @if (isLoaded) {
+  <table mat-table [dataSource]="history" class="w-100">
+    <ng-container matColumnDef="name">
+      <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1 p-l-0">
+        {{util.appTranslate('information')}}
+      </th>
+      <td mat-cell *matCellDef="let element" class="p-l-0 cursor-pointer" (click)="onOrderDetail(element)">
+        <div class="m-l-0">
+          <h6 class="f-s-14 mat-subtitle-1 f-w-600">
+            {{util.appTranslate('order')}} #
+            @if (element && element.posOrderInfo && element.posOrderInfo.id && element.posOrderInfo.id != '') {
+            <span>{{element.posOrderInfo.orderNo}}</span>
+            }
+            @if (element && element.tableOrderInfo && element.tableOrderInfo.id && element.tableOrderInfo.id != '') {
+            <span>{{element.tableOrderInfo.orderNo}}</span>
+            }
+          </h6>
+          <span class="mat-body-1 f-s-12">
+            {{getDate(element.createdAt)}}
+          </span>
+        </div>
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="type">
+      <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1 p-l-0">
+        {{util.appTranslate('from')}}
+      </th>
+      <td mat-cell *matCellDef="let element" class="mat-body-1 f-s-12 cursor-pointer">
+        <h6 class="mat-body-1 f-s-12">
+          @if (element && element.posOrderInfo && element.posOrderInfo.id && element.posOrderInfo.id != '') {
+          <span>{{util.appTranslate('pos_order')}}</span>
+          }
+          @if (element && element.tableOrderInfo && element.tableOrderInfo.id && element.tableOrderInfo.id != '') {
+          <span>{{util.appTranslate('table_order')}}</span>
+          }
+        </h6>
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="total">
+      <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1 p-r-0 text-right">
+        {{util.appTranslate('total')}}
+      </th>
+      <td mat-cell *matCellDef="let element" class="f-w-500 text-right p-r-0 cursor-pointer"
+        (click)="onOrderDetail(element)">
+        <h6 class="mat-subtitle-1 f-s-14 f-w-600">
+          {{util.priceFormat(element.totalCommision)}}
+        </h6>
+      </td>
+    </ng-container>
+
+    <tr mat-header-row *matHeaderRowDef="displayedColumn"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumn"></tr>
+
+    <tr *matNoDataRow>
+      <td colspan="2" class="m-b-16 m-t-16 text-center">{{util.appTranslate('table_no_data_found')}}</td>
+    </tr>
+
+  </table>
+  }
+  <mat-paginator [hidden]="!isLoaded" #paginator [pageSizeOptions]="[5,10, 20]" [pageSize]="pageSize"
+    (page)="onPageChange($event)" showFirstLastButtons></mat-paginator>
+
+</div>

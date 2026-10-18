@@ -1,0 +1,43 @@
+<h2 mat-dialog-title>{{ util.appTranslate('bank_new_offer') }}</h2>
+
+<mat-dialog-content>
+  <mat-form-field appearance="outline" class="w-100 m-b-16">
+    <mat-label>{{ util.appTranslate('th_application') }}</mat-label>
+    <mat-select [(ngModel)]="selectedApplication" (ngModelChange)="onAppChange()">
+      <mat-option [value]="null">
+        {{ util.appTranslate('select_application') }}
+      </mat-option>
+      <mat-option *ngFor="let app of applications" [value]="app">
+        <span>{{ app.loanApplication }}</span>
+        <span class="text-muted small">(₹{{ app.loanAmount }} – {{ app.status }})</span>
+      </mat-option>
+    </mat-select>
+    <mat-error *ngIf="!selectedApplication">
+      {{ util.appTranslate('required_field') }}
+    </mat-error>
+  </mat-form-field>
+
+  <mat-form-field appearance="outline" class="w-100 m-b-16">
+    <mat-label>{{ util.appTranslate('th_amount') }} ₹</mat-label>
+    <input matInput type="number" [(ngModel)]="loanAmount" />
+  </mat-form-field>
+  <mat-form-field appearance="outline" class="w-100 m-b-16">
+    <mat-label>{{ util.appTranslate('th_rate') }} %</mat-label>
+    <input matInput type="number" [(ngModel)]="interestRate" />
+  </mat-form-field>
+  <mat-form-field appearance="outline" class="w-100 m-b-16">
+    <mat-label>{{ util.appTranslate('th_tenure') }} (months)</mat-label>
+    <input matInput type="number" [(ngModel)]="tenureMonths" />
+  </mat-form-field>
+  <mat-form-field appearance="outline" class="w-100">
+    <mat-label>{{ util.appTranslate('th_processing_fee') }} ₹</mat-label>
+    <input matInput type="number" [(ngModel)]="processingFee" />
+  </mat-form-field>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button (click)="onClose()">{{ util.appTranslate('th_cancel') }}</button>
+  <button mat-flat-button color="primary" [disabled]="!selectedApplication || isSaving || loanAmount === null" (click)="onSubmit()">
+    {{ util.appTranslate('th_create') }}
+  </button>
+</mat-dialog-actions>

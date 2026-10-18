@@ -1,0 +1,24 @@
+<mat-card class="cardWithShadow theme-card">
+  <mat-card-header>
+    <mat-card-title class="m-b-0">
+      {{util.appTranslate('hidden_restaurants')}}
+    </mat-card-title>
+  </mat-card-header>
+
+  <mat-card-content class="b-t-0">
+    <mat-tab-group mat-stretch-tabs="false" [selectedIndex]="tabIndex" mat-align-tabs="start"
+      (selectedTabChange)="tabChanged($event)">
+      <mat-tab [label]="util.appTranslate('user_hidden_restaurant')"></mat-tab>
+
+      <mat-tab [label]="util.appTranslate('user_hide_restaurant_reason')"></mat-tab>
+
+    </mat-tab-group>
+  </mat-card-content>
+</mat-card>
+
+@if(tabIndex == 0){
+<app-hidden-restaurant-list></app-hidden-restaurant-list>
+}
+@if(tabIndex == 1){
+<app-hidden-restaurant-reason></app-hidden-restaurant-reason>
+}

@@ -1,0 +1,320 @@
+<mat-card class="cardWithShadow theme-card overflow-hidden">
+  <mat-card-header>
+    <mat-card-title class="m-b-0">
+      {{util.appTranslate('history_title')}}
+    </mat-card-title>
+  </mat-card-header>
+
+  <mat-card-content class="b-t-0">
+    <div class="d-flex align-items-center flex-wrap m-b-8">
+      <mat-form-field appearance="outline" style="max-width:220px;" class="m-r-8">
+        <mat-label>{{util.appTranslate('agent_lbl')}}</mat-label>
+        <mat-select [(ngModel)]="filterAgent" (selectionChange)="onFilterChange()">
+          <mat-option value="">All agents</mat-option>
+          @for (a of agentOptions; track a.agentId) {
+          <mat-option [value]="a.agentId">{{a.name}} ({{a.openNow}} open)</mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+      <mat-form-field appearance="outline" style="max-width:170px;" class="m-r-8">
+        <mat-label>{{util.appTranslate('from_lbl')}}</mat-label>
+        <input matInput type="date" [(ngModel)]="filterFrom" (dateChange)="onFilterChange()" />
+      </mat-form-field>
+      <mat-form-field appearance="outline" style="max-width:170px;" class="m-r-8">
+        <mat-label>{{util.appTranslate('to_lbl')}}</mat-label>
+        <input matInput type="date" [(ngModel)]="filterTo" (dateChange)="onFilterChange()" />
+      </mat-form-field>
+      <button mat-stroked-button class="m-r-8" (click)="clearFilters()">{{util.appTranslate('clear_btn')}}</button>
+      <button mat-stroked-button (click)="exportFiltered()"><mat-icon>download</mat-icon>{{util.appTranslate('export_csv')}}</button>
+    </div>
+    <div class="d-flex align-items-center m-b-8">
+      <mat-form-field appearance="outline" style="max-width:360px;" class="w-100">
+        <mat-label>{{util.appTranslate('search_all_messages')}}</mat-label>
+        <input matInput [ngModel]="searchTerm" (ngModelChange)="onSearch($event)" />
+        @if (searchTerm) {
+        <button mat-icon-button matSuffix (click)="clearSearch()"><mat-icon>close</mat-icon></button>
+        }
+      </mat-form-field>
+      @if (searching) {
+      <mat-spinner [diameter]="20" class="m-l-8"></mat-spinner>
+      }
+    </div>
+    @if (searchResults.length) {
+    <div class="m-b-16">
+      @for (m of searchResults; track m.messageId) {
+      <div class="d-flex align-items-center justify-content-between p-8 b-t-1 cursor-pointer" (click)="openMatch(m)">
+        <div>
+          <div class="f-s-13 f-w-600">{{m.customer || 'Customer'}} <span class="f-s-11 text-muted">· {{m.supportType}} · {{m.senderRole}}</span></div>
+          <div class="f-s-12 text-muted">{{m.message}}</div>
+        </div>
+        <span class="f-s-11 text-muted">{{getDate(m.createdAt)}}</span>
+      </div>
+      }
+    </div>
+    }
+    <div class="table-responsive">
+      @if (!isLoaded) {
+      <table mat-table [dataSource]="util.dummyArray" class="w-100">
+        <ng-container matColumnDef="id">
+          <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1 p-l-0 text-center">
+            {{util.appTranslate('chat_id')}}
+          </th>
+          <td mat-cell *matCellDef="let element" class="p-l-0">
+            <mat-progress-bar mode="indeterminate" color="light"></mat-progress-bar>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="type_id">
+          <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1 p-l-0 text-center">
+            {{util.appTranslate('issue_id')}}
+          </th>
+          <td mat-cell *matCellDef="let element" class="f-s-14">
+            <mat-progress-bar mode="indeterminate" color="light"></mat-progress-bar>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="customer">
+          <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1 p-l-0 text-center">
+            {{util.appTranslate('th_customer')}}
+          </th>
+          <td mat-cell *matCellDef="let element" class="f-s-14">
+            <mat-progress-bar mode="indeterminate" color="light"></mat-progress-bar>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="type">
+          <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1 p-l-0 text-center">
+            {{util.appTranslate('type')}}
+          </th>
+          <td mat-cell *matCellDef="let element" class="f-s-14">
+            <mat-progress-bar mode="indeterminate" color="light"></mat-progress-bar>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="status">
+          <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1 p-l-0 text-center">
+            {{util.appTranslate('th_status')}}
+          </th>
+          <td mat-cell *matCellDef="let element">
+            <mat-progress-bar mode="indeterminate" color="light"></mat-progress-bar>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="team">
+          <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1">
+            {{util.appTranslate('team')}}
+          </th>
+          <td mat-cell *matCellDef="let element">
+            <mat-progress-bar mode="indeterminate" color="light"></mat-progress-bar>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="time">
+          <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1">
+            {{util.appTranslate('th_time')}}
+          </th>
+          <td mat-cell *matCellDef="let element">
+            <mat-progress-bar mode="indeterminate" color="light"></mat-progress-bar>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="action">
+          <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1 p-r-0 text-right">
+            {{util.appTranslate('th_action')}}
+          </th>
+          <td mat-cell *matCellDef="let element" class="f-w-500 text-right p-r-0">
+            <mat-progress-bar mode="indeterminate" color="light"></mat-progress-bar>
+          </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="displayedColumn"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumn"></tr>
+
+      </table>
+      }
+
+      @if (isLoaded) {
+      <table mat-table [dataSource]="chatList" class="w-100">
+        <ng-container matColumnDef="id">
+          <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1 p-l-0 text-center">
+            {{util.appTranslate('chat_id')}}
+          </th>
+          <td mat-cell *matCellDef="let element" class="f-s-14 text-uppercase text-center">
+            {{ util.refId(element.id) }}
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="type_id">
+          <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1 p-l-0 text-center">
+            {{util.appTranslate('issue_id')}}
+          </th>
+          <td mat-cell *matCellDef="let element" class="f-s-14 text-uppercase text-center">
+            @if (element.supportType == 'orders' && element.orders != null && element.orders != '') {
+            <span>
+              {{ util.refId(element.orders) }}
+            </span>
+            }
+            @if (element.supportType == 'dining' && element.booking != null && element.booking != '') {
+            <span>
+              {{ util.refId(element.booking) }}
+            </span>
+            }
+            @if (element.supportType == 'tiffin_subscription' && element.purchaseSubscription != null &&
+            element.purchaseSubscription != '') {
+            <span>
+              {{ util.refId(element.purchaseSubscription) }}
+            </span>
+            }
+            @if (element.supportType == 'complaints' && element.complaints != null && element.complaints != '') {
+            <span>
+              {{ util.refId(element.complaints) }}
+            </span>
+            }
+            @if (element.supportType == 'reports' && element.reportIssue != null && element.reportIssue != '') {
+            <span>
+              {{ util.refId(element.reportIssue) }}
+            </span>
+            }
+            @if (element.supportType == 'restaurant_complaints' && element.restaurantComplaints != null &&
+            element.restaurantComplaints != '') {
+            <span>
+              {{ util.refId(element.restaurantComplaints) }}
+            </span>
+            }
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="customer">
+          <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1 p-l-0 text-left">
+            {{util.appTranslate('th_customer')}}
+          </th>
+          <td mat-cell *matCellDef="let element" class="p-l-0">
+            <div class="d-flex align-items-center">
+              <img [src]="api.mediaUrl+element.customer.image" alt="users" width="60" height="60" class="rounded"
+                onError="this.src='assets/images/onerror.png'" />
+              <div class="m-l-16">
+                <h6 class="f-s-14 mat-subtitle-1 f-w-600">
+                  {{ element.customer.firstName +' '+ element.customer.lastName}}
+                </h6>
+                <span class="mat-body-1 f-s-12">
+                  {{ element.customer.contactEmail }}
+                </span> <br>
+                <span class="mat-body-1 f-s-12">
+                  {{ '+' +element.customer.countryCode +' '+ element.customer.contactNumber }}
+                </span>
+              </div>
+            </div>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="type">
+          <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1 p-l-0 text-left">
+            {{util.appTranslate('type')}}
+          </th>
+          <td mat-cell *matCellDef="let element" class="f-s-14 text-left">
+            @if (element.supportType == 'orders') {
+            <h6 class="mat-subtitle-1 f-s-14 f-w-600">
+              {{util.appTranslate('orders')}}
+            </h6>
+            }
+            @if (element.supportType == 'dining') {
+            <h6 class="mat-subtitle-1 f-s-14 f-w-600">
+              {{util.appTranslate('th_dining_booking')}}
+            </h6>
+            }
+            @if (element.supportType == 'tiffin_subscription') {
+            <h6 class="mat-subtitle-1 f-s-14 f-w-600">
+              {{util.appTranslate('tiffin_subscriptions')}}
+            </h6>
+            }
+            @if (element.supportType == 'complaints') {
+            <h6 class="mat-subtitle-1 f-s-14 f-w-600">
+              {{util.appTranslate('complaints')}}
+            </h6>
+            }
+            @if (element.supportType == 'reports') {
+            <h6 class="mat-subtitle-1 f-s-14 f-w-600">
+              {{util.appTranslate('report_lbl')}}
+            </h6>
+            }
+            @if (element.supportType == 'restaurant_complaints') {
+            <h6 class="mat-subtitle-1 f-s-14 f-w-600">
+              {{util.appTranslate('restaurant_complaints')}}
+            </h6>
+            }
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="status">
+          <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1 p-l-0 text-center">
+            {{util.appTranslate('th_status')}}
+          </th>
+          <td mat-cell *matCellDef="let element" class="f-s-14 text-center">
+            @if (element.status == 'open') {
+            <span class="bg-light-primary text-primary rounded f-w-600 p-6 p-y-4 f-s-12">
+              {{util.appTranslate('open')}}
+            </span>
+            }
+            @if (element.status == 'in_progress') {
+            <span class="bg-light-success text-success rounded f-w-600 p-6 p-y-4 f-s-12">
+              {{util.appTranslate('in_progress')}}
+            </span>
+            }
+            @if (element.status == 'resolved') {
+            <span class="bg-light-error text-error rounded f-w-600 p-6 p-y-4 f-s-12">
+              {{util.appTranslate('resolved')}}
+            </span>
+            }
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="team">
+          <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1 text-left">
+            {{util.appTranslate('team')}}
+          </th>
+          <td mat-cell *matCellDef="let element" class="f-s-14 text-left">
+            <div class="avatar-group">
+              @for (team of element.team; track $index) {
+              <img [src]="api.mediaUrl+team.image" [alt]="team.firstName +' '+ team.lastName" class="rounded-circle"
+                width="30" height="30" onError="this.src='assets/images/onerror.png'"
+                [matTooltip]="team.firstName +' '+ team.lastName" />
+              }
+            </div>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="time">
+          <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1">
+            {{util.appTranslate('th_time')}}
+          </th>
+          <td mat-cell *matCellDef="let element" class="f-s-14 text-center">
+            {{ getDate(element.updatedAt) }}
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="action">
+          <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1 p-r-0 text-right">
+            {{util.appTranslate('th_action')}}
+          </th>
+          <td mat-cell *matCellDef="let element" class="f-w-500 text-right p-r-0">
+            <a (click)="onChat(element)" class="m-r-10 cursor-pointer text-secondary"
+              [matTooltip]="util.appTranslate('click_to_view')">
+              <mat-icon>chat</mat-icon>
+            </a>
+          </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="displayedColumn"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumn"></tr>
+
+        <tr *matNoDataRow>
+          <td colspan="8" class="m-b-16 m-t-16 text-center">{{util.appTranslate('table_no_data_found')}}</td>
+        </tr>
+
+      </table>
+      }
+      <mat-paginator [hidden]="!isLoaded" #chatPaginator [pageSizeOptions]="[5,10, 20]" [pageSize]="pageSize"
+        (page)="onPageChange($event)" showFirstLastButtons></mat-paginator>
+    </div>
+  </mat-card-content>
+</mat-card>

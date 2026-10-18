@@ -1,0 +1,127 @@
+<div class="p-16">
+  <div class="d-flex hb-between align-items-center flex-wrap g-12 m-b-16">
+    <div>
+      <h2 class="m-0 f-s-20">{{ util.appTranslate('header_banner_list') }}</h2>
+      <p class="m-0 text-secondary f-s-12">{{ util.appTranslate('header_banner_list_hint') }}</p>
+    </div>
+
+    <div class="d-flex align-items-center g-8">
+      <mat-form-field appearance="outline" class="hb-w-250">
+        <mat-label>{{ util.appTranslate('search') }}</mat-label>
+        <input matInput [(ngModel)]="searchQuery" (keyup.enter)="onSearch()" />
+      </mat-form-field>
+      <button mat-flat-button color="primary" (click)="onSearch()">{{ util.appTranslate('search') }}</button>
+      <button mat-flat-button color="primary" (click)="onAdd()">
+        <mat-icon>add</mat-icon>
+        {{ util.appTranslate('add_new_banner') }}
+      </button>
+    </div>
+  </div>
+
+  @if (!isLoaded) {
+    <div class="d-flex justify-content-center p-24">
+      <mat-spinner diameter="34"></mat-spinner>
+    </div>
+  } @else if (!banners.data.length) {
+    <div class="card-surface p-24 text-center">
+      <p class="m-0 text-secondary">{{ util.appTranslate('header_banner_empty') }}</p>
+    </div>
+  } @else {
+    <div class="card-surface">
+      <div class="hb-scroll">
+        <table mat-table [dataSource]="banners" class="w-100">
+          <ng-container matColumnDef="campaign">
+            <th mat-header-cell *matHeaderCellDef>{{ util.appTranslate('campaign_name') }}</th>
+            <td mat-cell *matCellDef="let row">
+              <div class="d-flex align-items-center g-10">
+                <img
+                  *ngIf="mediaPreview(row)"
+                  [src]="mediaPreview(row)"
+                  class="header-banner-list__thumb"
+                  [alt]="row.campaignName || 'banner'"
+                />
+                <div *ngIf="!mediaPreview(row)" class="header-banner-list__thumb header-banner-list__thumb--empty">
+                  <mat-icon>image_not_supported</mat-icon>
+                </div>
+                <div>
+                  <div class="f-s-14">{{ row.campaignName }}</div>
+                  <div class="text-secondary f-s-12">{{ row.title }}</div>
+                </div>
+              </div>
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="media">
+            <th mat-header-cell *matHeaderCellDef>{{ util.appTranslate('banner_type') }}</th>
+            <td mat-cell *matCellDef="let row">
+              <div class="f-s-14">{{ row.media }}</div>
+              <div class="text-secondary f-s-12">{{ row.orientation }} · {{ row.heightMode }}</div>
+              <div class="text-secondary f-s-12">{{ scopeLabel(row) }}</div>
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="schedule">
+            <th mat-header-cell *matHeaderCellDef>{{ util.appTranslate('schedule') }}</th>
+            <td mat-cell *matCellDef="let row">
+              <span
+                class="header-banner-list__badge"
+                [ngClass]="{
+                  'header-banner-list__badge--active': scheduleLabel(row) === 'active',
+                  'header-banner-list__badge--scheduled': scheduleLabel(row) === 'scheduled',
+                  'header-banner-list__badge--inactive': scheduleLabel(row) === 'inactive'
+                }"
+              >
+                {{ scheduleLabel(row) }}
+              </span>
+              @if (row.startDate || row.endDate) {
+                <div class="text-secondary f-s-12 m-t-4">{{ row.startDate | date: 'dd MMM' }} – {{ row.endDate | date: 'dd MMM yyyy' }}</div>
+              }
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="priority">
+            <th mat-header-cell *matHeaderCellDef>{{ util.appTranslate('priority') }}</th>
+            <td mat-cell *matCellDef="let row">{{ row.priority }}</td>
+          </ng-container>
+
+          <ng-container matColumnDef="status">
+            <th mat-header-cell *matHeaderCellDef>{{ util.appTranslate('status') }}</th>
+            <td mat-cell *matCellDef="let row">
+              <mat-slide-toggle [checked]="!!row.status" (change)="onStatusChange($event, row)"></mat-slide-toggle>
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="action">
+            <th mat-header-cell *matHeaderCellDef>{{ util.appTranslate('action') }}</th>
+            <td mat-cell *matCellDef="let row">
+              <div class="d-flex g-4">
+                <button mat-icon-button color="primary" (click)="onEdit(row)" [matTooltip]="util.appTranslate('edit')">
+                  <mat-icon>edit</mat-icon>
+                </button>
+                <button mat-icon-button color="primary" (click)="onHistory(row)" [matTooltip]="util.appTranslate('publish_history')">
+                  <mat-icon>history</mat-icon>
+                </button>
+                <button mat-icon-button color="warn" (click)="onDelete(row)" [matTooltip]="util.appTranslate('delete')">
+                  <mat-icon>delete</mat-icon>
+                </button>
+              </div>
+            </td>
+          </ng-container>
+
+          <tr mat-header-row *matHeaderRowDef="displayedColumn"></tr>
+          <tr mat-row *matRowDef="let row; columns: displayedColumn"></tr>
+        </table>
+      </div>
+
+      <mat-paginator
+        #paginator
+        [length]="banners.data.length"
+        [pageSize]="pageSize"
+        [pageIndex]="currentPage > 0 ? currentPage - 1 : 0"
+        (page)="onPageChange($event)"
+      ></mat-paginator>
+    </div>
+
+    <p class="text-secondary f-s-12 m-t-12">{{ util.appTranslate('header_banner_priority_hint') }}</p>
+  }
+</div>

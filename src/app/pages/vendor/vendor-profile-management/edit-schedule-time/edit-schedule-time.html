@@ -1,0 +1,64 @@
+<mat-card class="cardWithShadow">
+  <mat-card-content>
+    <div class="row">
+      <div class="col-sm-4 col-lg-4">
+        <mat-card-title>{{util.appTranslate('slot_list')}}</mat-card-title>
+      </div>
+    </div>
+  </mat-card-content>
+</mat-card>
+
+<mat-card class="cardWithShadow">
+  <mat-card-content>
+    @for (item of slots; track $index; let i = $index) {
+    <div class="m-t-6 m-b-6">
+      <div class="row">
+        <div class="col-sm-8 col-lg-8">
+          <mat-card-title class="mat-body-2 f-w-600">{{getDayName(i)}}</mat-card-title>
+        </div>
+        <div class="col-sm-4 col-lg-4 d-flex align-items-end justify-content-end">
+          <button mat-button type="button" color="primary" (click)="onAddItem(i)">
+            <div class="d-flex align-items-center">
+              <span>{{util.appTranslate('add_slot')}}</span>
+              <ng-icon name="tablerPlus" class="icon-20 m-l-4"></ng-icon>
+            </div>
+          </button>
+        </div>
+      </div>
+      <div class="row">
+        @for (slot of item.times; track $index; let j = $index) {
+        <div class="col-sm-4 col-lg-4">
+          <mat-form-field appearance="outline" class="w-100">
+            <input matInput type="text" value="{{slot.start}} {{util.appTranslate('to')}} {{slot.end}}"
+              [disabled]="true" />
+            <a (click)="onEdit(i,j)" matSuffix class="m-r-10 cursor-pointer text-warning"
+              [matTooltip]="util.appTranslate('click_to_edit')">
+              <mat-icon class="op-5">edit</mat-icon>
+            </a>
+            <a (click)="onDelete(i,j)" matSuffix class="m-r-10 cursor-pointer text-warning"
+              [matTooltip]="util.appTranslate('click_to_delete')">
+              <mat-icon class="op-5">delete</mat-icon>
+            </a>
+          </mat-form-field>
+        </div>
+        }
+        @if (item.times.length == 0) {
+        <div class="col-sm-4 col-lg-4">
+          <mat-form-field appearance="outline" class="w-100">
+            <input matInput type="text" value="Offday" [disabled]="true" />
+          </mat-form-field>
+        </div>
+        }
+      </div>
+    </div>
+    }
+  </mat-card-content>
+
+  <mat-card-content class="b-t-0">
+    <div class="row justify-content-end m-t-24">
+      <div class="col-sm-12">
+        <button mat-flat-button color="primary" (click)="onSubmit()">{{util.appTranslate('save_btn')}}</button>
+      </div>
+    </div>
+  </mat-card-content>
+</mat-card>

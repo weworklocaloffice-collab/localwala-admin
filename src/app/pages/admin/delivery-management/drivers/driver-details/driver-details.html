@@ -1,0 +1,147 @@
+<mat-card class="cardWithShadow">
+  <mat-card-content class="p-0">
+    <mat-tab-group mat-stretch-tabs="false" animationDuration="0ms" [selectedIndex]="tabIndex"
+      (selectedTabChange)="tabChanged($event)">
+      <mat-tab>
+        <ng-template mat-tab-label>
+          <div class="d-flex align-items-center justify-content-center">
+            <ng-icon name="tablerUserCircle" class="icon-20 m-r-8"></ng-icon>
+          </div>
+          {{util.appTranslate('personal_information')}}
+        </ng-template>
+        @if(tabIndex == 0){
+        <mat-card-content class="p-y-24 b-t-0">
+          <app-driver-details-personal-info [driverId]="driverId"></app-driver-details-personal-info>
+        </mat-card-content>
+        }
+      </mat-tab>
+
+      <mat-tab>
+        <ng-template mat-tab-label>
+          <div class="d-flex align-items-center justify-content-center">
+            <ng-icon name="tablerReceipt" class="icon-20 m-r-8"></ng-icon>
+          </div>
+          {{util.appTranslate('orders')}}
+        </ng-template>
+        @if(tabIndex == 1){
+        <mat-card-content class="p-y-24 b-t-0">
+          <app-driver-details-order-list [driverId]="driverId"></app-driver-details-order-list>
+        </mat-card-content>
+        }
+      </mat-tab>
+
+      <mat-tab>
+        <ng-template mat-tab-label>
+          <div class="d-flex align-items-center justify-content-center">
+            <ng-icon name="tablerMoodSurprised" class="icon-20 m-r-8"></ng-icon>
+          </div>
+          {{util.appTranslate('complaints')}}
+        </ng-template>
+        @if(tabIndex == 2){
+        <mat-card-content class="p-y-24 b-t-0">
+          <app-driver-details-complaints [driverId]="driverId"></app-driver-details-complaints>
+        </mat-card-content>
+        }
+      </mat-tab>
+
+      <mat-tab>
+        <ng-template mat-tab-label>
+          <div class="d-flex align-items-center justify-content-center">
+            <ng-icon name="tablerCashBanknote" class="icon-20 m-r-8"></ng-icon>
+          </div>
+          {{util.appTranslate('disbursement')}}
+        </ng-template>
+        @if(tabIndex == 3){
+        <mat-card-content class="p-y-24 b-t-0">
+          <app-driver-details-disbursement [driverId]="driverId"></app-driver-details-disbursement>
+        </mat-card-content>
+        }
+      </mat-tab>
+
+      <mat-tab>
+        <ng-template mat-tab-label>
+          <div class="d-flex align-items-center justify-content-center">
+            <ng-icon name="tablerWallet" class="icon-20 m-r-8"></ng-icon>
+          </div>
+          {{util.appTranslate('collected_cash_history')}}
+        </ng-template>
+        @if(tabIndex == 4){
+        <mat-card-content class="p-y-24 b-t-0">
+          <app-driver-details-collected-cash [driverId]="driverId"></app-driver-details-collected-cash>
+        </mat-card-content>
+        }
+      </mat-tab>
+
+      <mat-tab>
+        <ng-template mat-tab-label>
+          <div class="d-flex align-items-center justify-content-center">
+            <ng-icon name="tablerPigMoney" class="icon-20 m-r-8"></ng-icon>
+          </div>
+          {{util.appTranslate('payout_method')}}
+        </ng-template>
+        @if(tabIndex == 5){
+        <mat-card-content class="p-y-24 b-t-0">
+          <app-driver-details-payout-accounts [driverId]="driverId"></app-driver-details-payout-accounts>
+        </mat-card-content>
+        }
+      </mat-tab>
+
+      <mat-tab>
+        <ng-template mat-tab-label>
+          <div class="d-flex align-items-center justify-content-center">
+            <ng-icon name="tablerReceipt2" class="icon-20 m-r-8"></ng-icon>
+          </div>
+          {{util.appTranslate('withdrawal_request')}}
+        </ng-template>
+        @if(tabIndex == 6){
+        <mat-card-content class="p-y-24 b-t-0">
+          <app-driver-details-withdrawal-request [driverId]="driverId"></app-driver-details-withdrawal-request>
+        </mat-card-content>
+        }
+      </mat-tab>
+
+      <mat-tab>
+        <ng-template mat-tab-label>
+          <div class="d-flex align-items-center justify-content-center">
+            <ng-icon name="tablerCalendarDollar" class="icon-20 m-r-8"></ng-icon>
+          </div>
+          {{util.appTranslate('transactions')}}
+        </ng-template>
+        @if(tabIndex == 7){
+        <mat-card-content class="p-y-24 b-t-0">
+          <app-driver-details-wallet-transactions [driverId]="driverId"></app-driver-details-wallet-transactions>
+        </mat-card-content>
+        }
+      </mat-tab>
+
+      <mat-tab>
+        <ng-template mat-tab-label>
+          <div class="d-flex align-items-center justify-content-center">
+            <ng-icon name="tablerStars" class="icon-20 m-r-8"></ng-icon>
+          </div>
+          {{util.appTranslate('reviews')}}
+        </ng-template>
+        @if(tabIndex == 8){
+        <mat-card-content class="p-y-24 b-t-0">
+          <app-driver-details-reviews [driverId]="driverId"></app-driver-details-reviews>
+        </mat-card-content>
+        }
+      </mat-tab>
+
+      <mat-tab>
+        <ng-template mat-tab-label>
+          <div class="d-flex align-items-center justify-content-center">
+            <ng-icon name="tablerPhotoSearch" class="icon-20 m-r-8"></ng-icon>
+          </div>
+          {{util.appTranslate('media')}}
+        </ng-template>
+        @if(tabIndex == 9){
+        <mat-card-content class="p-y-24 b-t-0">
+          <app-driver-details-medias [driverId]="driverId"></app-driver-details-medias>
+        </mat-card-content>
+        }
+      </mat-tab>
+
+    </mat-tab-group>
+  </mat-card-content>
+</mat-card>

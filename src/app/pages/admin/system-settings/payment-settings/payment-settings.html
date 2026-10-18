@@ -1,0 +1,72 @@
+<mat-card class="cardWithShadow theme-card">
+  <mat-card-header>
+    <mat-card-title class="m-b-0">
+      {{util.appTranslate('payment_settings')}}
+    </mat-card-title>
+  </mat-card-header>
+
+  <mat-card-content class="b-t-0">
+    <mat-tab-group mat-stretch-tabs="false" mat-align-tabs="start" (selectedTabChange)="tabChanged($event)">
+      <mat-tab [label]="util.appTranslate('cod_payment_gateway')"></mat-tab>
+
+      <mat-tab [label]="util.appTranslate('stripe_payment_gateway')"></mat-tab>
+
+      <mat-tab [label]="util.appTranslate('paypal_payment_gateway')"></mat-tab>
+
+      <!-- PayTM -->
+      <!-- <mat-tab [label]="util.appTranslate('paytm_payment_gateway')"></mat-tab> -->
+      <!-- PayTM -->
+
+      <mat-tab [label]="util.appTranslate('razorpay_payment_gateway')"></mat-tab>
+
+      <mat-tab [label]="util.appTranslate('instamojo_payment_gateway')"></mat-tab>
+
+      <mat-tab [label]="util.appTranslate('paystack_payment_gateway')"></mat-tab>
+
+      <mat-tab [label]="util.appTranslate('flutterwave_payment_gateway')"></mat-tab>
+
+      <mat-tab [label]="util.appTranslate('cash_free_payment_gateway')"></mat-tab>
+
+      <mat-tab [label]="util.appTranslate('xendit_payment_gateway')"></mat-tab>
+
+    </mat-tab-group>
+  </mat-card-content>
+</mat-card>
+
+@if(tabIndex == 0){
+<app-cod-payment></app-cod-payment>
+}
+
+@if(tabIndex == 1){
+<app-stripe-payment></app-stripe-payment>
+}
+
+@if(tabIndex == 2){
+<app-paypal-payment></app-paypal-payment>
+}
+<!-- @if(tabIndex == 2){
+<app-paytm-payment></app-paytm-payment>
+ } -->
+@if(tabIndex == 3){
+<app-razorpay-payment></app-razorpay-payment>
+}
+
+@if(tabIndex == 4){
+<app-instamojo-payment></app-instamojo-payment>
+}
+
+@if(tabIndex == 5){
+<app-paystack-payment></app-paystack-payment>
+}
+
+@if(tabIndex == 6){
+<app-flutterwave-payment></app-flutterwave-payment>
+}
+
+@if(tabIndex == 7){
+<app-cashfree-payment></app-cashfree-payment>
+}
+
+@if(tabIndex == 8){
+<app-xendit-payment></app-xendit-payment>
+}

@@ -1,0 +1,477 @@
+<mat-card class="cardWithShadow theme-card">
+  <mat-card-header>
+    <mat-card-title class="m-b-0">
+      {{util.appTranslate('order_stats')}}
+    </mat-card-title>
+  </mat-card-header>
+
+  <mat-card-content class="p-32">
+    <div class="row">
+      @for (item of orderCount; track $index) {
+      <div class="col-lg-2 col-sm-4 col-6">
+        <mat-card
+          class="shadow-none text-center bg-light-{{ item.color }} shadow-none position-relative card-hover cursor-pointer"
+          (click)="onOrderCountClick(item)">
+          <mat-card-content class="p-16">
+            <img [src]="item.img" alt="users" width="30" height="30" class="rounded" />
+            <h4 class="mat-subtitle-2 f-w-600 text-{{ item.color }} m-t-8">
+              {{ item.title }}
+            </h4>
+            <h4 class="m-t-4 mat-subtitle-2 f-w-600 text-{{ item.color }} m-t-8">
+              {{ item.desc }}
+            </h4>
+          </mat-card-content>
+        </mat-card>
+      </div>
+      }
+    </div>
+  </mat-card-content>
+</mat-card>
+
+<mat-card class="cardWithShadow theme-card overflow-hidden">
+  <mat-card-header class="d-sm-flex">
+    <div class="m-r-auto">
+      <mat-card-title class="m-0">{{util.appTranslate('regular_order_earning_stats')}}</mat-card-title>
+    </div>
+    <div class="d-flex align-items-center">
+      <div class="d-flex align-items-center text-secondary">
+        <ng-icon name="tablerPoint" class="icon-12 d-flex"></ng-icon>
+        <div class="m-l-12 d-flex">
+          <span class="f-s-14">{{util.appTranslate('order_total')}}: {{util.priceFormatString(orderGrandTotal)}}</span>
+        </div>
+      </div>
+      <div class="d-flex m-l-16 align-items-center text-primary">
+        <ng-icon name="tablerPoint" class="icon-12 d-flex"></ng-icon>
+        <div class="m-l-12 d-flex">
+          <span class="f-s-14">{{util.appTranslate('th_admin_commission')}}:
+            {{util.priceFormatString(orderTotalCommission)}}</span>
+        </div>
+      </div>
+      <div class="d-flex m-l-16 align-items-center text-error">
+        <ng-icon name="tablerPoint" class="icon-12 d-flex"></ng-icon>
+        <div class="m-l-12 d-flex">
+          <span class="f-s-14">{{util.appTranslate('total_orders')}}: {{util.numberFormat(orderTotalSold)}}</span>
+        </div>
+      </div>
+    </div>
+  </mat-card-header>
+  <mat-card-content class="p-32">
+    <apx-chart #orderEarningChart [series]="orderEarningChartOption.series" [chart]="orderEarningChartOption.chart"
+      [xaxis]="orderEarningChartOption.xaxis" [yaxis]="orderEarningChartOption.yaxis"
+      [grid]="orderEarningChartOption.grid" [stroke]="orderEarningChartOption.stroke"
+      [tooltip]="orderEarningChartOption.tooltip" [dataLabels]="orderEarningChartOption.dataLabels"
+      [legend]="orderEarningChartOption.legend" [colors]="orderEarningChartOption.colors"
+      [markers]="orderEarningChartOption.markers">
+    </apx-chart>
+  </mat-card-content>
+</mat-card>
+
+<mat-card class="cardWithShadow theme-card overflow-hidden">
+  <mat-card-header class="d-sm-flex">
+    <div class="m-r-auto">
+      <mat-card-title class="m-0">{{util.appTranslate('pos_earning_stats')}}</mat-card-title>
+    </div>
+    <div class="d-flex align-items-center">
+      <div class="d-flex align-items-center text-secondary">
+        <ng-icon name="tablerPoint" class="icon-12 d-flex"></ng-icon>
+        <div class="m-l-12 d-flex">
+          <span class="f-s-14">{{util.appTranslate('order_total')}}: {{util.priceFormatString(posGrandTotal)}}</span>
+        </div>
+      </div>
+      <div class="d-flex m-l-16 align-items-center text-primary">
+        <ng-icon name="tablerPoint" class="icon-12 d-flex"></ng-icon>
+        <div class="m-l-12 d-flex">
+          <span class="f-s-14">{{util.appTranslate('th_admin_commission')}}:
+            {{util.priceFormatString(posTotalCommission)}}</span>
+        </div>
+      </div>
+      <div class="d-flex m-l-16 align-items-center text-error">
+        <ng-icon name="tablerPoint" class="icon-12 d-flex"></ng-icon>
+        <div class="m-l-12 d-flex">
+          <span class="f-s-14">{{util.appTranslate('total_orders')}}: {{util.numberFormat(posTotalSold)}}</span>
+        </div>
+      </div>
+    </div>
+  </mat-card-header>
+  <mat-card-content class="p-32">
+    <apx-chart #posEarningChart [series]="posEarningChartOption.series" [chart]="posEarningChartOption.chart"
+      [xaxis]="posEarningChartOption.xaxis" [yaxis]="posEarningChartOption.yaxis" [grid]="posEarningChartOption.grid"
+      [stroke]="posEarningChartOption.stroke" [tooltip]="posEarningChartOption.tooltip"
+      [dataLabels]="posEarningChartOption.dataLabels" [legend]="posEarningChartOption.legend"
+      [colors]="posEarningChartOption.colors" [markers]="posEarningChartOption.markers">
+    </apx-chart>
+  </mat-card-content>
+</mat-card>
+
+<mat-card class="cardWithShadow theme-card overflow-hidden">
+  <mat-card-header class="d-sm-flex">
+    <div class="m-r-auto">
+      <mat-card-title class="m-0">{{util.appTranslate('table_order_earning_stats')}}</mat-card-title>
+    </div>
+    <div class="d-flex align-items-center">
+      <div class="d-flex align-items-center text-secondary">
+        <ng-icon name="tablerPoint" class="icon-12 d-flex"></ng-icon>
+        <div class="m-l-12 d-flex">
+          <span class="f-s-14">{{util.appTranslate('order_total')}}:
+            {{util.priceFormatString(tableOrderGrandTotal)}}</span>
+        </div>
+      </div>
+      <div class="d-flex m-l-16 align-items-center text-primary">
+        <ng-icon name="tablerPoint" class="icon-12 d-flex"></ng-icon>
+        <div class="m-l-12 d-flex">
+          <span class="f-s-14">{{util.appTranslate('th_admin_commission')}}:
+            {{util.priceFormatString(tableOrderTotalCommission)}}</span>
+        </div>
+      </div>
+      <div class="d-flex m-l-16 align-items-center text-error">
+        <ng-icon name="tablerPoint" class="icon-12 d-flex"></ng-icon>
+        <div class="m-l-12 d-flex">
+          <span class="f-s-14">{{util.appTranslate('total_orders')}}: {{util.numberFormat(tableOrderTotalSold)}}</span>
+        </div>
+      </div>
+    </div>
+  </mat-card-header>
+  <mat-card-content class="p-32">
+    <apx-chart #tableOrderEarningChart [series]="tableOrderEarningChartOption.series"
+      [chart]="tableOrderEarningChartOption.chart" [xaxis]="tableOrderEarningChartOption.xaxis"
+      [yaxis]="tableOrderEarningChartOption.yaxis" [grid]="tableOrderEarningChartOption.grid"
+      [stroke]="tableOrderEarningChartOption.stroke" [tooltip]="tableOrderEarningChartOption.tooltip"
+      [dataLabels]="tableOrderEarningChartOption.dataLabels" [legend]="tableOrderEarningChartOption.legend"
+      [colors]="tableOrderEarningChartOption.colors" [markers]="tableOrderEarningChartOption.markers">
+    </apx-chart>
+  </mat-card-content>
+</mat-card>
+
+<mat-card class="cardWithShadow theme-card overflow-hidden">
+  <mat-card-header class="d-sm-flex">
+    <div class="m-r-auto">
+      <mat-card-title class="m-0">{{util.appTranslate('dining_booking_earning_stats')}}</mat-card-title>
+    </div>
+    <div class="d-flex align-items-center">
+      <div class="d-flex align-items-center text-secondary">
+        <ng-icon name="tablerPoint" class="icon-12 d-flex"></ng-icon>
+        <div class="m-l-12 d-flex">
+          <span class="f-s-14">{{util.appTranslate('booking_total')}}:
+            {{util.priceFormatString(bookingGrandTotal)}}</span>
+        </div>
+      </div>
+      <div class="d-flex m-l-16 align-items-center text-primary">
+        <ng-icon name="tablerPoint" class="icon-12 d-flex"></ng-icon>
+        <div class="m-l-12 d-flex">
+          <span class="f-s-14">{{util.appTranslate('th_admin_commission')}}:
+            {{util.priceFormatString(bookingTotalCommission)}}</span>
+        </div>
+      </div>
+      <div class="d-flex m-l-16 align-items-center text-error">
+        <ng-icon name="tablerPoint" class="icon-12 d-flex"></ng-icon>
+        <div class="m-l-12 d-flex">
+          <span class="f-s-14">{{util.appTranslate('total_bookings')}}: {{util.numberFormat(bookingTotalSold)}}</span>
+        </div>
+      </div>
+    </div>
+  </mat-card-header>
+  <mat-card-content class="p-32">
+    <apx-chart #bookingEarningChart [series]="bookingEarningChartOption.series"
+      [chart]="bookingEarningChartOption.chart" [xaxis]="bookingEarningChartOption.xaxis"
+      [yaxis]="bookingEarningChartOption.yaxis" [grid]="bookingEarningChartOption.grid"
+      [stroke]="bookingEarningChartOption.stroke" [tooltip]="bookingEarningChartOption.tooltip"
+      [dataLabels]="bookingEarningChartOption.dataLabels" [legend]="bookingEarningChartOption.legend"
+      [colors]="bookingEarningChartOption.colors" [markers]="bookingEarningChartOption.markers">
+    </apx-chart>
+  </mat-card-content>
+</mat-card>
+
+<div class="row">
+  <div class="col-lg-6 col-sm-12 p-b-16">
+    <mat-card class="cardWithShadow theme-card">
+      <mat-card-header>
+        <mat-card-title class="m-b-0">
+          {{util.appTranslate('top_rated_restaurants')}}
+        </mat-card-title>
+      </mat-card-header>
+      <mat-card-content class="p-32">
+        <div class="row">
+          @for (item of topRatedRestaurant; track $index) {
+          <div class="col-sm-12 col-lg-6">
+            <mat-card class="cardWithShadow position-relative card-hover cursor-pointer"
+              (click)="onRestaurantDetail(item.id)">
+              <mat-card-content class="text-center p-12">
+                <img [src]="api.mediaUrl+item.logo" alt="cover" width="80" height="80" class="rounded-circle border p-5"
+                  onError="this.src='assets/images/onerror.png'" />
+                <h4 class="m-t-8 m-b-0">
+                  {{ util.trimText(item.displayName, 30) }}
+                </h4>
+                <p class="f-s-12 m-t-4 m-b-4">
+                  @if (item && item.locality && item.locality.displayName && item.locality.displayName != '') {
+                  <span>({{item.locality.displayName}}) - </span>
+                  }
+                  @if (item && item.city && item.city.displayName && item.city.displayName != '') {
+                  <span>{{item.city.displayName}}</span>
+                  }
+                </p>
+              </mat-card-content>
+
+              <mat-divider></mat-divider>
+
+              <div class="row">
+                <div class="col-6 p-y-12">
+                  <div class="f-s-14 f-w-500 d-flex justify-content-start align-items-center p-x-24">
+                    <ng-icon name="tablerSparkles" class="icon-18 m-r-4 fill-warning"></ng-icon>
+                    {{ item.rating }}
+                  </div>
+                </div>
+                <div class="col-6 p-y-12">
+                  <div class="f-s-14 f-w-500 d-flex justify-content-end align-items-center p-x-24">
+                    <ng-icon name="tablerSparkles" class="icon-18 m-r-4 fill-warning"></ng-icon>
+                    {{ util.numberFormat(item.totalRating) }} {{util.appTranslate('reviews')}}
+                  </div>
+                </div>
+              </div>
+
+            </mat-card>
+          </div>
+          }
+        </div>
+      </mat-card-content>
+    </mat-card>
+  </div>
+  <div class="col-lg-6 col-sm-12 p-b-16">
+    <mat-card class="cardWithShadow theme-card">
+      <mat-card-header>
+        <mat-card-title class="m-b-0">
+          {{util.appTranslate('trending_restaurants')}}
+        </mat-card-title>
+      </mat-card-header>
+      <mat-card-content class="p-32">
+        <div class="row">
+          @for (item of trendingRestaurant; track $index) {
+          <div class="col-sm-12 col-lg-6">
+            <mat-card class="cardWithShadow position-relative card-hover cursor-pointer"
+              (click)="onRestaurantDetail(item.id)">
+              <mat-card-content class="text-center p-12">
+                <img [src]="api.mediaUrl+item.logo" alt="cover" width="80" height="80" class="rounded-circle border p-5"
+                  onError="this.src='assets/images/onerror.png'" />
+                <h4 class="m-t-8 m-b-0">
+                  {{ util.trimText(item.displayName, 30) }}
+                </h4>
+                <p class="f-s-12 m-t-4 m-b-4">
+                  @if (item && item.locality && item.locality.displayName && item.locality.displayName != '') {
+                  <span>({{item.locality.displayName}}) - </span>
+                  }
+                  @if (item && item.city && item.city.displayName && item.city.displayName != '') {
+                  <span>{{item.city.displayName}}</span>
+                  }
+                </p>
+              </mat-card-content>
+              <mat-divider></mat-divider>
+
+              <div class="row">
+                <div class="col-12 p-y-12">
+                  <div class="f-s-14 f-w-500 d-flex justify-content-center align-items-center p-x-24">
+                    <ng-icon name="tablerSoup" class="icon-18 m-r-4 fill-warning"></ng-icon>
+                    {{ util.numberFormat(item.totalOrders) }} {{util.appTranslate('orders')}}
+                  </div>
+                </div>
+              </div>
+            </mat-card>
+          </div>
+          }
+        </div>
+      </mat-card-content>
+    </mat-card>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-lg-6 col-sm-12 p-b-16">
+    <mat-card class="cardWithShadow theme-card">
+      <mat-card-header>
+        <mat-card-title class="m-b-0">
+          {{util.appTranslate('top_rated_foods')}}
+        </mat-card-title>
+      </mat-card-header>
+      <mat-card-content class="p-32">
+        <div class="row">
+          @for (item of topRatedFood; track $index) {
+          <div class="col-sm-12 col-lg-6">
+            <mat-card class="cardWithShadow position-relative card-hover cursor-pointer"
+              (click)="onFoodDetail(item.id)">
+              <mat-card-content class="text-center p-12">
+                <img [src]="api.mediaUrl+item.image" alt="cover" width="80" height="80"
+                  class="rounded-circle border p-5" onError="this.src='assets/images/onerror.png'" />
+                <h4 class="m-t-8 m-b-0">
+                  {{ util.trimText(item.displayName, 30) }}
+                </h4>
+                <p class="f-s-12 m-t-4 m-b-4">
+                  {{ util.trimText(item.restaurants.displayName, 30) }}
+                </p>
+              </mat-card-content>
+
+              <mat-divider></mat-divider>
+
+              <div class="row">
+                <div class="col-6 p-y-12">
+                  <div class="f-s-14 f-w-500 d-flex justify-content-start align-items-center p-x-24">
+                    <ng-icon name="tablerSparkles" class="icon-18 m-r-4 fill-warning"></ng-icon>
+                    {{ item.rating }}
+                  </div>
+                </div>
+                <div class="col-6 p-y-12">
+                  <div class="f-s-14 f-w-500 d-flex justify-content-end align-items-center p-x-24">
+                    <ng-icon name="tablerSparkles" class="icon-18 m-r-4 fill-warning"></ng-icon>
+                    {{ util.numberFormat(item.totalRating) }} {{util.appTranslate('reviews')}}
+                  </div>
+                </div>
+              </div>
+
+            </mat-card>
+          </div>
+          }
+        </div>
+      </mat-card-content>
+    </mat-card>
+  </div>
+  <div class="col-lg-6 col-sm-12 p-b-16">
+    <mat-card class="cardWithShadow theme-card">
+      <mat-card-header>
+        <mat-card-title class="m-b-0">
+          {{util.appTranslate('most_ordered_foods')}}
+        </mat-card-title>
+      </mat-card-header>
+      <mat-card-content class="p-32">
+        <div class="row">
+          @for (item of topOrderedFood; track $index) {
+          <div class="col-sm-12 col-lg-6">
+            <mat-card class="cardWithShadow position-relative card-hover cursor-pointer"
+              (click)="onFoodDetail(item.id)">
+              <mat-card-content class="text-center p-12">
+                <img [src]="api.mediaUrl+item.image" alt="cover" width="80" height="80"
+                  class="rounded-circle border p-5" onError="this.src='assets/images/onerror.png'" />
+                <h4 class="m-t-8 m-b-0">
+                  {{ util.trimText(item.displayName, 30) }}
+                </h4>
+                <p class="f-s-12 m-t-4 m-b-4">
+                  {{ util.trimText(item.restaurants.displayName, 30) }}
+                </p>
+              </mat-card-content>
+
+              <mat-divider></mat-divider>
+
+              <div class="row">
+                <div class="col-12 p-y-12">
+                  <div class="f-s-14 f-w-500 d-flex justify-content-center align-items-center p-x-24">
+                    <ng-icon name="tablerSoup" class="icon-18 m-r-4 fill-warning"></ng-icon>
+                    {{ util.numberFormat(item.orderCount) }} {{util.appTranslate('sold')}}
+                  </div>
+                </div>
+              </div>
+
+            </mat-card>
+          </div>
+          }
+        </div>
+      </mat-card-content>
+    </mat-card>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-lg-6 col-sm-12 p-b-16">
+    <mat-card class="cardWithShadow theme-card">
+      <mat-card-header>
+        <mat-card-title class="m-b-0">
+          {{util.appTranslate('top_rated_deliveryman')}}
+        </mat-card-title>
+      </mat-card-header>
+      <mat-card-content class="p-32">
+        <div class="row">
+          @for (item of topRatedDeliveryman; track $index) {
+          <div class="col-sm-12 col-lg-6">
+            <mat-card class="cardWithShadow position-relative card-hover cursor-pointer"
+              (click)="onDeliverymanDetail(item.driverInfo.id)">
+              <mat-card-content class="text-center p-12">
+                <img [src]="api.mediaUrl+item.driverInfo.image" alt="cover" width="80" height="80"
+                  class="rounded-circle border p-5" onError="this.src='assets/images/onerror.png'" />
+                <h4 class="m-t-8 m-b-0">
+                  {{ item.driverInfo.firstName +' '+ item.driverInfo.lastName }}
+                </h4>
+                <p class="f-s-12 m-t-4 m-b-4">
+                  @if (item && item.locality && item.locality.displayName && item.locality.displayName != '') {
+                  <span>({{item.locality.displayName}}) - </span>
+                  }
+                  @if (item && item.city && item.city.displayName && item.city.displayName != '') {
+                  <span>{{item.city.displayName}}</span>
+                  }
+                </p>
+              </mat-card-content>
+
+              <mat-divider></mat-divider>
+
+              <div class="row">
+                <div class="col-6 p-y-12">
+                  <div class="f-s-14 f-w-500 d-flex justify-content-start align-items-center p-x-24">
+                    <ng-icon name="tablerSparkles" class="icon-18 m-r-4 fill-warning"></ng-icon>
+                    {{ item.rating }}
+                  </div>
+                </div>
+                <div class="col-6 p-y-12">
+                  <div class="f-s-14 f-w-500 d-flex justify-content-end align-items-center p-x-24">
+                    <ng-icon name="tablerSparkles" class="icon-18 m-r-4 fill-warning"></ng-icon>
+                    {{ util.numberFormat(item.totalRating) }} {{util.appTranslate('reviews')}}
+                  </div>
+                </div>
+              </div>
+
+            </mat-card>
+          </div>
+          }
+        </div>
+      </mat-card-content>
+    </mat-card>
+  </div>
+  <div class="col-lg-6 col-sm-12 p-b-16">
+    <mat-card class="cardWithShadow theme-card">
+      <mat-card-header>
+        <mat-card-title class="m-b-0">
+          {{util.appTranslate('most_handle_orders_deliveryman')}}
+        </mat-card-title>
+      </mat-card-header>
+      <mat-card-content class="p-32">
+        <div class="row">
+          @for (item of mostHandleOrderDeliveryman; track $index) {
+          <div class="col-sm-12 col-lg-6">
+            <mat-card class="cardWithShadow position-relative card-hover cursor-pointer"
+              (click)="onDeliverymanDetail(item.driverInfo.id)">
+              <mat-card-content class="text-center p-12">
+                <img [src]="api.mediaUrl+item.driverInfo.image" alt="cover" width="80" height="80"
+                  class="rounded-circle border p-5" onError="this.src='assets/images/onerror.png'" />
+                <h4 class="m-t-8 m-b-0">
+                  {{ item.driverInfo.firstName +' '+ item.driverInfo.lastName }}
+                </h4>
+                <p class="f-s-12 m-t-4 m-b-4">
+                  @if (item && item.locality && item.locality.displayName && item.locality.displayName != '') {
+                  <span>({{item.locality.displayName}}) - </span>
+                  }
+                  @if (item && item.city && item.city.displayName && item.city.displayName != '') {
+                  <span>{{item.city.displayName}}</span>
+                  }
+                </p>
+              </mat-card-content>
+              <mat-divider></mat-divider>
+
+              <div class="row">
+                <div class="col-12 p-y-12">
+                  <div class="f-s-14 f-w-500 d-flex justify-content-center align-items-center p-x-24">
+                    <ng-icon name="tablerSoup" class="icon-18 m-r-4 fill-warning"></ng-icon>
+                    {{ util.numberFormat(item.totalOrders) }} {{util.appTranslate('orders')}}
+                  </div>
+                </div>
+              </div>
+            </mat-card>
+          </div>
+          }
+        </div>
+      </mat-card-content>
+    </mat-card>
+  </div>
+</div>

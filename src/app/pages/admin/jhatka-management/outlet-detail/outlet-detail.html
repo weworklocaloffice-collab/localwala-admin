@@ -1,0 +1,41 @@
+<mat-card class="cardWithShadow">
+  <mat-card-header class="m-b-16">
+    <mat-card-title>Outlet {{ outlet?.name }}</mat-card-title>
+    <mat-card-subtitle>{{ outlet?.outletCode }} · {{ outlet?.businessModel }} · {{ outlet?.status }}</mat-card-subtitle>
+  </mat-card-header>
+
+  <mat-card-content>
+    <div *ngIf="!isLoaded" class="m-b-16">Loading…</div>
+    <div *ngIf="isLoaded && !outlet">Outlet not found.</div>
+
+    <div *ngIf="outlet">
+      <p class="f-s-14">
+        {{ outlet.address?.line1 }} · {{ outlet.city?.name }} ·
+        business {{ outlet.business }}
+      </p>
+
+      <div class="d-flex flex-wrap gap-12 m-b-24">
+        <button mat-raised-button color="primary" (click)="setStatus('active')">Activate</button>
+        <button mat-button color="warn" (click)="setStatus('suspended')">Suspend</button>
+        <button mat-button color="warn" (click)="setStatus('closed')">Close</button>
+      </div>
+
+      <h3 class="f-s-16 f-w-600">Compliance alongside ({{ compliance.length }})</h3>
+      <p class="f-s-14">"Is this shop legal to sell meat" is the first question — asked here, answered from the other collection.</p>
+      <div class="table-responsive">
+        <table mat-table [dataSource]="compliance" class="w-100">
+          <ng-container matColumnDef="record">
+            <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1">Record</th>
+            <td mat-cell *matCellDef="let element">
+              <div class="f-w-600">FSSAI {{ element.fssai?.licenceNumber }}</div>
+              <div class="m-t-4 f-s-12 text-muted">expires {{ element.fssai?.expiresAt }} · {{ element.status }}</div>
+            </td>
+          </ng-container>
+
+          <tr mat-header-row *matHeaderRowDef="['record']"></tr>
+          <tr mat-row *matRowDef="let row; columns: ['record'];"></tr>
+        </table>
+      </div>
+    </div>
+  </mat-card-content>
+</mat-card>

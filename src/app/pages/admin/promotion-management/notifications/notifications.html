@@ -1,0 +1,95 @@
+<mat-card class="cardWithShadow theme-card">
+  <mat-card-header>
+    <mat-card-title class="m-b-0">
+      {{util.appTranslate('notifications')}}
+    </mat-card-title>
+  </mat-card-header>
+
+  <mat-card-content class="b-t-0">
+    <mat-tab-group mat-stretch-tabs="false" mat-align-tabs="start" (selectedTabChange)="tabChanged($event)">
+      <mat-tab [label]="util.appTranslate('send_notification')"></mat-tab>
+      <mat-tab [label]="util.appTranslate('order_notification_translations')"></mat-tab>
+    </mat-tab-group>
+  </mat-card-content>
+</mat-card>
+
+
+<form name="eventForm" [formGroup]="notificationForm" class="event-form" (ngSubmit)="onSubmit()" id="topContent">
+  @if (tabIndex == 0) {
+  <mat-card class="cardWithShadow theme-card">
+    <mat-card-header>
+      <mat-card-title class="m-b-0">
+        {{util.appTranslate('send_notification')}}
+      </mat-card-title>
+    </mat-card-header>
+
+    <mat-card-content class="b-t-0">
+
+      <div class="row">
+        <div class="col-lg-12 col-sm-12 p-b-6">
+          <mat-label class="mat-subtitle-2 f-w-600 m-b-8 d-block">{{util.appTranslate('select_role')}}</mat-label>
+          <mat-form-field appearance="outline" class="w-100">
+            <mat-select formControlName="to" name="to">
+              <mat-option value="all">{{util.appTranslate('dd_all')}}</mat-option>
+              <mat-option value="customer">{{util.appTranslate('customers')}}</mat-option>
+              <mat-option value="restaurant">{{util.appTranslate('restaurants')}}</mat-option>
+              <mat-option value="deliveryman">{{util.appTranslate('deliveryman')}}</mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
+
+        <div class="col-lg-12 col-sm-12 p-b-6">
+          <mat-label
+            class="mat-subtitle-2 f-w-600 m-b-8 d-block">{{util.appTranslate('notification_title')}}</mat-label>
+          <mat-form-field appearance="outline" class="w-100" color="primary">
+            <input matInput formControlName="title" type="text" name="title" />
+            @if(haveSubmitClicked == true && f['title'].invalid){
+            <mat-hint class="m-b-16 error-msg">
+              @if(f['title'].errors && f['title'].errors['required']){
+              <div class="text-error">
+                {{util.appTranslate('form_required')}}
+              </div>
+              }
+            </mat-hint>
+            }
+          </mat-form-field>
+        </div>
+
+        <div class="col-lg-12 col-sm-12 p-b-6">
+          <mat-label
+            class="mat-subtitle-2 f-w-600 m-b-8 d-block">{{util.appTranslate('notification_description')}}</mat-label>
+          <mat-form-field appearance="outline" class="w-100" color="primary">
+            <textarea matInput rows="5" formControlName="description" name="description"></textarea>
+            @if(haveSubmitClicked == true && f['description'].invalid){
+            <mat-hint class="m-b-16 error-msg">
+              @if(f['description'].errors && f['description'].errors['required']){
+              <div class="text-error">
+                {{util.appTranslate('form_required')}}
+              </div>
+              }
+            </mat-hint>
+            }
+          </mat-form-field>
+        </div>
+      </div>
+
+    </mat-card-content>
+    <mat-card-actions class="b-t-1">
+      <button mat-flat-button color="primary" type="submit" [disabled]="isSubmit == true">
+        @if (isSubmit == true) {
+        <mat-icon>
+          <mat-spinner diameter="15"></mat-spinner>
+        </mat-icon>
+        }
+        {{util.appTranslate('send')}}
+      </button>
+      <button mat-flat-button class="m-l-8 bg-secondary text-white" type="button"
+        (click)="onReset()">{{util.appTranslate('reset_btn')}}</button>
+    </mat-card-actions>
+  </mat-card>
+  }
+</form>
+
+@if (tabIndex == 1) {
+<app-translate-notification></app-translate-notification>
+}

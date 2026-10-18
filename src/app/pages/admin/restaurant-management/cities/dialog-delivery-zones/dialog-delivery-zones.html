@@ -1,0 +1,104 @@
+<h2 mat-dialog-title>{{ util.appTranslate('delivery_zones') }}{{ cityName ? ' — ' + cityName : '' }}</h2>
+
+<mat-dialog-content>
+  @if (loading) {
+    <div class="p-16 text-center"><mat-spinner diameter="32"></mat-spinner></div>
+  }
+  @if (!loading && error != '') {
+    <div class="p-16"><mat-label class="text-danger">{{ error }}</mat-label></div>
+  }
+  @if (!loading) {
+    <mat-tab-group>
+      <!-- Current set + live numbers -->
+      <mat-tab [label]="util.appTranslate('current_zones') || 'Zones'">
+        @for (zone of zones; track zone._id) {
+          <div class="m-b-16">
+            <div class="d-flex align-items-center">
+              <mat-label class="mat-subtitle-2 f-w-600">{{ zone.name }}</mat-label>
+              <mat-chip class="m-l-8">v{{ zone.version }}</mat-chip>
+            </div>
+            <div class="mat-body-2">
+              {{ (zone.localities || []).length }} {{ util.appTranslate('members_lbl') }}
+              @if (metricsFor(zone._id)) {
+                · {{ metricsFor(zone._id).pending }} {{ util.appTranslate('pending_lbl') }} ·
+                {{ metricsFor(zone._id).slaBreaches }} {{ util.appTranslate('breaches_lbl') }} ·
+                {{ metricsFor(zone._id).activeRiders }} {{ util.appTranslate('riders_lbl') }}
+              }
+            </div>
+            <div>
+              @for (loc of (zone.localities || []); track (loc._id || loc)) {
+                <mat-chip class="m-r-4 m-b-4">{{ loc.name || loc }}</mat-chip>
+              }
+            </div>
+          </div>
+        }
+        @if (zones.length === 0) {
+          <mat-label class="mat-body-1">{{ util.appTranslate('table_no_data_found') }}</mat-label>
+        }
+      </mat-tab>
+
+      <!-- Propose → rename → publish -->
+      <mat-tab [label]="util.appTranslate('propose_zones') || 'Propose'">
+        <div class="m-b-16">
+          <button mat-stroked-button color="primary" (click)="propose()" [disabled]="proposing">
+            {{ util.appTranslate('propose_zones') }}
+          </button>
+        </div>
+        @for (group of proposal; track $index) {
+          <div class="m-b-16">
+            <mat-form-field appearance="outline" class="w-100">
+              <mat-label>{{ util.appTranslate('zone_name') }}</mat-label>
+              <input matInput [(ngModel)]="group.name" />
+            </mat-form-field>
+            <div class="mat-body-2">≈ {{ group.diameterKm }} km · {{ group.localities.length }} {{ util.appTranslate('members_lbl') }}</div>
+            <div>
+              @for (name of group.memberNames; track name) {
+                <mat-chip class="m-r-4 m-b-4">{{ name }}</mat-chip>
+              }
+            </div>
+          </div>
+        }
+        @if (proposal.length > 0) {
+          <mat-form-field appearance="outline" class="w-100">
+            <mat-label>{{ util.appTranslate('reason_optional') }}</mat-label>
+            <input matInput [(ngModel)]="publishReason" />
+          </mat-form-field>
+          <button mat-flat-button color="primary" (click)="publish()" [disabled]="saving">
+            {{ util.appTranslate('publish_zones') }}
+          </button>
+        }
+      </mat-tab>
+
+      <!-- Surgical move -->
+      <mat-tab [label]="util.appTranslate('move_locality') || 'Move'">
+        <mat-form-field appearance="outline" class="w-100 m-b-8">
+          <mat-label>{{ util.appTranslate('pick_locality') }}</mat-label>
+          <mat-select [(ngModel)]="moveLocalityId">
+            @for (loc of allLocalities; track loc.id) {
+              <mat-option [value]="loc.id">{{ loc.name }}</mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
+        <mat-form-field appearance="outline" class="w-100 m-b-8">
+          <mat-label>{{ util.appTranslate('target_zone') }}</mat-label>
+          <mat-select [(ngModel)]="moveToZoneId">
+            @for (zone of zones; track zone._id) {
+              <mat-option [value]="zone._id">{{ zone.name }}</mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
+        <mat-form-field appearance="outline" class="w-100">
+          <mat-label>{{ util.appTranslate('reason_optional') }}</mat-label>
+          <input matInput [(ngModel)]="moveReason" />
+        </mat-form-field>
+        <button mat-flat-button color="primary" (click)="move()" [disabled]="saving || !moveLocalityId || !moveToZoneId">
+          {{ util.appTranslate('move_locality') }}
+        </button>
+      </mat-tab>
+    </mat-tab-group>
+  }
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button (click)="close()">{{ util.appTranslate('cancel_btn') }}</button>
+</mat-dialog-actions>

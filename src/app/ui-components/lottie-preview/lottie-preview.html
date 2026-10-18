@@ -1,0 +1,20 @@
+<div class="lottie-preview" [style.height.px]="height" [ngStyle]="frameStyle">
+  <!-- The stage is always in the DOM: the animation must be mounted onto a live element,
+       so gating it behind the ready state would mean there is nothing to mount onto. -->
+  <div #host class="lottie-preview__stage" [style.width.px]="stageWidth" [style.height.px]="stageHeight"></div>
+
+  @if (state === 'loading') {
+    <div class="lottie-preview__overlay"><mat-spinner diameter="28"></mat-spinner></div>
+  } @else if (state === 'error') {
+    <div class="lottie-preview__overlay">
+      <div class="lottie-preview__notice">
+        <mat-icon>animation</mat-icon>
+        <p class="text-secondary f-s-12">{{ errorMessage }}</p>
+      </div>
+    </div>
+  } @else if (state === 'idle') {
+    <div class="lottie-preview__overlay">
+      <p class="text-secondary f-s-12 text-center m-0">{{ util.appTranslate('lottie_preview_none') }}</p>
+    </div>
+  }
+</div>

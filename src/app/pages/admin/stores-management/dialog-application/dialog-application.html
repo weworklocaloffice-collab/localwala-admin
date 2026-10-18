@@ -1,0 +1,129 @@
+<h2 mat-dialog-title class="m-b-0">
+  {{ util.appTranslate('stores_review_application') }}
+</h2>
+
+<mat-dialog-content>
+  @if (application) {
+    <div class="review-grid">
+      <div class="review-row">
+        <span class="review-label">{{ util.appTranslate('stores_legal_name') }}</span>
+        <span>{{ application.businessInfo?.legalName || '—' }}</span>
+      </div>
+      <div class="review-row">
+        <span class="review-label">{{ util.appTranslate('stores_store_name') }}</span>
+        <span>{{ application.storeInfo?.name || '—' }}</span>
+      </div>
+      <div class="review-row">
+        <span class="review-label">{{ util.appTranslate('stores_owner_name') }}</span>
+        <span>{{ application.ownerInfo?.name || '—' }}</span>
+      </div>
+      <div class="review-row">
+        <span class="review-label">{{ util.appTranslate('th_status') }}</span>
+        <span class="status-chip" [ngClass]="application.status">{{ application.status }}</span>
+      </div>
+      <div class="review-row">
+        <span class="review-label">{{ util.appTranslate('stores_gstin') }}</span>
+        <span>{{ application.businessInfo?.gstin || '—' }}</span>
+      </div>
+      <div class="review-row">
+        <span class="review-label">{{ util.appTranslate('stores_city') }}</span>
+        <span>
+          {{ application.location?.city || '—' }}
+          @if (application.location?.locality) {
+            , {{ application.location.locality }}
+          }
+        </span>
+      </div>
+    </div>
+
+    @if (application.incompleteSteps && application.incompleteSteps.length) {
+      <div class="m-t-16 p-12 rounded border" style="border-color: var(--mat-sys-error)">
+        <div class="f-w-600 text-error m-b-8">
+          {{ util.appTranslate('stores_incomplete_steps') }}
+        </div>
+        <ul class="m-0 pl-20">
+          @for (step of application.incompleteSteps; track step) {
+            <li>{{ step }}</li>
+          }
+        </ul>
+      </div>
+    }
+
+    @if (!application.hasLocationGeo) {
+      <div class="m-t-16 f-s-12 text-muted">
+        {{ util.appTranslate('stores_location_pin_missing') }}
+      </div>
+    }
+
+    @if (canDecide) {
+      <mat-divider class="m-y-16"></mat-divider>
+
+      <div class="m-b-12 f-w-600">{{ util.appTranslate('stores_request_changes') }}</div>
+      <div class="d-flex gap-12 flex-wrap">
+        <mat-form-field appearance="outline" class="w-150">
+          <mat-label>{{ util.appTranslate('stores_step') }}</mat-label>
+          <input matInput [(ngModel)]="changesStep" />
+        </mat-form-field>
+        <mat-form-field appearance="outline" class="w-150">
+          <mat-label>{{ util.appTranslate('stores_field') }}</mat-label>
+          <input matInput [(ngModel)]="changesField" />
+        </mat-form-field>
+      </div>
+      <mat-form-field appearance="outline" class="w-100">
+        <mat-label>{{ util.appTranslate('stores_message') }}</mat-label>
+        <textarea matInput rows="2" [(ngModel)]="changesMessage"></textarea>
+      </mat-form-field>
+    }
+  }
+</mat-dialog-content>
+
+<mat-dialog-actions align="end" class="gap-8">
+  <button mat-stroked-button (click)="close()" [disabled]="submitting">
+    {{ util.appTranslate('ts_cancel') }}
+  </button>
+
+  @if (canReview) {
+    <button
+      mat-flat-button
+      color="primary"
+      (click)="startReview()"
+      [disabled]="submitting"
+    >
+      {{ util.appTranslate('ts_stores_start_review') }}
+    </button>
+  }
+
+  @if (canDecide) {
+<button
+        mat-stroked-button
+        color="warn"
+        (click)="requestChanges()"
+        [disabled]="submitting"
+      >
+        {{ util.appTranslate('ts_stores_request_changes') }}
+      </button>
+
+      <button
+        mat-stroked-button
+        color="warn"
+        (click)="reject()"
+        [disabled]="submitting"
+      >
+        {{ util.appTranslate('ts_stores_reject') }}
+      </button>
+
+    <mat-form-field appearance="outline" class="w-250">
+      <mat-label>{{ util.appTranslate('stores_reason') }}</mat-label>
+      <input matInput [(ngModel)]="reason" />
+    </mat-form-field>
+
+    <button
+      mat-flat-button
+      color="primary"
+      (click)="approve()"
+      [disabled]="submitting"
+    >
+      {{ util.appTranslate('ts_stores_approve') }}
+    </button>
+  }
+</mat-dialog-actions>

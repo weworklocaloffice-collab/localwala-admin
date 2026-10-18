@@ -1,0 +1,91 @@
+<h2 mat-dialog-title>{{ isEdit ? util.appTranslate('th_save') : util.appTranslate('th_create') }}</h2>
+
+<mat-dialog-content>
+  @if (!isEdit) {
+    <mat-form-field appearance="outline" class="w-100">
+      <mat-label>{{ util.appTranslate('th_bank') }}</mat-label>
+      <mat-select [(ngModel)]="form.bank">
+        @for (b of banks; track b._id || b.id) {
+          <mat-option [value]="b._id || b.id">{{ b.name || b.code }}</mat-option>
+        }
+      </mat-select>
+      @if (banksLoading) {
+        <mat-hint>Loading banks…</mat-hint>
+      }
+    </mat-form-field>
+  }
+
+  <div class="d-flex gap-12">
+    <mat-form-field appearance="outline" class="w-100">
+      <mat-label>Commission type</mat-label>
+      <mat-select [(ngModel)]="form.commissionType">
+        @for (t of commissionTypes; track t) {
+          <mat-option [value]="t">{{ t }}</mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+    <mat-form-field appearance="outline" class="w-100">
+      <mat-label>{{ util.appTranslate('th_rate') }} (%)</mat-label>
+      <input matInput type="number" min="0" max="100" [(ngModel)]="form.rate" />
+    </mat-form-field>
+  </div>
+
+  <mat-form-field appearance="outline" class="w-100">
+    <mat-label>Calculation basis</mat-label>
+    <mat-select [(ngModel)]="form.calculationBasis">
+      @for (b of bases; track b) {
+        <mat-option [value]="b">{{ b }}</mat-option>
+      }
+    </mat-select>
+  </mat-form-field>
+
+  <div class="d-flex gap-12">
+    <mat-form-field appearance="outline" class="w-100">
+      <mat-label>Min loan (₹)</mat-label>
+      <input matInput type="number" min="0" [(ngModel)]="form.minLoan" />
+    </mat-form-field>
+    <mat-form-field appearance="outline" class="w-100">
+      <mat-label>Max loan (₹)</mat-label>
+      <input matInput type="number" min="0" [(ngModel)]="form.maxLoan" />
+    </mat-form-field>
+  </div>
+
+  <div class="d-flex gap-12">
+    <mat-form-field appearance="outline" class="w-100">
+      <mat-label>{{ util.appTranslate('th_effective_from') }}</mat-label>
+      <input matInput type="date" [(ngModel)]="form.effectiveFrom" />
+    </mat-form-field>
+    <mat-form-field appearance="outline" class="w-100">
+      <mat-label>Effective to</mat-label>
+      <input matInput type="date" [(ngModel)]="form.effectiveTo" />
+    </mat-form-field>
+  </div>
+
+  <div class="d-flex gap-12">
+    <mat-form-field appearance="outline" class="w-100">
+      <mat-label>Payout cycle</mat-label>
+      <input matInput [(ngModel)]="form.payoutCycle" placeholder="monthly" />
+    </mat-form-field>
+    <mat-form-field appearance="outline" class="w-100">
+      <mat-label>TDS (%)</mat-label>
+      <input matInput type="number" min="0" max="100" [(ngModel)]="form.tdsPercentage" />
+    </mat-form-field>
+  </div>
+
+  <mat-checkbox [(ngModel)]="form.offerVisibleToCustomer">Visible to customer</mat-checkbox>
+  @if (isEdit) {
+    <p class="f-s-12 text-muted">Only DRAFT rows can be edited. ACTIVE terms take a new version.</p>
+  }
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button (click)="onClose()">{{ util.appTranslate('th_cancel') }}</button>
+  <button
+    mat-flat-button
+    color="primary"
+    [disabled]="!canSubmit"
+    (click)="onSubmit()"
+  >
+    {{ isEdit ? util.appTranslate('th_save') : util.appTranslate('th_create') }}
+  </button>
+</mat-dialog-actions>

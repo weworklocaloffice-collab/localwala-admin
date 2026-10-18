@@ -1,0 +1,57 @@
+@use "../variables" as *;
+html {
+  .mdc-list-item__primary-text,
+  .mat-drawer-container,
+  .mat-drawer,
+  .text-body {
+    color: $text-color;
+  }
+}
+
+.mat-headline-5 {
+  margin: 0;
+  font-size: 24px;
+  line-height: 30px;
+  font-weight: 700;
+  letter-spacing: normal;
+}
+
+.mat-headline-6 {
+  margin: 0;
+  font-size: 18px;
+  line-height: 26px;
+  font-weight: 600;
+  letter-spacing: normal;
+}
+
+.mat-subtitle-2 {
+  margin: 0;
+  font-size: 14px;
+  line-height: 14px;
+  font-weight: 400;
+  letter-spacing: normal;
+}
+
+.mat-subtitle-1 {
+  margin: 0;
+  font-size: 21px;
+  line-height: 26px;
+  font-weight: 500;
+  letter-spacing: normal;
+}
+
+.mat-body-1 {
+  margin: 0;
+  font-size: 14px;
+  line-height: 20px;
+  font-weight: 400;
+  letter-spacing: normal;
+}
+
+.mat-body-2 {
+  margin: 0;
+  font-size: 16px;
+  line-height: 22px;
+  font-weight: 400;
+  letter-spacing: normal;
+}

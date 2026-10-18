@@ -1,0 +1,40 @@
+<h2 mat-dialog-title>{{ util.appTranslate('realEstate_add_bank') }}</h2>
+
+<mat-dialog-content>
+  <mat-form-field appearance="outline" class="w-100 m-b-16">
+    <mat-label>{{ util.appTranslate('th_name') }}</mat-label>
+    <input matInput [(ngModel)]="name" />
+  </mat-form-field>
+  <mat-form-field appearance="outline" class="w-100 m-b-16">
+    <mat-label>{{ util.appTranslate('th_code') }}</mat-label>
+    <input matInput [(ngModel)]="code" [disabled]="isEdit" />
+    @if (isEdit) {
+      <mat-hint>Stable key, immutable</mat-hint>
+    }
+  </mat-form-field>
+  @if (isEdit) {
+    <mat-form-field appearance="outline" class="w-100">
+      <mat-label>{{ util.appTranslate('th_status') }}</mat-label>
+      <mat-select [(ngModel)]="status">
+        @for (s of statuses; track s) {
+          <mat-option [value]="s">{{ s }}</mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+  }
+  <mat-form-field appearance="outline" class="w-100 m-b-16">
+    <mat-label>{{ util.appTranslate('th_email') }}</mat-label>
+    <input matInput [(ngModel)]="contactEmail" />
+  </mat-form-field>
+  <mat-form-field appearance="outline" class="w-100">
+    <mat-label>{{ util.appTranslate('th_phone') }}</mat-label>
+    <input matInput [(ngModel)]="contactPhone" />
+  </mat-form-field>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button (click)="onClose()">{{ util.appTranslate('th_cancel') }}</button>
+  <button mat-flat-button color="primary" [disabled]="isSaving || !name || !code" (click)="onSubmit()">
+    {{ isEdit ? util.appTranslate('th_save') : util.appTranslate('th_create') }}
+  </button>
+</mat-dialog-actions>

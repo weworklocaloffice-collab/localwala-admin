@@ -1,0 +1,51 @@
+<h2 mat-dialog-title>{{ doc?.invoiceNo || 'Invoice' }} · {{ doc?.status }}</h2>
+
+<mat-dialog-content>
+  @if (!isLoaded) {
+    <div class="p-24 text-center text-muted">{{ util.appTranslate('ts_loading') }}</div>
+  } @else if (!doc) {
+    <div class="p-24 text-center text-muted">{{ util.appTranslate('ts_no_records_found') }}</div>
+  } @else {
+    <table class="w-100 f-s-13">
+      <tr><td class="f-w-600">Kind</td><td>{{ doc.kind }}</td></tr>
+      <tr><td class="f-w-600">Supply</td><td>{{ doc.supply }}</td></tr>
+      <tr><td class="f-w-600">Taxable</td><td>{{ formatPaise(doc.taxablePaise) }}</td></tr>
+      <tr><td class="f-w-600">Rate</td><td>{{ doc.ratePercent }}%</td></tr>
+      <tr><td class="f-w-600">Tax</td><td>{{ formatPaise(doc.taxPaise) }}</td></tr>
+      <tr><td class="f-w-600">Total</td><td>{{ formatPaise(doc.totalPaise) }}</td></tr>
+      <tr><td class="f-w-600">HSN/SAC</td><td>{{ doc.hsnSac || '—' }}</td></tr>
+      <tr><td class="f-w-600">Classification</td><td>{{ doc.taxClassification || '—' }}</td></tr>
+      <tr><td class="f-w-600">Org GSTIN</td><td>{{ doc.orgGstin || '—' }}</td></tr>
+      <tr><td class="f-w-600">Place of supply</td><td>{{ doc.placeOfSupply || '—' }}</td></tr>
+      <tr><td class="f-w-600">Source</td><td>{{ doc.sourceModel }} · {{ doc.sourceId }}</td></tr>
+      <tr><td class="f-w-600">Issued</td><td>{{ doc.issuedAt | date: 'dd MMM yyyy HH:mm' }}</td></tr>
+      @if (doc.creditNoteOf) {
+        <tr><td class="f-w-600">Credit note of</td><td>{{ doc.creditNoteOf }}</td></tr>
+      }
+      @if (doc.cancelReason) {
+        <tr><td class="f-w-600">Cancel reason</td><td>{{ doc.cancelReason }}</td></tr>
+      }
+    </table>
+
+    @if (canCancel()) {
+      <mat-form-field appearance="outline" class="w-100 m-t-16">
+        <mat-label>Cancellation reason (required)</mat-label>
+        <textarea matInput rows="2" [(ngModel)]="reason"></textarea>
+      </mat-form-field>
+    }
+  }
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button (click)="onClose()">{{ util.appTranslate('th_cancel') }}</button>
+  @if (canCancel()) {
+    <button
+      mat-flat-button
+      color="warn"
+      [disabled]="isSaving || !reason.trim()"
+      (click)="onCancel()"
+    >
+      Cancel via credit note
+    </button>
+  }
+</mat-dialog-actions>

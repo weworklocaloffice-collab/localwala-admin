@@ -1,0 +1,557 @@
+<mat-card class="cardWithShadow">
+  <mat-card-header>
+    <div class="d-sm-flex w-100">
+      <div>
+        <mat-card-title>{{util.appTranslate('restaurant_deleted_accounts')}}</mat-card-title>
+      </div>
+      <div class="m-l-auto more-btn-align">
+        <mat-form-field appearance="outline" class="theme-searchbar">
+          <input matInput type="text" [(ngModel)]="searchQuery" [placeholder]="util.appTranslate('search_by_name')"
+            (keyup.enter)="onSearch()" />
+          <button mat-icon-button matSuffix (click)="onSearch()">
+            <mat-icon class="op-5">search</mat-icon>
+          </button>
+        </mat-form-field>
+        <mat-form-field class="theme-select m-l-16" appearance="outline">
+          <mat-select [value]="exportType" [(ngModel)]="exportType"
+            (selectionChange)="onExportCollection($event.value)">
+            <mat-option value="export">
+              {{util.appTranslate('export_kind')}}
+            </mat-option>
+            <mat-option value="excel">
+              {{util.appTranslate('excel_export_kind')}}
+            </mat-option>
+            <mat-option value="csv">
+              {{util.appTranslate('csv_export_kind')}}
+            </mat-option>
+            <mat-option value="raw">
+              {{util.appTranslate('raw_export_kind')}}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
+    </div>
+  </mat-card-header>
+
+  <mat-card-content>
+    <div class="table-responsive">
+      @if (!isLoaded) {
+      <table mat-table [dataSource]="util.dummyArray" class="w-100">
+        <ng-container matColumnDef="name">
+          <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1 p-l-0 text-left">
+            {{util.appTranslate('restaurant')}}
+          </th>
+          <td mat-cell *matCellDef="let element" class="p-l-0">
+            <mat-progress-bar mode="indeterminate" color="light"></mat-progress-bar>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="reason">
+          <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1 p-l-0 text-left">
+            {{util.appTranslate('th_reason')}}
+          </th>
+          <td mat-cell *matCellDef="let element" class="p-l-0">
+            <mat-progress-bar mode="indeterminate" color="light"></mat-progress-bar>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="city">
+          <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1 p-l-0 text-center">
+            {{util.appTranslate('th_city')}}
+          </th>
+          <td mat-cell *matCellDef="let element" class="p-l-0">
+            <mat-progress-bar mode="indeterminate" color="light"></mat-progress-bar>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="foods">
+          <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1 p-l-0 text-center">
+            {{util.appTranslate('th_total_food_item')}}
+          </th>
+          <td mat-cell *matCellDef="let element" class="p-l-0">
+            <mat-progress-bar mode="indeterminate" color="light"></mat-progress-bar>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="orders">
+          <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1 p-l-0 text-center">
+            {{util.appTranslate('th_regular_orders')}}
+          </th>
+          <td mat-cell *matCellDef="let element" class="p-l-0">
+            <mat-progress-bar mode="indeterminate" color="light"></mat-progress-bar>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="pos">
+          <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1 p-l-0 text-center">
+            {{util.appTranslate('pos_orders')}}
+          </th>
+          <td mat-cell *matCellDef="let element" class="p-l-0">
+            <mat-progress-bar mode="indeterminate" color="light"></mat-progress-bar>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="table">
+          <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1 p-l-0 text-center">
+            {{util.appTranslate('table_orders')}}
+          </th>
+          <td mat-cell *matCellDef="let element" class="p-l-0">
+            <mat-progress-bar mode="indeterminate" color="light"></mat-progress-bar>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="dining">
+          <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1 p-l-0 text-center">
+            {{util.appTranslate('th_dining_booking')}}
+          </th>
+          <td mat-cell *matCellDef="let element" class="p-l-0">
+            <mat-progress-bar mode="indeterminate" color="light"></mat-progress-bar>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="permission">
+          <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1 p-l-0 text-center">
+            {{util.appTranslate('permission')}}
+          </th>
+          <td mat-cell *matCellDef="let element" class="f-s-14">
+            <mat-progress-bar mode="indeterminate" color="light"></mat-progress-bar>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="commission">
+          <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1 p-l-0 text-center">
+            {{util.appTranslate('commission')}}
+          </th>
+          <td mat-cell *matCellDef="let element" class="f-s-14">
+            <mat-progress-bar mode="indeterminate" color="light"></mat-progress-bar>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="rating">
+          <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1 p-l-0 text-center">
+            {{util.appTranslate('th_rating')}}
+          </th>
+          <td mat-cell *matCellDef="let element" class="p-l-0">
+            <mat-progress-bar mode="indeterminate" color="light"></mat-progress-bar>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="datetime">
+          <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1 p-l-0 text-center">
+            {{util.appTranslate('th_deleted_on')}}
+          </th>
+          <td mat-cell *matCellDef="let element" class="p-l-0">
+            <mat-progress-bar mode="indeterminate" color="light"></mat-progress-bar>
+          </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="displayedColumn"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumn"></tr>
+
+      </table>
+      }
+
+      @if (isLoaded) {
+      <table mat-table [dataSource]="restaurants" class="w-100">
+        <ng-container matColumnDef="name">
+          <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1 p-l-0 text-left">
+            {{util.appTranslate('restaurant')}}
+          </th>
+          <td mat-cell *matCellDef="let element" class="p-l-0 cursor-pointer">
+            <div>
+              <h6 class="mat-subtitle-1 f-s-14 f-w-600">
+                {{ element.displayName }}
+              </h6>
+              <span class="mat-body-1 f-s-12">
+                {{ element.displayAddress }}
+              </span> <br>
+              <span class="mat-body-1 f-s-12">
+                {{ element.firstName +' '+ element.lastName }}
+              </span> <br>
+              <span class="mat-body-1 f-s-12">
+                {{ element.email }}
+              </span> <br>
+              <span class="mat-body-1 f-s-12">
+                {{ '+' +element.countryCode +' '+ element.mobile }}
+              </span> <br>
+              <span class="mat-body-1 f-s-12">
+                {{element.type == 'subscription' ? util.appTranslate('subscription_based') :
+                util.appTranslate('commission_based') }}
+              </span>
+            </div>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="reason">
+          <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1 p-l-0 text-left">
+            {{util.appTranslate('th_reason')}}
+          </th>
+          <td mat-cell *matCellDef="let element" class="f-s-14">
+            <h6 class="mat-subtitle-1 f-s-14 f-w-600">
+              {{ element && element.reasons && element.reasons.displayName ? element.reasons.displayName :
+              util.appTranslate('invalid_data') }}
+            </h6>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="city">
+          <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1 p-l-0 text-center">
+            {{util.appTranslate('th_city')}}
+          </th>
+          <td mat-cell *matCellDef="let element" class="f-s-14 cursor-pointer" (click)="onCity(element)">
+            {{ element && element.city && element.city.displayName ? element.city.displayName : '' }} <br>
+            @if (element && element.locality && element.locality.displayName) {
+            <span>{{ element.locality.displayName}}</span>
+            }
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="foods">
+          <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1 p-l-0 text-center">
+            {{util.appTranslate('th_total_food_item')}}
+          </th>
+          <td mat-cell *matCellDef="let element" class="f-s-14">
+            {{element.foods}}
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="orders">
+          <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1 p-l-0 text-center">
+            {{util.appTranslate('th_regular_orders')}}
+          </th>
+          <td mat-cell *matCellDef="let element" class="f-s-14">
+            <ul>
+              <li>
+                <p class="mat-body-1 f-s-12">
+                  {{util.appTranslate('orders')}}: <span class="mat-subtitle-1 f-s-12 f-w-600">{{element.orders}}</span>
+                </p>
+              </li>
+              <li>
+                <p class="mat-body-1 f-s-12">
+                  {{util.appTranslate('earning')}}: <span
+                    class="mat-subtitle-1 f-s-12 f-w-600">{{util.priceFormat(element.orderEarningAmount)}}</span>
+                </p>
+              </li>
+              <li>
+                <p class="mat-body-1 f-s-12">
+                  {{util.appTranslate('discount_given')}}: <span
+                    class="mat-subtitle-1 f-s-12 f-w-600">{{util.priceFormat(element.orderDiscountGivenAmount)}}</span>
+                </p>
+              </li>
+              <li>
+                <p class="mat-body-1 f-s-12">
+                  {{util.appTranslate('commission')}}: <span
+                    class="mat-subtitle-1 f-s-12 f-w-600">{{util.priceFormat(element.orderRestaurantCommission)}}</span>
+                </p>
+              </li>
+              <li>
+                <p class="mat-body-1 f-s-12">
+                  {{util.appTranslate('tax')}}: <span
+                    class="mat-subtitle-1 f-s-12 f-w-600">{{util.priceFormat(element.orderFoodTaxAmount)}}</span>
+                </p>
+              </li>
+              <li>
+                <p class="mat-body-1 f-s-12">
+                  {{util.appTranslate('th_service_tax')}}: <span
+                    class="mat-subtitle-1 f-s-12 f-w-600">{{util.priceFormat(element.orderServiceChargeAmount)}}</span>
+                </p>
+              </li>
+            </ul>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="pos">
+          <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1 p-l-0 text-center">
+            {{util.appTranslate('pos_orders')}}
+          </th>
+          <td mat-cell *matCellDef="let element" class="f-s-14">
+            <ul>
+              <li>
+                <p class="mat-body-1 f-s-12">
+                  {{util.appTranslate('orders')}}: <span
+                    class="mat-subtitle-1 f-s-12 f-w-600">{{element.posOrders}}</span>
+                </p>
+              </li>
+              <li>
+                <p class="mat-body-1 f-s-12">
+                  {{util.appTranslate('earning')}}: <span
+                    class="mat-subtitle-1 f-s-12 f-w-600">{{util.priceFormat(element.posEarningAmount)}}</span>
+                </p>
+              </li>
+              <li>
+                <p class="mat-body-1 f-s-12">
+                  {{util.appTranslate('discount_given')}}: <span
+                    class="mat-subtitle-1 f-s-12 f-w-600">{{util.priceFormat(element.posDiscountGivenAmount)}}</span>
+                </p>
+              </li>
+              <li>
+                <p class="mat-body-1 f-s-12">
+                  {{util.appTranslate('commission')}}: <span
+                    class="mat-subtitle-1 f-s-12 f-w-600">{{util.priceFormat(element.posRestaurantCommission)}}</span>
+                </p>
+              </li>
+              <li>
+                <p class="mat-body-1 f-s-12">
+                  {{util.appTranslate('tax')}}: <span
+                    class="mat-subtitle-1 f-s-12 f-w-600">{{util.priceFormat(element.posFoodTaxAmount)}}</span>
+                </p>
+              </li>
+              <li>
+                <p class="mat-body-1 f-s-12">
+                  {{util.appTranslate('th_service_tax')}}: <span
+                    class="mat-subtitle-1 f-s-12 f-w-600">{{util.priceFormat(element.posServiceChargeAmount)}}</span>
+                </p>
+              </li>
+            </ul>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="table">
+          <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1 p-l-0 text-center">
+            {{util.appTranslate('table_orders')}}
+          </th>
+          <td mat-cell *matCellDef="let element" class="f-s-14">
+            <ul>
+              <li>
+                <p class="mat-body-1 f-s-12">
+                  {{util.appTranslate('orders')}}: <span
+                    class="mat-subtitle-1 f-s-12 f-w-600">{{element.tableOrders}}</span>
+                </p>
+              </li>
+              <li>
+                <p class="mat-body-1 f-s-12">
+                  {{util.appTranslate('earning')}}: <span
+                    class="mat-subtitle-1 f-s-12 f-w-600">{{util.priceFormat(element.tableOrderEarningAmount)}}</span>
+                </p>
+              </li>
+              <li>
+                <p class="mat-body-1 f-s-12">
+                  {{util.appTranslate('discount_given')}}: <span
+                    class="mat-subtitle-1 f-s-12 f-w-600">{{util.priceFormat(element.tableOrderDiscountGivenAmount)}}</span>
+                </p>
+              </li>
+              <li>
+                <p class="mat-body-1 f-s-12">
+                  {{util.appTranslate('commission')}}: <span
+                    class="mat-subtitle-1 f-s-12 f-w-600">{{util.priceFormat(element.tableOrderRestaurantCommission)}}</span>
+                </p>
+              </li>
+              <li>
+                <p class="mat-body-1 f-s-12">
+                  {{util.appTranslate('tax')}}: <span
+                    class="mat-subtitle-1 f-s-12 f-w-600">{{util.priceFormat(element.tableOrderFoodTaxAmount)}}</span>
+                </p>
+              </li>
+              <li>
+                <p class="mat-body-1 f-s-12">
+                  {{util.appTranslate('th_service_tax')}}: <span
+                    class="mat-subtitle-1 f-s-12 f-w-600">{{util.priceFormat(element.tableOrderServiceChargeAmount)}}</span>
+                </p>
+              </li>
+            </ul>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="dining">
+          <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1 p-l-0 text-center">
+            {{util.appTranslate('th_dining_booking')}}
+          </th>
+          <td mat-cell *matCellDef="let element" class="f-s-14">
+            <ul>
+              <li>
+                <p class="mat-body-1 f-s-12">
+                  {{util.appTranslate('bookings')}}: <span
+                    class="mat-subtitle-1 f-s-12 f-w-600">{{element.diningBookings}}</span>
+                </p>
+              </li>
+              <li>
+                <p class="mat-body-1 f-s-12">
+                  {{util.appTranslate('earning')}}: <span
+                    class="mat-subtitle-1 f-s-12 f-w-600">{{util.priceFormat(element.diningEarningAmount)}}</span>
+                </p>
+              </li>
+              <li>
+                <p class="mat-body-1 f-s-12">
+                  {{util.appTranslate('commission')}}: <span
+                    class="mat-subtitle-1 f-s-12 f-w-600">{{util.priceFormat(element.diningCommissionAmount)}}</span>
+                </p>
+              </li>
+            </ul>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="permission">
+          <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1 p-l-0 text-center">
+            {{util.appTranslate('permission')}}
+          </th>
+          <td mat-cell *matCellDef="let element" class="f-s-14">
+            <ul>
+              <li>
+                <p class="mat-body-1 f-s-12">
+                  {{util.appTranslate('pos')}}
+                  @if(element.pos) {
+                  <ng-icon name="tablerCheck" class="icon-12  m-l-4 text-success"></ng-icon>
+                  }@else {
+                  <ng-icon name="tablerX" class="icon-12 m-l-4 text-error"></ng-icon>
+                  }
+                </p>
+              </li>
+              <li>
+                <p class="mat-body-1 f-s-12">
+                  {{util.appTranslate('own_deliveryman')}}
+                  @if(element.ownDriver) {
+                  <ng-icon name="tablerCheck" class="icon-12  m-l-4 text-success"></ng-icon>
+                  }@else {
+                  <ng-icon name="tablerX" class="icon-12 m-l-4 text-error"></ng-icon>
+                  }
+                </p>
+              </li>
+              <li>
+                <p class="mat-body-1 f-s-12">
+                  {{util.appTranslate('promotion')}}
+                  @if(element.promote) {
+                  <ng-icon name="tablerCheck" class="icon-12  m-l-4 text-success"></ng-icon>
+                  }@else {
+                  <ng-icon name="tablerX" class="icon-12 m-l-4 text-error"></ng-icon>
+                  }
+                </p>
+              </li>
+              <li>
+                <p class="mat-body-1 f-s-12">
+                  {{util.appTranslate('dd_custom_category')}}
+                  @if(element.customCategory) {
+                  <ng-icon name="tablerCheck" class="icon-12  m-l-4 text-success"></ng-icon>
+                  }@else {
+                  <ng-icon name="tablerX" class="icon-12 m-l-4 text-error"></ng-icon>
+                  }
+                </p>
+              </li>
+              <li>
+                <p class="mat-body-1 f-s-12">
+                  {{util.appTranslate('multi_outlet')}}
+                  @if(element.multiOutlet) {
+                  <ng-icon name="tablerCheck" class="icon-12  m-l-4 text-success"></ng-icon>
+                  }@else {
+                  <ng-icon name="tablerX" class="icon-12 m-l-4 text-error"></ng-icon>
+                  }
+                </p>
+              </li>
+              <li>
+                <p class="mat-body-1 f-s-12">
+                  {{util.appTranslate('table_booking')}}
+                  @if(element.preBooking) {
+                  <ng-icon name="tablerCheck" class="icon-12  m-l-4 text-success"></ng-icon>
+                  }@else {
+                  <ng-icon name="tablerX" class="icon-12 m-l-4 text-error"></ng-icon>
+                  }
+                </p>
+              </li>
+              <li>
+                <p class="mat-body-1 f-s-12">
+                  {{util.appTranslate('qr_scan')}}
+                  @if(element.tableOrder) {
+                  <ng-icon name="tablerCheck" class="icon-12  m-l-4 text-success"></ng-icon>
+                  }@else {
+                  <ng-icon name="tablerX" class="icon-12 m-l-4 text-error"></ng-icon>
+                  }
+                </p>
+              </li>
+              <li>
+                <p class="mat-body-1 f-s-12">
+                  {{util.appTranslate('subscription_tiffin_service')}}
+                  @if(element.tiffinSubscription) {
+                  <ng-icon name="tablerCheck" class="icon-12  m-l-4 text-success"></ng-icon>
+                  }@else {
+                  <ng-icon name="tablerX" class="icon-12 m-l-4 text-error"></ng-icon>
+                  }
+                </p>
+              </li>
+              <li>
+                <p class="mat-body-1 f-s-12">
+                  {{util.appTranslate('waiter')}}
+                  @if(element.ownWaiter) {
+                  <ng-icon name="tablerCheck" class="icon-12  m-l-4 text-success"></ng-icon>
+                  }@else {
+                  <ng-icon name="tablerX" class="icon-12 m-l-4 text-error"></ng-icon>
+                  }
+                </p>
+              </li>
+              <li>
+                <p class="mat-body-1 f-s-12">
+                  {{util.appTranslate('kitchen_app')}}
+                  @if(element.ownKitchen) {
+                  <ng-icon name="tablerCheck" class="icon-12  m-l-4 text-success"></ng-icon>
+                  }@else {
+                  <ng-icon name="tablerX" class="icon-12 m-l-4 text-error"></ng-icon>
+                  }
+                </p>
+              </li>
+            </ul>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="commission">
+          <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1 p-l-0 text-center">
+            {{util.appTranslate('commission')}}
+          </th>
+          <td mat-cell *matCellDef="let element" class="f-s-14">
+            <ul>
+              <li>
+                <p class="mat-body-1 f-s-12">
+                  {{util.appTranslate('regular_order_commission')}}: <span
+                    class="mat-subtitle-1 f-s-12 f-w-600">{{element.commission}}</span>
+                </p>
+              </li>
+              <li>
+                <p class="mat-body-1 f-s-12">
+                  {{util.appTranslate('pos_order_commission')}}: <span
+                    class="mat-subtitle-1 f-s-12 f-w-600">{{element.posOrderCommission}}</span>
+                </p>
+              </li>
+              <li>
+                <p class="mat-body-1 f-s-12">
+                  {{util.appTranslate('table_order_commission')}}: <span
+                    class="mat-subtitle-1 f-s-12 f-w-600">{{element.tableOrderCommission}}</span>
+                </p>
+              </li>
+            </ul>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="rating">
+          <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1 p-l-0 text-center">
+            {{util.appTranslate('th_rating')}}
+          </th>
+          <td mat-cell *matCellDef="let element" class="p-l-0">
+            <h6 class="f-s-14 mat-subtitle-1 f-w-600">
+              <ng-icon name="tablerStar" class="icon-14 fill-warning"></ng-icon>
+              {{element.rating}}
+            </h6>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="datetime">
+          <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1 p-l-0 text-center">
+            {{util.appTranslate('th_deleted_on')}}
+          </th>
+          <td mat-cell *matCellDef="let element" class="f-s-14">
+            {{ getDate(element.createdAt) }}
+          </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="displayedColumn"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumn"></tr>
+
+        <tr *matNoDataRow>
+          <td colspan="8" class="m-b-16 m-t-16 text-center">{{util.appTranslate('table_no_data_found')}}</td>
+        </tr>
+      </table>
+      }
+
+      <mat-paginator [hidden]="!isLoaded" #paginator [pageSizeOptions]="[5,10, 20]" [pageSize]="pageSize"
+        (page)="onPageChange($event)" showFirstLastButtons>
+      </mat-paginator>
+
+    </div>
+  </mat-card-content>
+</mat-card>

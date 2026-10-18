@@ -1,0 +1,293 @@
+<mat-card class="cardWithShadow">
+  <mat-card-header>
+    <div class="d-sm-flex w-100">
+      <div>
+        <mat-card-title>{{util.appTranslate('deliveryman_deleted_accounts')}}</mat-card-title>
+      </div>
+      <div class="m-l-auto more-btn-align">
+        <mat-form-field appearance="outline" class="theme-searchbar">
+          <input matInput type="text" [(ngModel)]="searchQuery" [placeholder]="util.appTranslate('search_by_name')"
+            (keyup.enter)="onSearch()" />
+          <button mat-icon-button matSuffix (click)="onSearch()">
+            <mat-icon class="op-5">search</mat-icon>
+          </button>
+        </mat-form-field>
+        <mat-form-field class="theme-select m-l-16" appearance="outline">
+          <mat-select [value]="exportType" [(ngModel)]="exportType"
+            (selectionChange)="onExportCollection($event.value)">
+            <mat-option value="export">
+              {{util.appTranslate('export_kind')}}
+            </mat-option>
+            <mat-option value="excel">
+              {{util.appTranslate('excel_export_kind')}}
+            </mat-option>
+            <mat-option value="csv">
+              {{util.appTranslate('csv_export_kind')}}
+            </mat-option>
+            <mat-option value="raw">
+              {{util.appTranslate('raw_export_kind')}}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
+    </div>
+  </mat-card-header>
+
+  <mat-card-content>
+    <div class="table-responsive">
+      @if (!isLoaded) {
+      <table mat-table [dataSource]="util.dummyArray" class="w-100">
+        <ng-container matColumnDef="name">
+          <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1 p-l-0 text-left">
+            {{util.appTranslate('th_name')}}
+          </th>
+          <td mat-cell *matCellDef="let element" class="p-l-0">
+            <mat-progress-bar mode="indeterminate" color="light"></mat-progress-bar>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="reason">
+          <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1 p-l-0 text-left">
+            {{util.appTranslate('th_reason')}}
+          </th>
+          <td mat-cell *matCellDef="let element" class="p-l-0">
+            <mat-progress-bar mode="indeterminate" color="light"></mat-progress-bar>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="city">
+          <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1 p-l-0 text-center">
+            {{util.appTranslate('th_location')}}
+          </th>
+          <td mat-cell *matCellDef="let element" class="p-l-0">
+            <mat-progress-bar mode="indeterminate" color="light"></mat-progress-bar>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="wallet">
+          <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1 p-l-0 text-center">
+            {{util.appTranslate('th_wallet_balance')}}
+          </th>
+          <td mat-cell *matCellDef="let element" class="p-l-0">
+            <mat-progress-bar mode="indeterminate" color="light"></mat-progress-bar>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="orders">
+          <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1 p-l-0 text-center">
+            {{util.appTranslate('orders')}}
+          </th>
+          <td mat-cell *matCellDef="let element" class="p-l-0">
+            <mat-progress-bar mode="indeterminate" color="light"></mat-progress-bar>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="stats">
+          <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1 p-l-0 text-center">
+            {{util.appTranslate('th_earning_stats')}}
+          </th>
+          <td mat-cell *matCellDef="let element" class="p-l-0">
+            <mat-progress-bar mode="indeterminate" color="light"></mat-progress-bar>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="rating">
+          <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1 p-l-0 text-center">
+            {{util.appTranslate('th_average_rating')}}
+          </th>
+          <td mat-cell *matCellDef="let element" class="p-l-0">
+            <mat-progress-bar mode="indeterminate" color="light"></mat-progress-bar>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="datetime">
+          <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1 p-l-0 text-center">
+            {{util.appTranslate('th_deleted_on')}}
+          </th>
+          <td mat-cell *matCellDef="let element" class="p-l-0">
+            <mat-progress-bar mode="indeterminate" color="light"></mat-progress-bar>
+          </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="displayedColumn"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumn"></tr>
+
+      </table>
+      }
+
+      @if (isLoaded) {
+      <table mat-table [dataSource]="deliveryman" class="w-100">
+        <ng-container matColumnDef="name">
+          <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1 p-l-0 text-left">
+            {{util.appTranslate('th_name')}}
+          </th>
+          <td mat-cell *matCellDef="let element" class="p-l-0 cursor-pointer">
+            <div>
+              <h6 class="f-s-14 mat-subtitle-1 f-w-600">
+                {{ element.firstName +' '+ element.lastName}}
+              </h6>
+              <span class="mat-body-1 f-s-12">
+                {{ element.email }}
+              </span> <br>
+              <span class="mat-body-1 f-s-12">
+                {{ '+' +element.countryCode +' '+ element.mobile }}
+              </span> <br>
+              <span class="mat-body-1 f-s-12">
+                {{element.role == 'vendorDriver' ? util.appTranslate('vendor_deliveryman') :
+                util.appTranslate('system_deliveryman')}}
+                ({{ element.type == 'freelancer' ? util.appTranslate('freelancer'): util.appTranslate('salaried') }})
+              </span>
+              @if (element.role == 'vendorDriver' && element.restaurant.displayName) {
+              <br>
+              }
+              @if (element.role == 'vendorDriver' && element.restaurant.displayName) {
+              <span class="mat-body-1 f-s-12">
+                {{element && element.restaurant && element.restaurant.displayName ? element.restaurant.displayName
+                :util.appTranslate('invalid_data')}}
+              </span>
+              }
+            </div>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="reason">
+          <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1 p-l-0 text-left">
+            {{util.appTranslate('th_reason')}}
+          </th>
+          <td mat-cell *matCellDef="let element" class="f-s-14">
+            <h6 class="mat-subtitle-1 f-s-14 f-w-600">
+              {{ element && element.reasons && element.reasons.displayName ? element.reasons.displayName :
+              util.appTranslate('invalid_data') }}
+            </h6>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="city">
+          <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1 p-l-0 text-center">
+            {{util.appTranslate('th_location')}}
+          </th>
+          <td mat-cell *matCellDef="let element" class="f-s-14 cursor-pointer" (click)="onCity(element)">
+            {{ element.city.displayName }} <br>
+            @if (element && element.locality && element.locality.displayName) {
+            <span>{{ element.locality.displayName}}</span>
+            }
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="wallet">
+          <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1 p-l-0 text-center">
+            {{util.appTranslate('th_wallet_balance')}}
+          </th>
+          <td mat-cell *matCellDef="let element" class="p-l-0 text-center">
+            <h6 class="mat-body-1 f-s-12">
+              {{util.priceFormat(element.walletBalance)}}
+            </h6>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="orders">
+          <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1 p-l-0 text-center">
+            {{util.appTranslate('orders')}}
+          </th>
+          <td mat-cell *matCellDef="let element" class="f-s-14">
+            <ul>
+              <li>
+                <p class="mat-body-1 f-s-12">
+                  {{util.appTranslate('delivered')}}: <span
+                    class="mat-subtitle-1 f-s-12 f-w-600">{{element.deliveredOrders}}</span>
+                </p>
+              </li>
+              <li>
+                <p class="mat-body-1 f-s-12">
+                  {{util.appTranslate('rejected')}}: <span
+                    class="mat-subtitle-1 f-s-12 f-w-600">{{element.rejectedOrder}}</span>
+                </p>
+              </li>
+              <li>
+                <p class="mat-body-1 f-s-12">
+                  {{util.appTranslate('cancelled')}}: <span
+                    class="mat-subtitle-1 f-s-12 f-w-600">{{element.cancelledOrder}}</span>
+                </p>
+              </li>
+              <li>
+                <p class="mat-body-1 f-s-12">
+                  {{util.appTranslate('delayed')}}: <span
+                    class="mat-subtitle-1 f-s-12 f-w-600">{{element.delayedOrder}}</span>
+                </p>
+              </li>
+            </ul>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="stats">
+          <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1 p-l-0 text-center">
+            {{util.appTranslate('th_earning_stats')}}
+          </th>
+          <td mat-cell *matCellDef="let element" class="f-s-14">
+            <ul>
+              <li>
+                <p class="mat-body-1 f-s-12">
+                  {{util.appTranslate('total_earnings')}}: <span
+                    class="mat-subtitle-1 f-s-12 f-w-600">{{util.priceFormat(element.totalEarning)}}</span>
+                </p>
+              </li>
+              <li>
+                <p class="mat-body-1 f-s-12">
+                  {{util.appTranslate('tips')}} : <span
+                    class="mat-subtitle-1 f-s-12 f-w-600">{{util.priceFormat(element.tipAmount)}}</span>
+                </p>
+              </li>
+              <li>
+                <p class="mat-body-1 f-s-12">
+                  {{util.appTranslate('incentive_earnings')}} : <span
+                    class="mat-subtitle-1 f-s-12 f-w-600">{{util.priceFormat(element.incentiveAmount)}}</span>
+                </p>
+              </li>
+              <li>
+                <p class="mat-body-1 f-s-12">
+                  {{util.appTranslate('extra_shift_earnings')}} : <span
+                    class="mat-subtitle-1 f-s-12 f-w-600">{{util.priceFormat(element.extraEarningOnShiftAmount)}}</span>
+                </p>
+              </li>
+            </ul>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="rating">
+          <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1 p-l-0 text-center">
+            {{util.appTranslate('th_average_rating')}}
+          </th>
+          <td mat-cell *matCellDef="let element" class="p-l-0">
+            <span class="mat-body-1 f-s-12">
+              <ng-icon name="tablerStar" class="icon-14 fill-warning"></ng-icon>
+              {{element.rating}}
+              ({{element.totalRating}})
+            </span>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="datetime">
+          <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1 p-l-0 text-center">
+            {{util.appTranslate('th_deleted_on')}}
+          </th>
+          <td mat-cell *matCellDef="let element" class="f-s-14">
+            {{ getDate(element.createdAt) }}
+          </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="displayedColumn"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumn"></tr>
+
+        <tr *matNoDataRow>
+          <td colspan="8" class="m-b-16 m-t-16 text-center">{{util.appTranslate('table_no_data_found')}}</td>
+        </tr>
+
+      </table>
+      }
+
+      <mat-paginator [hidden]="!isLoaded" #paginator [pageSizeOptions]="[5,10, 20]" [pageSize]="pageSize"
+        (page)="onPageChange($event)" showFirstLastButtons>
+      </mat-paginator>
+    </div>
+  </mat-card-content>
+</mat-card>

@@ -1,0 +1,65 @@
+<h2 mat-dialog-title class="dialog-title">
+  <span class="title-text">{{util.appTranslate('write_thank_you_reply_and_close_the_report')}}</span>
+  <button mat-icon-button mat-dialog-close class="close-btn">
+    <mat-icon>close</mat-icon>
+  </button>
+</h2>
+<div mat-dialog-content style="max-width: 600px;max-height: max-content;" class="m-t-12 p-t-12">
+  <div class="row">
+    <div class="col-12 m-b-0 p-b-10">
+      <h6 class="mat-subtitle-1 f-s-14 f-w-600">
+        <span class="mat-body-1 f-s-12">
+          {{util.appTranslate('username_lbl')}} :
+        </span>
+        {{ userName}}
+      </h6>
+    </div>
+
+    <div class="col-12 m-b-0 p-b-10">
+      <h6 class="mat-subtitle-1 f-s-14 f-w-600">
+        <span class="mat-body-1 f-s-12">
+          {{util.appTranslate('email_lbl')}} :
+        </span>
+        {{userEmail}}
+      </h6>
+    </div>
+
+    <div class="col-12 m-b-0 p-b-10">
+      <h6 class="mat-subtitle-1 f-s-14 f-w-600">
+        <span class="mat-body-1 f-s-12">
+          {{util.appTranslate('contact_detail')}} :
+        </span>
+        +{{userCountryCode}} {{userContact}}
+      </h6>
+    </div>
+
+    <div class="col-12 m-b-0 p-b-10">
+      <h6 class="mat-subtitle-1 f-s-14 f-w-600">
+        <span class="mat-body-1 f-s-12">
+          {{util.appTranslate('description')}} :
+        </span>
+        {{ shortDescription}}
+      </h6>
+    </div>
+
+    <div class="col-12 m-b-0 p-b-10">
+      <mat-form-field appearance="outline" class="w-100" color="primary">
+        <textarea matInput type="text" [placeholder]="util.appTranslate('write_thank_you_reply')"
+          [(ngModel)]="replyText" [ngModelOptions]="{standalone: true}" row="4"> </textarea>
+      </mat-form-field>
+    </div>
+
+  </div>
+  <div mat-dialog-actions class="p-t-24 p-b-24">
+    <button mat-button mat-flat-button color="primary" type="submit" (click)="onSubmit()"
+      [disabled]="isFormSubmit == true">
+      @if (isFormSubmit == true) {
+      <mat-icon>
+        <mat-spinner diameter="15"></mat-spinner>
+      </mat-icon>
+      }
+      {{util.appTranslate('send_and_close')}}
+    </button>
+    <button mat-button mat-dialog-close class="m-l-8 bg-secondary text-white">{{util.appTranslate('cancel_btn')}}</button>
+  </div>
+</div>

@@ -1,0 +1,19 @@
+<h2 mat-dialog-title>{{util.appTranslate('analytics')}}</h2>
+<mat-dialog-content>
+  @if (!isLoaded) {
+  <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+  } @else if (stats) {
+  <table class="w-100">
+    <tr><td>{{util.appTranslate('th_status')}}</td><td><strong>{{stats.status}}</strong></td></tr>
+    <tr><td>{{util.appTranslate('th_views')}}</td><td><strong>{{stats.views}}</strong></td></tr>
+    <tr><td>{{util.appTranslate('completion_rate')}}</td><td><strong>{{stats.completionRate}}%</strong></td></tr>
+    <tr><td>{{util.appTranslate('th_likes')}}</td><td><strong>{{stats.likes}}</strong></td></tr>
+    <tr><td>{{util.appTranslate('th_saves')}}</td><td><strong>{{stats.saves}}</strong></td></tr>
+    <tr><td>{{util.appTranslate('th_shares')}}</td><td><strong>{{stats.shares}}</strong></td></tr>
+    <tr><td>{{util.appTranslate('th_comments')}}</td><td><strong>{{stats.comments}}</strong></td></tr>
+  </table>
+  }
+</mat-dialog-content>
+<mat-dialog-actions align="end">
+  <button mat-button mat-dialog-close>{{util.appTranslate('close')}}</button>
+</mat-dialog-actions>

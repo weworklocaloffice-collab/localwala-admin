@@ -1,0 +1,153 @@
+<mat-card class="cardWithShadow">
+  <mat-card-header>
+    <mat-card-title>{{isEdit ? util.appTranslate('edit_reel') : util.appTranslate('create_reel')}}</mat-card-title>
+    @if (isEdit) {
+    <mat-chip class="m-l-16">{{status}}</mat-chip>
+    }
+  </mat-card-header>
+
+  <mat-card-content>
+    <form [formGroup]="form">
+      <h3>{{util.appTranslate('video')}}</h3>
+      <input type="file" accept="video/mp4" (change)="onFileSelected($event)" />
+      <p class="op-5">{{util.appTranslate('video_hint')}}</p>
+      @if (selectedFile) {
+      <p>{{selectedFile.name}} · {{selectedDuration}}s</p>
+      }
+      @if (uploadProgress >= 0 && uploadProgress < 100) {
+      <p>{{util.appTranslate('uploading')}} {{uploadProgress}}%</p>
+      <mat-progress-bar mode="determinate" [value]="uploadProgress"></mat-progress-bar>
+      }
+      @if (status === 'PROCESSING' || polling) {
+      <p>{{util.appTranslate('processing')}} {{processingProgress}}% ({{processingStage}})</p>
+      <mat-progress-bar mode="determinate" [value]="processingProgress"></mat-progress-bar>
+      }
+      @if (processingError) {
+      <p class="text-danger">{{processingError}}</p>
+      }
+      @if (status === 'READY') {
+      <p class="text-success">✓ {{util.appTranslate('ready')}}</p>
+      }
+      <div class="m-t-16">
+        <button mat-flat-button color="primary" type="button" (click)="onUploadAndProcess()" [disabled]="!selectedFile">
+          {{util.appTranslate('upload_process')}}
+        </button>
+      </div>
+
+      <h3 class="m-t-24">{{util.appTranslate('thumbnail')}}</h3>
+      <mat-radio-group [value]="'auto'" class="m-b-16">
+        <mat-radio-button value="auto" checked>{{util.appTranslate('auto_generated')}}</mat-radio-button>
+      </mat-radio-group>
+      <mat-form-field appearance="outline" class="w-100">
+        <mat-label>{{util.appTranslate('upload_custom')}}</mat-label>
+        <input matInput formControlName="thumbnailUrl" placeholder="https://…" />
+      </mat-form-field>
+
+      <h3 class="m-t-24">{{util.appTranslate('caption')}}</h3>
+      <mat-form-field appearance="outline" class="w-100">
+        <mat-label>{{util.appTranslate('caption')}}</mat-label>
+        <textarea matInput formControlName="caption" rows="2"></textarea>
+      </mat-form-field>
+      <mat-form-field appearance="outline" class="w-100">
+        <mat-label>Hashtags (comma separated)</mat-label>
+        <input matInput formControlName="hashtagsText" />
+      </mat-form-field>
+
+      <h3 class="m-t-24">{{util.appTranslate('vertical')}}</h3>
+      <mat-form-field appearance="outline" class="w-100">
+        <mat-label>{{util.appTranslate('vertical')}}</mat-label>
+        <mat-select formControlName="vertical" (selectionChange)="onVerticalSelect()">
+          @for (vertical of verticals; track vertical) {
+          <mat-option [value]="vertical">{{vertical}}</mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+
+      <h3 class="m-t-24">{{util.appTranslate('target_type')}}</h3>
+      <mat-form-field appearance="outline" class="w-100">
+        <mat-label>{{util.appTranslate('target_type')}}</mat-label>
+        <mat-select formControlName="targetType" (selectionChange)="onTargetTypeChange()">
+          @for (target of targetTypes; track target) {
+          <mat-option [value]="target">{{target}}</mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+      @if (isPickerTarget) {
+      <mat-form-field appearance="outline" class="w-100">
+        <mat-label>{{util.appTranslate('target_id')}}</mat-label>
+        <input type="text" matInput [formControl]="targetCtrl" [matAutocomplete]="autoTarget"
+          [placeholder]="targetPlaceholder" />
+        <mat-autocomplete autoActiveFirstOption #autoTarget="matAutocomplete" [displayWith]="displayTargetName"
+          (optionSelected)="onTargetSelect($event)">
+          @for (option of targets | async; track option.id) {
+          <mat-option [value]="option">{{nameOf(option)}}</mat-option>
+          }
+          @empty {
+          <mat-option [value]="null" [disabled]="true">{{targetsLoading ? (util.appTranslate('loading') || 'Loading...') : (targetsError || util.appTranslate('no_results_found') || 'No results')}}</mat-option>
+          }
+        </mat-autocomplete>
+      </mat-form-field>
+      @if (targetsError) {
+      <p class="text-danger m-b-8">
+        {{targetsError}}
+        <button mat-stroked-button color="primary" type="button" (click)="retryLoadTargets()">
+          {{util.appTranslate('retry') || 'Retry'}}
+        </button>
+      </p>
+      }
+      } @else {
+      <mat-form-field appearance="outline" class="w-100">
+        <mat-label>{{util.appTranslate('target_id')}}</mat-label>
+        <input matInput formControlName="refId" placeholder="ObjectId" />
+      </mat-form-field>
+      }
+
+      <h3 class="m-t-24">{{util.appTranslate('cta')}}</h3>
+      <p class="op-5">{{util.appTranslate('cta_suggested')}}: {{suggestedCta || '-'}}</p>
+      <mat-form-field appearance="outline" class="w-100">
+        <mat-label>{{util.appTranslate('cta_override')}}</mat-label>
+        <input matInput formControlName="ctaLabel" />
+      </mat-form-field>
+
+      <h3 class="m-t-24">{{util.appTranslate('location')}}</h3>
+      <div class="d-sm-flex" style="gap: 16px;">
+        <mat-form-field appearance="outline" class="w-100">
+          <mat-label>{{util.appTranslate('city_id')}}</mat-label>
+          <input type="text" matInput [formControl]="cityCtrl" [matAutocomplete]="autoCity" [placeholder]="util.appTranslate('th_choose_city')" />
+          <mat-autocomplete autoActiveFirstOption #autoCity="matAutocomplete" [displayWith]="displayCityName" (optionSelected)="onCitySelect($event)">
+            @for (city of cities | async; track cityIdOf(city)) {
+            <mat-option [value]="city">{{cityNameOf(city)}}</mat-option>
+            }
+          </mat-autocomplete>
+        </mat-form-field>
+        <mat-form-field appearance="outline" class="w-100">
+          <mat-label>{{util.appTranslate('locality_id')}}</mat-label>
+          <input type="text" matInput [formControl]="localityCtrl" [matAutocomplete]="autoLocality" [placeholder]="util.appTranslate('th_choose_locality')" />
+          <mat-autocomplete autoActiveFirstOption #autoLocality="matAutocomplete" [displayWith]="displayLocalityName" (optionSelected)="onLocalitySelect($event)">
+            @for (locality of localities | async; track locality.id || locality._id) {
+            <mat-option [value]="locality">{{locality.name}}</mat-option>
+            }
+          </mat-autocomplete>
+        </mat-form-field>
+      </div>
+
+      <h3 class="m-t-24">{{util.appTranslate('publish')}}</h3>
+      <mat-radio-group formControlName="publishMode">
+        <mat-radio-button value="now">{{util.appTranslate('publish_now')}}</mat-radio-button>
+        <mat-radio-button value="scheduled" class="m-l-16">{{util.appTranslate('schedule')}}</mat-radio-button>
+      </mat-radio-group>
+      @if (form.value.publishMode === 'scheduled') {
+      <mat-form-field appearance="outline" class="w-100 m-t-16">
+        <mat-label>{{util.appTranslate('publish_at')}}</mat-label>
+        <input matInput type="datetime-local" formControlName="publishAt" />
+      </mat-form-field>
+      }
+
+      <div class="m-t-24 d-sm-flex" style="gap: 12px;">
+        <button mat-stroked-button type="button" (click)="onSaveDraft()" [disabled]="saving">{{util.appTranslate('save_draft')}}</button>
+        <button mat-stroked-button type="button" (click)="onPreview()" [disabled]="!isEdit">{{util.appTranslate('preview')}}</button>
+        <button mat-flat-button color="primary" type="button" (click)="onPublish()" [disabled]="!isEdit">{{util.appTranslate('publish')}}</button>
+      </div>
+    </form>
+  </mat-card-content>
+</mat-card>

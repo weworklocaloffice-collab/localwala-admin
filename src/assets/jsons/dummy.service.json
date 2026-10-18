@@ -1,0 +1,142 @@
+[
+  {
+    "title": "Multi-Vendor Marketplace",
+    "text": "Operate a fully scalable marketplace where multiple restaurants can register, manage menus, and fulfill orders independently. The admin retains full oversight of vendor activities, commissions, and performance metrics, ensuring complete business control with flexibility for vendors."
+  },
+  {
+    "title": "POS System",
+    "text": "Streamline in-house operations with an integrated Point of Sale system that supports dine-in, takeaway, and counter orders. Designed for speed and simplicity, it syncs directly with the restaurant’s online dashboard, eliminating order duplication and simplifying day-to-day billing."
+  },
+  {
+    "title": "Promotion Management",
+    "text": "Boost restaurant visibility and customer engagement through customizable campaigns, seasonal offers, and targeted discounts. Admins and restaurants can create and manage promotions easily, increasing repeat orders and brand loyalty."
+  },
+  {
+    "title": "Restaurant’s Own Deliverymen",
+    "text": "Empower restaurants to manage their own fleet of delivery drivers while maintaining platform-wide coordination. Restaurants can assign orders, track live delivery progress, and optimize delivery times — reducing dependency on third-party drivers."
+  },
+  {
+    "title": "Custom Categories",
+    "text": "Organize the entire marketplace with flexible and dynamic category creation. Whether it’s cuisine-based, dietary preferences, or restaurant types, Localwala allows complete customization to fit your business branding and customer browsing experience."
+  },
+  {
+    "title": "Multi-Outlet / Branches",
+    "text": "Perfect for restaurant chains and franchises — create parent restaurants with multiple child outlets. Each outlet can manage its own menu, timing, and delivery range while maintaining centralized reporting under one brand umbrella."
+  },
+  {
+    "title": "Advanced Table Booking",
+    "text": "Enable customers to book their dining experience in advance with smart table scheduling. Restaurants can configure available slots, special requests, and timing preferences — reducing wait times and enhancing customer satisfaction."
+  },
+  {
+    "title": "Table Scan / QR Order",
+    "text": "Revolutionize the dine-in experience with QR-based ordering. Customers simply scan the table QR code, browse the menu digitally, and place their order directly from their smartphone — faster, contactless, and paper-free."
+  },
+  {
+    "title": "Tiffin Subscription Packages",
+    "text": "Offer flexible daily or weekly meal plans with automated order scheduling and off-day settings. Ideal for corporate lunch deliveries or regular customers, this feature ensures consistent revenue flow and customer retention."
+  },
+  {
+    "title": "Waiter Services",
+    "text": "Digitize the waiter’s workflow by allowing them to take orders directly via mobile or tablet devices. Orders go straight to the kitchen app, minimizing human error, improving service speed, and enhancing the overall dining experience."
+  },
+  {
+    "title": "Kitchen App",
+    "text": "Keep chefs organized and efficient with a dedicated kitchen management interface. The kitchen app displays live orders, preparation status, and priority updates — ensuring real-time coordination with waiters and delivery staff."
+  },
+  {
+    "title": "Multiple Payment Gateways",
+    "text": "Give your customers the convenience of choice with multiple secure payment options like Stripe, PayPal, Razorpay, SSLCommerz, Flutterwave, and more. All transactions are encrypted and tracked with transparent reporting for admin and vendors."
+  },
+  {
+    "title": "Multi-Language Support",
+    "text": "Serve users from any region with multilingual and RTL-ready support. Every label, notification, and menu item can be translated dynamically — providing a localized experience for global customers."
+  },
+  {
+    "title": "Wallet, Loyalty Points & Referral",
+    "text": "Reward customers for every interaction. Offer wallet balance refunds, loyalty points for repeat orders, and referral bonuses that encourage users to invite friends and grow your customer base organically."
+  },
+  {
+    "title": "Coupon & Campaign Management",
+    "text": "Run platform-wide marketing campaigns or restaurant-specific coupons. Manage minimum spend limits, expiry dates, and usage restrictions to create effective, data-driven promotions that convert."
+  },
+  {
+    "title": "Report Management",
+    "text": "Access detailed insights into orders, revenue, customer growth, and delivery performance. The comprehensive reporting system helps admins and restaurants make smarter business decisions through visual dashboards and trend analysis."
+  },
+  {
+    "title": "Auth Role Management",
+    "text": "Create and manage custom roles such as Admin, Manager, Waiter, Delivery Partner, and Support Agent. Each role comes with controlled access permissions, ensuring security and proper workflow segregation."
+  },
+  {
+    "title": "Push Notifications",
+    "text": "Keep customers, restaurants, and delivery partners updated in real time. Send order status alerts, promotional offers, and important announcements instantly through mobile and web push notifications."
+  },
+  {
+    "title": "Chat Management",
+    "text": "Enable real-time communication between customers, restaurants, and delivery partners for instant support or order updates. The chat system ensures smooth communication and helps resolve issues quickly."
+  },
+  {
+    "title": "Support Management",
+    "text": "A dedicated module for handling support tickets and live assistance. Customers and partners can raise complaints or requests, and the admin team can manage and resolve them efficiently."
+  },
+  {
+    "title": "Fully Dynamic Configuration",
+    "text": "No coding required — customize everything from homepage banners to app colors, business policies, commission rates, and payment settings directly from the admin dashboard."
+  },
+  {
+    "title": "Light / Dark Mode",
+    "text": "Modern and elegant user interface that supports both light and dark themes. Enhance usability and comfort for customers and restaurant operators at any time of day."
+  },
+  {
+    "title": "Disbursement & Payment Reports",
+    "text": "Automate payment settlements with detailed disbursement tracking for restaurants and delivery partners. Generate transparent statements and reports to ensure accuracy and trust."
+  },
+  {
+    "title": "Customer Complaint System",
+    "text": "Provide users an easy way to raise issues or dissatisfaction about orders, delivery, or quality. Each complaint is logged, tracked, and resolved with clear communication between the admin and customer."
+  },
+  {
+    "title": "Refund Management",
+    "text": "Simplify refund requests for canceled or failed orders. The admin can manage approval, payment adjustment, and transaction tracking — maintaining fairness and transparency."
+  },
+  {
+    "title": "Dynamic Email Templates",
+    "text": "Design and manage fully customizable email templates for notifications, promotions, and verifications. Personalize content and branding across all outgoing emails with ease."
+  },
+  {
+    "title": "Multiple SMS Gateways",
+    "text": "Send OTPs, updates, and promotional SMS using your preferred local or international SMS provider. Flexible configuration ensures compatibility with multiple gateway services."
+  },
+  {
+    "title": "Withdrawal Requests",
+    "text": "Allow restaurants and drivers to request withdrawals directly from their dashboard. The admin can review, approve, and process payouts efficiently with full transaction history."
+  },
+  {
+    "title": "Real-Time Order Tracking",
+    "text": "Give customers peace of mind with real-time order progress tracking — from order placement to delivery arrival — using live map integration."
+  },
+  {
+    "title": "AI-Driven Suggestions",
+    "text": "Leverage machine learning to recommend restaurants, cuisines, and offers based on user history and preferences — improving personalization and increasing order frequency."
+  },
+  {
+    "title": "Advanced Analytics Dashboard",
+    "text": "Visualize performance metrics through interactive graphs and charts. Track top restaurants, peak hours, repeat customers, and delivery efficiency — all in one unified dashboard."
+  },
+  {
+    "title": "Delivery Route Optimization",
+    "text": "Smart route algorithms help drivers reach destinations faster, saving time and fuel while improving on-time delivery performance and customer satisfaction."
+  },
+  {
+    "title": "User Ratings & Feedback",
+    "text": "Collect and display customer feedback on food, delivery, and service. This builds trust, improves restaurant accountability, and enhances overall platform reputation."
+  },
+  {
+    "title": "Data Backup & Security",
+    "text": "Protect sensitive data with automated backups, encrypted storage, and secure authentication layers. Localwala ensures data safety and compliance with international standards."
+  },
+  {
+    "title": "Responsive Design",
+    "text": "Optimized for all screen sizes — from desktops to mobile devices. The interface adapts beautifully, ensuring smooth user experience for customers, vendors, and admins alike."
+  }
+]

@@ -1,0 +1,38 @@
+<mat-card class="cardWithShadow theme-card">
+  <mat-card-header>
+    <mat-card-title class="m-b-0">
+      {{util.appTranslate('ongoing_table_orders')}}
+    </mat-card-title>
+  </mat-card-header>
+
+  <mat-card-content class="b-t-0">
+    @if (!isLoaded) {
+    <div class="row m-t-10 p-t-10">
+      @for (item of util.dummyData; track $index) {
+      <div class="col-lg-2 col-sm-6 p-b-16">
+        <mat-progress-bar mode="indeterminate" color="light"></mat-progress-bar>
+      </div>
+      }
+    </div>
+    }
+
+    @if (isLoaded) {
+    <div class="row m-t-10 p-t-10">
+      @for (item of tablesOrders; track $index) {
+      <div class="col-lg-2 col-sm-6 p-b-16 m-b-8">
+        @if (item.occupied) {
+        <button mat-flat-button class="w-100 bg-primary text-white" (click)="onOrderDetail(item)">
+          <span class="f-s-10">{{item.tableNumber}}</span>
+        </button>
+        }@else {
+        <button mat-stroked-button class="w-100 b-1 border-secondary text-secondary" (click)="onOrderDetail(item)">
+          <span class="f-s-10">{{item.tableNumber}}</span>
+        </button>
+        }
+      </div>
+      }
+    </div>
+    }
+  </mat-card-content>
+
+</mat-card>

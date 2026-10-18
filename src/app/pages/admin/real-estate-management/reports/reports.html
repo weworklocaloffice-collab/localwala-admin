@@ -1,0 +1,23 @@
+<mat-card class="cardWithShadow m-b-16">
+  <mat-card-header class="m-b-16">
+    <mat-card-title>{{ util.appTranslate('realEstate_reports') }}</mat-card-title>
+    <mat-card-subtitle>{{ util.appTranslate('realEstate_reports_subtitle') }}</mat-card-subtitle>
+  </mat-card-header>
+
+  <mat-card-content>
+    @if (isLoaded) {
+      <div class="row">
+        @for (row of rows; track row.label) {
+          <div class="col-6 col-md-3 m-b-16">
+            <mat-card class="cardWithShadow p-16 text-center">
+              <div class="f-s-24 f-w-700">{{ row.value }}</div>
+              <div class="f-s-12 text-muted">{{ util.appTranslate(row.label) }}</div>
+            </mat-card>
+          </div>
+        }
+      </div>
+    } @else {
+      <div class="p-24 text-center text-muted">{{ util.appTranslate('ts_loading') }}</div>
+    }
+  </mat-card-content>
+</mat-card>

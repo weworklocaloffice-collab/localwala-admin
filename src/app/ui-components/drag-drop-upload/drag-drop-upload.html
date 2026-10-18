@@ -1,0 +1,77 @@
+<div class="drag-drop-upload">
+  <!-- Kept outside the conditional blocks so the template reference always resolves. -->
+  <input
+    #fileInput
+    type="file"
+    class="drag-drop-upload__input"
+    [accept]="acceptAttribute"
+    [disabled]="disabled || isUploading"
+    (change)="onFileChoose($event)"
+  />
+
+  <div
+    class="drag-drop-upload__zone"
+    [class.drag-drop-upload__zone--active]="isDragging"
+    [class.drag-drop-upload__zone--disabled]="disabled || isUploading"
+    (dragover)="onDragOver($event)"
+    (dragleave)="onDragLeave($event)"
+    (drop)="onDrop($event)"
+  >
+    @if (isUploading) {
+      <mat-spinner diameter="32"></mat-spinner>
+      <p class="drag-drop-upload__label">{{ util.appTranslate('uploading') }}</p>
+    } @else {
+      <mat-icon class="drag-drop-upload__icon">{{ isLottie ? 'animation' : 'add_photo_alternate_outlined' }}</mat-icon>
+      <p class="drag-drop-upload__label">{{ util.appTranslate(label) }}</p>
+      <button mat-stroked-button type="button" [disabled]="disabled || isUploading" (click)="onChooseClick(fileInput)">
+        {{ util.appTranslate('choose_file') }}
+      </button>
+      <p class="drag-drop-upload__hint text-secondary f-s-12">{{ acceptedLabel }} {{ maxLabel }}</p>
+    }
+  </div>
+
+  @if (errorMessage) {
+    <p class="drag-drop-upload__error text-error f-s-12">{{ errorMessage }}</p>
+  }
+
+  @if (value) {
+    <div class="drag-drop-upload__preview">
+      <!-- A Lottie document is JSON, so it is represented as a file card rather than an
+           <img> that would only ever render a broken icon. The animation itself is
+           previewed in the Live Preview tab. -->
+      @if (isLottie) {
+        <div class="drag-drop-upload__file">
+          <mat-icon>movie_creation_outlined</mat-icon>
+          <span class="drag-drop-upload__file-name">{{ fileInfo?.name || util.appTranslate('lottie_animation') }}</span>
+          @if (fileInfo?.size) {
+            <span class="text-secondary f-s-12">{{ fileInfo?.size }}</span>
+          }
+        </div>
+      } @else if (previewUrl) {
+        <img [src]="previewUrl" alt="banner preview" class="drag-drop-upload__image" />
+      }
+
+      @if (fileInfo && !isLottie) {
+        <div class="drag-drop-upload__meta f-s-12">
+          <span>{{ fileInfo.name }}</span>
+          <span>{{ fileInfo.size }}</span>
+          @if (fileInfo.width) {
+            <span>{{ fileInfo.width }} x {{ fileInfo.height }}</span>
+            <span [class.text-success]="fileInfo.ratioValid" [class.text-error]="!fileInfo.ratioValid">
+              {{ util.appTranslate(fileInfo.ratioValid ? 'ratio_ok' : 'ratio_recommended_16_9') }}
+            </span>
+          }
+        </div>
+      }
+
+      <div class="drag-drop-upload__actions">
+        <button mat-stroked-button type="button" [disabled]="disabled || isUploading" (click)="onChooseClick(fileInput)">
+          {{ util.appTranslate('change') }}
+        </button>
+        <button mat-stroked-button color="warn" type="button" [disabled]="disabled" (click)="onRemove()">
+          {{ util.appTranslate('remove') }}
+        </button>
+      </div>
+    </div>
+  }
+</div>

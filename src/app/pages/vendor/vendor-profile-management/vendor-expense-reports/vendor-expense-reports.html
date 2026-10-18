@@ -1,0 +1,544 @@
+<div class="row">
+  <div class="col-lg-4">
+    <div class="row">
+
+      <div class="col-lg-12 col-sm-6">
+        <mat-card class="cardWithShadow theme-card">
+          <mat-card-header>
+            <mat-card-title class="m-b-0">{{util.appTranslate('chart')}}</mat-card-title>
+          </mat-card-header>
+
+          <mat-card-content class="b-t-0">
+            <div class="d-flex d-md-block align-items-center">
+              <h3 class="mat-subtitle-2 f-s-16">{{util.appTranslate('total_expenses')}}</h3>
+              <h3 class="f-s-24 f-w-500 m-l-auto">{{util.priceFormat(totalExpenseDataAmount)}}</h3>
+            </div>
+
+            <div id="chart" class="d-flex flex-column m-t-30 position-relative">
+              @if (isInitialLoaded) {
+              <apx-chart #expenseChart [series]="expenseChartOptions.series" [chart]="expenseChartOptions.chart"
+                [legend]="expenseChartOptions.legend" [labels]="expenseChartOptions.labels"
+                [dataLabels]="expenseChartOptions.dataLabels" [colors]="expenseChartOptions.colors"
+                [stroke]="expenseChartOptions.stroke" [tooltip]="expenseChartOptions.tooltip"
+                [plotOptions]="expenseChartOptions.plotOptions">
+              </apx-chart>
+              }
+            </div>
+          </mat-card-content>
+        </mat-card>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="col-lg-8">
+    <mat-card class="cardWithShadow overflow-hidden">
+      <div class="row">
+        <div class="col-lg-3 col-sm-6 col-6 b-r-1 b-b-1">
+          <div class="p-30">
+            <button mat-mini-fab class="bg-secondary text-white">
+              <ng-icon name="tablerBriefcase" class="icon-20"></ng-icon>
+            </button>
+            <h4 class="mat-title m-b-0 m-t-30 f-s-24 f-w-500 p-b-4">
+              {{util.priceFormatString(totalExpenseDataAmount)}}
+            </h4>
+            <span class="text-success mat-body-1">({{totalExpenseDataCount}}) {{util.appTranslate('items')}}</span> <br>
+            <small class="mat-body-1 text-muted"> {{util.appTranslate('total_expenses')}} </small>
+          </div>
+        </div>
+        <div class="col-lg-3 col-sm-6 col-6 b-r-1 b-b-1">
+          <div class="p-30">
+            <button mat-mini-fab class="bg-light-warning text-warning">
+              <ng-icon name="tablerToolsKitchen3" class="icon-20"></ng-icon>
+            </button>
+            <h4 class="mat-title m-b-0 m-t-30 f-s-24 f-w-500 p-b-4">
+              {{util.priceFormatString(orderProductDiscountExpenseDataAmount)}}
+            </h4>
+            <span class="text-success mat-body-1">({{orderProductDiscountExpenseDataCount}})
+              {{util.appTranslate('items')}}</span> <br>
+            <small class="mat-body-1 text-muted"> {{util.appTranslate('order_product_discount')}} </small>
+          </div>
+        </div>
+        <div class="col-lg-3 col-sm-6 col-6 b-r-1 b-b-1">
+          <div class="p-30">
+            <button mat-mini-fab class="bg-light-error text-error">
+              <ng-icon name="tablerGauge" class="icon-20"></ng-icon>
+            </button>
+            <h4 class="mat-title m-b-0 m-t-30 f-s-24 f-w-500 p-b-4">
+              {{util.priceFormatString(posOrderProductDiscountExpenseDataAmount)}}
+            </h4>
+            <span class="text-success mat-body-1">({{posOrderProductDiscountExpenseDataCount}})
+              {{util.appTranslate('items')}}</span> <br>
+            <small class="mat-body-1 text-muted"> {{util.appTranslate('pos_order_product_discount')}} </small>
+          </div>
+        </div>
+        <div class="col-lg-3 col-sm-6 col-6 b-r-1 b-b-1">
+          <div class="p-30">
+            <button mat-mini-fab class="bg-light-success text-success">
+              <ng-icon name="tablerChalkboard" class="icon-20"></ng-icon>
+            </button>
+            <h4 class="mat-title m-b-0 m-t-30 f-s-24 f-w-500 p-b-4">
+              {{util.priceFormatString(tableOrderProductDiscountExpenseDataAmount)}}
+            </h4>
+            <span class="text-success mat-body-1">({{tableOrderProductDiscountExpenseDataCount}})
+              {{util.appTranslate('items')}}</span> <br>
+            <small class="mat-body-1 text-muted"> {{util.appTranslate('table_order_product_discount')}} </small>
+          </div>
+        </div>
+
+        <div class="col-lg-3 col-sm-6 col-6 b-r-1 b-b-1">
+          <div class="p-30">
+            <button mat-mini-fab class="bg-secondary text-white">
+              <ng-icon name="tablerDiscount" class="icon-20"></ng-icon>
+            </button>
+            <h4 class="mat-title m-b-0 m-t-30 f-s-24 f-w-500 p-b-4">
+              {{util.priceFormatString(posOrderExtraDiscountExpenseDataAmount)}}
+            </h4>
+            <span class="text-success mat-body-1">({{posOrderExtraDiscountExpenseDataCount}})
+              {{util.appTranslate('items')}}</span> <br>
+            <small class="mat-body-1 text-muted"> {{util.appTranslate('pos_order_extra_discount')}} </small>
+          </div>
+        </div>
+        <div class="col-lg-3 col-sm-6 col-6 b-r-1 b-b-1">
+          <div class="p-30">
+            <button mat-mini-fab class="bg-light-warning text-warning">
+              <ng-icon name="tablerTableDown" class="icon-20"></ng-icon>
+            </button>
+            <h4 class="mat-title m-b-0 m-t-30 f-s-24 f-w-500 p-b-4">
+              {{util.priceFormatString(tableOrderExtraDiscountExpenseDataAmount)}}
+            </h4>
+            <span class="text-success mat-body-1">({{tableOrderExtraDiscountExpenseDataCount}})
+              {{util.appTranslate('items')}}</span> <br>
+            <small class="mat-body-1 text-muted"> {{util.appTranslate('table_order_extra_discount')}} </small>
+          </div>
+        </div>
+        <div class="col-lg-3 col-sm-6 col-6 b-r-1 b-b-1">
+          <div class="p-30">
+            <button mat-mini-fab class="bg-light-error text-error">
+              <ng-icon name="tablerGiftCard" class="icon-20"></ng-icon>
+            </button>
+            <h4 class="mat-title m-b-0 m-t-30 f-s-24 f-w-500 p-b-4">
+              {{util.priceFormatString(couponExpenseDataAmount)}}
+            </h4>
+            <span class="text-success mat-body-1">({{couponExpenseDataCount}}) {{util.appTranslate('items')}}</span>
+            <br>
+            <small class="mat-body-1 text-muted"> {{util.appTranslate('coupon_expenses')}} </small>
+          </div>
+        </div>
+        <div class="col-lg-3 col-sm-6 col-6 b-r-1 b-b-1">
+          <div class="p-30">
+            <button mat-mini-fab class="bg-light-success text-success">
+              <ng-icon name="tablerTicket" class="icon-20"></ng-icon>
+            </button>
+            <h4 class="mat-title m-b-0 m-t-30 f-s-24 f-w-500 p-b-4">
+              {{util.priceFormatString(diningCouponExpenseDataAmount)}}
+            </h4>
+            <span class="text-success mat-body-1">({{diningCouponExpenseDataCount}})
+              {{util.appTranslate('items')}}</span> <br>
+            <small class="mat-body-1 text-muted"> {{util.appTranslate('dining_coupon_expenses')}} </small>
+          </div>
+        </div>
+
+        <div class="col-lg-3 col-sm-6 col-6 b-r-1">
+          <div class="p-30">
+            <button mat-mini-fab class="bg-secondary text-white">
+              <ng-icon name="tablerReservedLine" class="icon-20"></ng-icon>
+            </button>
+            <h4 class="mat-title m-b-0 m-t-30 f-s-24 f-w-500 p-b-4">
+              {{util.priceFormatString(diningBookingDiscountExpenseDataAmount)}}
+            </h4>
+            <span class="text-success mat-body-1">({{diningBookingDiscountExpenseDataCount}})
+              {{util.appTranslate('items')}}</span> <br>
+            <small class="mat-body-1 text-muted"> {{util.appTranslate('dining_booking_discount')}} </small>
+          </div>
+        </div>
+
+        <div class="col-lg-3 col-sm-6 col-6 b-r-1">
+          <div class="p-30">
+            <button mat-mini-fab class="bg-light-warning text-warning">
+              <ng-icon name="tablerReceiptRefund" class="icon-20"></ng-icon>
+            </button>
+            <h4 class="mat-title m-b-0 m-t-30 f-s-24 f-w-500 p-b-4">
+              {{util.priceFormatString(refundOrderExpenseDataAmount)}}
+            </h4>
+            <span class="text-success mat-body-1">({{refundOrderExpenseDataCount}})
+              {{util.appTranslate('items')}}</span> <br>
+            <small class="mat-body-1 text-muted"> {{util.appTranslate('order_refund_expenses')}} </small>
+          </div>
+        </div>
+
+        <div class="col-lg-3 col-sm-6 col-6 b-r-1">
+          <div class="p-30">
+            <button mat-mini-fab class="bg-light-error text-error">
+              <ng-icon name="tablerCommand" class="icon-20"></ng-icon>
+            </button>
+            <h4 class="mat-title m-b-0 m-t-30 f-s-24 f-w-500 p-b-4">
+              {{util.priceFormatString(otherExpenseDataAmount)}}
+            </h4>
+            <span class="text-success mat-body-1">({{otherExpenseDataCount}}) {{util.appTranslate('items')}}</span> <br>
+            <small class="mat-body-1 text-muted"> {{util.appTranslate('other_expenses')}} </small>
+          </div>
+        </div>
+      </div>
+    </mat-card>
+  </div>
+</div>
+
+
+<mat-card class="cardWithShadow">
+  <mat-card-header>
+    <div class="d-sm-flex w-100">
+      <div>
+        <mat-card-title>{{util.appTranslate('your_expenses')}}</mat-card-title>
+      </div>
+      <div class="m-l-auto">
+        <mat-form-field class="theme-select m-r-16" appearance="outline">
+          <mat-select [value]="expenseType" [(ngModel)]="expenseType" (selectionChange)="onTypeChange($event.value)">
+            <mat-option value="all">{{util.appTranslate('dd_all')}}</mat-option>
+            <mat-option value="order_product_discout">{{util.appTranslate('order_product_discount')}}</mat-option>
+            <mat-option value="pos_order_product_discount">{{util.appTranslate('pos_product_discount')}}</mat-option>
+            <mat-option
+              value="table_order_product_discount">{{util.appTranslate('table_product_discount')}}</mat-option>
+            <mat-option value="pos_order_extra_discount">{{util.appTranslate('pos_extra_discount')}}</mat-option>
+            <mat-option value="table_order_extra_discount">{{util.appTranslate('table_extra_discount')}}</mat-option>
+            <mat-option value="coupon">{{util.appTranslate('coupon')}}</mat-option>
+            <mat-option value="dining_coupon">{{util.appTranslate('dining_coupons')}}</mat-option>
+            <mat-option value="dining_booking_discount">{{util.appTranslate('dining_booking_discount')}}</mat-option>
+            <mat-option value="refund_order">{{util.appTranslate('order_refund')}}</mat-option>
+            <mat-option value="other">{{util.appTranslate('others')}}</mat-option>
+          </mat-select>
+        </mat-form-field>
+
+        <mat-form-field class="theme-select m-r-16" appearance="outline">
+          <mat-select [value]="exportType" [(ngModel)]="exportType"
+            (selectionChange)="onExportCollection($event.value)">
+            <mat-option value="export">
+              {{util.appTranslate('export_kind')}}
+            </mat-option>
+            <mat-option value="excel">
+              {{util.appTranslate('excel_export_kind')}}
+            </mat-option>
+            <mat-option value="csv">
+              {{util.appTranslate('csv_export_kind')}}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+        <a mat-button (click)="addExpsense()" class="m-r-16" mat-flat-button
+          color="primary">{{util.appTranslate('add_expense')}}</a>
+      </div>
+    </div>
+  </mat-card-header>
+
+  <mat-card-content>
+    <div class="table-responsive">
+      @if (!isLoaded) {
+      <table mat-table [dataSource]="util.dummyArray" class="w-100">
+        <ng-container matColumnDef="id">
+          <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1 p-l-0 text-center">
+            {{util.appTranslate('th_id')}}
+          </th>
+          <td mat-cell *matCellDef="let element" class="p-l-0">
+            <mat-progress-bar mode="indeterminate" color="light"></mat-progress-bar>
+          </td>
+        </ng-container>
+        <ng-container matColumnDef="customer">
+          <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1 p-l-0 text-center">
+            {{util.appTranslate('th_customer')}}
+          </th>
+          <td mat-cell *matCellDef="let element" class="p-l-0">
+            <mat-progress-bar mode="indeterminate" color="light"></mat-progress-bar>
+          </td>
+        </ng-container>
+        <ng-container matColumnDef="type">
+          <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1 p-l-0 text-center">
+            {{util.appTranslate('type')}}
+          </th>
+          <td mat-cell *matCellDef="let element" class="p-l-0">
+            <mat-progress-bar mode="indeterminate" color="light"></mat-progress-bar>
+          </td>
+        </ng-container>
+        <ng-container matColumnDef="order">
+          <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1 p-l-0 text-center">
+            {{util.appTranslate('order')}}
+          </th>
+          <td mat-cell *matCellDef="let element" class="p-l-0">
+            <mat-progress-bar mode="indeterminate" color="light"></mat-progress-bar>
+          </td>
+        </ng-container>
+        <ng-container matColumnDef="pos">
+          <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1 p-l-0 text-center">
+            {{util.appTranslate('pos_order')}}
+          </th>
+          <td mat-cell *matCellDef="let element" class="p-l-0">
+            <mat-progress-bar mode="indeterminate" color="light"></mat-progress-bar>
+          </td>
+        </ng-container>
+        <ng-container matColumnDef="table">
+          <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1 p-l-0 text-center">
+            {{util.appTranslate('table_order')}}
+          </th>
+          <td mat-cell *matCellDef="let element" class="p-l-0">
+            <mat-progress-bar mode="indeterminate" color="light"></mat-progress-bar>
+          </td>
+        </ng-container>
+        <ng-container matColumnDef="booking">
+          <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1 p-l-0 text-center">
+            {{util.appTranslate('booking')}}
+          </th>
+          <td mat-cell *matCellDef="let element" class="p-l-0">
+            <mat-progress-bar mode="indeterminate" color="light"></mat-progress-bar>
+          </td>
+        </ng-container>
+        <ng-container matColumnDef="coupon">
+          <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1 p-l-0 text-center">
+            {{util.appTranslate('coupon')}}
+          </th>
+          <td mat-cell *matCellDef="let element" class="p-l-0">
+            <mat-progress-bar mode="indeterminate" color="light"></mat-progress-bar>
+          </td>
+        </ng-container>
+        <ng-container matColumnDef="dining_coupon">
+          <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1 p-l-0 text-center">
+            {{util.appTranslate('dining_coupon')}}
+          </th>
+          <td mat-cell *matCellDef="let element" class="p-l-0">
+            <mat-progress-bar mode="indeterminate" color="light"></mat-progress-bar>
+          </td>
+        </ng-container>
+        <ng-container matColumnDef="amount">
+          <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1 p-l-0 text-center">
+            {{util.appTranslate('expense')}}
+          </th>
+          <td mat-cell *matCellDef="let element" class="p-l-0">
+            <mat-progress-bar mode="indeterminate" color="light"></mat-progress-bar>
+          </td>
+        </ng-container>
+        <ng-container matColumnDef="date">
+          <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1 p-l-0 text-center">
+            {{util.appTranslate('th_date')}}
+          </th>
+          <td mat-cell *matCellDef="let element" class="p-l-0">
+            <mat-progress-bar mode="indeterminate" color="light"></mat-progress-bar>
+          </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="displayedColumn"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumn"></tr>
+      </table>
+      }
+
+      @if (isLoaded) {
+      <table mat-table [dataSource]="reports" class="w-100">
+        <ng-container matColumnDef="id">
+          <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1 p-l-0 text-center">
+            {{util.appTranslate('th_id')}}
+          </th>
+          <td mat-cell *matCellDef="let element" class="f-s-12 text-uppercase">
+            {{ util.refId(element.id) }}
+          </td>
+        </ng-container>
+        <ng-container matColumnDef="customer">
+          <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1 p-l-0 text-center">
+            {{util.appTranslate('th_customer')}}
+          </th>
+          <td mat-cell *matCellDef="let element" class="f-s-12">
+            <h6 class="mat-subtitle-1 f-s-12 f-w-600">
+              {{element && element.userInfo && element.userInfo.id && element.userInfo.id != '' ?
+              element.userInfo.firstName
+              +' '+ element.userInfo.lastName :util.appTranslate('invalid_data') }}
+            </h6>
+          </td>
+        </ng-container>
+        <ng-container matColumnDef="type">
+          <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1 p-l-0 text-center">
+            {{util.appTranslate('type')}}
+          </th>
+          <td mat-cell *matCellDef="let element" class="f-s-12">
+            @if (element.expenseType == 'order_product_discout') {
+            <h6 class="mat-body-1 f-s-12">
+              {{util.appTranslate('order_product_discount')}}
+            </h6>
+            }
+            @if (element.expenseType == 'pos_order_product_discount') {
+            <h6 class="mat-body-1 f-s-12">
+              {{util.appTranslate('pos_product_discount')}}
+            </h6>
+            }
+            @if (element.expenseType == 'table_order_product_discount') {
+            <h6 class="mat-body-1 f-s-12">
+              {{util.appTranslate('table_product_discount')}}
+            </h6>
+            }
+            @if (element.expenseType == 'pos_order_extra_discount') {
+            <h6 class="mat-body-1 f-s-12">
+              {{util.appTranslate('pos_extra_discount')}}
+            </h6>
+            }
+            @if (element.expenseType == 'table_order_extra_discount') {
+            <h6 class="mat-body-1 f-s-12">
+              {{util.appTranslate('table_extra_discount')}}
+            </h6>
+            }
+            @if (element.expenseType == 'coupon') {
+            <h6 class="mat-body-1 f-s-12">
+              {{util.appTranslate('coupon')}}
+            </h6>
+            }
+            @if (element.expenseType == 'dining_coupon') {
+            <h6 class="mat-body-1 f-s-12">
+              {{util.appTranslate('dining_coupon')}}
+            </h6>
+            }
+            @if (element.expenseType == 'dining_booking_discount') {
+            <h6 class="mat-body-1 f-s-12">
+              {{util.appTranslate('dining_booking_discount')}}
+            </h6>
+            }
+            @if (element.expenseType == 'refund_order') {
+            <h6 class="mat-body-1 f-s-12">
+              {{util.appTranslate('order_refund')}}
+            </h6>
+            }
+            @if (element.expenseType == 'other') {
+            <h6 class="mat-body-1 f-s-12">
+              {{util.appTranslate('others')}}
+            </h6>
+            }
+          </td>
+        </ng-container>
+        <ng-container matColumnDef="order">
+          <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1 p-l-0 text-center">
+            {{util.appTranslate('order')}}
+          </th>
+          <td mat-cell *matCellDef="let element" class="f-s-14">
+            @if (element && element.orderInfo && element.orderInfo.id !='') {
+            <span class="m-l-0 cursor-pointer mat-body-1 f-s-12" (click)="onOrderInfo(element)">
+              {{ util.refId(element.orderInfo.id) }}
+            </span>
+            }
+            @if (!element || !element.orderInfo || element.orderInfo.id =='') {
+            <span class="m-l-0 cursor-pointer mat-body-1 f-s-12">
+              {{util.appTranslate('unknown')}}
+            </span>
+            }
+          </td>
+        </ng-container>
+        <ng-container matColumnDef="pos">
+          <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1 p-l-0 text-center">
+            {{util.appTranslate('pos_order')}}
+          </th>
+          <td mat-cell *matCellDef="let element" class="f-s-14">
+            @if (element && element.posOrderInfo && element.posOrderInfo.id !='') {
+            <span class="m-l-0 cursor-pointer mat-body-1 f-s-12" (click)="onPosOrderInfo(element)">
+              {{ util.refId(element.posOrderInfo.id) }}
+            </span>
+            }
+            @if (!element || !element.posOrderInfo || element.posOrderInfo.id =='') {
+            <span class="m-l-0 cursor-pointer mat-body-1 f-s-12">
+              {{util.appTranslate('unknown')}}
+            </span>
+            }
+          </td>
+        </ng-container>
+        <ng-container matColumnDef="table">
+          <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1 p-l-0 text-center">
+            {{util.appTranslate('table_order')}}
+          </th>
+          <td mat-cell *matCellDef="let element" class="f-s-14">
+            @if (element && element.tableOrderInfo && element.tableOrderInfo.id !='') {
+            <span class="m-l-0 cursor-pointer mat-body-1 f-s-12" (click)="onTableOrderInfo(element)">
+              {{ util.refId(element.tableOrderInfo.id) }}
+            </span>
+            }
+            @if (!element || !element.tableOrderInfo || element.tableOrderInfo.id =='') {
+            <span class="m-l-0 cursor-pointer mat-body-1 f-s-12">
+              {{util.appTranslate('unknown')}}
+            </span>
+            }
+          </td>
+        </ng-container>
+        <ng-container matColumnDef="booking">
+          <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1 p-l-0 text-center">
+            {{util.appTranslate('booking')}}
+          </th>
+          <td mat-cell *matCellDef="let element" class="f-s-14">
+            @if (element && element.bookingInfo && element.bookingInfo.id !='') {
+            <span class="m-l-0 cursor-pointer mat-body-1 f-s-12" (click)="onBookingInfo(element)">
+              {{ util.refId(element.bookingInfo.id) }}
+            </span>
+            }
+            @if (!element || !element.bookingInfo || element.bookingInfo.id =='') {
+            <span class="m-l-0 cursor-pointer mat-body-1 f-s-12">
+              {{util.appTranslate('unknown')}}
+            </span>
+            }
+          </td>
+        </ng-container>
+        <ng-container matColumnDef="coupon">
+          <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1 p-l-0 text-center">
+            {{util.appTranslate('coupon')}}
+          </th>
+          <td mat-cell *matCellDef="let element" class="f-s-14">
+            @if (element && element.couponInfo && element.couponInfo.id !='') {
+            <span class="m-l-0 cursor-pointer mat-body-1 f-s-12" (click)="onCouponInfo(element)">
+              {{element.couponInfo.code}}
+            </span>
+            }
+            @if (!element || !element.couponInfo || element.couponInfo.id =='') {
+            <span class="m-l-0 cursor-pointer mat-body-1 f-s-12">
+              {{util.appTranslate('unknown')}}
+            </span>
+            }
+          </td>
+        </ng-container>
+        <ng-container matColumnDef="dining_coupon">
+          <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1 p-l-0 text-center">
+            {{util.appTranslate('dining_coupon')}}
+          </th>
+          <td mat-cell *matCellDef="let element" class="f-s-14">
+            @if (element && element.diningCouponInfo && element.diningCouponInfo.id !='') {
+            <span class="m-l-0 cursor-pointer mat-body-1 f-s-12" (click)="onDiningCouponInfo(element)">
+              {{element.diningCouponInfo.code}}
+            </span>
+            }
+            @if (!element || !element.diningCouponInfo || element.diningCouponInfo.id =='') {
+            <span class="m-l-0 cursor-pointer mat-body-1 f-s-12">
+              {{util.appTranslate('unknown')}}
+            </span>
+            }
+          </td>
+        </ng-container>
+        <ng-container matColumnDef="amount">
+          <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1 p-l-0 text-center">
+            {{util.appTranslate('expense')}}
+          </th>
+          <td mat-cell *matCellDef="let element" class="p-l-0 text-center">
+            <h6 class="mat-body-1 f-s-12">
+              {{util.priceFormat(element.amount)}}
+            </h6>
+          </td>
+        </ng-container>
+        <ng-container matColumnDef="date">
+          <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1 p-l-0 text-center">
+            {{util.appTranslate('th_date')}}
+          </th>
+          <td mat-cell *matCellDef="let element" class="f-s-14">
+            {{ getDate(element.createdAt) }}
+          </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="displayedColumn"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumn"></tr>
+
+        <tr *matNoDataRow>
+          <td colspan="11" class="m-b-16 m-t-16 text-center">{{util.appTranslate('table_no_data_found')}}</td>
+        </tr>
+
+      </table>
+      }
+
+      <mat-paginator [hidden]="!isLoaded" #paginator [pageSizeOptions]="[5,10, 20]" [pageSize]="pageSize"
+        (page)="onPageChange($event)" showFirstLastButtons></mat-paginator>
+    </div>
+  </mat-card-content>
+</mat-card>

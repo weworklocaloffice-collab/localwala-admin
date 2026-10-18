@@ -1,0 +1,30 @@
+<mat-card class="cardWithShadow theme-card">
+  <mat-card-header>
+    <mat-card-title class="m-b-0">
+      {{util.appTranslate('dining_settings')}}
+    </mat-card-title>
+  </mat-card-header>
+
+  <mat-card-content class="b-t-0">
+    <div class="row m-t-10 p-t-10">
+      @for (item of guestCount; track $index) {
+      <div class="col-lg-2 col-sm-3 p-b-16 m-b-8">
+        @if(guestAvailable.includes(item)){
+        <button mat-flat-button class="bg-primary text-white" (click)="onAddOrRemove(item)">{{item}}</button>
+        }@else {
+        <button mat-stroked-button class="b-1 border-primary text-primary"
+          (click)="onAddOrRemove(item)">{{item}}</button>
+        }
+      </div>
+      }
+    </div>
+  </mat-card-content>
+
+  <mat-card-content class="b-t-0">
+    <div class="row justify-content-end m-t-24">
+      <div class="col-sm-12">
+        <button mat-flat-button color="primary" (click)="onSubmit()">{{util.appTranslate('save_btn')}}</button>
+      </div>
+    </div>
+  </mat-card-content>
+</mat-card>

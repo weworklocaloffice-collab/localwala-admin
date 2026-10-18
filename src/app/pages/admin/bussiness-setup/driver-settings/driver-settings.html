@@ -1,0 +1,1001 @@
+<form name="eventForm" [formGroup]="settingForm" class="event-form" (ngSubmit)="onSubmit()" id="topContent">
+  <div class="row">
+    <div class="col-lg-12 col-sm-12 p-b-16">
+      <mat-card class="cardWithShadow theme-card">
+        <mat-card-header>
+          <mat-card-title class="m-b-0">
+            {{util.appTranslate('deliveryman_settings')}}
+          </mat-card-title>
+        </mat-card-header>
+
+        <mat-card-content class="b-t-0">
+          <div class="row p-b-16">
+            <div class="col-lg-4 col-sm-12 p-b-16">
+              <mat-form-field appearance="outline" class="w-100">
+                <mat-label>{{util.appTranslate('deliveryman_login_with')}}</mat-label>
+                <mat-select formControlName="driverLoginWith" name="driverLoginWith">
+                  <mat-option value="email_password">{{util.appTranslate('email_password')}}</mat-option>
+                  <mat-option value="phone_password">{{util.appTranslate('mobile_password')}}</mat-option>
+                  <mat-option value="phone_otp">{{util.appTranslate('mobile_otp')}}</mat-option>
+                  <mat-option value="email_otp">{{util.appTranslate('email_otp')}}</mat-option>
+                </mat-select>
+                @if(haveSubmitClicked == true && f['driverLoginWith'].invalid){
+                <mat-hint class="m-b-16 error-msg">
+                  @if(f['driverLoginWith'].errors && f['driverLoginWith'].errors['required']){
+                  <div class="text-error">
+                    {{util.appTranslate('form_required')}}
+                  </div>
+                  }
+                </mat-hint>
+                }
+              </mat-form-field>
+            </div>
+
+            <div class="col-lg-4 col-sm-12 p-b-16">
+              <mat-form-field appearance="outline" class="w-100">
+                <mat-label>{{util.appTranslate('reset_password_with')}}</mat-label>
+                <mat-select formControlName="driverResetPasswordWith" name="driverResetPasswordWith">
+                  <mat-option value="phone_otp">{{util.appTranslate('mobile_otp')}}</mat-option>
+                  <mat-option value="email_otp">{{util.appTranslate('email_otp')}}</mat-option>
+                </mat-select>
+                @if(haveSubmitClicked == true && f['driverResetPasswordWith'].invalid){
+                <mat-hint class="m-b-16 error-msg">
+                  @if(f['driverResetPasswordWith'].errors && f['driverResetPasswordWith'].errors['required']){
+                  <div class="text-error">
+                    {{util.appTranslate('form_required')}}
+                  </div>
+                  }
+                </mat-hint>
+                }
+              </mat-form-field>
+            </div>
+
+            <div class="col-lg-4 col-sm-12 p-b-16">
+              <mat-form-field appearance="outline" class="w-100"
+                [matTooltip]="util.appTranslate('deliveryman_self_register_tooltip')">
+                <mat-label>{{util.appTranslate('deliveryman_self_register')}} </mat-label>
+                <mat-select formControlName="selfRegistration" name="selfRegistration">
+                  <mat-option [value]="true">{{util.appTranslate('dd_yes')}}</mat-option>
+                  <mat-option [value]="false">{{util.appTranslate('dd_no')}}</mat-option>
+                </mat-select>
+                @if(haveSubmitClicked == true && f['selfRegistration'].invalid){
+                <mat-hint class="m-b-16 error-msg">
+                  @if(f['selfRegistration'].errors && f['selfRegistration'].errors['required']){
+                  <div class="text-error">
+                    {{util.appTranslate('form_required')}}
+                  </div>
+                  }
+                </mat-hint>
+                }
+              </mat-form-field>
+            </div>
+
+            <div class="col-lg-4 col-sm-12 p-b-16">
+              <mat-form-field appearance="outline" class="w-100"
+                [matTooltip]="util.appTranslate('deliveryman_suspend_cash_in_hand_overflow')">
+                <mat-label>{{util.appTranslate('cash_in_hand_overflow')}} </mat-label>
+                <mat-select formControlName="cashInHand" name="cashInHand"
+                  (selectionChange)="onCashInHandChangeEvent($event)">
+                  <mat-option [value]="true">{{util.appTranslate('dd_yes')}}</mat-option>
+                  <mat-option [value]="false">{{util.appTranslate('dd_no')}}</mat-option>
+                </mat-select>
+                @if(haveSubmitClicked == true && f['cashInHand'].invalid){
+                <mat-hint class="m-b-16 error-msg">
+                  @if(f['cashInHand'].errors && f['cashInHand'].errors['required']){
+                  <div class="text-error">
+                    {{util.appTranslate('form_required')}}
+                  </div>
+                  }
+                </mat-hint>
+                }
+              </mat-form-field>
+            </div>
+
+            <div class="col-lg-4 col-sm-12 p-b-16">
+              <mat-form-field appearance="outline" class="w-100" color="primary"
+                [matTooltip]="util.appTranslate('min_amount_to_pay_in_price')">
+                <mat-label>{{util.appTranslate('min_amount_to_pay_in_price')}}</mat-label>
+                <input matInput formControlName="minCashInHand" type="number" name="minCashInHand" />
+                @if(haveSubmitClicked == true && f['minCashInHand'].invalid){
+                <mat-hint class="m-b-16 error-msg">
+                  @if(f['minCashInHand'].errors && f['minCashInHand'].errors['required']){
+                  <div class="text-error">
+                    {{util.appTranslate('form_required')}}
+                  </div>
+                  }
+                </mat-hint>
+                }
+              </mat-form-field>
+            </div>
+
+            <div class="col-lg-4 col-sm-12 p-b-16">
+              <mat-form-field appearance="outline" class="w-100" color="primary"
+                [matTooltip]="util.appTranslate('deliveryman_cash_hold')">
+                <mat-label>{{util.appTranslate('max_amount_to_hold')}}</mat-label>
+                <input matInput formControlName="maxCashInHand" type="number" name="maxCashInHand" />
+                @if(haveSubmitClicked == true && f['maxCashInHand'].invalid){
+                <mat-hint class="m-b-16 error-msg">
+                  @if(f['maxCashInHand'].errors && f['maxCashInHand'].errors['required']){
+                  <div class="text-error">
+                    {{util.appTranslate('form_required')}}
+                  </div>
+                  }
+                </mat-hint>
+                }
+              </mat-form-field>
+            </div>
+
+            <div class="col-lg-4 col-sm-12 p-b-16">
+              <mat-form-field appearance="outline" class="w-100"
+                [matTooltip]="util.appTranslate('give_tip_on_checkout_tooltip')">
+                <mat-label>{{util.appTranslate('tips_for_deliveryman')}}</mat-label>
+                <mat-select formControlName="getTip" name="getTip">
+                  <mat-option [value]="true">{{util.appTranslate('dd_yes')}}</mat-option>
+                  <mat-option [value]="false">{{util.appTranslate('dd_no')}}</mat-option>
+                </mat-select>
+                @if(haveSubmitClicked == true && f['getTip'].invalid){
+                <mat-hint class="m-b-16 error-msg">
+                  @if(f['getTip'].errors && f['getTip'].errors['required']){
+                  <div class="text-error">
+                    {{util.appTranslate('form_required')}}
+                  </div>
+                  }
+                </mat-hint>
+                }
+              </mat-form-field>
+            </div>
+
+            <div class="col-lg-4 col-sm-12 p-b-16">
+              <mat-form-field appearance="outline" class="w-100"
+                [matTooltip]="util.appTranslate('can_see_earning_tooltip')">
+                <mat-label>{{util.appTranslate('show_earnings_in_app')}}</mat-label>
+                <mat-select formControlName="showEarning" name="showEarning">
+                  <mat-option [value]="true">{{util.appTranslate('dd_yes')}}</mat-option>
+                  <mat-option [value]="false">{{util.appTranslate('dd_no')}}</mat-option>
+                </mat-select>
+                @if(haveSubmitClicked == true && f['showEarning'].invalid){
+                <mat-hint class="m-b-16 error-msg">
+                  @if(f['showEarning'].errors && f['showEarning'].errors['required']){
+                  <div class="text-error">
+                    {{util.appTranslate('form_required')}}
+                  </div>
+                  }
+                </mat-hint>
+                }
+              </mat-form-field>
+            </div>
+
+            <div class="col-lg-4 col-sm-12 p-b-16">
+              <mat-form-field appearance="outline" class="w-100" color="primary"
+                [matTooltip]="util.appTranslate('max_order_assign_tooltip')">
+                <mat-label>{{util.appTranslate('max_assigned_order_limit')}}</mat-label>
+                <input matInput formControlName="maxOrderLimit" type="number" name="maxOrderLimit" />
+                @if(haveSubmitClicked == true && f['maxOrderLimit'].invalid){
+                <mat-hint class="m-b-16 error-msg">
+                  @if(f['maxOrderLimit'].errors && f['maxOrderLimit'].errors['required']){
+                  <div class="text-error">
+                    {{util.appTranslate('form_required')}}
+                  </div>
+                  }
+                </mat-hint>
+                }
+              </mat-form-field>
+            </div>
+
+            <div class="col-lg-4 col-sm-12 p-b-16">
+              <mat-form-field appearance="outline" class="w-100"
+                [matTooltip]="util.appTranslate('pickup_proof_tooltip')">
+                <mat-label>{{util.appTranslate('pickup_proof')}}</mat-label>
+                <mat-select formControlName="pickupProof" name="pickupProof">
+                  <mat-option [value]="true">{{util.appTranslate('dd_yes')}}</mat-option>
+                  <mat-option [value]="false">{{util.appTranslate('dd_no')}}</mat-option>
+                </mat-select>
+                @if(haveSubmitClicked == true && f['pickupProof'].invalid){
+                <mat-hint class="m-b-16 error-msg">
+                  @if(f['pickupProof'].errors && f['pickupProof'].errors['required']){
+                  <div class="text-error">
+                    {{util.appTranslate('form_required')}}
+                  </div>
+                  }
+                </mat-hint>
+                }
+              </mat-form-field>
+            </div>
+
+            <div class="col-lg-4 col-sm-12 p-b-16">
+              <mat-form-field appearance="outline" class="w-100"
+                [matTooltip]="util.appTranslate('dropup_proof_tooltip')">
+                <mat-label>{{util.appTranslate('delivery_proof_lbl')}}</mat-label>
+                <mat-select formControlName="deliveryProof" name="deliveryProof">
+                  <mat-option [value]="true">{{util.appTranslate('dd_yes')}}</mat-option>
+                  <mat-option [value]="false">{{util.appTranslate('dd_no')}}</mat-option>
+                </mat-select>
+                @if(haveSubmitClicked == true && f['deliveryProof'].invalid){
+                <mat-hint class="m-b-16 error-msg">
+                  @if(f['deliveryProof'].errors && f['deliveryProof'].errors['required']){
+                  <div class="text-error">
+                    {{util.appTranslate('form_required')}}
+                  </div>
+                  }
+                </mat-hint>
+                }
+              </mat-form-field>
+            </div>
+
+            <div class="col-lg-4 col-sm-12 p-b-16">
+              <mat-form-field appearance="outline" class="w-100" [matTooltip]="util.appTranslate('order_init_chat')">
+                <mat-label>{{util.appTranslate('can_init_chat')}} </mat-label>
+                <mat-select formControlName="canInitiateChat" name="canInitiateChat">
+                  <mat-option [value]="true">{{util.appTranslate('dd_yes')}}</mat-option>
+                  <mat-option [value]="false">{{util.appTranslate('dd_no')}}</mat-option>
+                </mat-select>
+                @if(haveSubmitClicked == true && f['canInitiateChat'].invalid){
+                <mat-hint class="m-b-16 error-msg">
+                  @if(f['canInitiateChat'].errors && f['canInitiateChat'].errors['required']){
+                  <div class="text-error">
+                    {{util.appTranslate('form_required')}}
+                  </div>
+                  }
+                </mat-hint>
+                }
+              </mat-form-field>
+            </div>
+
+            <div class="col-lg-4 col-sm-12 p-b-16">
+              <mat-form-field appearance="outline" class="w-100" [matTooltip]="util.appTranslate('order_init_call')">
+                <mat-label>{{util.appTranslate('can_init_call')}} </mat-label>
+                <mat-select formControlName="canInitiateCall" name="canInitiateCall">
+                  <mat-option [value]="true">{{util.appTranslate('dd_yes')}}</mat-option>
+                  <mat-option [value]="false">{{util.appTranslate('dd_no')}}</mat-option>
+                </mat-select>
+                @if(haveSubmitClicked == true && f['canInitiateCall'].invalid){
+                <mat-hint class="m-b-16 error-msg">
+                  @if(f['canInitiateCall'].errors && f['canInitiateCall'].errors['required']){
+                  <div class="text-error">
+                    {{util.appTranslate('form_required')}}
+                  </div>
+                  }
+                </mat-hint>
+                }
+              </mat-form-field>
+            </div>
+
+            <div class="col-lg-4 col-sm-12 p-b-16">
+              <mat-form-field appearance="outline" class="w-100"
+                [matTooltip]="util.appTranslate('deliveryman_earning_model')">
+                <mat-label>{{util.appTranslate('earning_model')}}</mat-label>
+                <mat-select formControlName="earningModel" name="earningModel"
+                  (selectionChange)="onEarningModelChangeEvent($event)">
+                  <mat-option value="salaried">{{util.appTranslate('salary_based')}}</mat-option>
+                  <mat-option value="order">{{util.appTranslate('order_based')}}</mat-option>
+                </mat-select>
+                @if(haveSubmitClicked == true && f['earningModel'].invalid){
+                <mat-hint class="m-b-16 error-msg">
+                  @if(f['earningModel'].errors && f['earningModel'].errors['required']){
+                  <div class="text-error">
+                    {{util.appTranslate('form_required')}}
+                  </div>
+                  }
+                </mat-hint>
+                }
+              </mat-form-field>
+            </div>
+
+            <div class="col-lg-4 col-sm-12 p-b-16">
+              <mat-form-field appearance="outline" class="w-100" color="primary"
+                [matTooltip]="util.appTranslate('deliveryman_salary_model_tooltip')">
+                <mat-label>{{util.appTranslate('salary_amount')}}</mat-label>
+                <input matInput formControlName="salaryAmount" type="number" name="salaryAmount" />
+                @if(haveSubmitClicked == true && f['salaryAmount'].invalid){
+                <mat-hint class="m-b-16 error-msg">
+                  @if(f['salaryAmount'].errors && f['salaryAmount'].errors['required']){
+                  <div class="text-error">
+                    {{util.appTranslate('form_required')}}
+                  </div>
+                  }
+                </mat-hint>
+                }
+              </mat-form-field>
+            </div>
+
+            <div class="col-lg-4 col-sm-12 p-b-16">
+              <mat-form-field appearance="outline" class="w-100"
+                [matTooltip]="util.appTranslate('deliveryman_earning_on_order')">
+                <mat-label>{{util.appTranslate('earning_on_order')}}</mat-label>
+                <mat-select formControlName="earningOnOrder" name="earningOnOrder"
+                  (selectionChange)="onEarningOnOrderChangeEvent($event)">
+                  <mat-option value="fixed">{{util.appTranslate('fixed_amount')}}</mat-option>
+                  <mat-option value="distance">{{util.appTranslate('distance_based')}}</mat-option>
+                </mat-select>
+                @if(haveSubmitClicked == true && f['earningOnOrder'].invalid){
+                <mat-hint class="m-b-16 error-msg">
+                  @if(f['earningOnOrder'].errors && f['earningOnOrder'].errors['required']){
+                  <div class="text-error">
+                    {{util.appTranslate('form_required')}}
+                  </div>
+                  }
+                </mat-hint>
+                }
+              </mat-form-field>
+            </div>
+
+            <div class="col-lg-4 col-sm-12 p-b-16">
+              <mat-form-field appearance="outline" class="w-100" color="primary"
+                [matTooltip]="util.appTranslate('deliveryman_earning_amount')">
+                <mat-label>{{util.appTranslate('earning_amount')}}</mat-label>
+                <input matInput formControlName="earningAmount" type="number" name="earningAmount" />
+                @if(haveSubmitClicked == true && f['earningAmount'].invalid){
+                <mat-hint class="m-b-16 error-msg">
+                  @if(f['earningAmount'].errors && f['earningAmount'].errors['required']){
+                  <div class="text-error">
+                    {{util.appTranslate('form_required')}}
+                  </div>
+                  }
+                </mat-hint>
+                }
+              </mat-form-field>
+            </div>
+
+            <div class="col-lg-4 col-sm-12 p-b-16">
+              <mat-form-field appearance="outline" class="w-100" color="primary"
+                [matTooltip]="util.appTranslate('radius_for_delivery_area_tooltip')">
+                <mat-label>{{util.appTranslate('radius_for_delivery_area')}}</mat-label>
+                <input matInput formControlName="distanceRadiusForFixed" type="number" name="distanceRadiusForFixed" />
+                @if(haveSubmitClicked == true && f['distanceRadiusForFixed'].invalid){
+                <mat-hint class="m-b-16 error-msg">
+                  @if(f['distanceRadiusForFixed'].errors && f['distanceRadiusForFixed'].errors['required']){
+                  <div class="text-error">
+                    {{util.appTranslate('form_required')}}
+                  </div>
+                  }
+                </mat-hint>
+                }
+              </mat-form-field>
+            </div>
+
+            <div class="col-lg-4 col-sm-12 p-b-16">
+              <mat-form-field appearance="outline" class="w-100" color="primary"
+                [matTooltip]="util.appTranslate('earning_fixed_distance_amount')">
+                <mat-label>{{util.appTranslate('earning_fixed_distance_amount')}}</mat-label>
+                <input matInput formControlName="earningFixedDistanceAmount" type="number"
+                  name="earningFixedDistanceAmount" />
+                @if(haveSubmitClicked == true && f['earningFixedDistanceAmount'].invalid){
+                <mat-hint class="m-b-16 error-msg">
+                  @if(f['earningFixedDistanceAmount'].errors && f['earningFixedDistanceAmount'].errors['required']){
+                  <div class="text-error">
+                    {{util.appTranslate('form_required')}}
+                  </div>
+                  }
+                </mat-hint>
+                }
+              </mat-form-field>
+            </div>
+
+            <div class="col-lg-4 col-sm-12 p-b-16">
+              <mat-form-field appearance="outline" class="w-100" color="primary"
+                [matTooltip]="util.appTranslate('earning_surplus_distance_amount')">
+                <mat-label>{{util.appTranslate('earning_surplus_distance_amount')}}</mat-label>
+                <input matInput formControlName="earningSurplusDistanceAmount" type="number"
+                  name="earningSurplusDistanceAmount" />
+                @if(haveSubmitClicked == true && f['earningSurplusDistanceAmount'].invalid){
+                <mat-hint class="m-b-16 error-msg">
+                  @if(f['earningSurplusDistanceAmount'].errors && f['earningSurplusDistanceAmount'].errors['required']){
+                  <div class="text-error">
+                    {{util.appTranslate('form_required')}}
+                  </div>
+                  }
+                </mat-hint>
+                }
+              </mat-form-field>
+            </div>
+
+            <div class="col-lg-4 col-sm-12 p-b-16">
+              <mat-form-field appearance="outline" class="w-100"
+                [matTooltip]="util.appTranslate('deliveryman_incentive_tooltip')">
+                <mat-label>{{util.appTranslate('have_incentive')}}</mat-label>
+                <mat-select formControlName="haveIncentive" name="haveIncentive">
+                  <mat-option [value]="true">{{util.appTranslate('dd_yes')}}</mat-option>
+                  <mat-option [value]="false">{{util.appTranslate('dd_no')}}</mat-option>
+                </mat-select>
+                @if(haveSubmitClicked == true && f['haveIncentive'].invalid){
+                <mat-hint class="m-b-16 error-msg">
+                  @if(f['haveIncentive'].errors && f['haveIncentive'].errors['required']){
+                  <div class="text-error">
+                    {{util.appTranslate('form_required')}}
+                  </div>
+                  }
+                </mat-hint>
+                }
+              </mat-form-field>
+            </div>
+
+          </div>
+
+          <div class="row">
+            <div class="col-lg-2 col-sm-6 p-b-16">
+              <button mat-flat-button color="primary" type="submit" class="w-100">
+                {{ action == 'add' ? util.appTranslate('submit_btn') : util.appTranslate('update_btn')}}
+              </button>
+            </div>
+            <div class="col-lg-2 col-sm-6 p-b-16">
+              <button mat-flat-button (click)="onReset()" class="w-100 bg-secondary text-white"
+                type="button">{{util.appTranslate('reset_btn')}}</button>
+            </div>
+          </div>
+        </mat-card-content>
+      </mat-card>
+    </div>
+  </div>
+</form>
+
+<mat-card class="cardWithShadow theme-card">
+  <mat-card-header>
+    <div class="d-sm-flex w-100">
+      <div>
+        <mat-card-title>{{util.appTranslate('delivery_instruction')}}</mat-card-title>
+      </div>
+      <div class="m-l-auto more-btn-align">
+        <mat-form-field appearance="outline" class="theme-searchbar">
+          <input matInput type="text" [(ngModel)]="searchQueryInstruction"
+            [placeholder]="util.appTranslate('search_by_name')" (keyup.enter)="onSearchInstruction()" />
+          <button mat-icon-button matSuffix (click)="onSearchInstruction()">
+            <mat-icon class="op-5">search</mat-icon>
+          </button>
+        </mat-form-field>
+        <mat-form-field class="theme-select m-l-16" appearance="outline">
+          <mat-select [value]="exportType" [(ngModel)]="exportType"
+            (selectionChange)="onExportCollection($event.value,'delivery_instruction')">
+            <mat-option value="export">
+              {{util.appTranslate('export_kind')}}
+            </mat-option>
+            <mat-option value="excel">
+              {{util.appTranslate('excel_export_kind')}}
+            </mat-option>
+            <mat-option value="csv">
+              {{util.appTranslate('csv_export_kind')}}
+            </mat-option>
+            <mat-option value="raw">
+              {{util.appTranslate('raw_export_kind')}}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+        <a mat-button (click)="importCollection('delivery_instruction')" class="m-l-16 bg-secondary text-white" mat-flat-button>{{util.appTranslate('import_collection_btn')}}</a>
+        <a mat-button (click)="onAddInstruction()" class="m-l-16" mat-flat-button
+          color="primary">{{util.appTranslate('add_delivery_instruction')}}</a>
+      </div>
+    </div>
+  </mat-card-header>
+  <mat-card-content>
+    <div class="table-responsive">
+      @if(!isLoaded){
+      <table mat-table [dataSource]="util.dummyArray" class="w-100">
+        <ng-container matColumnDef="name">
+          <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1 p-l-0">
+            {{util.appTranslate('th_name')}}
+          </th>
+          <td mat-cell *matCellDef="let element" class="p-l-0">
+            <mat-progress-bar mode="indeterminate" color="light"></mat-progress-bar>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="status">
+          <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1">
+            {{util.appTranslate('th_status')}}
+          </th>
+          <td mat-cell *matCellDef="let element">
+            <mat-progress-bar mode="indeterminate" color="light"></mat-progress-bar>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="action">
+          <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1 p-r-0 text-right">
+            {{util.appTranslate('th_action')}}
+          </th>
+          <td mat-cell *matCellDef="let element" class="f-w-500 text-right p-r-0">
+            <mat-progress-bar mode="indeterminate" color="light"></mat-progress-bar>
+          </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="displayedColumn"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumn"></tr>
+
+      </table>
+      }
+
+      @if(isLoaded){
+      <table mat-table [dataSource]="instructions" class="w-100">
+        <ng-container matColumnDef="name">
+          <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1 p-l-0">
+            {{util.appTranslate('th_name')}}
+          </th>
+          <td mat-cell *matCellDef="let element" class="p-l-0">
+            <div class="d-flex align-items-center">
+              <img [src]="api.mediaUrl+element.image" alt="cover" width="40" height="40" class="rounded-circle"
+                onError="this.src='assets/images/onerror.png'" />
+              <div class="m-l-16">
+                <h6 class="mat-subtitle-1 f-s-14 f-w-600">
+                  {{ element.displayName }}
+                </h6>
+              </div>
+            </div>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="status">
+          <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1">
+            {{util.appTranslate('th_status')}}
+          </th>
+          <td mat-cell *matCellDef="let element">
+            <mat-slide-toggle [checked]="element.status"
+              [matTooltip]="element.status == true ? util.appTranslate('deactivate') : util.appTranslate('activate') "
+              (change)="onStatusChange($event, element)"></mat-slide-toggle>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="action">
+          <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1 p-r-0 text-right">
+            {{util.appTranslate('th_action')}}
+          </th>
+          <td mat-cell *matCellDef="let element" class="f-w-500 text-right p-r-0">
+            <a (click)="onEdit(element)" class="m-r-10 cursor-pointer text-primary"
+              [matTooltip]="util.appTranslate('click_to_edit')">
+              <mat-icon>edit</mat-icon>
+            </a>
+            <a (click)="onDelete(element)" class="m-r-10 cursor-pointer text-error"
+              [matTooltip]="util.appTranslate('click_to_delete')">
+              <mat-icon>delete</mat-icon>
+            </a>
+          </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="displayedColumn"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumn"></tr>
+
+        <tr *matNoDataRow>
+          <td colspan="4" class="m-b-16 m-t-16 text-center">{{util.appTranslate('table_no_data_found')}}</td>
+        </tr>
+
+      </table>
+      }
+
+      <mat-paginator [hidden]="!isLoaded" #paginator [pageSizeOptions]="[5,10, 20]" [pageSize]="pageSize"
+        (page)="onPageChange($event)" showFirstLastButtons></mat-paginator>
+    </div>
+  </mat-card-content>
+</mat-card>
+
+<mat-card class="cardWithShadow theme-card">
+  <mat-card-header>
+    <div class="d-sm-flex w-100">
+      <div>
+        <mat-card-title>{{util.appTranslate('delivery_gratitude')}}</mat-card-title>
+      </div>
+      <div class="m-l-auto more-btn-align">
+        <mat-form-field appearance="outline" class="theme-searchbar">
+          <input matInput type="text" [(ngModel)]="searchQueryGratitude"
+            [placeholder]="util.appTranslate('search_by_price')" (keyup.enter)="onSearchGratitude()" />
+          <button mat-icon-button matSuffix (click)="onSearchGratitude()">
+            <mat-icon class="op-5">search</mat-icon>
+          </button>
+        </mat-form-field>
+        <mat-form-field class="theme-select m-l-16" appearance="outline">
+          <mat-select [value]="exportType" [(ngModel)]="exportType"
+            (selectionChange)="onExportCollection($event.value,'delivery_gratitude')">
+            <mat-option value="export">
+              {{util.appTranslate('export_kind')}}
+            </mat-option>
+            <mat-option value="excel">
+              {{util.appTranslate('excel_export_kind')}}
+            </mat-option>
+            <mat-option value="csv">
+              {{util.appTranslate('csv_export_kind')}}
+            </mat-option>
+            <mat-option value="raw">
+              {{util.appTranslate('raw_export_kind')}}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+        <a mat-button (click)="importCollection('delivery_gratitude')" class="m-l-16 bg-secondary text-white" mat-flat-button>{{util.appTranslate('import_collection_btn')}}</a>
+        <a mat-button (click)="onAddGratitude()" class="m-l-16" mat-flat-button
+          color="primary">{{util.appTranslate('add_delivery_gratitude')}}</a>
+      </div>
+    </div>
+  </mat-card-header>
+  <mat-card-content>
+    <div class="table-responsive">
+      @if(!isGratitudeLoaded){
+      <table mat-table [dataSource]="util.dummyArray" class="w-100">
+        <ng-container matColumnDef="price">
+          <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1 p-l-0">
+            {{util.appTranslate('th_price')}}
+          </th>
+          <td mat-cell *matCellDef="let element" class="p-l-0">
+            <mat-progress-bar mode="indeterminate" color="light"></mat-progress-bar>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="mostTripped">
+          <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1">
+            {{util.appTranslate('most_tipped')}}
+          </th>
+          <td mat-cell *matCellDef="let element">
+            <mat-progress-bar mode="indeterminate" color="light"></mat-progress-bar>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="status">
+          <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1">
+            {{util.appTranslate('th_status')}}
+          </th>
+          <td mat-cell *matCellDef="let element">
+            <mat-progress-bar mode="indeterminate" color="light"></mat-progress-bar>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="action">
+          <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1 p-r-0 text-right">
+            {{util.appTranslate('th_action')}}
+          </th>
+          <td mat-cell *matCellDef="let element" class="f-w-500 text-right p-r-0">
+            <mat-progress-bar mode="indeterminate" color="light"></mat-progress-bar>
+          </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="displayedColumnGratitude"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumnGratitude"></tr>
+
+      </table>
+      }
+
+      @if(isGratitudeLoaded){
+      <table mat-table [dataSource]="gratitudes" class="w-100">
+        <ng-container matColumnDef="price">
+          <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1 p-l-0">
+            {{util.appTranslate('th_price')}}
+          </th>
+          <td mat-cell *matCellDef="let element" class="p-l-0">
+            <h6 class="mat-subtitle-1 f-s-14 f-w-600">
+              {{ element.price }}
+            </h6>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="mostTripped">
+          <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1">
+            {{util.appTranslate('most_tipped')}}
+          </th>
+          <td mat-cell *matCellDef="let element">
+            <mat-slide-toggle [checked]="element.mostTipped"
+              [matTooltip]="element.mostTipped == true ? util.appTranslate('remove') : util.appTranslate('set') "
+              (change)="onGratitudeTippedChange($event, element)"></mat-slide-toggle>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="status">
+          <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1">
+            {{util.appTranslate('th_status')}}
+          </th>
+          <td mat-cell *matCellDef="let element">
+            <mat-slide-toggle [checked]="element.status"
+              [matTooltip]="element.status == true ? util.appTranslate('deactivate') : util.appTranslate('activate') "
+              (change)="onGratitudeStatusChange($event, element)"></mat-slide-toggle>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="action">
+          <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1 p-r-0 text-right">
+            {{util.appTranslate('th_action')}}
+          </th>
+          <td mat-cell *matCellDef="let element" class="f-w-500 text-right p-r-0">
+            <a (click)="onGratitudeEdit(element)" class="m-r-10 cursor-pointer text-primary"
+              [matTooltip]="util.appTranslate('click_to_edit')">
+              <mat-icon>edit</mat-icon>
+            </a>
+            <a (click)="onGratitudeDelete(element)" class="m-r-10 cursor-pointer text-error"
+              [matTooltip]="util.appTranslate('click_to_delete')">
+              <mat-icon>delete</mat-icon>
+            </a>
+          </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="displayedColumnGratitude"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumnGratitude"></tr>
+
+        <tr *matNoDataRow>
+          <td colspan="4" class="m-b-16 m-t-16 text-center">{{util.appTranslate('table_no_data_found')}}</td>
+        </tr>
+
+      </table>
+      }
+
+      <mat-paginator [hidden]="!isGratitudeLoaded" #paginatorGratitude [pageSizeOptions]="[5,10, 20]"
+        [pageSize]="pageSizeGratitude" (page)="onGratitudePageChange($event)" showFirstLastButtons></mat-paginator>
+    </div>
+  </mat-card-content>
+</mat-card>
+
+<mat-card class="cardWithShadow theme-card">
+  <mat-card-header>
+    <div class="d-sm-flex w-100">
+      <div>
+        <mat-card-title>{{util.appTranslate('deliveryman_incentives')}}</mat-card-title>
+      </div>
+      <div class="m-l-auto more-btn-align">
+        <mat-form-field appearance="outline" class="theme-searchbar">
+          <input matInput type="text" [(ngModel)]="searchQueryIncentive"
+            [placeholder]="util.appTranslate('search_by_price')" (keyup.enter)="onSearchIncentive()" />
+          <button mat-icon-button matSuffix (click)="onSearchIncentive()">
+            <mat-icon class="op-5">search</mat-icon>
+          </button>
+        </mat-form-field>
+        <mat-form-field class="theme-select m-l-16" appearance="outline">
+          <mat-select [value]="exportType" [(ngModel)]="exportType"
+            (selectionChange)="onExportCollection($event.value,'driver_incentive')">
+            <mat-option value="export">
+              {{util.appTranslate('export_kind')}}
+            </mat-option>
+            <mat-option value="excel">
+              {{util.appTranslate('excel_export_kind')}}
+            </mat-option>
+            <mat-option value="csv">
+              {{util.appTranslate('csv_export_kind')}}
+            </mat-option>
+            <mat-option value="raw">
+              {{util.appTranslate('raw_export_kind')}}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+        <a mat-button (click)="importCollection('driver_incentive')" class="m-l-16 bg-secondary text-white" mat-flat-button>{{util.appTranslate('import_collection_btn')}}</a>
+        <a mat-button (click)="onAddIncentive()" class="m-l-16" mat-flat-button
+          color="primary">{{util.appTranslate('add_deliveryman_incentive')}}</a>
+      </div>
+    </div>
+  </mat-card-header>
+  <mat-card-content>
+    <div class="table-responsive">
+      @if(!isIncentiveLoaded){
+      <table mat-table [dataSource]="util.dummyArray" class="w-100">
+        <ng-container matColumnDef="orders">
+          <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1 p-l-0">
+            {{util.appTranslate('orders')}}
+          </th>
+          <td mat-cell *matCellDef="let element" class="p-l-0">
+            <mat-progress-bar mode="indeterminate" color="light"></mat-progress-bar>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="price">
+          <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1">
+            {{util.appTranslate('th_price')}}
+          </th>
+          <td mat-cell *matCellDef="let element">
+            <mat-progress-bar mode="indeterminate" color="light"></mat-progress-bar>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="status">
+          <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1">
+            {{util.appTranslate('th_status')}}
+          </th>
+          <td mat-cell *matCellDef="let element">
+            <mat-progress-bar mode="indeterminate" color="light"></mat-progress-bar>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="action">
+          <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1 p-r-0 text-right">
+            {{util.appTranslate('th_action')}}
+          </th>
+          <td mat-cell *matCellDef="let element" class="f-w-500 text-right p-r-0">
+            <mat-progress-bar mode="indeterminate" color="light"></mat-progress-bar>
+          </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="displayedColumnIncentive"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumnIncentive"></tr>
+
+      </table>
+      }
+
+      @if(isIncentiveLoaded){
+      <table mat-table [dataSource]="incentive" class="w-100">
+
+        <ng-container matColumnDef="orders">
+          <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1 p-l-0">
+            {{util.appTranslate('orders')}}
+          </th>
+          <td mat-cell *matCellDef="let element" class="p-l-0">
+            <h6 class="mat-subtitle-1 f-s-14 f-w-600">
+              {{ element.orderTotal }}
+            </h6>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="price">
+          <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1 p-l-0">
+            {{util.appTranslate('th_price')}}
+          </th>
+          <td mat-cell *matCellDef="let element" class="p-l-0">
+            <h6 class="mat-subtitle-1 f-s-14 f-w-600">
+              {{ element.incentiveAmount }}
+            </h6>
+          </td>
+        </ng-container>
+
+
+        <ng-container matColumnDef="status">
+          <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1">
+            {{util.appTranslate('th_status')}}
+          </th>
+          <td mat-cell *matCellDef="let element">
+            <mat-slide-toggle [checked]="element.status"
+              [matTooltip]="element.status == true ? util.appTranslate('deactivate') : util.appTranslate('activate') "
+              (change)="onIncentiveStatusChange($event, element)"></mat-slide-toggle>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="action">
+          <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1 p-r-0 text-right">
+            {{util.appTranslate('th_action')}}
+          </th>
+          <td mat-cell *matCellDef="let element" class="f-w-500 text-right p-r-0">
+            <a (click)="onIncentiveEdit(element)" class="m-r-10 cursor-pointer text-primary"
+              [matTooltip]="util.appTranslate('click_to_edit')">
+              <mat-icon>edit</mat-icon>
+            </a>
+            <a (click)="onIncentiveDelete(element)" class="m-r-10 cursor-pointer text-error"
+              [matTooltip]="util.appTranslate('click_to_delete')">
+              <mat-icon>delete</mat-icon>
+            </a>
+          </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="displayedColumnIncentive"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumnIncentive"></tr>
+
+        <tr *matNoDataRow>
+          <td colspan="4" class="m-b-16 m-t-16 text-center">{{util.appTranslate('table_no_data_found')}}</td>
+        </tr>
+
+      </table>
+      }
+
+      <mat-paginator [hidden]="!isIncentiveLoaded" #paginatorIncentive [pageSizeOptions]="[5,10, 20]"
+        [pageSize]="pageSizeIncentive" (page)="onIncentivePageChange($event)" showFirstLastButtons></mat-paginator>
+    </div>
+  </mat-card-content>
+</mat-card>
+
+<mat-card class="cardWithShadow theme-card">
+  <mat-card-header>
+    <div class="d-sm-flex w-100">
+      <div>
+        <mat-card-title>{{util.appTranslate('deliveryman_offline_messages')}}</mat-card-title>
+      </div>
+      <div class="m-l-auto more-btn-align">
+        <mat-form-field appearance="outline" class="theme-searchbar">
+          <input matInput type="text" [(ngModel)]="searchQueryOffline"
+            [placeholder]="util.appTranslate('search_by_name')" (keyup.enter)="onSearchOffline()" />
+          <button mat-icon-button matSuffix (click)="onSearchOffline()">
+            <mat-icon class="op-5">search</mat-icon>
+          </button>
+        </mat-form-field>
+        <mat-form-field class="theme-select m-l-16" appearance="outline">
+          <mat-select [value]="exportType" [(ngModel)]="exportType"
+            (selectionChange)="onExportCollection($event.value,'driver_offline_messsage')">
+            <mat-option value="export">
+              {{util.appTranslate('export_kind')}}
+            </mat-option>
+            <mat-option value="excel">
+              {{util.appTranslate('excel_export_kind')}}
+            </mat-option>
+            <mat-option value="csv">
+              {{util.appTranslate('csv_export_kind')}}
+            </mat-option>
+            <mat-option value="raw">
+              {{util.appTranslate('raw_export_kind')}}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+        <a mat-button (click)="importCollection('driver_offline_messsage')" class="m-l-16 bg-secondary text-white" mat-flat-button>{{util.appTranslate('import_collection_btn')}}</a>
+        <a mat-button (click)="onAddOfflineMessage()" class="m-l-16" mat-flat-button
+          color="primary">{{util.appTranslate('add_offline_message')}}</a>
+      </div>
+    </div>
+  </mat-card-header>
+  <mat-card-content>
+    <div class="table-responsive">
+
+      @if(!isOfflineMessageLoaded){
+      <table mat-table [dataSource]="util.dummyArray" class="w-100">
+        <ng-container matColumnDef="name">
+          <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1 p-l-0">
+            {{util.appTranslate('message')}}
+          </th>
+          <td mat-cell *matCellDef="let element" class="p-l-0">
+            <mat-progress-bar mode="indeterminate" color="light"></mat-progress-bar>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="status">
+          <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1">
+            {{util.appTranslate('th_status')}}
+          </th>
+          <td mat-cell *matCellDef="let element">
+            <mat-progress-bar mode="indeterminate" color="light"></mat-progress-bar>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="action">
+          <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1 p-r-0 text-right">
+            {{util.appTranslate('th_action')}}
+          </th>
+          <td mat-cell *matCellDef="let element" class="f-w-500 text-right p-r-0">
+            <mat-progress-bar mode="indeterminate" color="light"></mat-progress-bar>
+          </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="displayedOfflineMessageColumn"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedOfflineMessageColumn"></tr>
+
+      </table>
+      }
+
+      @if(isOfflineMessageLoaded){
+      <table mat-table [dataSource]="offlineMessages" class="w-100">
+
+        <ng-container matColumnDef="name">
+          <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1 p-l-0">
+            {{util.appTranslate('message')}}
+          </th>
+          <td mat-cell *matCellDef="let element" class="p-l-0">
+            <h6 class="mat-subtitle-1 f-s-14 f-w-600">
+              {{ element.displayName }}
+            </h6>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="status">
+          <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1">
+            {{util.appTranslate('th_status')}}
+          </th>
+          <td mat-cell *matCellDef="let element">
+            <mat-slide-toggle [checked]="element.status"
+              [matTooltip]="element.status == true ? util.appTranslate('deactivate') : util.appTranslate('activate') "
+              (change)="onOfflineMessageStatusChange($event, element)"></mat-slide-toggle>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="action">
+          <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1 p-r-0 text-right">
+            {{util.appTranslate('th_action')}}
+          </th>
+          <td mat-cell *matCellDef="let element" class="f-w-500 text-right p-r-0">
+            <a (click)="onOfflineMessageEdit(element)" class="m-r-10 cursor-pointer text-primary"
+              [matTooltip]="util.appTranslate('click_to_edit')">
+              <mat-icon>edit</mat-icon>
+            </a>
+            <a (click)="onOfflineMessageDelete(element)" class="m-r-10 cursor-pointer text-error"
+              [matTooltip]="util.appTranslate('click_to_delete')">
+              <mat-icon>delete</mat-icon>
+            </a>
+          </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="displayedOfflineMessageColumn"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedOfflineMessageColumn"></tr>
+
+        <tr *matNoDataRow>
+          <td colspan="4" class="m-b-16 m-t-16 text-center">{{util.appTranslate('table_no_data_found')}}</td>
+        </tr>
+
+      </table>
+      }
+
+      <mat-paginator [hidden]="!isOfflineMessageLoaded" #paginatorOfflineMessage [pageSizeOptions]="[5,10, 20]"
+        [pageSize]="pageSizeOfflineMessage" (page)="onOfflineMessagePageChange($event)"
+        showFirstLastButtons></mat-paginator>
+    </div>
+
+  </mat-card-content>
+</mat-card>

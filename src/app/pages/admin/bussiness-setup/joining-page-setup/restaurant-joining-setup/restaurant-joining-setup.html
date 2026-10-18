@@ -1,0 +1,165 @@
+<mat-card class="cardWithShadow theme-card">
+  <mat-card-header>
+    <mat-card-title class="m-b-0">
+      {{util.appTranslate('default_form_field')}}
+    </mat-card-title>
+  </mat-card-header>
+
+  <mat-card-content class="b-t-0">
+    <ul class="default-joining-form">
+      @for (item of defaultField; track $index) {
+      <li>
+        <span class="mat-body-1 m-t-16">{{item}}</span>
+      </li>
+      }
+    </ul>
+  </mat-card-content>
+</mat-card>
+
+<form name="eventForm" [formGroup]="fieldForm" class="event-form" (ngSubmit)="onSubmit()" id="topContent">
+  <mat-card class="cardWithShadow theme-card">
+    <mat-card-header class="d-flex align-items-center justify-content-between">
+      <mat-card-title class="m-b-0">
+        {{util.appTranslate('add_new_form_field')}}
+      </mat-card-title>
+      <button mat-button type="button" color="primary" (click)="onAddFormField()">
+        <div class="d-flex align-items-center">
+          <span> {{util.appTranslate('add_field')}}</span>
+          <ng-icon name="tablerPlus" class="icon-20 m-l-4"></ng-icon>
+        </div>
+      </button>
+    </mat-card-header>
+
+    <mat-card-content class="b-t-1" formArrayName="formField">
+      @for (item of formFields.controls; track $index; let i = $index) {
+      <div class="row b-b-1 p-t-16" [formGroupName]="i">
+        <div class="col-lg-3 col-sm-12 p-b-16">
+          <mat-form-field appearance="outline" class="w-100">
+            <mat-label>{{util.appTranslate('type')}}</mat-label>
+            <mat-select formControlName="type" (selectionChange)="onFieldTypeChangeEvent($event,i)">
+              <mat-option value="text">{{util.appTranslate('text_input')}}</mat-option>
+              <mat-option value="number">{{util.appTranslate('number_input')}}</mat-option>
+              <mat-option value="file">{{util.appTranslate('file_input')}}</mat-option>
+              <mat-option value="choose">{{util.appTranslate('checkbox_input')}}</mat-option>
+              <mat-option value="date">{{util.appTranslate('date_input')}}</mat-option>
+              <mat-option value="email">{{util.appTranslate('email_input')}}</mat-option>
+              <mat-option value="phone">{{util.appTranslate('phone_input')}}</mat-option>
+            </mat-select>
+            @if(haveSubmitClicked == true && item.get('type')?.invalid){
+            <mat-hint class="m-b-16 error-msg">
+              @if(item.get('type')?.errors && item.get('type')?.errors?.['required']){
+              <div class="text-error">
+                {{util.appTranslate('form_required')}}
+              </div>
+              }
+            </mat-hint>
+            }
+          </mat-form-field>
+        </div>
+
+        <div class="col-lg-3 col-sm-12 p-b-16">
+          <mat-form-field appearance="outline" class="w-100" color="primary">
+            <mat-label>{{util.appTranslate('field_title')}}</mat-label>
+            <input matInput formControlName="title" type="text" />
+            @if(haveSubmitClicked == true && item.get('title')?.invalid){
+            <mat-hint class="m-b-16 error-msg">
+              @if(item.get('title')?.errors && item.get('title')?.errors?.['required']){
+              <div class="text-error">
+                {{util.appTranslate('form_required')}}
+              </div>
+              }
+            </mat-hint>
+            }
+          </mat-form-field>
+        </div>
+
+        @if(item.get('type')?.value != 'choose' && item.get('type')?.value != 'file'){
+        <div class="col-lg-3 col-sm-12 p-b-16">
+          <mat-form-field appearance="outline" class="w-100" color="primary">
+            <mat-label>{{util.appTranslate('field_placeholder')}}</mat-label>
+            <input matInput formControlName="placeholder" type="text" />
+            @if(haveSubmitClicked == true && item.get('placeholder')?.invalid){
+            <mat-hint class="m-b-16 error-msg">
+              @if(item.get('placeholder')?.errors && item.get('placeholder')?.errors?.['required']){
+              <div class="text-error">
+                {{util.appTranslate('form_required')}}
+              </div>
+              }
+            </mat-hint>
+            }
+          </mat-form-field>
+        </div>
+        }
+
+        <div class="col-lg-3 col-sm-12 p-b-16">
+          <div class="d-flex align-items-center justify-content-between m-b-16 p-t-12">
+            <mat-checkbox color="primary"
+              formControlName="isRequired">{{util.appTranslate('form_required')}}</mat-checkbox>
+            <button mat-mini-fab color="primary" type="button" (click)="onRemoveFormField(i)">
+              <ng-icon name="tablerTrash" class="icon-20"></ng-icon>
+            </button>
+          </div>
+        </div>
+
+        @if(item.get('type')?.value == 'choose'){
+        <div class="col-lg-12 col-sm-12" formArrayName="items">
+          <div class="row">
+            @for (options of getItems(i); track $index; let j = $index) {
+            <div class="col-lg-3 col-sm-12 p-b-16" [formGroupName]="j">
+              <div class="row">
+                <div class="col-lg-10 col-sm-10">
+                  <mat-form-field appearance="outline" class="w-100" color="primary">
+                    <mat-label>{{util.appTranslate('option_name')}}</mat-label>
+                    <input matInput formControlName="name" type="text" />
+                    @if(haveSubmitClicked == true && options.get('name')?.invalid){
+                    <mat-hint class="m-b-16 error-msg">
+                      @if(options.get('name')?.errors && options.get('name')?.errors?.['required']){
+                      <div class="text-error">
+                        {{util.appTranslate('form_required')}}
+                      </div>
+                      }
+                    </mat-hint>
+                    }
+                  </mat-form-field>
+                </div>
+                <div class="col-lg-2 col-sm-2">
+                  <div class="d-flex align-items-center justify-content-start m-b-16 p-t-12">
+                    @if(j == 0){
+                    <button mat-mini-fab color="primary" type="button" (click)="onAddItemOnField(i)">
+                      <ng-icon name="tablerPlus" class="icon-20"></ng-icon>
+                    </button>
+                    }
+                    @if(j != 0){
+                    <button mat-mini-fab color="primary" type="button" (click)="onDeleteItemOnField(i,j)">
+                      <ng-icon name="tablerTrash" class="icon-20"></ng-icon>
+                    </button>
+                    }
+                  </div>
+                </div>
+              </div>
+            </div>
+            }
+          </div>
+        </div>
+        }
+
+      </div>
+      }
+    </mat-card-content>
+
+    <mat-card-actions class="b-t-1">
+      <button mat-flat-button color="primary" type="submit" [disabled]="isSubmit == true">
+        @if(isSubmit == true){
+        <mat-icon>
+          <mat-spinner diameter="15"></mat-spinner>
+        </mat-icon>
+        }
+        {{util.appTranslate('submit_btn')}}
+      </button>
+      <button mat-flat-button class="m-l-8 bg-secondary text-white" type="button"
+        (click)="onReset()">{{util.appTranslate('reset_btn')}}</button>
+    </mat-card-actions>
+
+  </mat-card>
+
+</form>

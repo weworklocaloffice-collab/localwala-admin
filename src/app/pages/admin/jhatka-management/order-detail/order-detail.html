@@ -1,0 +1,138 @@
+<mat-card class="cardWithShadow">
+  <mat-card-header class="m-b-16">
+    <mat-card-title>Order {{ order?.orderNo }}</mat-card-title>
+    <mat-card-subtitle>{{ order?.lifecycle }} · placed {{ order?.placedAt }}</mat-card-subtitle>
+  </mat-card-header>
+
+  <mat-card-content>
+    <div *ngIf="!isLoaded" class="m-b-16">Loading…</div>
+
+    <div *ngIf="isLoaded && !order">Order not found.</div>
+
+    <div *ngIf="order">
+      <h3 class="f-s-16 f-w-600">Integrity</h3>
+      <div class="table-responsive">
+        <table mat-table [dataSource]="[
+          { k: 'Variance flags', v: integrity?.hasVariance ? 'YES' : 'none' },
+          { k: 'Refunded', v: (integrity?.refundedRupees | paise) },
+          { k: 'Final within estimate', v: integrity?.finalWithinEstimate }
+        ]" class="w-100">
+          <ng-container matColumnDef="k">
+            <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1">Check</th>
+            <td mat-cell *matCellDef="let element">{{ element.k }}</td>
+          </ng-container>
+
+          <ng-container matColumnDef="v">
+            <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1">Result</th>
+            <td mat-cell *matCellDef="let element">{{ element.v }}</td>
+          </ng-container>
+
+          <tr mat-header-row *matHeaderRowDef="['k', 'v']"></tr>
+          <tr mat-row *matRowDef="let row; columns: ['k', 'v'];"></tr>
+        </table>
+      </div>
+
+      <h3 class="f-s-16 f-w-600 m-t-24">Lines ({{ order.items?.length || 0 }})</h3>
+      <div class="table-responsive">
+        <table mat-table [dataSource]="order.items || []" class="w-100">
+          <ng-container matColumnDef="line">
+            <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1">Line</th>
+            <td mat-cell *matCellDef="let element">
+              <div class="f-w-600">{{ element.name }} ({{ element.sku }})</div>
+              <div class="m-t-4 f-s-12 text-muted">
+                asked {{ element.requestedQuantity?.value }} {{ element.requestedQuantity?.unit }}
+                · got {{ element.actualQuantity?.value }} {{ element.actualQuantity?.unit }}
+              </div>
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="money">
+            <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1">Money</th>
+            <td mat-cell *matCellDef="let element">est {{ element.estimatedAmount | paise }} · final {{ element.finalAmount | paise }} · refunded {{ element.refundedAmount | paise }}</td>
+          </ng-container>
+
+          <tr mat-header-row *matHeaderRowDef="['line', 'money']"></tr>
+          <tr mat-row *matRowDef="let row; columns: ['line', 'money'];"></tr>
+        </table>
+      </div>
+
+      <h3 class="f-s-16 f-w-600 m-t-24">Money</h3>
+      <p class="f-s-14">
+        Estimated {{ order.estimatedTotal | paise }} · final {{ order.finalTotal | paise }} ·
+        refunded {{ order.refundedAmount | paise }} · absorbed {{ order.absorbedOverchargeTotal | paise }} ·
+        tax {{ order.taxTotal | paise }}
+      </p>
+
+      <h3 class="f-s-16 f-w-600 m-t-24">Lifecycle history ({{ history.length }})</h3>
+      <div class="table-responsive">
+        <table mat-table [dataSource]="history" class="w-100">
+          <ng-container matColumnDef="move">
+            <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1">Move</th>
+            <td mat-cell *matCellDef="let element">{{ element.from }} → {{ element.to }} · {{ element.at }}</td>
+          </ng-container>
+
+          <tr mat-header-row *matHeaderRowDef="['move']"></tr>
+          <tr mat-row *matRowDef="let row; columns: ['move'];"></tr>
+        </table>
+      </div>
+
+      <h3 class="f-s-16 f-w-600 m-t-24">Weight confirmations ({{ confirmations.length }})</h3>
+      <div class="table-responsive">
+        <table mat-table [dataSource]="confirmations" class="w-100">
+          <ng-container matColumnDef="confirmation">
+            <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1">Attempt</th>
+            <td mat-cell *matCellDef="let element">
+              <div class="f-w-600">#{{ element.attempt }} {{ element.direction }}</div>
+              <div class="m-t-4 f-s-12 text-muted">variance {{ element.variancePct }}% · current: {{ element.isCurrent }}</div>
+            </td>
+          </ng-container>
+
+          <tr mat-header-row *matHeaderRowDef="['confirmation']"></tr>
+          <tr mat-row *matRowDef="let row; columns: ['confirmation'];"></tr>
+        </table>
+      </div>
+
+      <h3 class="f-s-16 f-w-600 m-t-24">Refunds ({{ refunds.length }}) · Complaints ({{ complaints.length }})</h3>
+      <div class="table-responsive">
+        <table mat-table [dataSource]="refunds" class="w-100">
+          <ng-container matColumnDef="refund">
+            <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1">Refund</th>
+            <td mat-cell *matCellDef="let element">
+              <div class="f-w-600">{{ element.refundNo }} — {{ element.amount | paise }}</div>
+              <div class="m-t-4 f-s-12 text-muted">{{ element.reason }} · {{ element.status }}</div>
+            </td>
+          </ng-container>
+
+          <tr mat-header-row *matHeaderRowDef="['refund']"></tr>
+          <tr mat-row *matRowDef="let row; columns: ['refund'];"></tr>
+        </table>
+      </div>
+      <div class="table-responsive m-t-16">
+        <table mat-table [dataSource]="complaints" class="w-100">
+          <ng-container matColumnDef="complaint">
+            <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1">Complaint</th>
+            <td mat-cell *matCellDef="let element">
+              <div class="f-w-600">{{ element.subject }}</div>
+              <div class="m-t-4 f-s-12 text-muted">{{ element.status }}</div>
+            </td>
+          </ng-container>
+
+          <tr mat-header-row *matHeaderRowDef="['complaint']"></tr>
+          <tr mat-row *matRowDef="let row; columns: ['complaint'];"></tr>
+        </table>
+      </div>
+
+      <div class="m-t-16" *ngIf="review">
+        <h3 class="f-s-16 f-w-600">Review: {{ review.rating }}★</h3>
+        <p class="f-s-14">{{ review.comment }}</p>
+      </div>
+
+      <div class="m-t-16" *ngIf="varianceFlags.length">
+        <h3 class="f-s-16 f-w-600">Variance flags ({{ varianceFlags.length }})</h3>
+        <p class="f-s-14" *ngFor="let flag of varianceFlags">
+          {{ flag.direction }} · {{ flag.variancePct }}% · {{ flag.action }}
+        </p>
+      </div>
+    </div>
+  </mat-card-content>
+</mat-card>

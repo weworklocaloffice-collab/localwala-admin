@@ -1,0 +1,153 @@
+<mat-card class="cardWithShadow">
+  <mat-card-content class="p-0">
+    <mat-tab-group mat-stretch-tabs="false" animationDuration="0ms" [selectedIndex]="tabIndex"
+      (selectedTabChange)="tabChanged($event)">
+      <mat-tab>
+        <ng-template mat-tab-label>
+          <div class="d-flex align-items-center justify-content-center">
+            <ng-icon name="tablerUserCircle" class="icon-20 m-r-8"></ng-icon>
+          </div>
+          {{util.appTranslate('personal_information')}}
+        </ng-template>
+        @if (tabIndex == 0) {
+        <mat-card-content class="p-y-24 b-t-0">
+          <app-cityzen-deliveryman-detail-personal-info
+            [driverId]="driverId"></app-cityzen-deliveryman-detail-personal-info>
+        </mat-card-content>
+        }
+      </mat-tab>
+
+      <mat-tab>
+        <ng-template mat-tab-label>
+          <div class="d-flex align-items-center justify-content-center">
+            <ng-icon name="tablerReceipt" class="icon-20 m-r-8"></ng-icon>
+          </div>
+          {{util.appTranslate('orders')}}
+        </ng-template>
+        @if (tabIndex == 1) {
+        <mat-card-content class="p-y-24 b-t-0">
+          <app-cityzen-deliveryman-detail-order-list [driverId]="driverId"></app-cityzen-deliveryman-detail-order-list>
+        </mat-card-content>
+        }
+      </mat-tab>
+
+      <mat-tab>
+        <ng-template mat-tab-label>
+          <div class="d-flex align-items-center justify-content-center">
+            <ng-icon name="tablerMoodSurprised" class="icon-20 m-r-8"></ng-icon>
+          </div>
+          {{util.appTranslate('complaints')}}
+        </ng-template>
+        @if (tabIndex == 2) {
+        <mat-card-content class="p-y-24 b-t-0">
+          <app-cityzen-deliveryman-detail-complaints [driverId]="driverId"></app-cityzen-deliveryman-detail-complaints>
+        </mat-card-content>
+        }
+      </mat-tab>
+
+      <mat-tab>
+        <ng-template mat-tab-label>
+          <div class="d-flex align-items-center justify-content-center">
+            <ng-icon name="tablerCashBanknote" class="icon-20 m-r-8"></ng-icon>
+          </div>
+          {{util.appTranslate('disbursement')}}
+        </ng-template>
+        @if (tabIndex == 3) {
+        <mat-card-content class="p-y-24 b-t-0">
+          <app-cityzen-deliveryman-detail-disbursement
+            [driverId]="driverId"></app-cityzen-deliveryman-detail-disbursement>
+        </mat-card-content>
+        }
+      </mat-tab>
+
+      <mat-tab>
+        <ng-template mat-tab-label>
+          <div class="d-flex align-items-center justify-content-center">
+            <ng-icon name="tablerWallet" class="icon-20 m-r-8"></ng-icon>
+          </div>
+          {{util.appTranslate('collected_cash_history')}}
+        </ng-template>
+        @if (tabIndex == 4) {
+        <mat-card-content class="p-y-24 b-t-0">
+          <app-cityzen-deliveryman-detail-collected-cash
+            [driverId]="driverId"></app-cityzen-deliveryman-detail-collected-cash>
+        </mat-card-content>
+        }
+      </mat-tab>
+
+      <mat-tab>
+        <ng-template mat-tab-label>
+          <div class="d-flex align-items-center justify-content-center">
+            <ng-icon name="tablerPigMoney" class="icon-20 m-r-8"></ng-icon>
+          </div>
+          {{util.appTranslate('payout_method')}}
+        </ng-template>
+        @if (tabIndex == 5) {
+        <mat-card-content class="p-y-24 b-t-0">
+          <app-cityzen-deliveryman-detail-payout-accounts
+            [driverId]="driverId"></app-cityzen-deliveryman-detail-payout-accounts>
+        </mat-card-content>
+        }
+      </mat-tab>
+
+      <mat-tab>
+        <ng-template mat-tab-label>
+          <div class="d-flex align-items-center justify-content-center">
+            <ng-icon name="tablerReceipt2" class="icon-20 m-r-8"></ng-icon>
+          </div>
+          {{util.appTranslate('withdrawal_request')}}
+        </ng-template>
+        @if (tabIndex == 6) {
+        <mat-card-content class="p-y-24 b-t-0">
+          <app-cityzen-deliveryman-detail-withdrawal-request
+            [driverId]="driverId"></app-cityzen-deliveryman-detail-withdrawal-request>
+        </mat-card-content>
+        }
+      </mat-tab>
+
+      <mat-tab>
+        <ng-template mat-tab-label>
+          <div class="d-flex align-items-center justify-content-center">
+            <ng-icon name="tablerCalendarDollar" class="icon-20 m-r-8"></ng-icon>
+          </div>
+          {{util.appTranslate('transactions')}}
+        </ng-template>
+        @if (tabIndex == 7) {
+        <mat-card-content class="p-y-24 b-t-0">
+          <app-cityzen-deliveryman-detail-wallet-transactions
+            [driverId]="driverId"></app-cityzen-deliveryman-detail-wallet-transactions>
+        </mat-card-content>
+        }
+      </mat-tab>
+
+      <mat-tab>
+        <ng-template mat-tab-label>
+          <div class="d-flex align-items-center justify-content-center">
+            <ng-icon name="tablerStars" class="icon-20 m-r-8"></ng-icon>
+          </div>
+          {{util.appTranslate('reviews')}}
+        </ng-template>
+        @if (tabIndex == 8) {
+        <mat-card-content class="p-y-24 b-t-0">
+          <app-cityzen-deliveryman-detail-reviews [driverId]="driverId"></app-cityzen-deliveryman-detail-reviews>
+        </mat-card-content>
+        }
+      </mat-tab>
+
+      <mat-tab>
+        <ng-template mat-tab-label>
+          <div class="d-flex align-items-center justify-content-center">
+            <ng-icon name="tablerPhotoSearch" class="icon-20 m-r-8"></ng-icon>
+          </div>
+          {{util.appTranslate('media')}}
+        </ng-template>
+        @if (tabIndex == 9) {
+        <mat-card-content class="p-y-24 b-t-0">
+          <app-cityzen-deliveryman-detail-medias [driverId]="driverId"></app-cityzen-deliveryman-detail-medias>
+        </mat-card-content>
+        }
+      </mat-tab>
+
+    </mat-tab-group>
+  </mat-card-content>
+</mat-card>

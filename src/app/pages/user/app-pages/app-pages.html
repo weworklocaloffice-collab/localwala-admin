@@ -1,0 +1,25 @@
+<mat-card class="cardWithShadow theme-card">
+  <mat-card-header>
+    <mat-card-title class="m-b-0">
+      {{ util.appTranslate(title) }}
+    </mat-card-title>
+  </mat-card-header>
+
+  @if (!isLoaded) {
+  <mat-card-content class="b-t-0">
+    @for (item of [1,2,3,4,5,6,7,8,9,10]; track $index) {
+    <div>
+      <mat-progress-bar mode="indeterminate" color="light" style="width:100%; margin:10px"></mat-progress-bar>
+      <mat-progress-bar mode="indeterminate" color="light" style="width:100%; margin:10px"></mat-progress-bar>
+      <mat-progress-bar mode="indeterminate" color="light" style="width:80%; margin:10px"></mat-progress-bar>
+    </div>
+    }
+  </mat-card-content>
+  }
+
+  @if (isLoaded) {
+  <mat-card-content class="b-t-0">
+    <p [innerHTML]="safeDescription"></p>
+  </mat-card-content>
+  }
+</mat-card>

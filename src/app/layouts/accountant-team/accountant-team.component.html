@@ -1,0 +1,62 @@
+<span [dir]="options.dir!">
+  <mat-sidenav-container class="mainWrapper" autosize autoFocus [ngClass]="{
+      'sidebarNav-mini':
+        options.sidenavCollapsed && options.navPos !== 'top' && !resView,
+      'sidebarNav-horizontal': options.horizontal,
+      cardBorder: options.cardBorder
+    }">
+    <!-- ============================================================== -->
+    <!-- Vertical Sidebar -->
+    <!-- ============================================================== -->
+    @if (!options.horizontal) {
+    <mat-sidenav #leftsidenav [mode]="isOver ? 'over' : 'side'" [opened]="
+        options.navPos === 'side' &&
+        options.sidenavOpened &&
+        !isOver &&
+        !resView
+      " (openedChange)="onSidenavOpenedChange($event)" (closedStart)="onSidenavClosedStart()" class="sidebarNav">
+      <div class="flex-layout">
+        <app-accountant-team-sidebar (toggleMobileNav)="sidenav.toggle()"
+          [showToggle]="isOver"></app-accountant-team-sidebar>
+        <ng-scrollbar class="position-relative" style="height: 100%">
+          <mat-nav-list class="sidebar-list">
+            @for(item of navItems; track item) {
+            <app-accountant-team-nav-item [item]="item" (notify)="sidenav.toggle()">
+            </app-accountant-team-nav-item>
+            }
+          </mat-nav-list>
+        </ng-scrollbar>
+      </div>
+    </mat-sidenav>
+    }
+
+    <!-- ============================================================== -->
+    <!-- Main Content -->
+    <!-- ============================================================== -->
+    <mat-sidenav-content class="contentWrapper" #content>
+      <!-- ============================================================== -->
+      <!-- VerticalHeader -->
+      <!-- ============================================================== -->
+      <app-accountant-header [showToggle]="!isOver" (toggleCollapsed)="toggleCollapsed()"
+        (toggleMobileNav)="sidenav.toggle()" (optionsChange)="receiveOptions($event)"></app-accountant-header>
+
+      <main class="pageWrapper" [ngClass]="{
+          maxWidth: options.boxed
+        }">
+        <router-outlet></router-outlet>
+      </main>
+      <div class="d-flex align-items-center justify-content-between p-24">
+
+        <span class="f-s-12">
+          <span>&#169;</span> {{appName}}. {{currentYear}}
+          {{util.appTranslate('all_right_reserved')}}
+        </span>
+
+        <span class="text-white bg-secondary rounded f-w-500 p-4 p-y-2 f-s-10">
+          Software Release {{appVersion}}
+        </span>
+
+      </div>
+    </mat-sidenav-content>
+  </mat-sidenav-container>
+</span>

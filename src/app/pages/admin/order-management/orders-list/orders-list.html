@@ -1,0 +1,168 @@
+<mat-card class="cardWithShadow theme-card">
+  <mat-card-header>
+    <mat-card-title class="m-b-0">
+      {{util.appTranslate('orders')}}
+    </mat-card-title>
+  </mat-card-header>
+
+  <mat-card-content class="b-t-0">
+    <mat-tab-group mat-stretch-tabs="false" [selectedIndex]="tabIndex" mat-align-tabs="start"
+      (selectedTabChange)="tabChanged($event)">
+      <mat-tab>
+        <ng-template matTabLabel>
+          <span [matBadge]="allOrders" matBadgeOverlap="false">{{util.appTranslate('all_orders')}}</span>
+        </ng-template>
+        @if(tabIndex == 0){
+        <mat-card-content>
+          <app-order-tabs-list [status]="'all'"></app-order-tabs-list>
+        </mat-card-content>
+        }
+      </mat-tab>
+
+      <mat-tab>
+        <ng-template matTabLabel>
+          <span [matBadge]="freshOrders" matBadgeOverlap="false">{{util.appTranslate('new_orders')}}</span>
+        </ng-template>
+        @if(tabIndex == 1){
+        <mat-card-content>
+          <app-order-tabs-list [status]="'created'"></app-order-tabs-list>
+        </mat-card-content>
+        }
+      </mat-tab>
+
+      <mat-tab>
+        <ng-template matTabLabel>
+          <span [matBadge]="accepted" matBadgeOverlap="false">{{util.appTranslate('accepted_orders')}}</span>
+        </ng-template>
+        @if(tabIndex == 2){
+        <mat-card-content>
+          <app-order-tabs-list [status]="'accepted'"></app-order-tabs-list>
+        </mat-card-content>
+        }
+      </mat-tab>
+
+      <mat-tab>
+        <ng-template matTabLabel>
+          <span [matBadge]="scheduleOrder" matBadgeOverlap="false">{{util.appTranslate('schedule_orders')}}</span>
+        </ng-template>
+        @if(tabIndex == 3){
+        <mat-card-content>
+          <app-order-tabs-list [status]="'schedule'"></app-order-tabs-list>
+        </mat-card-content>
+        }
+      </mat-tab>
+
+      <mat-tab>
+        <ng-template matTabLabel>
+          <span [matBadge]="preparingOrders" matBadgeOverlap="false">{{util.appTranslate('preparing_orders')}}</span>
+        </ng-template>
+        @if(tabIndex == 4){
+        <mat-card-content>
+          <app-order-tabs-list [status]="'preparing'"></app-order-tabs-list>
+        </mat-card-content>
+        }
+      </mat-tab>
+
+      <mat-tab>
+        <ng-template matTabLabel>
+          <span [matBadge]="readyOrder" matBadgeOverlap="false">{{util.appTranslate('ready_orders')}}</span>
+        </ng-template>
+        @if(tabIndex == 5){
+        <mat-card-content>
+          <app-order-tabs-list [status]="'ready'"></app-order-tabs-list>
+        </mat-card-content>
+        }
+      </mat-tab>
+
+      <mat-tab>
+        <ng-template matTabLabel>
+          <span [matBadge]="handoverOrder" matBadgeOverlap="false">{{util.appTranslate('handover_orders')}}</span>
+        </ng-template>
+        @if(tabIndex == 6){
+        <mat-card-content>
+          <app-order-tabs-list [status]="'handover'"></app-order-tabs-list>
+        </mat-card-content>
+        }
+      </mat-tab>
+
+      <mat-tab>
+        <ng-template matTabLabel>
+          <span [matBadge]="ongoingOrder" matBadgeOverlap="false">{{util.appTranslate('ongoing_orders')}}</span>
+        </ng-template>
+        @if(tabIndex == 7){
+        <mat-card-content>
+          <app-order-tabs-list [status]="'ongoing'"></app-order-tabs-list>
+        </mat-card-content>
+        }
+      </mat-tab>
+
+      <mat-tab>
+        <ng-template matTabLabel>
+          <span [matBadge]="deliveredOrder" matBadgeOverlap="false">{{util.appTranslate('delivered_orders')}}</span>
+        </ng-template>
+        @if(tabIndex == 8){
+        <mat-card-content>
+          <app-order-tabs-list [status]="'delivered'"></app-order-tabs-list>
+        </mat-card-content>
+        }
+      </mat-tab>
+
+      <mat-tab>
+        <ng-template matTabLabel>
+          <span [matBadge]="cancelledOrder" matBadgeOverlap="false">{{util.appTranslate('cancelled_orders')}}</span>
+        </ng-template>
+        @if(tabIndex == 9){
+        <mat-card-content>
+          <app-order-tabs-list [status]="'cancelled'"></app-order-tabs-list>
+        </mat-card-content>
+        }
+      </mat-tab>
+
+      <mat-tab>
+        <ng-template matTabLabel>
+          <span [matBadge]="rejectedOrder" matBadgeOverlap="false">{{util.appTranslate('rejected_orders')}}</span>
+        </ng-template>
+        @if(tabIndex == 10){
+        <mat-card-content>
+          <app-order-tabs-list [status]="'rejected'"></app-order-tabs-list>
+        </mat-card-content>
+        }
+      </mat-tab>
+
+      <mat-tab>
+        <ng-template matTabLabel>
+          <span [matBadge]="refundedOrder" matBadgeOverlap="false">{{util.appTranslate('refunded_orders')}}</span>
+        </ng-template>
+        @if(tabIndex == 11){
+        <mat-card-content>
+          <app-order-tabs-list [status]="'refunded'"></app-order-tabs-list>
+        </mat-card-content>
+        }
+      </mat-tab>
+
+      <mat-tab>
+        <ng-template matTabLabel>
+          <span [matBadge]="partiallyOrder"
+            matBadgeOverlap="false">{{util.appTranslate('partially_refunded_orders')}}</span>
+        </ng-template>
+        @if(tabIndex == 12){
+        <mat-card-content>
+          <app-order-tabs-list [status]="'partially_refunded'"></app-order-tabs-list>
+        </mat-card-content>
+        }
+      </mat-tab>
+
+      <mat-tab>
+        <ng-template matTabLabel>
+          <span [matBadge]="pendingOrder" matBadgeOverlap="false">{{util.appTranslate('pending_orders')}}</span>
+        </ng-template>
+        @if(tabIndex == 13){
+        <mat-card-content>
+          <app-order-tabs-list [status]="'pending_payments'"></app-order-tabs-list>
+        </mat-card-content>
+        }
+      </mat-tab>
+
+    </mat-tab-group>
+  </mat-card-content>
+</mat-card>

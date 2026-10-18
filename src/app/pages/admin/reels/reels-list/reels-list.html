@@ -1,0 +1,101 @@
+<mat-card class="cardWithShadow">
+  <mat-card-header>
+    <div class="d-sm-flex w-100">
+      <div>
+        <mat-card-title>{{util.appTranslate('reels')}}</mat-card-title>
+      </div>
+      <div class="m-l-auto more-btn-align">
+        <a mat-button (click)="onAdd()" class="m-l-16" mat-flat-button color="primary">{{util.appTranslate('create_reel')}}</a>
+      </div>
+    </div>
+  </mat-card-header>
+
+  <mat-card-content>
+    <mat-tab-group (selectedTabChange)="onTabChange($event.index)" mat-stretch-tabs="false">
+      <mat-tab [label]="util.appTranslate('th_all')"></mat-tab>
+      @for (status of statuses; track status) {
+      <mat-tab [label]="status"></mat-tab>
+      }
+    </mat-tab-group>
+
+    <div class="table-responsive">
+      <table mat-table [dataSource]="reels" class="w-100">
+        <ng-container matColumnDef="video">
+          <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1 p-l-0">
+            {{util.appTranslate('th_video')}}
+          </th>
+          <td mat-cell *matCellDef="let element" class="p-l-0">
+            @if (element.thumbnail) {
+            <img [src]="element.thumbnail" alt="reel" width="72" height="96" style="object-fit: cover; border-radius: 6px;" />
+            } @else {
+            <span class="op-5">{{util.appTranslate('th_no_media')}}</span>
+            }
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="vertical">
+          <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1">
+            {{util.appTranslate('vertical')}}
+          </th>
+          <td mat-cell *matCellDef="let element">{{element.vertical || '-'}}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="target">
+          <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1">
+            {{util.appTranslate('target')}}
+          </th>
+          <td mat-cell *matCellDef="let element">{{targetLabel(element)}}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="status">
+          <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1">
+            {{util.appTranslate('th_status')}}
+          </th>
+          <td mat-cell *matCellDef="let element">
+            <mat-chip>{{statusLabel(element)}}</mat-chip>
+            @if (element.status === 'PROCESSING' && element.processing) {
+            <mat-progress-bar mode="determinate" [value]="element.processing.progress || 0"></mat-progress-bar>
+            }
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="likes">
+          <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1">
+            {{util.appTranslate('th_likes')}}
+          </th>
+          <td mat-cell *matCellDef="let element">{{element.likesCount || element.likes || 0}}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="action">
+          <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1 p-r-0 text-right">
+            {{util.appTranslate('th_action')}}
+          </th>
+          <td mat-cell *matCellDef="let element" class="p-r-0 text-right">
+            <button mat-icon-button [matMenuTriggerFor]="menu">
+              <mat-icon>more_vert</mat-icon>
+            </button>
+            <mat-menu #menu="matMenu">
+              <button mat-menu-item (click)="onPreview(element)">{{util.appTranslate('preview')}}</button>
+              <button mat-menu-item (click)="onEdit(element)">{{util.appTranslate('edit')}}</button>
+              <button mat-menu-item (click)="onPublish(element)">{{util.appTranslate('publish')}}</button>
+              <button mat-menu-item (click)="onPause(element)">{{util.appTranslate('pause')}}</button>
+              <button mat-menu-item (click)="onDuplicate(element)">{{util.appTranslate('duplicate')}}</button>
+              <button mat-menu-item (click)="onAnalytics(element)">{{util.appTranslate('analytics')}}</button>
+              <button mat-menu-item (click)="onReports(element)">{{util.appTranslate('reports')}}</button>
+              <button mat-menu-item (click)="onDelete(element)">{{util.appTranslate('delete')}}</button>
+            </mat-menu>
+          </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="displayedColumn"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumn;"></tr>
+      </table>
+
+      @if (isLoaded && reels.data.length === 0) {
+      <div class="text-center op-5 p-16">{{util.appTranslate('th_no_records')}}</div>
+      }
+
+      <mat-paginator #paginator [pageSize]="pageSize" [pageSizeOptions]="[5, 10, 20, 50]" (page)="onPageChange($event)" showFirstLastButtons></mat-paginator>
+    </div>
+  </mat-card-content>
+</mat-card>

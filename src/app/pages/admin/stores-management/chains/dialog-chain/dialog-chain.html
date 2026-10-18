@@ -1,0 +1,40 @@
+<div mat-dialog-content class="dialog-form">
+  <form [formGroup]="chainForm">
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Name <span class="required">*</span></mat-label>
+      <input matInput formControlName="name" placeholder="Chain name">
+      <mat-error *ngIf="f.name.invalid && haveSubmitClicked">
+        Name is required
+      </mat-error>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Key <span class="required">*</span></mat-label>
+      <input matInput formControlName="key" placeholder="e.g. dwarka-chain">
+      <mat-error *ngIf="f.key.invalid && haveSubmitClicked">
+        Key is required and must be lowercase letters, numbers, and dashes only
+      </mat-error>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Status</mat-label>
+      <mat-select formControlName="status">
+        <mat-option value="true">
+          <span>Active</span>
+        </mat-option>
+        <mat-option value="false">
+          <span>Suspended</span>
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+  </form>
+</div>
+
+<div mat-dialog-actions class="dialog-actions">
+  <button mat-button type="button" (click)="dialogRef.close()" cdkFocusInitial>
+    Cancel
+  </button>
+  <button mat-raised-button color="primary" type="submit" [disabled]="!chainForm.valid || haveSubmitClicked">
+    {{ action === 'create' ? 'Create' : 'Update' }}
+  </button>
+</div>

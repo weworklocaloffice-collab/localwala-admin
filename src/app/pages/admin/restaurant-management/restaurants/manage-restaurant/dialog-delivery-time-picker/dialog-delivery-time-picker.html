@@ -1,0 +1,62 @@
+<h2 mat-dialog-title class="dialog-title">
+  <span class="title-text">{{util.appTranslate('save_appx_delivery_time')}}</span>
+  <button mat-icon-button mat-dialog-close class="close-btn">
+    <mat-icon>close</mat-icon>
+  </button>
+</h2>
+<div mat-dialog-content style="max-width: 600px;max-height: max-content;" class="m-t-12 p-t-12">
+  <form name="eventForm" [formGroup]="deliveryTimeForm" class="event-form" (ngSubmit)="onSubmit()">
+    <div class="row">
+      <div class="col-lg-4 col-sm-12 p-b-16">
+        <mat-form-field appearance="outline" class="w-100" color="primary">
+          <mat-label>{{util.appTranslate('min_time')}}</mat-label>
+          <input matInput formControlName="min" type="number" />
+          @if(f['min'].touched && f['min'].invalid){
+          <mat-hint class="m-b-16 error-msg">
+            @if(f['min'].errors && f['min'].errors['required']){
+            <div class="text-error">
+              {{util.appTranslate('form_required')}}
+            </div>
+            }
+          </mat-hint>
+          }
+        </mat-form-field>
+      </div>
+      <div class="col-lg-4 col-sm-12 p-b-16">
+        <mat-form-field appearance="outline" class="w-100" color="primary">
+          <mat-label>{{util.appTranslate('max_time')}}</mat-label>
+          <input matInput formControlName="max" type="number" />
+          @if(f['max'].touched && f['max'].invalid){
+          <mat-hint class="m-b-16 error-msg">
+            @if(f['max'].errors && f['max'].errors['required']){
+            <div class="text-error">
+              {{util.appTranslate('form_required')}}
+            </div>
+            }
+          </mat-hint>
+          }
+        </mat-form-field>
+      </div>
+      <div class="col-lg-4 col-sm-12 p-b-16">
+        <mat-form-field appearance="outline" class="w-100">
+          <mat-select formControlName="type">
+            <mat-option value="min">{{util.appTranslate('min')}}</mat-option>
+            <mat-option value="hour">{{util.appTranslate('hour')}}</mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
+    </div>
+    <div mat-dialog-actions class="p-b-24">
+      <button mat-button mat-flat-button color="primary" type="submit"
+        [disabled]="!deliveryTimeForm.valid || isSubmit == true">
+        @if(isSubmit == true){
+        <mat-icon>
+          <mat-spinner diameter="15"></mat-spinner>
+        </mat-icon>
+        }
+        {{util.appTranslate('save_btn')}}
+      </button>
+      <button mat-button mat-dialog-close class="m-l-8 bg-secondary text-white">{{util.appTranslate('cancel_btn')}}</button>
+    </div>
+  </form>
+</div>

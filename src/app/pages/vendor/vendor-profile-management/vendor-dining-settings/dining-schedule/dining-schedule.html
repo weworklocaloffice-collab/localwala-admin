@@ -1,0 +1,113 @@
+<mat-card class="cardWithShadow">
+  <mat-card-content>
+
+    @for (item of slots; track $index; let i = $index) {
+
+    <div class="m-t-6 m-b-6">
+      <div class="row">
+        <div class="col-sm-8 col-lg-8">
+          <mat-card-title class="mat-body-2 f-w-600">
+            {{ getDayName(i) }}
+          </mat-card-title>
+        </div>
+        <div class="col-sm-4 col-lg-4 d-flex align-items-end justify-content-end">
+          <button mat-button type="button" color="primary" (click)="onAddItem(i)">
+            <div class="d-flex align-items-center">
+              <span>{{ util.appTranslate('add_slot') }}</span>
+              <ng-icon name="tablerPlus" class="icon-20 m-l-4"></ng-icon>
+            </div>
+          </button>
+        </div>
+      </div>
+
+      <!-- BREAKFAST -->
+      <div class="row">
+        <div class="col-sm-12 col-lg-12">
+          {{ util.appTranslate('breakfast') }}
+        </div>
+      </div>
+
+      <div class="row m-t-10">
+        @for (slot of getSlotsByType(item.times, 'breakfast'); track slot.time) {
+        <div class="col-sm-4 col-lg-4">
+          <mat-form-field appearance="outline" class="w-100">
+            <input matInput type="text" [value]="slot.time" disabled />
+            <a (click)="onEdit(i, item.times.indexOf(slot))" matSuffix class="m-r-10 cursor-pointer text-warning"
+              [matTooltip]="util.appTranslate('click_to_edit')">
+              <mat-icon class="op-5">edit</mat-icon>
+            </a>
+            <a (click)="onDelete(i, item.times.indexOf(slot))" matSuffix class="m-r-10 cursor-pointer text-warning"
+              [matTooltip]="util.appTranslate('click_to_delete')">
+              <mat-icon class="op-5">delete</mat-icon>
+            </a>
+          </mat-form-field>
+        </div>
+        }
+      </div>
+
+      <!-- LUNCH -->
+      <div class="row">
+        <div class="col-sm-12 col-lg-12">
+          {{ util.appTranslate('lunch') }}
+        </div>
+      </div>
+
+      <div class="row m-t-10">
+        @for (slot of getSlotsByType(item.times, 'lunch'); track slot.time) {
+        <div class="col-sm-4 col-lg-4">
+          <mat-form-field appearance="outline" class="w-100">
+            <input matInput type="text" [value]="slot.time" disabled />
+            <a (click)="onEdit(i, item.times.indexOf(slot))" matSuffix class="m-r-10 cursor-pointer text-warning"
+              [matTooltip]="util.appTranslate('click_to_edit')">
+              <mat-icon class="op-5">edit</mat-icon>
+            </a>
+            <a (click)="onDelete(i, item.times.indexOf(slot))" matSuffix class="m-r-10 cursor-pointer text-warning"
+              [matTooltip]="util.appTranslate('click_to_edit')">
+              <mat-icon class="op-5">delete</mat-icon>
+            </a>
+          </mat-form-field>
+        </div>
+        }
+      </div>
+
+      <!-- DINNER -->
+      <div class="row">
+        <div class="col-sm-12 col-lg-12">
+          {{ util.appTranslate('dinner') }}
+        </div>
+      </div>
+
+      <div class="row m-t-10">
+        @for (slot of getSlotsByType(item.times, 'dinner'); track slot.time) {
+        <div class="col-sm-4 col-lg-4">
+          <mat-form-field appearance="outline" class="w-100">
+            <input matInput type="text" [value]="slot.time" disabled />
+            <a (click)="onEdit(i, item.times.indexOf(slot))" matSuffix class="m-r-10 cursor-pointer text-warning"
+              [matTooltip]="util.appTranslate('click_to_edit')">
+              <mat-icon class="op-5">edit</mat-icon>
+            </a>
+            <a (click)="onDelete(i, item.times.indexOf(slot))" matSuffix class="m-r-10 cursor-pointer text-warning"
+              [matTooltip]="util.appTranslate('click_to_edit')">
+              <mat-icon class="op-5">delete</mat-icon>
+            </a>
+          </mat-form-field>
+        </div>
+        }
+      </div>
+
+    </div>
+    }
+
+  </mat-card-content>
+
+  <mat-card-content class="b-t-0">
+    <div class="row justify-content-end m-t-24">
+      <div class="col-sm-12">
+        <button mat-flat-button color="primary" (click)="onSubmit()">
+          {{ util.appTranslate('save_btn') }}
+        </button>
+      </div>
+    </div>
+  </mat-card-content>
+
+</mat-card>

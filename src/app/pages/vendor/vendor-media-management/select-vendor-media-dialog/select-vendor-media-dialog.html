@@ -1,0 +1,89 @@
+<h2 mat-dialog-title class="dialog-title">
+  <span class="title-text">{{util.appTranslate('image_gallery')}}</span>
+  <button mat-icon-button mat-dialog-close class="close-btn">
+    <mat-icon>close</mat-icon>
+  </button>
+</h2>
+<mat-dialog-content class="mat-typography w-100 m-t-12 p-t-12">
+  <mat-tab-group mat-stretch-tabs="false" mat-align-tabs="start" [tabIndex]="tabIndex"
+    (selectedTabChange)="tabChanged($event)">
+
+    <mat-tab [label]="util.appTranslate('upload_files')">
+      <mat-card class="cardWithShadow">
+        <mat-card-content class="p-y-24">
+          <div class="text-center m-t-24">
+            <img [src]="fileURL" class="rounded media-custom-image-upload border p-5 m-b-16" width="200" height="200"
+              (click)="fileInput.click()" />
+            <input #fileInput type="file" hidden (change)="onFileChoose($event)" accept="image/*">
+            <div class="m-t-24">
+              <button mat-flat-button color="primary" class="m-r-8" type="button" (click)="uploadImage()">
+                {{util.appTranslate('upload_and_save')}}
+              </button>
+              <button mat-stroked-button class="bg-secondary text-white" type="button"
+                (click)="onReset()">{{util.appTranslate('reset_btn')}}</button>
+            </div>
+            <span class="f-s-14 m-t-24 d-block">{{util.appTranslate('image_validation_type')}}</span>
+          </div>
+        </mat-card-content>
+      </mat-card>
+    </mat-tab>
+
+    <mat-tab [label]="util.appTranslate('image_gallery')">
+      <mat-card class="cardWithShadow">
+        <mat-card-content>
+          @if (!isLoaded) {
+          <div class="row m-t-12">
+            @for (item of util.dummyData; track $index) {
+            <div class="col-lg-1 col-sm-2 p-b-16">
+              <mat-progress-bar mode="indeterminate" class="progress-bar-product-info" color="light"></mat-progress-bar>
+            </div>
+            }
+          </div>
+          }
+          @if (isLoaded) {
+          <div class="row m-t-12">
+            @for (item of listOfMedias; track $index) {
+            <div class="col-lg-1 col-sm-2 p-b-16">
+              <img [src]="api.mediaUrl+item.path" class="media-image-cover border p-5 m-t-16 w-100"
+                [ngStyle]="{'border': selectedMedia == item.path ? '5px solid #fb9778' : '1px solid #e5e5e5'}"
+                onError="this.src='assets/images/placeholder.png'" (click)="onMediaSelect(item.path)" />
+            </div>
+            }
+          </div>
+          }
+          @if (listOfMedias.length == 0 && isLoaded) {
+          <div class="row m-t-12">
+            <div class="col-lg-12 col-sm-12 p-b-16 text-center">
+              <p>{{util.appTranslate('no_image_found')}}</p>
+            </div>
+          </div>
+          }
+          @if (serverResults < totalResults && isLoaded) { <div class="row">
+            @if (isLoadingMore) {
+            <div
+              class="col-lg-12 d-flex flex-row align-items-center justify-content-center m-t-16 m-b-16 p-t-16 p-b-16">
+              <mat-spinner [diameter]="50" style="margin: 0 auto;"></mat-spinner>
+            </div>
+            }
+            @if (!isLoadingMore) {
+            <div
+              class="col-lg-12 d-flex flex-row align-items-center justify-content-center m-t-16 m-b-16 p-t-16 p-b-16">
+              <button mat-stroked-button (click)="onLoadMore()">{{util.appTranslate('load_more')}}</button>
+            </div>
+            }
+            </div>
+            }
+        </mat-card-content>
+      </mat-card>
+    </mat-tab>
+
+  </mat-tab-group>
+</mat-dialog-content>
+<mat-dialog-actions align="end">
+  <button mat-flat-button class="bg-secondary text-white" mat-dialog-close>
+    {{util.appTranslate('cancel_btn')}}
+  </button>
+  <button mat-flat-button (click)="onSelect()" cdkFocusInitial>
+    {{util.appTranslate('set_image')}}
+  </button>
+</mat-dialog-actions>

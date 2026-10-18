@@ -1,0 +1,73 @@
+<form name="eventForm" [formGroup]="settingForm" class="event-form" (ngSubmit)="onSubmit()" id="topContent">
+
+  <div class="row">
+    <div class="col-lg-12 col-sm-12 p-b-16">
+      <mat-card class="cardWithShadow theme-card">
+        <mat-card-header>
+          <mat-card-title class="m-b-0">
+            {{util.appTranslate('kitchen_owner_settings')}}
+          </mat-card-title>
+        </mat-card-header>
+
+        <mat-card-content class="b-t-0">
+          <div class="row p-b-16">
+            <div class="col-lg-6 col-sm-12 p-b-16">
+              <mat-form-field appearance="outline" class="w-100">
+                <mat-label>{{util.appTranslate('kitchen_owner_login_with')}}</mat-label>
+                <mat-select formControlName="ownerLoginWith" name="ownerLoginWith">
+                  <mat-option value="email_password">{{util.appTranslate('email_password')}}</mat-option>
+                  <mat-option value="phone_password">{{util.appTranslate('mobile_password')}}</mat-option>
+                  <mat-option value="phone_otp">{{util.appTranslate('mobile_otp')}}</mat-option>
+                  <mat-option value="email_otp">{{util.appTranslate('email_otp')}}</mat-option>
+                </mat-select>
+                @if(haveSubmitClicked == true && f['ownerLoginWith'].invalid){
+                <mat-hint class="m-b-16 error-msg">
+                  @if(f['ownerLoginWith'].errors && f['ownerLoginWith'].errors['required']){
+                  <div class="text-error">
+                    {{util.appTranslate('form_required')}}
+                  </div>
+                  }
+                </mat-hint>
+                }
+              </mat-form-field>
+            </div>
+
+            <div class="col-lg-6 col-sm-12 p-b-16">
+              <mat-form-field appearance="outline" class="w-100">
+                <mat-label>{{util.appTranslate('reset_password_with')}}</mat-label>
+                <mat-select formControlName="ownerResetPasswordWith" name="ownerResetPasswordWith">
+                  <mat-option value="phone_otp">{{util.appTranslate('mobile_otp')}}</mat-option>
+                  <mat-option value="email_otp">{{util.appTranslate('email_otp')}}</mat-option>
+                </mat-select>
+                @if(haveSubmitClicked == true && f['ownerResetPasswordWith'].invalid){
+                <mat-hint class="m-b-16 error-msg">
+                  @if(f['ownerResetPasswordWith'].errors && f['ownerResetPasswordWith'].errors['required']){
+                  <div class="text-error">
+                    {{util.appTranslate('form_required')}}
+                  </div>
+                  }
+                </mat-hint>
+                }
+              </mat-form-field>
+            </div>
+
+          </div>
+
+          <div class="row">
+            <div class="col-lg-2 col-sm-6 p-b-16">
+              <button mat-flat-button color="primary" type="submit" class="w-100">
+                {{ action == 'add' ? util.appTranslate('submit_btn') : util.appTranslate('update_btn')}}
+              </button>
+            </div>
+            <div class="col-lg-2 col-sm-6 p-b-16">
+              <button mat-flat-button (click)="onReset()" class="w-100 bg-secondary text-white"
+                type="button">{{util.appTranslate('reset_btn')}}</button>
+            </div>
+          </div>
+
+        </mat-card-content>
+      </mat-card>
+    </div>
+  </div>
+
+</form>

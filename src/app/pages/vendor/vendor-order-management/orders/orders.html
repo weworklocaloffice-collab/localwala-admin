@@ -1,0 +1,80 @@
+<mat-card class="cardWithShadow theme-card">
+  <mat-card-header>
+    <mat-card-title class="m-b-0">
+      {{util.appTranslate('orders')}}
+    </mat-card-title>
+  </mat-card-header>
+
+  <mat-card-content class="b-t-0">
+    <mat-tab-group mat-stretch-tabs="false" [selectedIndex]="tabIndex" mat-align-tabs="start"
+      (selectedTabChange)="tabChanged($event)">
+
+      <mat-tab>
+        <ng-template matTabLabel>
+          <span>{{util.appTranslate('new_orders')}}</span>
+        </ng-template>
+      </mat-tab>
+
+      <mat-tab>
+        <ng-template matTabLabel>
+          <span>{{util.appTranslate('preparing_orders')}}</span>
+        </ng-template>
+      </mat-tab>
+
+      <mat-tab>
+        <ng-template matTabLabel>
+          <span>{{util.appTranslate('ready_orders')}}</span>
+        </ng-template>
+      </mat-tab>
+
+      <mat-tab>
+        <ng-template matTabLabel>
+          <span>{{util.appTranslate('handover_orders')}}</span>
+        </ng-template>
+      </mat-tab>
+
+      <mat-tab>
+        <ng-template matTabLabel>
+          <span>{{util.appTranslate('ongoing_orders')}}</span>
+        </ng-template>
+      </mat-tab>
+
+      <mat-tab>
+        <ng-template matTabLabel>
+          <span>{{util.appTranslate('delivered_orders')}}</span>
+        </ng-template>
+      </mat-tab>
+
+
+      <mat-tab>
+        <ng-template matTabLabel>
+          <span>{{util.appTranslate('rejected_orders')}}</span>
+        </ng-template>
+      </mat-tab>
+
+
+    </mat-tab-group>
+  </mat-card-content>
+</mat-card>
+
+@if (tabIndex == 0 ) {
+  <app-vendor-new-order-list></app-vendor-new-order-list>
+}
+@if (tabIndex == 1 ) {
+  <app-vendor-preparing-order-list></app-vendor-preparing-order-list>
+}
+@if (tabIndex == 2 ) {
+  <app-vendor-ready-order-list></app-vendor-ready-order-list>
+}
+@if (tabIndex == 3 ) {
+  <app-vendor-handover-order-list></app-vendor-handover-order-list>
+}
+@if (tabIndex == 4 ) {
+  <app-vendor-ongoing-order-list></app-vendor-ongoing-order-list>
+}
+@if (tabIndex == 5 ) {
+  <app-vendor-delivered-order-list></app-vendor-delivered-order-list>
+}
+@if (tabIndex == 6 ) {
+  <app-vendor-rejected-order-list></app-vendor-rejected-order-list>
+}

@@ -1,0 +1,103 @@
+<h2 mat-dialog-title class="dialog-title">
+  <span class="title-text">{{util.appTranslate('withdrawal_history_detail')}}</span>
+  <button mat-icon-button mat-dialog-close class="close-btn">
+    <mat-icon>close</mat-icon>
+  </button>
+</h2>
+<div mat-dialog-content class="m-t-12 p-t-12">
+  <div class="row">
+    <div class="col-12">
+      <div class="m-l-0">
+        <span class="mat-body-1 f-s-12">{{util.appTranslate('th_id')}}:</span>
+        <span class="f-s-14 mat-subtitle-1 f-w-600 m-l-4">{{id | uppercase}}</span>
+      </div>
+    </div>
+
+    <div class="col-12">
+      <div class="m-l-0">
+        <span class="mat-body-1 f-s-12">{{util.appTranslate('th_status')}}:</span>
+        @if (status == 'created') {
+        <span class="f-s-14 mat-subtitle-1 f-w-600 m-l-4">{{util.appTranslate('pending')}}</span>
+        }
+        @if (status == 'accepted') {
+        <span class="f-s-14 mat-subtitle-1 f-w-600 m-l-4">{{util.appTranslate('accepted')}}</span>
+        }
+        @if (status == 'rejected') {
+        <span class="f-s-14 mat-subtitle-1 f-w-600 m-l-4">{{util.appTranslate('rejected')}}</span>
+        }
+      </div>
+    </div>
+
+    <div class="col-12">
+      <div class="m-l-0">
+        <span class="mat-body-1 f-s-12">{{util.appTranslate('th_amount')}}:</span>
+        <span class="f-s-14 mat-subtitle-1 f-w-600 m-l-4">{{util.priceFormat(amount)}}</span>
+      </div>
+    </div>
+
+    <div class="col-12">
+      <div class="m-l-0">
+        <span class="mat-body-1 f-s-12">{{util.appTranslate('payout_method')}}:</span>
+        <span class="f-s-14 mat-subtitle-1 f-w-600 m-l-4">{{methodName}}</span>
+      </div>
+    </div>
+
+    <div class="col-12">
+      <div class="m-l-0">
+        <span class="mat-body-1 f-s-12">{{util.appTranslate('th_payout_creds')}}</span>
+      </div>
+    </div>
+
+    <div class="col-12">
+      @if (status == 'created') {
+      <div class="bg-light rounded p-4 m-t-10">
+        @for (item of restaurantPayoutMethodCredential; track $index) {
+        <div class="d-flex align-items-center justify-content-between">
+          <span class="mat-body-1 f-s-12">{{item.fieldName}}:</span>
+          <span class="f-s-14 mat-subtitle-1 f-w-600 m-l-4">{{item.fieldValue}}</span>
+        </div>
+        }
+      </div>
+      }
+
+      @if (status != 'created') {
+      <div class="bg-light rounded p-4 m-t-10">
+        @for (item of formElementCredential; track $index) {
+        <div class="d-flex align-items-center justify-content-between">
+          <span class="mat-body-1 f-s-12">{{item.fieldName}}:</span>
+          <span class="f-s-14 mat-subtitle-1 f-w-600 m-l-4">{{item.fieldValue}}</span>
+        </div>
+        }
+      </div>
+      }
+    </div>
+
+    @if (status =='accepted') {
+    <div class="col-12">
+      <div class="m-l-0">
+        <span class="mat-body-1 f-s-12">{{util.appTranslate('approval_notes')}}:</span>
+        <span class="f-s-14 mat-subtitle-1 f-w-600 m-l-4">{{approvedNotes}}</span>
+      </div>
+
+      @if (proof !== '') {
+      <div class="m-l-0">
+        <img [src]="api.mediaUrl+proof" alt="users" class="rounded w-100"
+          onError="this.src='assets/images/onerror.png'" />
+      </div>
+      }
+    </div>
+    }
+
+    @if (status =='rejected') {
+    <div class="col-12">
+      <div class="m-l-0">
+        <span class="mat-body-1 f-s-12">{{util.appTranslate('rejection_notes')}}:</span>
+        <span class="f-s-14 mat-subtitle-1 f-w-600 m-l-4">{{rejectedReason}}</span>
+      </div>
+    </div>
+    }
+  </div>
+</div>
+<mat-dialog-actions align="end">
+  <button mat-flat-button class="bg-secondary text-white" mat-dialog-close>{{util.appTranslate('cancel_btn')}}</button>
+</mat-dialog-actions>

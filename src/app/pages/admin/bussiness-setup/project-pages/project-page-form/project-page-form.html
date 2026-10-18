@@ -1,0 +1,49 @@
+<form name="eventForm" [formGroup]="pageForm" class="event-form" (ngSubmit)="onSubmit()" id="topContent">
+  <div class="row">
+    <div class="col-lg-12 col-sm-12 p-b-16">
+      <mat-card class="cardWithShadow theme-card">
+        <mat-card-header>
+          <mat-card-title class="m-b-0">
+            {{pageTitle}}
+          </mat-card-title>
+        </mat-card-header>
+
+        <mat-card-content class="b-t-0">
+          <div class="row">
+            <div class="col-lg-12 col-sm-6 p-b-16">
+              <angular-editor [placeholder]="util.appTranslate('enter_page_content')" formControlName="description"
+                name="description" [config]="config">
+              </angular-editor>
+            </div>
+          </div>
+
+          <div class="col-12 m-b-16 p-b-16">
+            <mat-tab-group mat-stretch-tabs="false" mat-align-tabs="start">
+              @for (item of languages; track $index) {
+              <mat-tab [label]="item.nativeName">
+                <div class="mat-body-1 px-16 m-t-12">
+                  <angular-editor placeholder="{{util.appTranslate('enter_page_content')}} ({{item.nativeName}})"
+                    [(ngModel)]="item.value" [ngModelOptions]="{standalone: true}" [config]="config">
+                  </angular-editor>
+                </div>
+              </mat-tab>
+              }
+            </mat-tab-group>
+          </div>
+
+          <div class="row">
+            <div class="col-lg-2 col-sm-6 p-b-16">
+              <button mat-flat-button color="primary" type="submit" class="w-100">
+                {{ action == 'add' ? util.appTranslate('submit_btn') : util.appTranslate('update_btn')}}
+              </button>
+            </div>
+            <div class="col-lg-2 col-sm-6 p-b-16">
+              <button mat-flat-button (click)="onReset()" class="w-100 bg-secondary text-white"
+                type="button">{{util.appTranslate('reset_btn')}}</button>
+            </div>
+          </div>
+        </mat-card-content>
+      </mat-card>
+    </div>
+  </div>
+</form>

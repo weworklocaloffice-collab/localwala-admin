@@ -1,0 +1,1078 @@
+<div class="header-banner">
+  <!-- Top bar -->
+  <div class="header-banner__topbar">
+    <div>
+      <h2 class="m-0 f-s-20">{{ util.appTranslate('header_banner_title') }}</h2>
+      <p class="m-0 text-secondary f-s-12">
+        @if (draftDirty) {
+          <span class="header-banner__dot header-banner__dot--dirty"></span> unsaved_changes
+        } @else if (draftSavedAt) {
+          <span class="header-banner__dot header-banner__dot--saved"></span> draft_saved
+        } @else {
+          <span class="header-banner__dot header-banner__dot--saved"></span> changes_saved
+        }
+      </p>
+    </div>
+
+    <div class="d-flex align-items-center g-8">
+      <span class="header-banner__chip" [class.header-banner__chip--active]="statusChip.active">{{ statusChip.label }}</span>
+      <button mat-stroked-button type="button" [disabled]="isSubmit" (click)="onNewBanner()">
+        {{ util.appTranslate('add_new_banner') }}
+      </button>
+      <button mat-stroked-button type="button" [disabled]="isSubmit || !draftId" (click)="onDiscardDraft()">
+        {{ util.appTranslate('discard_draft') }}
+      </button>
+      <button mat-stroked-button color="primary" type="button" [disabled]="isSubmit" (click)="onSaveDraft()">
+        @if (isSubmit) {
+          <mat-spinner diameter="18"></mat-spinner>
+        } @else {
+          {{ util.appTranslate('save_draft') }}
+        }
+      </button>
+      <button mat-flat-button color="primary" type="button" [disabled]="isSubmit" (click)="onPublish()">
+        {{ util.appTranslate('publish') }}
+      </button>
+    </div>
+  </div>
+
+  <mat-tab-group [(selectedIndex)]="tabIndex" animationDuration="120ms" class="header-banner__tabs">
+    <!-- ============================ BANNERS ============================ -->
+    <mat-tab [label]="'banners'">
+      <app-header-banner-list (selected)="onSelectBanner($event)" (historySelected)="onSelectHistory($event)" (createNew)="onNewBanner()" (changed)="onListRefresh()"></app-header-banner-list>
+    </mat-tab>
+
+    <!-- ============================ CONTENT ============================ -->
+    <mat-tab [label]="'content'">
+      <div class="p-16 grid-2">
+        <mat-card appearance="outlined">
+          <mat-card-header><mat-card-title>{{ util.appTranslate('basic_information') }}</mat-card-title></mat-card-header>
+          <mat-card-content class="d-flex flex-column g-12 p-t-16">
+            <mat-form-field appearance="outline">
+              <mat-label>{{ util.appTranslate('campaign_name') }}</mat-label>
+              <input matInput [formControl]="f['campaignName']" />
+              @if (haveSubmitClicked && f['campaignName'].invalid) {
+                <mat-error>{{ util.appTranslate('required') }}</mat-error>
+              }
+            </mat-form-field>
+
+            <mat-form-field appearance="outline">
+              <mat-label>{{ util.appTranslate('subtitle') }}</mat-label>
+              <input matInput [formControl]="f['subtitle']" />
+            </mat-form-field>
+
+            <mat-form-field appearance="outline">
+              <mat-label>{{ util.appTranslate('priority') }}</mat-label>
+              <input matInput type="number" [formControl]="f['priority']" />
+              <mat-hint>{{ util.appTranslate('priority_hint') }}</mat-hint>
+            </mat-form-field>
+
+            <mat-slide-toggle [formControl]="f['isActive']">{{ util.appTranslate('enable_banner') }}</mat-slide-toggle>
+          </mat-card-content>
+        </mat-card>
+
+        <mat-card appearance="outlined">
+          <mat-card-header><mat-card-title>{{ util.appTranslate('banner_content') }}</mat-card-title></mat-card-header>
+          <mat-card-content class="d-flex flex-column g-12 p-t-16">
+            <mat-form-field appearance="outline">
+              <mat-label>{{ util.appTranslate('title') }}</mat-label>
+              <input matInput [formControl]="f['title']" />
+            </mat-form-field>
+
+            <mat-form-field appearance="outline">
+              <mat-label>{{ util.appTranslate('subtitle_overlay') }}</mat-label>
+              <input matInput [formControl]="f['subtitle']" />
+            </mat-form-field>
+
+            <mat-slide-toggle [formControl]="f['enableOverlayText']">{{ util.appTranslate('enable_overlay_text') }}</mat-slide-toggle>
+          </mat-card-content>
+        </mat-card>
+      </div>
+    </mat-tab>
+
+    <!-- ============================ APPEARANCE ============================ -->
+    <mat-tab [label]="'appearance'">
+      <div class="p-16 grid-2">
+        <mat-card appearance="outlined">
+          <mat-card-header><mat-card-title>{{ util.appTranslate('banner_type_layout') }}</mat-card-title></mat-card-header>
+          <mat-card-content class="d-flex flex-column g-12 p-t-16">
+            <mat-form-field appearance="outline">
+              <mat-label>{{ util.appTranslate('banner_type') }}</mat-label>
+              <mat-select [formControl]="f['media']" (selectionChange)="onMediaChange()">
+                <mat-option value="image">{{ util.appTranslate('image') }}</mat-option>
+                <mat-option value="lottie">{{ util.appTranslate('lottie') }}</mat-option>
+                <mat-option value="video">{{ util.appTranslate('video') }}</mat-option>
+              </mat-select>
+            </mat-form-field>
+
+            <mat-form-field appearance="outline">
+              <mat-label>{{ util.appTranslate('orientation') }}</mat-label>
+              <mat-select [formControl]="f['orientation']" (selectionChange)="onOrientationChange()">
+                <mat-option value="horizontal">{{ util.appTranslate('horizontal_16_9') }}</mat-option>
+                <mat-option value="vertical">{{ util.appTranslate('vertical_3_4') }}</mat-option>
+              </mat-select>
+            </mat-form-field>
+
+            <mat-form-field appearance="outline">
+              <mat-label>{{ util.appTranslate('aspect_ratio') }}</mat-label>
+              <mat-select [formControl]="f['aspectRatio']">
+                <!-- Options come from the component rather than being inlined, so a ratio
+                     produced by a preview drag still has a matching entry to select. -->
+                @for (option of aspectRatioOptions; track option.value) {
+                  <mat-option [value]="option.value">{{ option.label }}</mat-option>
+                }
+              </mat-select>
+            </mat-form-field>
+
+            <mat-radio-group [formControl]="f['heightMode']" class="d-flex flex-column">
+              <mat-radio-button value="responsive">{{ util.appTranslate('responsive_auto') }}</mat-radio-button>
+              <mat-radio-button value="fixed">{{ util.appTranslate('fixed_height') }}</mat-radio-button>
+            </mat-radio-group>
+
+            <mat-form-field appearance="outline">
+              <mat-label>{{ util.appTranslate('banner_height') }}</mat-label>
+              <input matInput type="number" [formControl]="f['maxHeight']" />
+              <mat-hint>130 – 210 px</mat-hint>
+            </mat-form-field>
+          </mat-card-content>
+        </mat-card>
+
+        <mat-card appearance="outlined">
+          <mat-card-header><mat-card-title>{{ util.appTranslate('upload_image_lottie') }}</mat-card-title></mat-card-header>
+          <mat-card-content class="p-t-16 d-flex flex-column g-12">
+            @if (isVideo) {
+              <mat-form-field appearance="outline" class="w-100">
+                <mat-label>{{ util.appTranslate('media_url') }}</mat-label>
+                <input matInput [formControl]="f['mediaUrl']" placeholder="https://example.com/banner.mp4" />
+                <mat-hint>{{ util.appTranslate('media_url_hint') }}</mat-hint>
+              </mat-form-field>
+            } @else if (isLottie) {
+              <!-- Uploaded because a Lottie is an asset, not a poster. The URL field below
+                   stays for animations already hosted elsewhere (CDN, After Effects export). -->
+              <app-drag-drop-upload
+                kind="lottie"
+                label="drag_drop_lottie_here"
+                [value]="f['mediaUrl'].value"
+                [mediaUrl]="api.mediaUrl"
+                (valueChange)="onLottieChange($event)"
+              ></app-drag-drop-upload>
+
+              <mat-form-field appearance="outline" class="w-100">
+                <mat-label>{{ util.appTranslate('media_url') }}</mat-label>
+                <input matInput [formControl]="f['mediaUrl']" placeholder="https://example.com/animation.json" />
+                <mat-hint>{{ util.appTranslate('media_url_hint') }}</mat-hint>
+              </mat-form-field>
+            } @else {
+              <app-drag-drop-upload
+                [value]="f['image'].value"
+                [mediaUrl]="api.mediaUrl"
+                [recommendedWidth]="1920"
+                [recommendedHeight]="1080"
+                (valueChange)="onImageChange($event)"
+              ></app-drag-drop-upload>
+            }
+          </mat-card-content>
+        </mat-card>
+      </div>
+    </mat-tab>
+
+    <!-- ============================ POSITION & SIZE ============================ -->
+    <mat-tab [label]="'position_size'">
+      <div class="p-16 grid-2">
+        <mat-card appearance="outlined">
+          <mat-card-header><mat-card-title>{{ util.appTranslate('silver_app_bar_background') }}</mat-card-title></mat-card-header>
+          <mat-card-content class="d-flex flex-column g-12 p-t-16">
+            <mat-radio-group
+              [formControl]="f['appBarBackgroundMode']"
+              class="d-flex flex-column"
+              (change)="onBackgroundModeChange($event.value)"
+            >
+              <mat-radio-button value="auto">{{ util.appTranslate('auto_from_banner') }}</mat-radio-button>
+              <mat-radio-button value="manual">{{ util.appTranslate('manual_colour') }}</mat-radio-button>
+              <mat-radio-button value="gradient">{{ util.appTranslate('gradient') }}</mat-radio-button>
+            </mat-radio-group>
+
+            @if (f['extractedColors'].value.length) {
+              <div class="d-flex flex-column g-4">
+                <span class="f-s-12 text-secondary">{{ util.appTranslate('extracted_colour') }}</span>
+                <div class="d-flex g-6">
+                  @for (color of f['extractedColors'].value; track color) {
+                    <span class="header-banner__swatch" [style.background-color]="color" [title]="color"></span>
+                  }
+                </div>
+              </div>
+            }
+
+            @if (manualColourEnabled) {
+              <app-color-picker
+                label="background_colour"
+                [value]="f['appBarBackgroundColor'].value"
+                [palette]="f['extractedColors'].value"
+                (valueChange)="f['appBarBackgroundColor'].setValue($event)"
+              ></app-color-picker>
+            }
+
+            @if (gradientEnabled) {
+              <app-color-picker
+                label="gradient_from"
+                [value]="f['appBarGradientFrom'].value"
+                (valueChange)="f['appBarGradientFrom'].setValue($event)"
+              ></app-color-picker>
+              <app-color-picker
+                label="gradient_to"
+                [value]="f['appBarGradientTo'].value"
+                (valueChange)="f['appBarGradientTo'].setValue($event)"
+              ></app-color-picker>
+            }
+
+            <p class="text-secondary f-s-12">{{ util.appTranslate('appbar_bg_hint') }}</p>
+          </mat-card-content>
+        </mat-card>
+
+        <mat-card appearance="outlined">
+          <mat-card-header><mat-card-title>{{ util.appTranslate('header_visibility') }}</mat-card-title></mat-card-header>
+          <mat-card-content class="d-flex flex-column g-12 p-t-16">
+            <mat-form-field appearance="outline">
+              <mat-label>{{ util.appTranslate('collapsed_height') }}</mat-label>
+              <input matInput type="number" [formControl]="f['collapsedHeight']" />
+              <mat-hint>48 – 120 px · default 64</mat-hint>
+            </mat-form-field>
+
+            <mat-slide-toggle [formControl]="f['showLocation']">{{ util.appTranslate('show_location') }}</mat-slide-toggle>
+            <mat-slide-toggle [formControl]="f['showLanguageSelector']">{{ util.appTranslate('show_language_selector') }}</mat-slide-toggle>
+            <mat-slide-toggle [formControl]="f['showNotificationIcon']">{{ util.appTranslate('show_notification_icon') }}</mat-slide-toggle>
+          </mat-card-content>
+        </mat-card>
+      </div>
+    </mat-tab>
+
+    <!-- ============================ ANIMATION (LOTTIE) ============================ -->
+    <mat-tab [label]="'animation_lottie'">
+      <div class="p-16 grid-2">
+        <mat-card appearance="outlined">
+          <mat-card-header><mat-card-title>{{ util.appTranslate('animation_settings') }}</mat-card-title></mat-card-header>
+          <mat-card-content class="d-flex flex-column g-12 p-t-16">
+            <p class="text-secondary f-s-12">{{ util.appTranslate('animation_hint') }}</p>
+
+            <mat-slide-toggle [formControl]="f['lottieAutoPlay']">{{ util.appTranslate('auto_play') }}</mat-slide-toggle>
+            <mat-slide-toggle [formControl]="f['lottieLoop']">{{ util.appTranslate('loop') }}</mat-slide-toggle>
+
+            <mat-form-field appearance="outline">
+              <mat-label>{{ util.appTranslate('playback_speed') }}</mat-label>
+              <input matInput type="number" step="0.1" [formControl]="f['lottieSpeed']" />
+              <mat-hint>0.5× – 2.0×</mat-hint>
+            </mat-form-field>
+
+            <mat-form-field appearance="outline">
+              <mat-label>{{ util.appTranslate('fit') }}</mat-label>
+              <mat-select [formControl]="f['lottieFit']">
+                @for (fit of ['contain', 'fill', 'cover', 'fitWidth', 'fitHeight', 'none', 'scaleDown']; track fit) {
+                  <mat-option [value]="fit">{{ fit }}</mat-option>
+                }
+              </mat-select>
+            </mat-form-field>
+
+            <mat-form-field appearance="outline">
+              <mat-label>{{ util.appTranslate('alignment') }}</mat-label>
+              <mat-select [formControl]="f['lottieAlignment']">
+                @for (alignment of ['topLeft', 'topCenter', 'topRight', 'centerLeft', 'center', 'centerRight', 'bottomLeft', 'bottomCenter', 'bottomRight']; track alignment) {
+                  <mat-option [value]="alignment">{{ alignment }}</mat-option>
+                }
+              </mat-select>
+            </mat-form-field>
+          </mat-card-content>
+        </mat-card>
+
+        <mat-card appearance="outlined">
+          <mat-card-header><mat-card-title>{{ util.appTranslate('preview') }}</mat-card-title></mat-card-header>
+          <mat-card-content class="p-t-16">
+            @if (isLottie && f['mediaUrl'].value) {
+              <app-lottie-preview
+                [path]="f['mediaUrl'].value"
+                [autoPlay]="f['lottieAutoPlay'].value"
+                [loop]="f['lottieLoop'].value"
+                [speed]="f['lottieSpeed'].value"
+                [fit]="f['lottieFit'].value"
+                [alignment]="f['lottieAlignment'].value"
+                [height]="previewBannerHeight"
+              ></app-lottie-preview>
+              <p class="text-secondary f-s-12 m-t-8">{{ util.appTranslate('lottie_preview_hint') }}</p>
+            } @else {
+              <p class="text-secondary f-s-12">{{ util.appTranslate('lottie_preview_none') }}</p>
+            }
+          </mat-card-content>
+        </mat-card>
+      </div>
+    </mat-tab>
+
+    <!-- ============================ SCHEDULE ============================ -->
+    <mat-tab [label]="'schedule'">
+      <div class="p-16 grid-2">
+        <mat-card appearance="outlined">
+          <mat-card-header><mat-card-title>{{ util.appTranslate('schedule') }}</mat-card-title></mat-card-header>
+          <mat-card-content class="d-flex flex-column g-12 p-t-16">
+            <mat-radio-group
+              [formControl]="f['scheduleType']"
+              class="d-flex flex-column"
+              (change)="onScheduleTypeChange($event.value)"
+            >
+              <mat-radio-button value="alwaysOn">{{ util.appTranslate('always_on') }}</mat-radio-button>
+              <mat-radio-button value="dateRange">{{ util.appTranslate('custom_date_range') }}</mat-radio-button>
+            </mat-radio-group>
+
+            @if (f['scheduleType'].value === 'dateRange') {
+              <div class="d-flex g-12">
+                <mat-form-field appearance="outline" class="w-100">
+                  <mat-label>{{ util.appTranslate('start_date') }}</mat-label>
+                  <input matInput [matDatepicker]="startPicker" [formControl]="f['startDate']" />
+                  <mat-datepicker-toggle matIconSuffix [for]="startPicker"></mat-datepicker-toggle>
+                  <mat-datepicker #startPicker></mat-datepicker>
+                </mat-form-field>
+                <mat-form-field appearance="outline" class="w-100">
+                  <mat-label>{{ util.appTranslate('end_date') }}</mat-label>
+                  <input matInput [matDatepicker]="endPicker" [formControl]="f['endDate']" />
+                  <mat-datepicker-toggle matIconSuffix [for]="endPicker"></mat-datepicker-toggle>
+                  <mat-datepicker #endPicker></mat-datepicker>
+                </mat-form-field>
+              </div>
+
+              <div class="d-flex g-12">
+                <mat-form-field appearance="outline" class="w-100">
+                  <mat-label>{{ util.appTranslate('start_time') }}</mat-label>
+                  <input matInput [formControl]="f['startTime']" placeholder="00:00" />
+                </mat-form-field>
+                <mat-form-field appearance="outline" class="w-100">
+                  <mat-label>{{ util.appTranslate('end_time') }}</mat-label>
+                  <input matInput [formControl]="f['endTime']" placeholder="23:59" />
+                </mat-form-field>
+              </div>
+            }
+
+            <mat-form-field appearance="outline">
+              <mat-label>{{ util.appTranslate('timezone') }}</mat-label>
+              <mat-select [formControl]="f['timezone']">
+                <mat-option value="Asia/Kolkata">Asia/Kolkata</mat-option>
+                <mat-option value="UTC">UTC</mat-option>
+              </mat-select>
+            </mat-form-field>
+
+            <mat-form-field appearance="outline">
+              <mat-label>{{ util.appTranslate('repeat') }}</mat-label>
+              <input matInput [formControl]="f['repeat']" />
+            </mat-form-field>
+          </mat-card-content>
+        </mat-card>
+
+        <mat-card appearance="outlined">
+          <mat-card-header><mat-card-title>{{ util.appTranslate('targeting') }}</mat-card-title></mat-card-header>
+          <mat-card-content class="d-flex flex-column g-12 p-t-16">
+            <mat-form-field appearance="outline">
+              <mat-label>{{ util.appTranslate('city') }}</mat-label>
+              <!-- The stored value is the city id, so a plain text input could never be
+                   filled from the label. Selecting a city writes the id; an empty field
+                   means global. -->
+              <input
+                type="text"
+                matInput
+                [formControl]="cityCtrl"
+                [matAutocomplete]="cityAuto"
+                [placeholder]="util.appTranslate('select_city')"
+              />
+              <mat-autocomplete
+                #cityAuto="matAutocomplete"
+                autoActiveFirstOption
+                [displayWith]="displayCityName"
+                (optionSelected)="onCitySelect($event)"
+              >
+                @for (item of cities | async; track item.id) {
+                  <mat-option [value]="item.id">{{ getTranslatedCityName(item) }}</mat-option>
+                }
+              </mat-autocomplete>
+              <mat-hint>{{ util.appTranslate('city_hint') }}</mat-hint>
+            </mat-form-field>
+
+            @if (f['city'].value) {
+              <button mat-stroked-button type="button" class="hb-self-start" (click)="clearCity()">
+                {{ util.appTranslate('city_global_option') }}
+              </button>
+            }
+
+            <mat-form-field appearance="outline">
+              <mat-label>{{ util.appTranslate('priority') }}</mat-label>
+              <input matInput type="number" [formControl]="f['priority']" />
+              <mat-hint>{{ util.appTranslate('header_banner_priority_hint') }}</mat-hint>
+            </mat-form-field>
+          </mat-card-content>
+        </mat-card>
+      </div>
+    </mat-tab>
+
+    <!-- ============================ TARGET & CTA ============================ -->
+    <mat-tab [label]="'target_cta'">
+      <div class="p-16 grid-2">
+        <mat-card appearance="outlined">
+          <mat-card-header><mat-card-title>{{ util.appTranslate('target_cta') }}</mat-card-title></mat-card-header>
+          <mat-card-content class="d-flex flex-column g-12 p-t-16">
+            <mat-slide-toggle [formControl]="f['showCta']">{{ util.appTranslate('show_cta') }}</mat-slide-toggle>
+
+            <!-- Kept mounted when the toggle is off so switching it back on restores the
+                 copy instead of an empty field. -->
+            <mat-form-field appearance="outline">
+              <mat-label>{{ util.appTranslate('cta_text') }}</mat-label>
+              <input matInput [formControl]="f['ctaText']" />
+            </mat-form-field>
+
+            <mat-form-field appearance="outline">
+              <mat-label>{{ util.appTranslate('cta_preset') }}</mat-label>
+              <mat-select [formControl]="f['ctaPreset']" (selectionChange)="applyCtaPreset($event.value)">
+                @for (preset of ctaPresetOptions; track preset) {
+                  <mat-option [value]="preset">{{ util.appTranslate('cta_preset_' + preset) }}</mat-option>
+                }
+              </mat-select>
+              <mat-hint>{{ util.appTranslate('cta_preset_hint') }}</mat-hint>
+            </mat-form-field>
+
+            <div class="d-flex g-12 flex-wrap">
+              <mat-form-field appearance="outline" class="hb-cta-half">
+                <mat-label>{{ util.appTranslate('cta_style') }}</mat-label>
+                <mat-select [formControl]="f['ctaStyle']">
+                  <mat-option value="solid">{{ util.appTranslate('cta_style_solid') }}</mat-option>
+                  <mat-option value="outline">{{ util.appTranslate('cta_style_outline') }}</mat-option>
+                  <mat-option value="ghost">{{ util.appTranslate('cta_style_ghost') }}</mat-option>
+                </mat-select>
+              </mat-form-field>
+
+              <!-- app-color-picker renders its OWN mat-form-field internally (colour-picker.html:12),
+                   so it must not be wrapped in another one: mat-form-field asserts it has
+                   a MatFormFieldControl child, the picker is not one, and that assertion
+                   throws during change detection - which took the whole tab group with it. -->
+              <div class="hb-cta-half">
+                <app-color-picker
+                  label="cta_bg_colour"
+                  [value]="f['ctaBackgroundColor'].value"
+                  (valueChange)="f['ctaBackgroundColor'].setValue($event)"
+                ></app-color-picker>
+              </div>
+
+              <div class="hb-cta-half">
+                <app-color-picker
+                  label="cta_text_colour"
+                  [value]="f['ctaTextColor'].value"
+                  (valueChange)="f['ctaTextColor'].setValue($event)"
+                ></app-color-picker>
+              </div>
+
+              <mat-form-field appearance="outline" class="hb-cta-half">
+                <mat-label>{{ util.appTranslate('cta_radius') }}</mat-label>
+                <input matInput type="number" min="0" max="999" [formControl]="f['ctaCornerRadius']" />
+                <mat-hint>{{ util.appTranslate('cta_radius_hint') }}</mat-hint>
+              </mat-form-field>
+
+              <mat-form-field appearance="outline" class="hb-cta-half">
+                <mat-label>{{ util.appTranslate('cta_font_size') }}</mat-label>
+                <input matInput type="number" min="10" max="24" [formControl]="f['ctaFontSize']" />
+              </mat-form-field>
+
+              <mat-form-field appearance="outline" class="hb-cta-half">
+                <mat-label>{{ util.appTranslate('cta_padding_x') }}</mat-label>
+                <input matInput type="number" min="0" max="40" [formControl]="f['ctaPaddingX']" />
+              </mat-form-field>
+
+              <mat-form-field appearance="outline" class="hb-cta-half">
+                <mat-label>{{ util.appTranslate('cta_padding_y') }}</mat-label>
+                <input matInput type="number" min="0" max="40" [formControl]="f['ctaPaddingY']" />
+              </mat-form-field>
+            </div>
+
+            <div class="d-flex g-12 flex-wrap align-items-center">
+              <mat-slide-toggle [formControl]="f['ctaFullWidth']">{{ util.appTranslate('cta_full_width') }}</mat-slide-toggle>
+              <mat-slide-toggle [formControl]="f['ctaShowArrow']">{{ util.appTranslate('cta_show_arrow') }}</mat-slide-toggle>
+              <button mat-stroked-button type="button" (click)="resetCtaStyle()">
+                {{ util.appTranslate('cta_reset_style') }}
+              </button>
+            </div>
+
+            <p class="text-secondary f-s-12 m-0">{{ util.appTranslate('cta_style_hint') }}</p>
+
+            <mat-form-field appearance="outline">
+              <mat-label>{{ util.appTranslate('cta_animation') }}</mat-label>
+              <mat-select [formControl]="f['ctaAnimation']">
+                @for (entry of ctaAnimationGroups; track entry.group) {
+                  <mat-optgroup [label]="util.appTranslate('cta_animation_group_' + entry.group)">
+                    @for (animation of entry.values; track animation) {
+                      <mat-option [value]="animation">
+                        {{ util.appTranslate('cta_animation_' + animation) }}
+                      </mat-option>
+                    }
+                  </mat-optgroup>
+                }
+              </mat-select>
+              <mat-hint>{{ util.appTranslate('cta_animation_' + f['ctaAnimation'].value + '_hint') }}</mat-hint>
+            </mat-form-field>
+
+            <!-- Duration and loop only mean anything for some families, so the controls
+                 are hidden rather than shown-and-ignored. -->
+            @if (f['ctaAnimation'].value !== 'none' && f['ctaAnimation'].value !== 'pressDown') {
+              <div class="d-flex g-12 flex-wrap align-items-center">
+                <mat-form-field appearance="outline" class="hb-cta-half">
+                  <mat-label>{{ util.appTranslate('cta_animation_duration') }}</mat-label>
+                  <input matInput type="number" min="200" max="5000" [formControl]="f['ctaAnimationDuration']" />
+                  <mat-hint>ms · 200 – 5000</mat-hint>
+                </mat-form-field>
+
+                @if (ctaLoopAvailable) {
+                  <mat-slide-toggle [formControl]="f['ctaAnimationLoop']">{{ util.appTranslate('cta_animation_loop') }}</mat-slide-toggle>
+                }
+              </div>
+            }
+
+            @if (ctaLoopIgnored) {
+              <p class="text-secondary f-s-12 m-0">{{ util.appTranslate('cta_animation_loop_ignored') }}</p>
+            } @else {
+              <p class="text-warning f-s-12 m-0">{{ util.appTranslate('cta_animation_loop_warning') }}</p>
+            }
+
+            <mat-form-field appearance="outline">
+              <mat-label>{{ util.appTranslate('cta_action') }}</mat-label>
+              <mat-select [formControl]="f['ctaAction']" (selectionChange)="onCtaActionChange()">
+                <mat-option value="">{{ util.appTranslate('none') }}</mat-option>
+                <mat-option value="open_restaurant_list">{{ util.appTranslate('open_restaurant_list') }}</mat-option>
+                <mat-option value="open_search">{{ util.appTranslate('open_search') }}</mat-option>
+                <mat-option value="category">{{ util.appTranslate('open_category') }}</mat-option>
+                <mat-option value="restaurant">{{ util.appTranslate('open_restaurant') }}</mat-option>
+                <mat-option value="food">{{ util.appTranslate('open_food') }}</mat-option>
+              </mat-select>
+              <mat-hint>{{ util.appTranslate('cta_action_hint') }}</mat-hint>
+            </mat-form-field>
+
+            <!-- Pickers, not an id field. `ctaTarget` is a Mongo ObjectId, which an operator
+                 cannot read off a screen; each autocomplete shows a translated label and
+                 writes the id on selection. `ctaNeedsCity` is a hard stop rather than a hint
+                 because a city-scoped list fetched without a city comes back as a 400. -->
+            @if (ctaNeedsCity && (f['ctaAction'].value === 'restaurant' || f['ctaAction'].value === 'food')) {
+              <p class="text-warning f-s-12 m-0">{{ util.appTranslate('cta_needs_city') }}</p>
+            }
+
+            @if (f['ctaAction'].value === 'restaurant') {
+              <mat-form-field appearance="outline">
+                <mat-label>{{ util.appTranslate('choose_restaurant') }}</mat-label>
+                <input
+                  type="text"
+                  matInput
+                  [formControl]="ctaRestaurantCtrl"
+                  [matAutocomplete]="ctaRestaurantAuto"
+                  [placeholder]="util.appTranslate('choose_restaurant')"
+                />
+                <mat-autocomplete
+                  #ctaRestaurantAuto="matAutocomplete"
+                  autoActiveFirstOption
+                  [displayWith]="displayCtaOptionName"
+                  (optionSelected)="onCtaRestaurantSelect($event)"
+                >
+                  @for (item of ctaRestaurants | async; track item.id) {
+                    <mat-option [value]="item.id">{{ ctaOptionName(item) }}</mat-option>
+                  } @empty {
+                    <mat-option [value]="null" [disabled]="true">
+                      {{ ctaRestaurantsLoading ? util.appTranslate('loading') : util.appTranslate('no_results_found') }}
+                    </mat-option>
+                  }
+                </mat-autocomplete>
+                <mat-hint>{{ util.appTranslate('target_hint') }}</mat-hint>
+              </mat-form-field>
+            }
+
+            @if (f['ctaAction'].value === 'food') {
+              <!-- Scoping the food list to a restaurant is a narrowing, not a requirement:
+                   with no restaurant chosen the city-wide list is shown, which is what makes
+                   a food target reachable for an operator who has not settled on a kitchen. -->
+              <mat-form-field appearance="outline">
+                <mat-label>{{ util.appTranslate('food_restaurant_filter') }}</mat-label>
+                <input
+                  type="text"
+                  matInput
+                  [formControl]="ctaRestaurantCtrl"
+                  [matAutocomplete]="ctaFoodRestaurantAuto"
+                  [placeholder]="util.appTranslate('any_restaurant')"
+                />
+                <mat-autocomplete
+                  #ctaFoodRestaurantAuto="matAutocomplete"
+                  autoActiveFirstOption
+                  [displayWith]="displayCtaOptionName"
+                  (optionSelected)="onCtaRestaurantSelect($event)"
+                >
+                  @for (item of ctaRestaurants | async; track item.id) {
+                    <mat-option [value]="item.id">{{ ctaOptionName(item) }}</mat-option>
+                  } @empty {
+                    <mat-option [value]="null" [disabled]="true">
+                      {{ ctaRestaurantsLoading ? util.appTranslate('loading') : util.appTranslate('no_results_found') }}
+                    </mat-option>
+                  }
+                </mat-autocomplete>
+                <mat-hint>{{ util.appTranslate('food_restaurant_filter_hint') }}</mat-hint>
+              </mat-form-field>
+
+              <mat-form-field appearance="outline">
+                <mat-label>{{ util.appTranslate('choose_food') }}</mat-label>
+                <input
+                  type="text"
+                  matInput
+                  [formControl]="ctaFoodCtrl"
+                  [matAutocomplete]="ctaFoodAuto"
+                  [placeholder]="util.appTranslate('choose_food')"
+                />
+                <mat-autocomplete
+                  #ctaFoodAuto="matAutocomplete"
+                  autoActiveFirstOption
+                  [displayWith]="displayCtaFoodName"
+                  (optionSelected)="onCtaFoodSelect($event)"
+                >
+                  @for (item of ctaFoods | async; track item.id) {
+                    <mat-option [value]="item.id">{{ ctaFoodOptionName(item) }}</mat-option>
+                  } @empty {
+                    <mat-option [value]="null" [disabled]="true">
+                      {{ ctaFoodsLoading ? util.appTranslate('loading') : util.appTranslate('no_results_found') }}
+                    </mat-option>
+                  }
+                </mat-autocomplete>
+                <mat-hint>{{ util.appTranslate('target_hint') }}</mat-hint>
+              </mat-form-field>
+            }
+
+            @if (f['ctaAction'].value === 'category') {
+              <mat-form-field appearance="outline">
+                <mat-label>{{ util.appTranslate('choose_category') }}</mat-label>
+                <input
+                  type="text"
+                  matInput
+                  [formControl]="ctaCategoryCtrl"
+                  [matAutocomplete]="ctaCategoryAuto"
+                  [placeholder]="util.appTranslate('choose_category')"
+                />
+                <mat-autocomplete
+                  #ctaCategoryAuto="matAutocomplete"
+                  autoActiveFirstOption
+                  [displayWith]="displayCtaOptionName"
+                  (optionSelected)="onCtaCategorySelect($event)"
+                >
+                  @for (item of ctaCategories | async; track item.id) {
+                    <mat-option [value]="item.id">{{ ctaOptionName(item) }}</mat-option>
+                  } @empty {
+                    <mat-option [value]="null" [disabled]="true">
+                      {{ ctaCategoriesLoading ? util.appTranslate('loading') : util.appTranslate('no_results_found') }}
+                    </mat-option>
+                  }
+                </mat-autocomplete>
+                <mat-hint>{{ util.appTranslate('target_hint') }}</mat-hint>
+              </mat-form-field>
+            }
+
+            @if (f['ctaTarget'].value) {
+              <button mat-stroked-button type="button" class="hb-self-start" (click)="clearCtaTarget()">
+                {{ util.appTranslate('clear_cta_target') }}
+              </button>
+            }
+
+            <mat-form-field appearance="outline">
+              <mat-label>{{ util.appTranslate('deep_link') }}</mat-label>
+              <input matInput [formControl]="f['deepLink']" placeholder="https://" />
+            </mat-form-field>
+          </mat-card-content>
+        </mat-card>
+
+        <mat-card appearance="outlined">
+          <mat-card-header><mat-card-title>{{ util.appTranslate('rotation') }}</mat-card-title></mat-card-header>
+          <mat-card-content class="d-flex flex-column g-12 p-t-16">
+            <mat-form-field appearance="outline">
+              <mat-label>{{ util.appTranslate('display_duration') }}</mat-label>
+              <input matInput type="number" [formControl]="f['displayDuration']" />
+              <mat-hint>{{ util.appTranslate('display_duration_hint') }}</mat-hint>
+            </mat-form-field>
+            <p class="text-secondary f-s-12">{{ util.appTranslate('rotation_hint') }}</p>
+          </mat-card-content>
+        </mat-card>
+      </div>
+    </mat-tab>
+
+    <!-- ============================ PREVIEW ============================ -->
+    <mat-tab [label]="'preview'">
+      <div class="p-16 d-flex flex-column g-16">
+        <div class="d-flex g-8 flex-wrap align-items-center">
+          <mat-button-toggle-group [value]="previewDevice" (change)="previewDevice = $event.value">
+            @for (device of previewDevices; track device.key) {
+              <mat-button-toggle [value]="device.key">{{ device.label }}</mat-button-toggle>
+            }
+          </mat-button-toggle-group>
+
+          <mat-button-toggle-group [value]="previewState" (change)="previewState = $event.value">
+            <mat-button-toggle value="expanded">{{ util.appTranslate('expanded') }}</mat-button-toggle>
+            <mat-button-toggle value="collapsed">{{ util.appTranslate('collapsed') }}</mat-button-toggle>
+            <mat-button-toggle value="pull">{{ util.appTranslate('pull_to_refresh') }}</mat-button-toggle>
+          </mat-button-toggle-group>
+        </div>
+
+        <!-- The surface controls are duplicated from Position & Size rather than moved, so an
+             operator comparing a design against the device does not lose the canonical form.
+             Both bind the same reactive controls, so either one repaints the phone below. -->
+        <mat-card appearance="outlined">
+          <mat-card-content class="d-flex flex-column g-12 p-16">
+            <mat-radio-group
+              [formControl]="f['appBarBackgroundMode']"
+              class="d-flex g-16 flex-wrap"
+              (change)="onBackgroundModeChange($event.value)"
+            >
+              <mat-radio-button value="auto">{{ util.appTranslate('auto_from_banner') }}</mat-radio-button>
+              <mat-radio-button value="manual">{{ util.appTranslate('manual_colour') }}</mat-radio-button>
+              <mat-radio-button value="gradient">{{ util.appTranslate('gradient') }}</mat-radio-button>
+            </mat-radio-group>
+
+            @if (f['extractedColors'].value.length) {
+              <div class="d-flex flex-column g-4">
+                <span class="f-s-12 text-secondary">{{ util.appTranslate('extracted_colour') }}</span>
+                <div class="d-flex g-6">
+                  @for (color of f['extractedColors'].value; track color) {
+                    <span class="header-banner__swatch" [style.background-color]="color" [title]="color"></span>
+                  }
+                </div>
+              </div>
+            }
+
+            @if (manualColourEnabled || gradientEnabled) {
+              <div class="header-banner__preview-colours">
+                @if (manualColourEnabled) {
+                  <app-color-picker
+                    label="background_colour"
+                    [value]="f['appBarBackgroundColor'].value"
+                    [palette]="f['extractedColors'].value"
+                    (valueChange)="f['appBarBackgroundColor'].setValue($event)"
+                  ></app-color-picker>
+                }
+                @if (gradientEnabled) {
+                  <app-color-picker
+                    label="gradient_from"
+                    [value]="f['appBarGradientFrom'].value"
+                    (valueChange)="f['appBarGradientFrom'].setValue($event)"
+                  ></app-color-picker>
+                  <app-color-picker
+                    label="gradient_to"
+                    [value]="f['appBarGradientTo'].value"
+                    (valueChange)="f['appBarGradientTo'].setValue($event)"
+                  ></app-color-picker>
+                }
+              </div>
+            }
+
+            <p class="text-secondary f-s-12">{{ util.appTranslate('appbar_bg_hint') }}</p>
+          </mat-card-content>
+        </mat-card>
+
+        <!-- Same reasoning as the colour controls above: edit the CTA next to the mockup that
+             renders it. Bound to the same controls as the Target & CTA tab. -->
+        <mat-card appearance="outlined">
+          <mat-card-content class="d-flex flex-column g-12 p-16">
+            <mat-slide-toggle [formControl]="f['showCta']">{{ util.appTranslate('show_cta') }}</mat-slide-toggle>
+            <mat-form-field appearance="outline">
+              <mat-label>{{ util.appTranslate('cta_text') }}</mat-label>
+              <input matInput [formControl]="f['ctaText']" />
+            </mat-form-field>
+            <p class="text-secondary f-s-12 m-0">{{ util.appTranslate('cta_text_hint') }}</p>
+          </mat-card-content>
+        </mat-card>
+
+        <!-- Offset and zoom are one crop, so they are cleared together from the one button.
+             Media, banner content and CTA each move independently, so each gets its own
+             readout and its own reset - a single combined reset would make it impossible
+             to put the artwork back without losing a deliberate copy placement. -->
+        <div class="d-flex g-8 flex-wrap align-items-center">
+          <span class="text-secondary f-s-12">{{ util.appTranslate('preview_drag_hint') }}</span>
+          <span class="header-banner__offset-chip">
+            {{ f['mediaOffsetX'].value | number: '1.2-2' }} / {{ f['mediaOffsetY'].value | number: '1.2-2' }}
+          </span>
+          <button
+            mat-stroked-button
+            type="button"
+            [disabled]="!hasMediaTransform"
+            (click)="resetMediaTransform()"
+          >
+            {{ util.appTranslate('reset_placement') }}
+          </button>
+
+          <span class="text-secondary f-s-12">{{ util.appTranslate('preview_drag_overlay_hint') }}</span>
+          <span class="header-banner__offset-chip">
+            {{ f['overlayOffsetX'].value | number: '1.2-2' }} / {{ f['overlayOffsetY'].value | number: '1.2-2' }}
+          </span>
+          <button mat-stroked-button type="button" [disabled]="!hasOverlayOffset" (click)="resetOverlayOffset()">
+            {{ util.appTranslate('reset_placement') }}
+          </button>
+
+          <span class="text-secondary f-s-12">{{ util.appTranslate('preview_drag_cta_hint') }}</span>
+          <span class="header-banner__offset-chip">
+            {{ f['ctaOffsetX'].value | number: '1.2-2' }} / {{ f['ctaOffsetY'].value | number: '1.2-2' }}
+          </span>
+          <button mat-stroked-button type="button" [disabled]="!hasCtaOffset" (click)="resetCtaOffset()">
+            {{ util.appTranslate('reset_placement') }}
+          </button>
+        </div>
+
+        <!-- Live readout of the two numbers the handles below are dragging. Kept above
+             the frame so the operator reads the stored value, not the scaled pixels. -->
+        <div class="d-flex g-8 flex-wrap align-items-center">
+          <span class="text-secondary f-s-12">{{ util.appTranslate('preview_resize_hint') }}</span>
+          <span class="header-banner__offset-chip">
+            {{ util.appTranslate('banner_height') }}: {{ previewBannerReadout }}
+          </span>
+          <span class="header-banner__offset-chip">
+            {{ util.appTranslate('collapsed_height') }}: {{ previewHeaderReadout }}
+          </span>
+        </div>
+
+        <div class="d-flex flex-column align-items-center justify-content-center g-12">
+          <div class="header-banner__phone" [style.width.px]="previewWidth">
+            <!-- App bar -->
+            <div
+              class="header-banner__preview-appbar"
+              [class.header-banner__preview-appbar--resizing]="isResizingHeader"
+              [style.background]="previewAppBarBackground"
+              [style.height.px]="previewState === 'collapsed' ? previewCollapsedHeight : previewAppBarHeight"
+            >
+              @if (f['showLocation'].value) {
+                <div class="header-banner__preview-loc">
+                  <span class="header-banner__preview-pin"></span>
+                  <span>Madhapur</span>
+                </div>
+                <div class="header-banner__preview-sub">777, Road Number 44, Madhapur, Hyderabad</div>
+              }
+              <div
+                class="header-banner__preview-handle header-banner__preview-handle--bottom"
+                role="separator"
+                tabindex="0"
+                aria-orientation="horizontal"
+                [class.header-banner__preview-handle--active]="isResizingHeader"
+                [attr.aria-label]="util.appTranslate('collapsed_height')"
+                [attr.aria-valuenow]="previewCollapsedHeight"
+                [attr.aria-valuemin]="collapsedHeightBounds.min"
+                [attr.aria-valuemax]="collapsedHeightBounds.max"
+                [title]="util.appTranslate('preview_resize_header_hint')"
+                (pointerdown)="onResizeStart('header', $event)"
+                (pointermove)="onResizeMove($event)"
+                (pointerup)="onResizeEnd($event)"
+                (pointercancel)="onResizeEnd($event)"
+                (keydown)="onResizeKey('header', $event)"
+                (dblclick)="onResizeReset('header')"
+              >
+                <span class="header-banner__preview-handle-pill">
+                  <mat-icon class="header-banner__preview-handle-icon">height</mat-icon>
+                  {{ previewHeaderHandleLabel }}
+                </span>
+              </div>
+            </div>
+
+            <!-- Pull-to-refresh gap: sits between the app bar and the banner -->
+            @if (previewState === 'pull') {
+              <div class="header-banner__preview-gap">
+                <mat-spinner diameter="22"></mat-spinner>
+              </div>
+            }
+
+            <!-- Banner -->
+            @if (previewState !== 'collapsed') {
+              <div
+                #previewFrame
+                class="header-banner__preview-banner"
+                [class.header-banner__preview-banner--dragging]="isDraggingMedia"
+                [class.header-banner__preview-banner--resizing]="isResizingBanner"
+                [style.height.px]="previewBannerHeight"
+                [style.background]="previewBannerBackground"
+                [title]="util.appTranslate('preview_drag_hint')"
+                (pointerdown)="onLayerDragStart($event, previewFrame, 'media')"
+                (pointermove)="onLayerDragMove($event)"
+                (pointerup)="onLayerDragEnd($event)"
+                (pointercancel)="onLayerDragEnd($event)"
+              >
+                <!-- The media sits in its own absolutely positioned layer so the zoom and the
+                     drag can transform it. A CSS `background-image` cannot be
+                     transformed, which is why the artwork is an <img> rather than a
+                     background. -->
+                <div class="header-banner__preview-media" [style.transform]="previewMediaTransform">
+                  @if (isLottie && f['mediaUrl'].value) {
+                    <app-lottie-preview
+                      [path]="f['mediaUrl'].value"
+                      [autoPlay]="f['lottieAutoPlay'].value"
+                      [loop]="f['lottieLoop'].value"
+                      [speed]="f['lottieSpeed'].value"
+                      [fit]="f['lottieFit'].value"
+                      [alignment]="f['lottieAlignment'].value"
+                      [height]="previewBannerHeight"
+                    ></app-lottie-preview>
+                  } @else if (previewMediaUrl) {
+                    <img class="header-banner__preview-media-img" [src]="previewMediaUrl" alt="banner media" />
+                  }
+                </div>
+                @if (f['enableOverlayText'].value) {
+                  <!-- Own positioned layer so it can be dragged independently of the media.
+                       `stopPropagation` inside the handler keeps the frame's own media drag
+                       from claiming the gesture. -->
+                  <div
+                    class="header-banner__preview-overlay-layer"
+                    [class.header-banner__preview-layer--dragging]="isDraggingLayer('overlay')"
+                    [style.transform]="previewOverlayTransform"
+                    [title]="util.appTranslate('preview_drag_overlay_hint')"
+                    (pointerdown)="onLayerDragStart($event, previewFrame, 'overlay')"
+                    (pointermove)="onLayerDragMove($event)"
+                    (pointerup)="onLayerDragEnd($event)"
+                    (pointercancel)="onLayerDragEnd($event)"
+                  >
+                    <div class="header-banner__preview-overlay">
+                      @if (f['title'].value) {
+                        <div class="header-banner__preview-title">{{ f['title'].value }}</div>
+                      }
+                      @if (f['subtitle'].value) {
+                        <div class="header-banner__preview-text">{{ f['subtitle'].value }}</div>
+                      }
+                    </div>
+                  </div>
+                }
+                <!-- Sibling of the content block, not a child. The two switches are
+                     independent, so switching off "Show Banner Content" must leave the
+                     button alone - same rule as `hasCta` on the client. -->
+                @if (f['showCta'].value && f['ctaText'].value) {
+                  <div
+                    class="header-banner__preview-cta-layer"
+                    [class.header-banner__preview-layer--dragging]="isDraggingLayer('cta')"
+                    [style.transform]="previewCtaTransform"
+                    [title]="util.appTranslate('preview_drag_cta_hint')"
+                    (pointerdown)="onLayerDragStart($event, previewFrame, 'cta')"
+                    (pointermove)="onLayerDragMove($event)"
+                    (pointerup)="onLayerDragEnd($event)"
+                    (pointercancel)="onLayerDragEnd($event)"
+                  >
+                    <div
+                      class="header-banner__preview-cta"
+                      [ngStyle]="previewCtaStyles"
+                      [style.animation]="previewCtaAnimation"
+                    >
+                      {{ f['ctaText'].value }} →
+                    </div>
+                  </div>
+                }
+                <div
+                  class="header-banner__preview-handle header-banner__preview-handle--bottom"
+                  role="separator"
+                  tabindex="0"
+                  aria-orientation="horizontal"
+                  [class.header-banner__preview-handle--active]="isResizingBanner"
+                  [attr.aria-label]="util.appTranslate('banner_height')"
+                  [attr.aria-valuenow]="previewBannerReferenceHeight"
+                  [attr.aria-valuemin]="bannerHeightBounds.min"
+                  [attr.aria-valuemax]="bannerHeightBounds.max"
+                  [title]="util.appTranslate('preview_resize_banner_hint')"
+                  (pointerdown)="onResizeStart('banner', $event)"
+                  (pointermove)="onResizeMove($event)"
+                  (pointerup)="onResizeEnd($event)"
+                  (pointercancel)="onResizeEnd($event)"
+                  (keydown)="onResizeKey('banner', $event)"
+                  (dblclick)="onResizeReset('banner')"
+                >
+                  <span class="header-banner__preview-handle-pill">
+                    <mat-icon class="header-banner__preview-handle-icon">height</mat-icon>
+                    {{ previewBannerHandleLabel }}
+                  </span>
+                </div>
+              </div>
+            }
+
+            <!-- Search bar survives collapse -->
+            <div class="header-banner__preview-search">
+              <mat-icon>search</mat-icon>
+              <span>Search 'pizza'</span>
+            </div>
+
+            <div class="header-banner__preview-content">
+              <p class="text-secondary f-s-12">
+                {{ util.appTranslate('preview_notice') }}
+              </p>
+            </div>
+          </div>
+
+          <!-- Media zoom. The rail spans the whole 1x - 3x range, so a drag across it
+               is a direct manipulation of the crop rather than a relative nudge, and the
+               banner above repaints on every move. Below the frame rather than on an edge
+               because zooming is a horizontal gesture and a 26px edge strip is far too
+               thin a target for one. -->
+          <div class="header-banner__zoom">
+            <span class="header-banner__zoom-label">
+              <mat-icon class="header-banner__zoom-icon">photo_size_select_actual</mat-icon>
+              {{ util.appTranslate('media_zoom') }}
+            </span>
+            <div
+              #scaleTrack
+              class="header-banner__zoom-track"
+              role="slider"
+              tabindex="0"
+              [class.header-banner__zoom-track--active]="isScalingMedia"
+              [attr.aria-label]="util.appTranslate('media_zoom')"
+              [attr.aria-valuenow]="mediaScale"
+              [attr.aria-valuemin]="mediaScaleBounds.min"
+              [attr.aria-valuemax]="mediaScaleBounds.max"
+              [attr.aria-valuetext]="previewScaleReadout"
+              [title]="util.appTranslate('preview_zoom_hint')"
+              (pointerdown)="onScaleDragStart($event, scaleTrack)"
+              (pointermove)="onScaleDragMove($event)"
+              (pointerup)="onScaleDragEnd($event)"
+              (pointercancel)="onScaleDragEnd($event)"
+              (keydown)="onScaleKey($event)"
+            >
+              <div class="header-banner__zoom-fill" [style.width.%]="zoomPercent"></div>
+              <div class="header-banner__zoom-thumb" [style.left.%]="zoomPercent">
+                <mat-icon>open_with</mat-icon>
+              </div>
+            </div>
+            <span class="header-banner__offset-chip header-banner__offset-chip--wide">
+              {{ previewScaleReadout }}
+            </span>
+          </div>
+        </div>
+
+        <!-- The live numbers sit on the chips above the frame; this only names the sum. -->
+        <p class="text-secondary f-s-12 text-center">
+          {{ util.appTranslate('preview_dimension_hint') }}
+        </p>
+      </div>
+    </mat-tab>
+
+    <!-- ============================ PUBLISH & HISTORY ============================ -->
+    <mat-tab [label]="'publish_history'">
+      <div class="p-16">
+        <mat-card appearance="outlined">
+          <mat-card-header><mat-card-title>{{ util.appTranslate('publish_history') }}</mat-card-title></mat-card-header>
+          <mat-card-content class="p-t-16">
+            @if (!history.length) {
+              <p class="text-secondary f-s-12">{{ util.appTranslate('no_history') }}</p>
+            } @else {
+              <div class="hb-scroll">
+                <table class="w-100">
+                  <thead>
+                    <tr class="header-banner__row header-banner__row--head">
+                      <th>{{ util.appTranslate('action') }}</th>
+                      <th>{{ util.appTranslate('campaign_name') }}</th>
+                      <th>{{ util.appTranslate('published_by') }}</th>
+                      <th>{{ util.appTranslate('published_at') }}</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    @for (entry of history; track entry.id) {
+                      <tr class="header-banner__row">
+                        <td>{{ entry.action }}</td>
+                        <td>{{ entry.campaignName }}</td>
+                        <td>{{ entry.publishedBy?.name || '—' }}</td>
+                        <td>{{ entry.publishedAt | date: 'dd MMM yyyy, HH:mm' }}</td>
+                      </tr>
+                    }
+                  </tbody>
+                </table>
+              </div>
+            }
+          </mat-card-content>
+        </mat-card>
+      </div>
+    </mat-tab>
+  </mat-tab-group>
+</div>

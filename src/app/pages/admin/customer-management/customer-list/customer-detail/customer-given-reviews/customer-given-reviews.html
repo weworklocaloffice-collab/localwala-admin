@@ -1,0 +1,288 @@
+<h4 class="mat-headline-6 m-b-16 p-b-16 m-t-16 p-t-16">{{util.appTranslate('restaurant_reviews')}}
+  ({{restaurantTotalReview}}) </h4>
+
+@if(!isLoadedRestaurant){
+<div class="row">
+  @for (item of util.dummyData; track $index) {
+  <div class="col-sm-6 col-lg-3 m-b-24">
+    <mat-progress-bar mode="indeterminate" class="progress-bar-product-info" color="light"></mat-progress-bar>
+  </div>
+  }
+</div>
+}
+
+@if(isLoadedRestaurant){
+<div class="row">
+  @for (item of restaurantReview; track $index) {
+  <div class="col-sm-6 col-lg-3">
+    <mat-card class="cardWithShadow">
+      <mat-card-content class="text-center p-y-24">
+        <img [src]="api.mediaUrl+item.restaurants.cover" class="rounded-circle" width="80"
+          onError="this.src='assets/images/onerror.png'" height="80" />
+        <div class="m-t-16">
+          <h3 class="m-b-4 mat-subtitle-2 f-s-16 f-w-600">
+            {{ item.restaurants.displayName }}
+          </h3>
+          <span class="f-s-12">{{item.restaurants.displayAddress}}</span> <br>
+          <span class="f-s-12">{{getDate(item.createdAt)}}</span>
+        </div>
+        <div class="m-t-16 text-left">
+          <span class="f-s-14">
+            {{item.shortReview}}
+          </span>
+        </div>
+        <div class="m-t-6 text-left">
+          @for (hash of item.hashtags; track $index) {
+          <p class="mat-body-1 f-s-14">{{getTranslatedRestaurantHashtag(hash)}}</p>
+          }
+        </div>
+        @if(item.images.length){
+        <div class="d-flex align-items-center gap-6 m-t-16">
+          @for (img of item.images; track $index) {
+          <img [src]="api.mediaUrl+img" class="rounded" width="40" height="40" alt="user"
+            onError="this.src='assets/images/onerror.png'" />
+          }
+        </div>
+        }
+      </mat-card-content>
+
+      @if(item && item.orderInfo && item.orderInfo.id !=''){
+      <mat-divider></mat-divider>
+      }
+
+      @if(item && item.orderInfo && item.orderInfo.id !=''){
+      <div class="row">
+        <div class="col-6 p-y-12 p-x-24">
+          <h3 class="m-b-4 mat-subtitle-2 f-s-16 f-w-600">
+            # {{ item.orderInfo.orderNo }}
+          </h3>
+          <span class="f-s-12">{{util.refId(item.orderInfo.id)}}</span>
+        </div>
+      </div>
+      }
+
+      <mat-divider></mat-divider>
+
+      <div class="row">
+        <div class="col-6 p-y-12">
+          <div
+            class="mat-subtitle-2 text-decoration-none f-s-14 f-w-500 d-flex justify-content-start align-items-center p-x-24">
+            <ng-icon name="tablerSparkles" class="icon-18 m-r-4 fill-warning"></ng-icon>
+            {{ item.ratingCount }}
+          </div>
+        </div>
+        @if (item && item.orders && item.orders != null) {
+        <div class="col-6 p-y-12">
+          <div
+            class="mat-subtitle-2 text-decoration-none f-s-14 f-w-500 d-flex justify-content-end align-items-center p-x-24">
+            <ng-icon name="tablerSquareRoundedCheck" class="icon-18 m-r-4" [ngStyle]="{color:'#2bff73'}"></ng-icon>
+            {{util.appTranslate('verified')}}
+          </div>
+        </div>
+        }
+      </div>
+    </mat-card>
+  </div>
+  }
+</div>
+}
+
+@if(!restaurantReview.length){
+<h6 class="mat-body-2 f-w-600 text-center">
+  {{util.appTranslate('table_no_data_found')}}
+</h6>
+}
+
+<mat-paginator [hidden]="!isLoadedRestaurant" #restaurantReviewPaginator [pageSizeOptions]="[5,10, 20]"
+  [pageSize]="pageSizeRestaurant" (page)="onRestaurantPageChange($event)" showFirstLastButtons></mat-paginator>
+
+<!-- Food Reviews -->
+<h4 class="mat-headline-6 m-b-16 p-b-16 m-t-16 p-t-16">{{util.appTranslate('food_reviews')}} ({{foodTotalReview}})</h4>
+
+@if(!isLoadedFood){
+<div class="row">
+  @for (item of util.dummyData; track $index) {
+  <div class="col-sm-6 col-lg-3 m-b-24">
+    <mat-progress-bar mode="indeterminate" class="progress-bar-product-info" color="light"></mat-progress-bar>
+  </div>
+  }
+</div>
+}
+
+@if(isLoadedFood){
+<div class="row">
+  @for (item of foodReview; track $index) {
+  <div class="col-sm-6 col-lg-3">
+    <mat-card class="cardWithShadow">
+      <mat-card-content class="text-center p-y-24">
+        <img [src]="api.mediaUrl+item.foods.image" class="rounded-circle" width="80"
+          onError="this.src='assets/images/onerror.png'" height="80" />
+        <div class="m-t-16">
+          <h3 class="m-b-4 mat-subtitle-2 f-s-16 f-w-600">
+            {{ item.foods.displayName }}
+          </h3>
+          <span class="f-s-12">{{getDate(item.createdAt)}}</span>
+        </div>
+        <div class="m-t-16 text-left">
+          <span class="f-s-14">
+            {{item.shortReview}}
+          </span>
+        </div>
+        <div class="m-t-6 text-left">
+          @for (hash of item.hashtags; track $index) {
+          <p class="mat-body-1 f-s-14">{{getTranslatedFoodHashtag(hash)}}</p>
+          }
+        </div>
+        @if (item.images.length) {
+        <div class="d-flex align-items-center gap-6 m-t-16">
+          @for (img of item.images; track $index) {
+          <img [src]="api.mediaUrl+img" class="rounded" width="40" height="40" alt="user"
+            onError="this.src='assets/images/onerror.png'" />
+          }
+        </div>
+        }
+      </mat-card-content>
+
+      @if (item && item.orderInfo && item.orderInfo.id !='') {
+      <mat-divider></mat-divider>
+      }
+
+      @if(item && item.orderInfo && item.orderInfo.id !=''){
+      <div class="row">
+        <div class="col-6 p-y-12 p-x-24">
+          <h3 class="m-b-4 mat-subtitle-2 f-s-16 f-w-600">
+            # {{ item.orderInfo.orderNo }}
+          </h3>
+          <span class="f-s-12">{{util.refId(item.orderInfo.id)}}</span>
+        </div>
+      </div>
+      }
+
+      <mat-divider></mat-divider>
+
+      <div class="row">
+        <div class="col-6 p-y-12">
+          <div
+            class="mat-subtitle-2 text-decoration-none f-s-14 f-w-500 d-flex justify-content-start align-items-center p-x-24">
+            <ng-icon name="tablerSparkles" class="icon-18 m-r-4 fill-warning"></ng-icon>
+            {{ item.ratingCount }}
+          </div>
+        </div>
+        <div class="col-6 p-y-12">
+          <div
+            class="mat-subtitle-2 text-decoration-none f-s-14 f-w-500 d-flex justify-content-end align-items-center p-x-24">
+            <ng-icon name="tablerSquareRoundedCheck" class="icon-18 m-r-4" [ngStyle]="{color:'#2bff73'}"></ng-icon>
+            {{util.appTranslate('verified')}}
+          </div>
+        </div>
+      </div>
+    </mat-card>
+  </div>
+  }
+</div>
+}
+
+@if (!foodReview.length) {
+<h6 class="mat-body-2 f-w-600 text-center">
+  {{util.appTranslate('table_no_data_found')}}
+</h6>
+}
+
+<mat-paginator [hidden]="!isLoadedFood" #foodReviewPaginator [pageSizeOptions]="[5,10, 20]" [pageSize]="pageSizeFood"
+  (page)="onFoodPageChange($event)" showFirstLastButtons></mat-paginator>
+<!-- Food Reviews -->
+
+
+<h4 class="mat-headline-6 m-b-16 p-b-16 m-t-16 p-t-16">{{util.appTranslate('deliveryman_reviews')}}
+  ({{deliverymanTotalReview}})</h4>
+
+@if (!isLoadedDeliveryman) {
+<div class="row">
+  @for (item of util.dummyData; track $index) {
+  <div class="col-sm-6 col-lg-3 m-b-24">
+    <mat-progress-bar mode="indeterminate" class="progress-bar-product-info" color="light"></mat-progress-bar>
+  </div>
+  }
+</div>
+}
+
+@if(isLoadedDeliveryman){
+<div class="row">
+  @for (item of deliverymanReview; track $index) {
+  <div class="col-sm-6 col-lg-3">
+    <mat-card class="cardWithShadow">
+      <mat-card-content class="text-center p-y-24">
+        <img [src]="api.mediaUrl+item.driverInfo.image" class="rounded-circle" width="80"
+          onError="this.src='assets/images/onerror.png'" height="80" />
+        <div class="m-t-16">
+          <h3 class="m-b-4 mat-subtitle-2 f-s-16 f-w-600">
+            {{ item.driverInfo.firstName +' '+ item.driverInfo.lastName }}
+          </h3>
+          <span class="f-s-12">{{getDate(item.createdAt)}}</span>
+        </div>
+        <div class="m-t-16 text-left">
+          <span class="f-s-14">
+            {{item.shortReview}}
+          </span>
+        </div>
+        <div class="m-t-6 text-left">
+          @for (hash of item.hashtags; track $index) {
+          <p class="mat-body-1 f-s-14">{{getTranslatedDeliverymanHashtag(hash)}}</p>
+          }
+        </div>
+        @if (item.images.length) {
+        <div class="d-flex align-items-center gap-6 m-t-16">
+          @for (img of item.images; track $index) {
+          <img [src]="api.mediaUrl+img" class="rounded" width="40" height="40" alt="user"
+            onError="this.src='assets/images/onerror.png'" />
+          }
+        </div>
+        }
+      </mat-card-content>
+
+      @if (item && item.orderInfo && item.orderInfo.id !='') {
+      <mat-divider></mat-divider>
+      }
+
+      @if (item && item.orderInfo && item.orderInfo.id !='') {
+      <div class="row">
+        <div class="col-6 p-y-12 p-x-24">
+          <h3 class="m-b-4 mat-subtitle-2 f-s-16 f-w-600">
+            # {{ item.orderInfo.orderNo }}
+          </h3>
+          <span class="f-s-12">{{util.refId(item.orderInfo.id)}}</span>
+        </div>
+      </div>
+      }
+
+      <mat-divider></mat-divider>
+      <div class="row">
+        <div class="col-6 p-y-12">
+          <div
+            class="mat-subtitle-2 text-decoration-none f-s-14 f-w-500 d-flex justify-content-start align-items-center p-x-24">
+            <ng-icon name="tablerSparkles" class="icon-18 m-r-4 fill-warning"></ng-icon>
+            {{ item.ratingCount }}
+          </div>
+        </div>
+        <div class="col-6 p-y-12">
+          <div
+            class="mat-subtitle-2 text-decoration-none f-s-14 f-w-500 d-flex justify-content-end align-items-center p-x-24">
+            <ng-icon name="tablerSquareRoundedCheck" class="icon-18 m-r-4" [ngStyle]="{color:'#2bff73'}"></ng-icon>
+            {{util.appTranslate('verified')}}
+          </div>
+        </div>
+      </div>
+    </mat-card>
+  </div>
+  }
+</div>
+}
+
+@if (!deliverymanReview.length) {
+<h6 class="mat-body-2 f-w-600 text-center">
+  {{util.appTranslate('table_no_data_found')}}
+</h6>
+}
+
+<mat-paginator [hidden]="!isLoadedDeliveryman" #deliverymanReviewPaginator [pageSizeOptions]="[5,10, 20]"
+  [pageSize]="pageSizeDeliveryman" (page)="onDeliverymanPageChange($event)" showFirstLastButtons></mat-paginator>

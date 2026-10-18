@@ -1,0 +1,189 @@
+<h2 mat-dialog-title class="dialog-title">
+  <span class="title-text">
+    {{action == 'create' ? util.appTranslate('add_cityzen') : util.appTranslate('update_cityzen') }}
+  </span>
+  <button mat-icon-button mat-dialog-close class="close-btn">
+    <mat-icon>close</mat-icon>
+  </button>
+</h2>
+<div mat-dialog-content style="max-width: 600px;max-height: max-content;" class="m-t-12 p-t-12">
+  <form name="eventForm" [formGroup]="roleForm" class="event-form" (ngSubmit)="onSubmit()">
+    <div class="row">
+
+      <div class="col-12 text-center m-b-16 p-b-24 d-flex flex-column justify-content-center align-items-center">
+        <img [src]="api.mediaUrl+f['image'].value" class="custom-image-upload border p-5 m-b-16" width="80" height="80"
+          onError="this.src='assets/images/placeholder.png'" (click)="onImagePicker()"
+          [ngStyle]="{'border': isFormSubmit == true && f['image'].invalid ? '2px dashed red' : '2px dashed #e5e5e5', 'height' : '80px'}" />
+        <span class="f-s-12"
+          [matTooltip]="util.appTranslate('upload_image_ratio_1_o_1')">{{util.appTranslate('image_ratio_1_o_1')}}</span>
+      </div>
+
+      <div class="col-lg-6 col-sm-12 p-b-16">
+        <mat-form-field appearance="outline" class="w-100" color="primary">
+          <mat-label>{{util.appTranslate('first_name_lbl')}}</mat-label>
+          <input matInput formControlName="firstName" type="text" />
+          @if(isFormSubmit == true && f['firstName'].invalid){
+          <mat-hint class="m-b-16 error-msg">
+            @if(f['firstName'].errors && f['firstName'].errors['required']){
+            <div class="text-error">
+              {{util.appTranslate('form_required')}}
+            </div>
+            }
+          </mat-hint>
+          }
+        </mat-form-field>
+      </div>
+
+      <div class="col-lg-6 col-sm-12 p-b-16">
+        <mat-form-field appearance="outline" class="w-100" color="primary">
+          <mat-label>{{util.appTranslate('last_name_lbl')}}</mat-label>
+          <input matInput formControlName="lastName" type="text" />
+          @if(isFormSubmit == true && f['lastName'].invalid){
+          <mat-hint class="m-b-16 error-msg">
+            @if(f['lastName'].errors && f['lastName'].errors['required']){
+            <div class="text-error">
+              {{util.appTranslate('form_required')}}
+            </div>
+            }
+          </mat-hint>
+          }
+        </mat-form-field>
+      </div>
+
+      <div class="col-lg-12 col-sm-12">
+        <div class="row">
+          <div class="col-lg-3 col-sm-12 p-b-16">
+            <mat-form-field class="w-100" appearance="outline">
+              <mat-label>{{util.appTranslate('country_lbl')}}</mat-label>
+              <input type="text" [placeholder]="util.appTranslate('choose_country')" matInput name="countryCode"
+                [formControl]="countryCodeCtrl" [matAutocomplete]="autoCountryCode" />
+              <mat-autocomplete autoActiveFirstOption #autoCountryCode="matAutocomplete"
+                (optionSelected)="onCountryCodeSelect($event)">
+                @for (item of countryCodes | async; track $index) {
+                <mat-option [value]="item.flag +' '+ item.dial_code +' '+ item.name">
+                  {{item.flag +' '+ item.dial_code + ' '+ item.name }}
+                </mat-option>
+                }
+              </mat-autocomplete>
+              @if(isFormSubmit == true && f['countryCode'].invalid){
+              <mat-hint class="m-b-16 error-msg">
+                @if(f['countryCode'].errors && f['countryCode'].errors['required']){
+                <div class="text-error">
+                  {{util.appTranslate('form_required')}}
+                </div>
+                }
+              </mat-hint>
+              }
+            </mat-form-field>
+          </div>
+          <div class="col-lg-9 col-sm-12 p-b-16">
+            <mat-form-field appearance="outline" class="w-100" color="primary">
+              <mat-label>{{util.appTranslate('mobile_number')}}</mat-label>
+              <input matInput formControlName="mobile" type="number" />
+              @if(isFormSubmit == true && f['mobile'].invalid){
+              <mat-hint class="m-b-16 error-msg">
+                @if(f['mobile'].errors && f['mobile'].errors['required']){
+                <div class="text-error">
+                  {{util.appTranslate('form_required')}}
+                </div>
+                }
+              </mat-hint>
+              }
+            </mat-form-field>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-lg-12 col-sm-12 p-b-16">
+        <mat-form-field appearance="outline" class="w-100" color="primary">
+          <mat-label>{{util.appTranslate('email_lbl')}}</mat-label>
+          <input matInput formControlName="email" type="email" />
+          @if(isFormSubmit == true && f['email'].invalid){
+          <mat-hint class="m-b-16 error-msg">
+            @if(f['email'].errors && f['email'].errors['required']){
+            <div class="text-error">
+              {{util.appTranslate('form_required')}}
+            </div>
+            }
+            @if(f['email'].errors && f['email'].errors['pattern']){
+            <div class="text-error">
+              {{util.appTranslate('email_validation')}}
+            </div>
+            }
+          </mat-hint>
+          }
+        </mat-form-field>
+      </div>
+
+      @if (action == 'create') {
+      <div class="col-lg-12 col-sm-12 p-b-10">
+        <div class="row">
+          <div class="col-lg-10 col-sm-12 p-b-16">
+            <mat-form-field appearance="outline" class="w-100" color="primary">
+              <mat-label>{{util.appTranslate('password')}}</mat-label>
+              <input matInput [type]="showPassword ? 'password' : 'text'" formControlName="password" />
+              <button mat-icon-button matSuffix (click)="showPassword = !showPassword" type="button">
+                <mat-icon class="op-5">{{ showPassword ? "visibility_off" : "visibility"}}</mat-icon>
+              </button>
+              @if(isFormSubmit == true && f['password'].invalid){
+              <mat-hint class="m-b-16 error-msg">
+                @if(f['password'].errors && f['password'].errors['required']){
+                <div class="text-error">
+                  {{util.appTranslate('form_required')}}
+                </div>
+                }
+              </mat-hint>
+              }
+            </mat-form-field>
+          </div>
+          <div class="col-lg-2 col-sm-12 p-b-16">
+            <div class="d-flex align-items-center justify-content-start m-b-16">
+              <button mat-mini-fab color="primary" type="button" (click)="onRefreshPassword()">
+                <ng-icon name="tablerRefresh" class="icon-20"></ng-icon>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+      }
+
+      <div class="col-lg-12 col-sm-12 p-b-10">
+        <mat-form-field class="w-100" appearance="outline">
+          <mat-label>{{util.appTranslate('th_city')}}</mat-label>
+          <input type="text" [placeholder]="util.appTranslate('th_choose_city')" matInput name="city"
+            formControlName="city" [formControl]="cityCtrl" [matAutocomplete]="auto" />
+          <mat-autocomplete autoActiveFirstOption #auto="matAutocomplete" (optionSelected)="onCitySelect($event)"
+            [displayWith]="displayItemName">
+            @for (item of cities | async; track $index) {
+            <mat-option [value]="item.id">
+              {{ getTranslatedItemName(item) }}
+            </mat-option>
+            }
+          </mat-autocomplete>
+          @if (isFormSubmit && f['city'].invalid) {
+          <mat-hint class="m-b-16 error-msg">
+            @if (f['city'].errors && f['city'].errors['required']) {
+            <div class="text-error">
+              {{util.appTranslate('form_required')}}
+            </div>
+            }
+          </mat-hint>
+          }
+        </mat-form-field>
+      </div>
+    </div>
+
+    <div mat-dialog-actions class="p-b-24">
+      <button mat-button mat-flat-button color="primary" type="submit" [disabled]="isSubmit == true">
+        @if (isSubmit == true) {
+        <mat-icon>
+          <mat-spinner diameter="15"></mat-spinner>
+        </mat-icon>
+        }
+        {{util.appTranslate('save_btn')}}
+      </button>
+      <button mat-button mat-dialog-close class="m-l-8 bg-secondary text-white">{{util.appTranslate('cancel_btn')}}</button>
+    </div>
+
+  </form>
+</div>

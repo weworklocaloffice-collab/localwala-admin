@@ -1,0 +1,254 @@
+<div class="table-qr-order-container">
+  <div class="content-area" #scrollContainer>
+    @if (isInitialLoaded) {
+    <mat-card class="cardWithShadow menu-card">
+      <mat-card-content class="p-y-24">
+        @if (!canDeliverNow) {
+        <div class="p-16 bg-light-error rounded m-b-16">
+          <h5 class="mat-subtitle-2 text-error d-flex align-items-center f-w-600">
+            <ng-icon name="tablerInfoCircleFill" class="icon-20 m-r-8 d-flex"></ng-icon>
+            {{util.appTranslate('restaurant_closed_time')}}
+          </h5>
+        </div>
+        }
+        <div class="row">
+          <div class="col-12 col-md-12">
+            <h4 mat-card-title class="card-title m-t-0 m-b-8">
+              {{util.appTranslate('table')}} #{{tableNumber}}
+            </h4>
+            <h4 mat-card-title class="card-title m-t-0 m-b-0">
+              {{ util.trimText(restaurantName,100) }}
+            </h4>
+            <p class="mat-subtitle-2 f-s-12 m-t-8">
+              {{ util.trimText(restaurantCuisine,70) }}
+            </p>
+            <p class="mat-subtitle-2 f-s-12 m-t-8">
+              {{ util.trimText(restaurantAddress,100) }}
+            </p>
+
+            <p class="mat-subtitle-2 f-s-12 m-t-8 text-decoration-none d-flex justify-content-start align-items-center">
+              <ng-icon name="tablerStar" class="text-success icon-18 m-r-4"></ng-icon>
+              {{restaurantRatingPrice}}
+            </p>
+          </div>
+        </div>
+      </mat-card-content>
+    </mat-card>
+    }
+
+    @if (isInitialLoaded) {
+    <mat-card class="cardWithShadow menu-card">
+      <mat-card-content class="p-y-24">
+        @for (category of categories; track $index) {
+        <div class="food-catalog-container">
+          <div class="category-header m-b-24" (click)="category.inView = !category.inView" [id]="category.id">
+            <h4 class="f-w-600 f-s-18 m-b-0 m-t-0">{{util.appTranslate(category.displayName)}}
+              ({{category.items.length}})
+            </h4>
+            <ng-icon [name]="category.inView == true ? 'tablerChevronDown' : 'tablerChevronUp'"
+              class="text-dart icon-18"></ng-icon>
+          </div>
+
+          @if (category.inView) {
+          <div class="food-catalog">
+            @for (food of category.items; track food; let last = $last) {
+            <div class="row food-container" [ngClass]="{ 'b-b-1': !last }">
+              <div class="col-7 col-md-7">
+                <div class="food-detail-content">
+                  @if (food.foodType == 'veg') {
+                  <img src="assets/images/veg.png" alt="" class="food-type rounded">
+                  }
+                  @if (food.foodType ==' nonveg') {
+                  <img src="assets/images/nonveg.png" alt="" class="food-type rounded">
+                  }
+                  @if (food.foodType == 'vegan') {
+                  <img src="assets/images/vegan.png" alt="" class="food-type rounded">
+                  }
+                  @if (food.foodType == 'none') {
+                  <img src="assets/images/onerror.png" alt="" class="food-type rounded">
+                  }
+
+                  <h6 class="mat-subtitle-1 f-s-14 f-w-500">{{ util.trimText(food.displayName,40) }}</h6>
+
+                  @if (food.discount <= 0) { <div class="d-flex align-items-start justify-content-start">
+                    <h6 class="f-w-500 mat-body-1 m-t-0 m-b-5 f-s-12">{{ util.priceFormat(food.price) }}</h6>
+                </div>
+                }
+
+                @if (food.discount > 0) {
+                <div class="d-flex align-items-start justify-content-start">
+                  <span class="f-w-500 mat-body-1 m-t-0 m-b-5 f-s-12 text-line-through">
+                    {{util.priceFormat(food.price)}}
+                  </span>
+                  <span class="f-w-500 mat-body-1 m-t-0 m-b-5 f-s-12 m-l-4">
+                    {{util.priceFormat(food.offerPrice)}}
+                  </span>
+                </div>
+                }
+
+                @if (food.rating > 0) {
+                <p
+                  class="mat-subtitle-2 f-s-12 text-decoration-none d-flex justify-content-start align-items-center m-t-8 m-b-8">
+                  <ng-icon name="tablerStar" class="text-success icon-12 m-r-4"></ng-icon>
+                  <span class="f-s-12 text-success"> {{food.rating}} </span>
+                  <span class="f-s-12 m-l-6"> ({{util.numberFormat(food.totalRating)}}) </span>
+                </p>
+                }
+                @if (food.rating <= 0) { <p class="m-t-8 m-b-8">
+                  </p>
+                  }
+
+                  <span class="f-s-10">{{ util.trimText(food.displayShortDescription,80) }}</span>
+
+              </div>
+            </div>
+            <div class="col-5 col-md-5">
+              <div class="media-content">
+                <div class="food-image rounded"
+                  [ngStyle]="{'background-image':'url('+api.mediaUrl+ food.image+'),url(assets/images/onerror.png)'}">
+                  @if (food.quantity <= 0 && canDeliverNow) { <div class="cart-btn-add" (click)="onAddCart(food)">
+                    <p class="lbl">{{util.appTranslate('add')}}</p>
+                </div>
+                }
+                @if (food.quantity >= 1 && canDeliverNow) {
+                <div class="cart-btn-quantity">
+                  <ng-icon name="tablerMinus" class="icon-16 icon-lbl" (click)="decreaseCartItem(food)"></ng-icon>
+                  <p class="lbl">{{ food.quantity }}</p>
+                  <ng-icon name="tablerPlus" class="icon-16 icon-lbl" (click)="increaseCartItem(food)"></ng-icon>
+                </div>
+                }
+              </div>
+              @if (food.addons.length != 0 || food.variations.length != 0) {
+              <div class="f-s-12 m-t-16 customisable-lbl">
+                {{util.appTranslate('customisable')}}
+              </div>
+              }
+            </div>
+          </div>
+
+          @if (last) {
+          <div class="col-12 col-md-12 breaker m-t-8"></div>
+          }
+        </div>
+        }
+  </div>
+  }
+</div>
+}
+</mat-card-content>
+</mat-card>
+}
+
+@if (isInitialLoaded) {
+<mat-card class="cardWithShadow menu-card">
+  <mat-card-content class="p-y-24">
+    <ul class="restaurant-notice-content">
+      @for (item of notice; track $index) {
+      <li>{{item.displayName}}</li>
+      }
+    </ul>
+  </mat-card-content>
+</mat-card>
+}
+
+@if (!isInitialLoaded) {
+<mat-card class="cardWithShadow menu-card">
+  <mat-card-content class="p-y-24">
+    <div class="row">
+      <div class="col-4 col-md-3">
+        <mat-progress-bar mode="indeterminate" class="restaurant-logo-loader" color="light"></mat-progress-bar>
+      </div>
+      <div class="col-8 col-md-9">
+        <h4 mat-card-title class="card-title m-t-0 m-b-0">
+          <mat-progress-bar mode="indeterminate" color="light"></mat-progress-bar>
+        </h4>
+        <p class="mat-subtitle-2 f-s-12 m-t-8">
+          <mat-progress-bar mode="indeterminate" color="light"></mat-progress-bar>
+        </p>
+        <p class="mat-subtitle-2 f-s-12 m-t-8">
+          <mat-progress-bar mode="indeterminate" color="light"></mat-progress-bar>
+        </p>
+        <p class="mat-subtitle-2 f-s-12 m-t-8">
+          <mat-progress-bar mode="indeterminate" color="light"></mat-progress-bar>
+        </p>
+        <p class="mat-subtitle-2 f-s-12 m-t-8">
+          <mat-progress-bar mode="indeterminate" color="light"></mat-progress-bar>
+        </p>
+        <p class="mat-subtitle-2 f-s-12 m-t-8">
+          <mat-progress-bar mode="indeterminate" color="light"></mat-progress-bar>
+        </p>
+      </div>
+    </div>
+  </mat-card-content>
+</mat-card>
+}
+
+@if (!isInitialLoaded) {
+<mat-card class="cardWithShadow menu-card">
+  <mat-card-content class="p-y-24">
+    @for (item of util.dummyData; track $index) {
+    <div class="row m-b-16">
+
+      <div class="col-8 col-md-9">
+        <h4 mat-card-title class="card-title m-t-0 m-b-0">
+          <mat-progress-bar mode="indeterminate" color="light"></mat-progress-bar>
+        </h4>
+        <p class="mat-subtitle-2 f-s-12 m-t-8">
+          <mat-progress-bar mode="indeterminate" color="light"></mat-progress-bar>
+        </p>
+        <p class="mat-subtitle-2 f-s-12 m-t-8">
+          <mat-progress-bar mode="indeterminate" color="light"></mat-progress-bar>
+        </p>
+        <p class="mat-subtitle-2 f-s-12 m-t-8">
+          <mat-progress-bar mode="indeterminate" color="light"></mat-progress-bar>
+        </p>
+        <p class="mat-subtitle-2 f-s-12 m-t-8">
+          <mat-progress-bar mode="indeterminate" color="light"></mat-progress-bar>
+        </p>
+        <p class="mat-subtitle-2 f-s-12 m-t-8">
+          <mat-progress-bar mode="indeterminate" color="light"></mat-progress-bar>
+        </p>
+      </div>
+
+      <div class="col-4 col-md-3">
+        <mat-progress-bar mode="indeterminate" class="restaurant-logo-loader" color="light"></mat-progress-bar>
+      </div>
+
+    </div>
+    }
+  </mat-card-content>
+</mat-card>
+}
+</div>
+
+</div>
+
+@if (isInitialLoaded) {
+<div class="menu-btn" (click)="onMenuModal()">
+  <p class="menu-lbl">{{util.appTranslate('menu')}}</p>
+</div>
+}
+
+@if (cartItemNumber >=1 || ongoingCartItemNumber > 0) {
+<div class="table-order-cart" (click)="openCartModal()">
+  <p class="cart-item-lbl">
+    @if (cartItemNumber >=1) {
+    <span>{{cartItemNumber}}
+      {{ cartItemNumber == 1 ? util.appTranslate('item_added') : util.appTranslate('items_added') }}
+    </span>
+    }
+    @if (cartItemNumber >=1 && ongoingCartItemNumber > 0) {
+    <span> • </span>
+    }
+    @if (ongoingCartItemNumber > 0) {
+    <span>
+      {{util.appTranslate('already_ordered_items')}} {{ ongoingCartItemNumber }} {{util.appTranslate('items')}}
+    </span>
+    }
+  </p>
+  <div class="cart-btn">
+    <p class="cart-lbl">{{util.appTranslate('cart')}}</p>
+    <ng-icon name="tablerBasketDown" class="icon-14 m-l-8 text-light"></ng-icon>
+  </div>
+</div>
+}

@@ -1,0 +1,68 @@
+<mat-card class="cardWithShadow">
+  <mat-card-header>
+    <div class="d-sm-flex w-100">
+      <div>
+        <mat-card-title>{{util.appTranslate('media_list')}}</mat-card-title>
+      </div>
+      <div class="m-l-auto">
+        <mat-form-field class="theme-select" appearance="outline">
+          <mat-select [value]="exportType" [(ngModel)]="exportType"
+            (selectionChange)="onExportCollection($event.value)">
+            <mat-option value="export">
+              {{util.appTranslate('export_kind')}}
+            </mat-option>
+            <mat-option value="excel">
+              {{util.appTranslate('excel_export_kind')}}
+            </mat-option>
+            <mat-option value="csv">
+              {{util.appTranslate('csv_export_kind')}}
+            </mat-option>
+            <mat-option value="raw">
+              {{util.appTranslate('raw_export_kind')}}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+        <a mat-button (click)="importCollection()" class="m-l-16 bg-secondary text-white" mat-flat-button>{{util.appTranslate('import_collection_btn')}}</a>
+      </div>
+    </div>
+  </mat-card-header>
+
+  <mat-card-content>
+    <ng-scrollbar style="height: calc(100vh - 390px)" class="position-relative">
+      @if (!isLoaded) {
+      <div class="row m-t-12">
+        @for (item of util.dummyData; track $index) {
+        <div class="col-lg-1 col-sm-2 p-b-16">
+          <mat-progress-bar mode="indeterminate" class="progress-bar-product-info" color="light"></mat-progress-bar>
+        </div>
+        }
+      </div>
+      }
+      @if (isLoaded) {
+      <div class="row m-t-12">
+        @for (item of listOfMedias; track $index) {
+        <div class="col-lg-1 col-sm-2 p-b-16">
+          <img [src]="api.mediaUrl+item.path" class="media-image-cover border p-5 m-t-16 w-100"
+            (click)="onMediaInfo(item)" onError="this.src='assets/images/placeholder.png'" />
+        </div>
+        }
+      </div>
+      }
+    </ng-scrollbar>
+    <mat-divider></mat-divider>
+    @if (serverResults < totalResults && isLoaded) { <div class="row">
+      @if (isLoadingMore) {
+      <div class="col-lg-12 d-flex flex-row align-items-center justify-content-center m-t-16 m-b-16 p-t-16 p-b-16">
+        <mat-spinner [diameter]="50" style="margin: 0 auto;"></mat-spinner>
+      </div>
+      }
+
+      @if (!isLoadingMore) {
+      <div class="col-lg-12 d-flex flex-row align-items-center justify-content-center m-t-16 m-b-16 p-t-16 p-b-16">
+        <button mat-stroked-button (click)="onLoadMore()">{{util.appTranslate('load_more')}}</button>
+      </div>
+      }
+      </div>
+      }
+  </mat-card-content>
+</mat-card>

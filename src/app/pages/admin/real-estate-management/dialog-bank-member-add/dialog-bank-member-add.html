@@ -1,0 +1,22 @@
+<h2 mat-dialog-title>{{ util.appTranslate('realEstate_add_officer') }}</h2>
+
+<mat-dialog-content>
+  <p class="f-s-14 text-muted">
+    {{ util.appTranslate('realEstate_add_officer_hint') }}
+  </p>
+  <mat-form-field appearance="outline" class="w-100 m-b-16">
+    <mat-label>{{ util.appTranslate('th_user_id') }}</mat-label>
+    <input matInput [(ngModel)]="user" placeholder="User ObjectId (role: bank)" />
+  </mat-form-field>
+  <mat-form-field appearance="outline" class="w-100">
+    <mat-label>{{ util.appTranslate('th_designation') }}</mat-label>
+    <input matInput [(ngModel)]="designation" />
+  </mat-form-field>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button (click)="onClose()">{{ util.appTranslate('th_cancel') }}</button>
+  <button mat-flat-button color="primary" [disabled]="isSaving || !user" (click)="onSubmit()">
+    {{ util.appTranslate('th_create') }}
+  </button>
+</mat-dialog-actions>

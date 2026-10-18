@@ -1,0 +1,59 @@
+@use "sass:map";
+@use "sass:meta";
+@use "sass:list";
+@use "variables";
+@use "functions";
+@use "flexbox";
+@use "display";
+@use "border";
+@use "text";
+@use "spacing";
+@use "rounded";
+
+$utility-groups: (
+  "standard": functions.map-collect(
+    variables.$utilities,
+    display.$utilities,
+    flexbox.$utilities,
+    spacing.$utilities,
+    border.$utilities,
+    rounded.$utilities,
+    text.$utilities
+  ),
+  "ltr": functions.map-collect(spacing.$ltr),
+  "rtl": functions.map-collect(spacing.$rtl)
+);
+
+@each $group-name, $utilities in $utility-groups {
+  @each $key, $utility in $utilities {
+    $values: map.get($utility, values);
+
+    // If the values are a list or string, convert it into a map
+    @if meta.type-of($values) == "string" or meta.type-of(list.nth($values, 1)) != "list" {
+      $values: list.zip($values, $values);
+    }
+
+    $properties: map.get($utility, property);
+    $prefix: map.get($utility, class);
+
+    // FIX: Avoid if() function to prevent deprecation warnings
+    $full-prefix: "";
+    @if $prefix != "" {
+      $full-prefix: "#{$prefix}-";
+    }
+
+    @each $class-modifier, $value in $values {
+      $class-name: ".#{$full-prefix}#{$class-modifier}";
+
+      @if $group-name == "standard" {
+        #{$class-name} {
+          @each $property in $properties { #{$property}: $value !important; }
+        }
+      } @else {
+        [dir="#{$group-name}"] #{$class-name} {
+          @each $property in $properties { #{$property}: $value !important; }
+        }
+      }
+    }
+  }
+}

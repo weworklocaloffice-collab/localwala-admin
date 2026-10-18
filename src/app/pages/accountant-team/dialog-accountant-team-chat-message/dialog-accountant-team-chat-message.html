@@ -1,0 +1,107 @@
+<div class="dialog-chat-box-container">
+  <div class="top-container">
+    <div class="d-flex align-items-center">
+      <img [src]="api.mediaUrl+image" alt="users" width="40" height="40" class="rounded-circle chat-image"
+        onError="this.src='assets/images/placeholder.png'" />
+      <div class="m-l-16 d-flex flex-column align-items-start justify-content-start">
+        <h6 class="mat-subtitle-1 f-s-14 f-w-600 lh-sm name-lbl">
+          {{ name }}
+        </h6>
+        <span class="mat-body-1 f-s-12 role-lbl">
+          {{ role }}
+        </span>
+      </div>
+    </div>
+    <button mat-icon-button (click)="onClose()" class="close-btn-chatbox">
+      <mat-icon>close</mat-icon>
+    </button>
+  </div>
+  <div class="center-container" id="chatBox">
+    <ng-scrollbar style="height: calc(100vh - 390px)" class="position-relative" #chatMessageScroll>
+      @if (loadMoreChats) {
+      <div class="p-24">
+        <mat-spinner [diameter]="30" style="margin: 0 auto;"></mat-spinner>
+      </div>
+      }
+      @if (!isLoading && chats.length == 0) {
+      <div class="d-flex align-items-center justify-content-center h-100 w-100">
+        <div>
+          <img src="/assets/images/breadcrumb/emailSv.png" width="250px" />
+          <h3 class="mat-subtitle-2 f-w-600 m-t-20 text-center">{{util.appTranslate('no_messages')}}</h3>
+        </div>
+      </div>
+      }
+      @if (isLoading) {
+      <div class="chat-list-container">
+        @for (chat of [1,2,3,4,5,6,7,8,9,10]; track $index) {
+        <ng-container>
+          @if (chat % 2 == 0) {
+          <div class="chat-item left">
+            <div class="chat-bubble left-bubble">
+              <div>
+                <div class="chat-message">
+                  <mat-progress-bar mode="indeterminate" color="primary"></mat-progress-bar>
+                </div>
+              </div>
+            </div>
+          </div>
+          }
+
+          @if (chat % 2 != 0) {
+          <div class="chat-item right">
+            <div class="chat-bubble right-bubble">
+              <div>
+                <div class="chat-message">
+                  <mat-progress-bar mode="indeterminate" color="primary"></mat-progress-bar>
+                </div>
+              </div>
+            </div>
+          </div>
+          }
+        </ng-container>
+        }
+      </div>
+      }
+      @if (!isLoading) {
+      <div class="chat-list-container">
+        @for (chat of chats; track $index) {
+        <ng-container>
+          @if (uid != chat.senderId) {
+          <div class="chat-item left">
+            <div class="chat-bubble left-bubble">
+              <div>
+                <div class="chat-message">{{ chat.message }}</div>
+                <div class="chat-time">{{ getDateFormatted(chat.createdAt) }}</div>
+              </div>
+            </div>
+          </div>
+          }
+
+          @if (uid == chat.senderId) {
+          <div class="chat-item right">
+            <div class="chat-bubble right-bubble">
+              <div>
+                <div class="chat-message">{{ chat.message }}</div>
+                <div class="chat-time">{{ getDateFormatted(chat.createdAt) }}</div>
+              </div>
+            </div>
+          </div>
+          }
+        </ng-container>
+        }
+      </div>
+      }
+    </ng-scrollbar>
+  </div>
+  <div class="bottom-container">
+    @if (!isLoading) {
+    <mat-form-field appearance="outline" class="w-100">
+      <input matInput [placeholder]="util.appTranslate('chat_dialog_placeholder')" type="text" [(ngModel)]="msg"
+        (keyup.enter)="sendMessage()" />
+      <button mat-icon-button matSuffix type="button" (click)="sendMessage()">
+        <mat-icon class="op-5">send</mat-icon>
+      </button>
+    </mat-form-field>
+    }
+  </div>
+</div>

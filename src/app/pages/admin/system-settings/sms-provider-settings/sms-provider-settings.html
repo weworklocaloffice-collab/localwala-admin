@@ -1,0 +1,55 @@
+<mat-card class="cardWithShadow theme-card">
+  <mat-card-header>
+    <mat-card-title class="m-b-0">
+      {{util.appTranslate('sms_providers')}}
+    </mat-card-title>
+  </mat-card-header>
+
+  <mat-card-content class="b-t-0">
+    <mat-tab-group mat-stretch-tabs="false" mat-align-tabs="start" (selectedTabChange)="tabChanged($event)">
+      <mat-tab [label]="util.appTranslate('firebase_sms_gateway')"></mat-tab>
+
+      <mat-tab [label]="util.appTranslate('twilio_sms_gateway')"></mat-tab>
+
+      <mat-tab [label]="util.appTranslate('msg91_sms_gateway')"></mat-tab>
+
+      <mat-tab [label]="util.appTranslate('nexmo_sms_gateway')"></mat-tab>
+
+      <mat-tab [label]="util.appTranslate('sms_to_sms_gateway')"></mat-tab>
+
+      <mat-tab [label]="util.appTranslate('2factor_sms_gateway')"></mat-tab>
+
+      <mat-tab [label]="util.appTranslate('fast2sms_sms_gateway')"></mat-tab>
+
+    </mat-tab-group>
+  </mat-card-content>
+</mat-card>
+
+@if(tabIndex == 0){
+  <app-firebase-sms-provider></app-firebase-sms-provider>
+}
+
+@if(tabIndex == 1){
+  <app-twilio-sms-provider></app-twilio-sms-provider>
+}
+
+@if(tabIndex == 2){
+  <app-msg91-sms-provider></app-msg91-sms-provider>
+}
+
+@if(tabIndex == 3){
+  <app-nexmo-sms-provider></app-nexmo-sms-provider>
+}
+
+@if(tabIndex == 4){
+  <app-sms-dot-to-sms-provider></app-sms-dot-to-sms-provider>
+}
+
+@if(tabIndex == 5){
+  <app-two-factor-sms-provider></app-two-factor-sms-provider>
+}
+
+@if(tabIndex == 6){
+  <app-fast2sms-sms-provider></app-fast2sms-sms-provider>
+}
+

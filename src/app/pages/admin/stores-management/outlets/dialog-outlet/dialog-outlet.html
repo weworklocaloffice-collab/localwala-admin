@@ -1,0 +1,72 @@
+<div mat-dialog-content class="dialog-form">
+  <form [formGroup]="outletForm" (ngSubmit)="onSubmit()">
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>{{ util.appTranslate('stores_outlet_name') }} <span class="required">*</span></mat-label>
+      <input matInput formControlName="name" placeholder="Outlet name">
+      @if (f.name.invalid && haveSubmitClicked) {
+        <mat-error>{{ util.appTranslate('ts_field_required') }}</mat-error>
+      }
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>{{ util.appTranslate('stores_outlet_code') }} <span class="required">*</span></mat-label>
+      <input matInput formControlName="outletCode" placeholder="e.g. ABC-HYD-01">
+      @if (f.outletCode.invalid && haveSubmitClicked) {
+        <mat-error>{{ util.appTranslate('ts_field_required') }}</mat-error>
+      }
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>GSTIN</mat-label>
+      <input matInput formControlName="gstin" placeholder="e.g. 29ABCDE1234F1Z5">
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>PAN</mat-label>
+      <input matInput formControlName="pan" placeholder="e.g. ABCDE1234F">
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>{{ util.appTranslate('stores_legal_name') }}</mat-label>
+      <input matInput formControlName="legalName" placeholder="Registered legal name">
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>State Code</mat-label>
+      <input matInput formControlName="stateCode" placeholder="e.g. 29 for Karnataka">
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>{{ util.appTranslate('stores_invoice_series') }}</mat-label>
+      <input matInput formControlName="invoicePrefix" placeholder="Series prefix">
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Financial Year</mat-label>
+      <input matInput formControlName="invoiceFinancialYear" placeholder="e.g. 2026-27">
+    </mat-form-field>
+
+    <mat-slide-toggle formControlName="codEnabled">
+      {{ util.appTranslate('stores_cod_enabled') }}
+    </mat-slide-toggle>
+
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>COD Min Order</mat-label>
+      <input matInput type="number" formControlName="codMinOrder" min="0">
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>COD Max Order</mat-label>
+      <input matInput type="number" formControlName="codMaxOrder" min="0">
+    </mat-form-field>
+
+    <div mat-dialog-actions class="dialog-actions">
+      <button mat-button type="button" (click)="dialogRef.close()" cdkFocusInitial>
+        {{ util.appTranslate('common_cancel') }}
+      </button>
+      <button mat-raised-button color="primary" type="submit" [disabled]="outletForm.invalid">
+        {{ util.appTranslate('ts_add_new') }}
+      </button>
+    </div>
+  </form>
+</div>

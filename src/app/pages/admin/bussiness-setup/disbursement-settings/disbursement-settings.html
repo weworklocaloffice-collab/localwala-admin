@@ -1,0 +1,187 @@
+<form name="eventForm" [formGroup]="settingForm" class="event-form" (ngSubmit)="onSubmit()" id="topContent">
+  <div class="row">
+    <div class="col-lg-12 col-sm-12 p-b-16">
+      <mat-card class="cardWithShadow theme-card">
+        <mat-card-header>
+          <mat-card-title class="m-b-0">
+            {{util.appTranslate('dibursement_settings')}}
+          </mat-card-title>
+        </mat-card-header>
+
+        <mat-card-content class="b-t-0">
+          <div class="row p-b-16">
+            <div class="col-lg-6 col-sm-12 p-b-16">
+              <mat-form-field appearance="outline" class="w-100"
+                [matTooltip]="util.appTranslate('disbursement_request_type_tooltip')">
+                <mat-label>{{util.appTranslate('disbursement_request_type')}}</mat-label>
+                <mat-select formControlName="type" name="type">
+                  <mat-option value="manual">{{util.appTranslate('manual')}}</mat-option>
+                  <mat-option value="auto">{{util.appTranslate('automated')}}</mat-option>
+                </mat-select>
+              </mat-form-field>
+            </div>
+          </div>
+          @if(f['type'].value == 'auto'){
+          <div class="row p-b-16">
+            <div class="col-lg-6 col-sm-12 p-b-16">
+              <mat-card class="b-1 shadow-none theme-card">
+                <mat-card-header>
+                  <mat-card-title class="m-b-0">
+                    {{util.appTranslate('restaurant_disbursement')}}
+                  </mat-card-title>
+                </mat-card-header>
+
+                <mat-card-content class="b-t-1" [formGroup]="settingForm.controls['restaurant']">
+                  <div class="row p-b-16">
+                    <div
+                      [ngClass]="settingForm.controls['restaurant'].controls['from'].value == 'weekly' ? 'col-lg-6 col-sm-12 p-b-16' :'col-lg-12 col-sm-12 p-b-16' ">
+                      <mat-form-field appearance="outline" class="w-100"
+                        [matTooltip]="util.appTranslate('disbursement_generate_tooltip')">
+                        <mat-label>{{util.appTranslate('create_disbursement')}}</mat-label>
+                        <mat-select formControlName="from" name="from">
+                          <mat-option value="daily">{{util.appTranslate('daily')}}</mat-option>
+                          <mat-option value="weekly">{{util.appTranslate('weekly')}}</mat-option>
+                          <mat-option value="monthly">{{util.appTranslate('monthly')}}</mat-option>
+                        </mat-select>
+                      </mat-form-field>
+                    </div>
+
+                    @if(settingForm.controls['restaurant'].controls['from'].value == 'weekly'){
+                    <div class="col-lg-6 col-sm-12 p-b-16">
+                      <mat-form-field appearance="outline" class="w-100"
+                        [matTooltip]="util.appTranslate('disbursement_generate_day_tooltip')">
+                        <mat-label>{{util.appTranslate('create_disbursement')}}</mat-label>
+                        <mat-select formControlName="weekStart" name="weekStart">
+                          <mat-option [value]="1">{{util.appTranslate('dd_monday')}}</mat-option>
+                          <mat-option [value]="2">{{util.appTranslate('dd_tuesday')}}</mat-option>
+                          <mat-option [value]="3">{{util.appTranslate('dd_wednesday')}}</mat-option>
+                          <mat-option [value]="4">{{util.appTranslate('dd_thursday')}}</mat-option>
+                          <mat-option [value]="5">{{util.appTranslate('dd_friday')}}</mat-option>
+                          <mat-option [value]="6">{{util.appTranslate('dd_saturday')}}</mat-option>
+                          <mat-option [value]="7">{{util.appTranslate('dd_sunday')}}</mat-option>
+                        </mat-select>
+                      </mat-form-field>
+                    </div>
+                    }
+                  </div>
+
+                  <div class="row p-b-16">
+                    <div class="col-lg-6 col-sm-12 p-b-16">
+                      <mat-form-field appearance="outline" class="w-100" color="primary"
+                        [matTooltip]="util.appTranslate('disbursement_time_tooltip')">
+                        <mat-label>{{util.appTranslate('create_time')}}</mat-label>
+                        <input matInput formControlName="time" name="time" type="time" />
+                      </mat-form-field>
+                    </div>
+
+                    <div class="col-lg-6 col-sm-12 p-b-16">
+                      <mat-form-field appearance="outline" class="w-100" color="primary"
+                        [matTooltip]="util.appTranslate('disbursement_min_amount_tooltip')">
+                        <mat-label>{{util.appTranslate('min_amount_lbl')}}</mat-label>
+                        <input matInput formControlName="minAmount" name="minAmount" type="number" />
+                      </mat-form-field>
+                    </div>
+
+                    <div class="col-lg-12 col-sm-12 p-b-16">
+                      <mat-form-field appearance="outline" class="w-100" color="primary"
+                        [matTooltip]="util.appTranslate('disbursement_complete_day_tooltip')">
+                        <mat-label>{{util.appTranslate('days_needed_to_complete_disbursement')}}</mat-label>
+                        <input matInput formControlName="dayComplete" name="dayComplete" type="number" />
+                      </mat-form-field>
+                    </div>
+
+                  </div>
+                </mat-card-content>
+              </mat-card>
+            </div>
+
+            <div class="col-lg-6 col-sm-12 p-b-16">
+              <mat-card class="b-1 shadow-none theme-card">
+                <mat-card-header>
+                  <mat-card-title class="m-b-0">
+                    {{util.appTranslate('deliveryman_disbursement')}}
+                  </mat-card-title>
+                </mat-card-header>
+
+                <mat-card-content class="b-t-1" [formGroup]="settingForm.controls['driver']">
+                  <div class="row p-b-16">
+                    <div
+                      [ngClass]="settingForm.controls['driver'].controls['from'].value == 'weekly' ? 'col-lg-6 col-sm-12 p-b-16' :'col-lg-12 col-sm-12 p-b-16' ">
+                      <mat-form-field appearance="outline" class="w-100"
+                        [matTooltip]="util.appTranslate('disbursement_generate_tooltip')">
+                        <mat-label>{{util.appTranslate('create_disbursement')}}</mat-label>
+                        <mat-select formControlName="from" name="from">
+                          <mat-option value="daily">{{util.appTranslate('daily')}}</mat-option>
+                          <mat-option value="weekly">{{util.appTranslate('weekly')}}</mat-option>
+                          <mat-option value="monthly">{{util.appTranslate('monthly')}}</mat-option>
+                        </mat-select>
+                      </mat-form-field>
+                    </div>
+
+                    @if(settingForm.controls['driver'].controls['from'].value == 'weekly'){
+                    <div class="col-lg-6 col-sm-12 p-b-16">
+                      <mat-form-field appearance="outline" class="w-100"
+                        [matTooltip]="util.appTranslate('disbursement_generate_day_tooltip')">
+                        <mat-label>{{util.appTranslate('create_disbursement')}}</mat-label>
+                        <mat-select formControlName="weekStart" name="weekStart">
+                          <mat-option [value]="1">{{util.appTranslate('dd_monday')}}</mat-option>
+                          <mat-option [value]="2">{{util.appTranslate('dd_tuesday')}}</mat-option>
+                          <mat-option [value]="3">{{util.appTranslate('dd_wednesday')}}</mat-option>
+                          <mat-option [value]="4">{{util.appTranslate('dd_thursday')}}</mat-option>
+                          <mat-option [value]="5">{{util.appTranslate('dd_friday')}}</mat-option>
+                          <mat-option [value]="6">{{util.appTranslate('dd_saturday')}}</mat-option>
+                          <mat-option [value]="7">{{util.appTranslate('dd_sunday')}}</mat-option>
+                        </mat-select>
+                      </mat-form-field>
+                    </div>
+                    }
+                  </div>
+
+                  <div class="row p-b-16">
+                    <div class="col-lg-6 col-sm-12 p-b-16">
+                      <mat-form-field appearance="outline" class="w-100" color="primary"
+                        [matTooltip]="util.appTranslate('disbursement_time_tooltip')">
+                        <mat-label>{{util.appTranslate('create_time')}}</mat-label>
+                        <input matInput formControlName="time" name="time" type="time" />
+                      </mat-form-field>
+                    </div>
+
+                    <div class="col-lg-6 col-sm-12 p-b-16">
+                      <mat-form-field appearance="outline" class="w-100" color="primary"
+                        [matTooltip]="util.appTranslate('disbursement_min_amount_tooltip')">
+                        <mat-label>{{util.appTranslate('min_amount_lbl')}}</mat-label>
+                        <input matInput formControlName="minAmount" name="minAmount" type="number" />
+                      </mat-form-field>
+                    </div>
+
+                    <div class="col-lg-12 col-sm-12 p-b-16">
+                      <mat-form-field appearance="outline" class="w-100" color="primary"
+                        [matTooltip]="util.appTranslate('disbursement_complete_day_tooltip')">
+                        <mat-label>{{util.appTranslate('days_needed_to_complete_disbursement')}}</mat-label>
+                        <input matInput formControlName="dayComplete" name="dayComplete" type="number" />
+                      </mat-form-field>
+                    </div>
+
+                  </div>
+                </mat-card-content>
+              </mat-card>
+            </div>
+          </div>
+          }
+
+          <div class="row">
+            <div class="col-lg-2 col-sm-6 p-b-16">
+              <button mat-flat-button color="primary" type="submit" class="w-100">
+                {{ action == 'add' ? util.appTranslate('submit_btn') : util.appTranslate('update_btn')}}
+              </button>
+            </div>
+            <div class="col-lg-2 col-sm-6 p-b-16">
+              <button mat-flat-button (click)="onReset()" class="w-100 bg-secondary text-white"
+                type="button">{{util.appTranslate('reset_btn')}}</button>
+            </div>
+          </div>
+        </mat-card-content>
+      </mat-card>
+    </div>
+  </div>
+</form>

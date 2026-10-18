@@ -1,0 +1,99 @@
+<mat-card class="cardWithShadow theme-card">
+  <div class="p-24">
+    <mat-card-title class="m-b-0">
+      {{util.appTranslate('business_setup')}}
+    </mat-card-title>
+  </div>
+
+  <mat-card-content>
+    <mat-tab-group mat-stretch-tabs="false" mat-align-tabs="start" (selectedTabChange)="tabChanged($event)">
+      <mat-tab [label]="util.appTranslate('business_settings')"></mat-tab>
+
+      <mat-tab [label]="util.appTranslate('order_settings')"></mat-tab>
+
+      <mat-tab [label]="util.appTranslate('restaurant_settings')"></mat-tab>
+
+      <mat-tab [label]="util.appTranslate('deliveryman_settings')"></mat-tab>
+
+      <mat-tab [label]="util.appTranslate('customer_settings')"></mat-tab>
+
+      <mat-tab [label]="util.appTranslate('waiter_settings')"></mat-tab>
+
+      <mat-tab [label]="util.appTranslate('kitchen_owner_settings')"></mat-tab>
+
+      <mat-tab [label]="util.appTranslate('dining_settings')"></mat-tab>
+
+      <mat-tab [label]="util.appTranslate('language_settings')"></mat-tab>
+
+      <mat-tab [label]="util.appTranslate('dibursement_settings')"></mat-tab>
+
+      <mat-tab [label]="util.appTranslate('user_avatar_list')"></mat-tab>
+
+      <mat-tab [label]="util.appTranslate('social_sign_in')"></mat-tab>
+
+      <mat-tab [label]="util.appTranslate('media_storage_settings')"></mat-tab>
+
+      <!-- Appended last rather than grouped with the restaurant/driver tabs, so the
+           existing tabIndex values below stay valid. Adding it after `order_settings`
+           would renumber eight conditional blocks for no benefit. -->
+      <mat-tab [label]="util.appTranslate('dairy_settings')"></mat-tab>
+
+    </mat-tab-group>
+  </mat-card-content>
+</mat-card>
+
+@if(tabIndex == 0){
+  <app-business-settings></app-business-settings>
+}
+
+@if(tabIndex == 1){
+  <app-order-settings></app-order-settings>
+}
+
+@if(tabIndex == 2){
+  <app-restaurant-settings></app-restaurant-settings>
+}
+
+@if(tabIndex == 3){
+  <app-driver-settings></app-driver-settings>
+}
+
+@if(tabIndex == 4){
+  <app-user-settings></app-user-settings>
+}
+
+@if(tabIndex == 5){
+  <app-waiter-settings></app-waiter-settings>
+}
+
+@if(tabIndex == 6){
+  <app-kitchen-owner-settings></app-kitchen-owner-settings>
+}
+
+@if(tabIndex == 7){
+  <app-dining-settings></app-dining-settings>
+}
+
+@if(tabIndex == 8){
+  <app-languages></app-languages>
+}
+
+@if(tabIndex == 9){
+  <app-disbursement-settings></app-disbursement-settings>
+}
+
+@if(tabIndex == 10){
+  <app-user-avatar-list></app-user-avatar-list>
+}
+
+@if(tabIndex == 11){
+  <app-social-signin></app-social-signin>
+}
+
+@if(tabIndex == 12){
+  <app-media-storage-settings></app-media-storage-settings>
+}
+
+@if(tabIndex == 13){
+  <app-dairy-settings></app-dairy-settings>
+}

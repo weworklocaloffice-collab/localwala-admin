@@ -1,0 +1,34 @@
+<mat-card class="cardWithShadow theme-card">
+  <mat-card-header>
+    <mat-card-title class="m-b-0">
+      {{util.appTranslate('system_settings')}}
+    </mat-card-title>
+  </mat-card-header>
+
+  <mat-card-content class="b-t-0">
+    <mat-tab-group mat-stretch-tabs="false" mat-align-tabs="start" (selectedTabChange)="tabChanged($event)"
+      [selectedIndex]="tabIndex">
+      <mat-tab [label]="util.appTranslate('app_web_settings')"></mat-tab>
+
+      <mat-tab [label]="util.appTranslate('email_config')"></mat-tab>
+
+      <mat-tab [label]="util.appTranslate('sms_providers')"></mat-tab>
+
+      <mat-tab [label]="util.appTranslate('landing_page_content')"></mat-tab>
+
+    </mat-tab-group>
+  </mat-card-content>
+</mat-card>
+
+@if(tabIndex == 0){
+<app-app-web-settings></app-app-web-settings>
+}
+@if(tabIndex == 1){
+<app-email-config-settings></app-email-config-settings>
+}
+@if(tabIndex == 2){
+<app-sms-provider-settings></app-sms-provider-settings>
+}
+@if(tabIndex == 3){
+<app-landing-page-settings></app-landing-page-settings>
+}

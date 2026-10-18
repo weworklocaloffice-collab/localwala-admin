@@ -1,0 +1,27 @@
+<mat-card class="cardWithShadow theme-card">
+  <mat-card-header>
+    <mat-card-title class="m-b-0">
+      {{util.appTranslate('joining_form_setup')}}
+    </mat-card-title>
+  </mat-card-header>
+
+  <mat-card-content class="b-t-0">
+    <mat-tab-group mat-stretch-tabs="false" mat-align-tabs="start" (selectedTabChange)="tabChanged($event)">
+      <!-- Restaurant Joining Setup -->
+      <mat-tab [label]="util.appTranslate('restaurant_joining_setup')"></mat-tab>
+      <!-- Restaurant Joining Setup -->
+
+      <!-- Deliveryman Joining Setup -->
+      <mat-tab [label]="util.appTranslate('deliveryman_joining_setup')"></mat-tab>
+      <!-- Deliveryman Joining Setup -->
+
+    </mat-tab-group>
+  </mat-card-content>
+</mat-card>
+
+@if(tabIndex == 0){
+<app-restaurant-joining-setup></app-restaurant-joining-setup>
+}
+@if(tabIndex == 1){
+<app-deliveryman-joining-setup></app-deliveryman-joining-setup>
+}

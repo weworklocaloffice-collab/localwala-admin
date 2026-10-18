@@ -1,0 +1,76 @@
+<h2 mat-dialog-title class="dialog-title">
+  <span class="title-text">
+    {{
+      action == 'create'
+        ? util.appTranslate('add_dairy_category')
+        : util.appTranslate('update_dairy_category')
+    }}
+  </span>
+  <button mat-icon-button mat-dialog-close class="close-btn">
+    <mat-icon>close</mat-icon>
+  </button>
+</h2>
+
+<mat-dialog-content>
+  <form [formGroup]="categoryForm" class="pt-8">
+    <mat-form-field appearance="outline" class="w-100">
+      <mat-label>{{ util.appTranslate('th_key') }}</mat-label>
+      <input matInput formControlName="key" [placeholder]="util.appTranslate('ph_lowercase_key')" />
+      @if (action == 'create') {
+        <mat-hint>{{ util.appTranslate('ph_key_hint') }}</mat-hint>
+      } @else {
+        <!-- Read-only on edit, rather than hidden: the operator can still see it,
+             and it explains why the field does not change on save. -->
+        <mat-hint>{{ util.appTranslate('ph_key_immutable') }}</mat-hint>
+      }
+      @if (haveSubmitClicked && f['key'].invalid) {
+        <mat-hint class="m-b-16 error-msg">
+          @if (f['key'].errors && f['key'].errors['required']) {
+            <div class="text-error">{{ util.appTranslate('form_required') }}</div>
+          }
+          @if (f['key'].errors && f['key'].errors['pattern']) {
+            <div class="text-error">{{ util.appTranslate('form_key_invalid') }}</div>
+          }
+        </mat-hint>
+      }
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="w-100">
+      <mat-label>{{ util.appTranslate('th_name') }}</mat-label>
+      <input matInput formControlName="name" [placeholder]="util.appTranslate('th_name')" />
+      @if (haveSubmitClicked && f['name'].invalid) {
+        <mat-hint class="m-b-16 error-msg">
+          <div class="text-error">{{ util.appTranslate('form_required') }}</div>
+        </mat-hint>
+      }
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="w-100">
+      <mat-label>{{ util.appTranslate('description') }}</mat-label>
+      <textarea matInput formControlName="description" rows="3"></textarea>
+    </mat-form-field>
+
+    <div class="d-flex gap-16">
+      <mat-form-field appearance="outline" class="w-100">
+        <mat-label>{{ util.appTranslate('sort_order') }}</mat-label>
+        <input matInput type="number" formControlName="sortOrder" />
+      </mat-form-field>
+
+      <div class="w-100 d-flex align-center gap-16">
+        <mat-slide-toggle formControlName="featured">{{
+          util.appTranslate('featured')
+        }}</mat-slide-toggle>
+        <mat-slide-toggle formControlName="status">{{
+          util.appTranslate('th_status')
+        }}</mat-slide-toggle>
+      </div>
+    </div>
+  </form>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-stroked-button mat-dialog-close>{{ util.appTranslate('ts_cancel') }}</button>
+  <button mat-flat-button color="primary" (click)="onSubmit()">
+    {{ util.appTranslate('ts_submit') }}
+  </button>
+</mat-dialog-actions>

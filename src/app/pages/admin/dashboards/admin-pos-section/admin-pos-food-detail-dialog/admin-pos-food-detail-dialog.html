@@ -1,0 +1,235 @@
+<h2 mat-dialog-title class="dialog-title">
+  <span class="title-text">{{ product.displayName }}</span>
+  <button mat-icon-button mat-dialog-close class="close-btn">
+    <mat-icon>close</mat-icon>
+  </button>
+</h2>
+<div mat-dialog-content style="max-width: 600px;max-height: max-content;" class="m-t-12 p-t-12">
+  <mat-dialog-content class="mat-typography">
+    <div class="pos-food-info-dialog">
+      <div class="row p-b-24">
+        <div class="col-lg-12">
+          <div class="d-flex align-items-center">
+            <div class="pos-food-info-image"
+              [ngStyle]="{'background-image':'url('+api.mediaUrl+product.image+'),url(assets/images/onerror.png)'}">
+            </div>
+            <div class="m-l-16">
+              <h6 class="f-s-14 mat-subtitle-1 f-w-600">
+                {{ product.displayName }}
+                <span>
+                  @if(product.foodType =='veg'){
+                  <img src="assets/images/veg.png" alt="" style="height: 10px;width: 10px;margin:0px 10px;">
+                  }
+                  @if(product.foodType =='nonveg'){
+                  <img src="assets/images/nonveg.png" alt="" style="height: 10px;width: 10px;margin:0px 10px;">
+                  }
+                  @if(product.foodType =='vegan'){
+                  <img src="assets/images/vegan.png" alt="" style="height: 10px;width: 10px;margin:0px 10px;">
+                  }
+                  @if(product.foodType == 'none'){
+                  <img src="assets/images/onerror.png" alt="" style="height: 10px;width: 10px;margin:0px 10px;">
+                  }
+                </span>
+              </h6>
+              @if(product.discount <= 0){ <div class="d-flex align-items-start justify-content-start">
+                <span class="mat-subtitle-1 f-s-14 f-w-600">
+                  {{util.priceFormat(product.price)}}
+                </span>
+            </div>
+            }
+            @if(product.discount > 0){
+            <div class="d-flex align-items-start justify-content-start">
+              <span class="mat-subtitle-1 f-s-14 f-w-600 text-line-through">
+                {{util.priceFormat(product.price)}}
+              </span>
+              <span class="mat-subtitle-1 f-s-14 f-w-600 m-l-4">
+                {{util.priceFormat(product.offerPrice)}}
+              </span>
+            </div>
+            }
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="row p-b-24">
+      <div class="col-lg-12">
+        <h2 class="mat-headline-6">{{util.appTranslate('description')}}</h2>
+      </div>
+      <div class="col-lg-12">
+        <p class="mat-body-1 m-t-16">
+          {{product.displayShortDescription}}
+        </p>
+      </div>
+    </div>
+
+    @for(item of variations;track $index || $index; let vIndex = $index){
+    <div class="row b-1 variation-box p-8 m-b-8">
+      <div class="col-lg-12">
+        <div class="d-flex align-items-center justify-content-between w-100 m-t-8 m-b-8">
+          <div>
+            <h6 class="f-s-14 mat-subtitle-1 f-w-600">
+              {{item.title}}
+            </h6>
+            @if(item.type == 'single'){
+            <span class="mat-body-1 f-s-12">
+              {{util.appTranslate('select_any_one_option')}}
+            </span>
+            }
+            @if(item.type != 'single'){
+            <span class="mat-body-1 f-s-12">
+              {{util.appTranslate('select_min')}} {{item.min}} {{util.appTranslate('and_upto')}} {{item.max}}
+            </span>
+            }
+          </div>
+          @if(item.isRequired){
+          <span class="mat-body-1 f-s-12 text-error">
+            {{util.appTranslate('form_required')}}
+          </span>
+          }
+        </div>
+      </div>
+      @for(option of item.options; track $index || $index; let oIndex = $index){
+      <div class="col-lg-12">
+        <div class="d-flex align-items-center justify-content-between w-100 m-t-8 m-b-8 cursor-pointer"
+          (click)="variationSelectEvent(vIndex, oIndex)">
+          <div>
+            <span class="mat-body-1 f-s-12">{{option.name}}</span>
+            @if(option.limitCrossed){
+            <span class="mat-body-1 f-s-12 text-primary m-l-4">
+              ({{util.appTranslate('only')}} {{option.stock}} {{util.appTranslate('item_available')}})
+            </span>
+            }
+            @if(!option.inStock){
+            <span class="mat-body-1 f-s-12 text-primary m-l-4">
+              ({{util.appTranslate('out_of_stock')}})
+            </span>
+            }
+          </div>
+          <div class="d-flex align-items-center justify-content-between">
+            @if(!option.haveDiscount){
+            <span class="mat-body-1 f-s-12">+ {{option.price}}</span>
+            }
+            @if(option.haveDiscount){
+            <div class="d-flex align-items-start justify-content-start">
+              <span class="mat-body-1 f-s-12 text-line-through">
+                {{util.priceFormat(option.price)}}
+              </span>
+              <span class="mat-body-1 f-s-12 m-l-4">
+                + {{util.priceFormat(option.discountPrice)}}
+              </span>
+            </div>
+            }
+            @if(item.type == 'single'){
+            <ng-icon [name]="option.checked ? 'tablerCircleCheck' : 'tablerCircle'"
+              class="icon-18 d-flex m-l-4"></ng-icon>
+            }
+            @if(item.type != 'single'){
+            <ng-icon
+              [name]="option.checked ? 'tablerSquareCheck' : option.enable ?  'tablerSquare' : 'tablerSquareRoundedMinus'"
+              class="icon-18 d-flex m-l-4"></ng-icon>
+            }
+          </div>
+        </div>
+      </div>
+      }
+    </div>
+    }
+
+    @if(addons.length){
+    <div class="row b-1 variation-box p-8 m-b-8">
+      <div class="col-lg-12">
+        <div class="d-flex align-items-center justify-content-between w-100 m-t-8 m-b-8">
+          <div>
+            <h6 class="f-s-14 mat-subtitle-1 f-w-600">
+              {{util.appTranslate('addon')}}
+            </h6>
+            <span class="mat-body-1 f-s-12">
+              {{util.appTranslate('select_addons_lbl')}}
+            </span>
+          </div>
+
+        </div>
+      </div>
+      @for (item of addons; track $index) {
+      <div class="col-lg-12">
+        <div class="d-flex align-items-center justify-content-between w-100 m-t-8 m-b-8 cursor-pointer"
+          (click)="addonSelectEvent($index)">
+          <div>
+            <span class="mat-body-1 f-s-12">{{item.displayName}}</span>
+            @if(item.limitCrossed){
+            <span class="mat-body-1 f-s-12 text-primary m-l-4">
+              ({{util.appTranslate('only')}} {{item.stockNumber}}
+              {{util.appTranslate('item_available')}})
+            </span>
+            }
+            @if(!item.inStock){
+            <span class="mat-body-1 f-s-12 text-primary m-l-4">({{util.appTranslate('out_of_stock')}})</span>
+            }
+          </div>
+          <div class="d-flex align-items-center justify-content-between">
+            @if(!item.haveDiscount){
+            <span class="mat-body-1 f-s-12">+ {{item.price}}</span>
+            }
+            @if(item.haveDiscount){
+            <div class="d-flex align-items-start justify-content-start">
+              <span class="mat-body-1 f-s-12 text-line-through">
+                {{util.priceFormat(item.price)}}
+              </span>
+              <span class="mat-body-1 f-s-12 m-l-4">
+                + {{util.priceFormat(item.discountPrice)}}
+              </span>
+            </div>
+            }
+            <ng-icon [name]="item.checked ? 'tablerSquareCheck' :'tablerSquare'" class="icon-18 d-flex m-l-4"></ng-icon>
+          </div>
+        </div>
+      </div>
+      }
+    </div>
+    }
+
+    <div class="row b-1 variation-box p-8 m-b-8 m-t-8">
+      <mat-label class="mat-subtitle-2 f-w-600 m-b-8 d-block">{{util.appTranslate('cooking_instruction')}}</mat-label>
+      <mat-form-field appearance="outline" class="w-100" color="primary">
+        <textarea matInput rows="5" [(ngModel)]="instruction"></textarea>
+      </mat-form-field>
+    </div>
+</div>
+
+</mat-dialog-content>
+
+<div mat-dialog-actions class="p-b-24 p-r-8 p-l-8">
+  <div class="d-flex align-items-center justify-content-between w-100 m-t-8 m-b-8">
+    <p class="mat-subtitle-1 f-s-14 f-w-600">{{util.appTranslate('total_amount')}}</p>
+    @if(discountPrice <= 0){ <div class="d-flex align-items-start justify-content-start">
+      <span class="mat-subtitle-1 f-s-14 f-w-600">
+        {{util.priceFormat(originalPrice)}}
+      </span>
+  </div>
+  }
+  @if(discountPrice > 0){
+  <div class="d-flex align-items-start justify-content-start">
+    <span class="mat-subtitle-1 f-s-14 f-w-600 text-line-through">
+      {{util.priceFormat(originalPrice)}}
+    </span>
+    <span class="mat-subtitle-1 f-s-14 f-w-600 m-l-4">
+      {{util.priceFormat(discountPrice)}}
+    </span>
+  </div>
+  }
+</div>
+<div class="d-flex align-items-center justify-content-between w-100">
+  <div class="pos-food-info-dialog-cart-widget shadow-none">
+    <ng-icon name="tablerMinus" class="icon-12 d-flex icon-lbl" (click)="quantityEvent('decrease')"></ng-icon>
+    <p class="f-s-12 f-w-500 lbl">{{quantity}}</p>
+    <ng-icon name="tablerPlus" class="icon-12 d-flex icon-lbl" (click)="quantityEvent('increase')"></ng-icon>
+  </div>
+  <button mat-button mat-flat-button color="primary" type="submit" (click)="onAddToCartEvent()">
+    <div class="d-flex align-items-center">
+      <ng-icon name="tablerShoppingCartPlus" class="icon-20 m-r-4"></ng-icon>
+      <span>{{util.appTranslate('add_to_cart')}}</span>
+    </div>
+  </button>
+</div>
+</div>
+</div>

@@ -1,0 +1,1987 @@
+@if (isLoading) {
+<div class="full-screen-loader">
+  <mat-spinner [diameter]="50" style="margin: 0 auto;"></mat-spinner>
+</div>
+}
+
+@if (!isLoading) {
+<div class="landing-screen">
+  <!-- Hero Content -->
+  <section class="hero-container">
+    @if (!haveHeroContent) {
+    <div class="container">
+      <div class="row align-items-center">
+        <div class="col-lg-6">
+          <div class="hero-content">
+            <span class="p-y-8 p-x-10 bg-light-primary text-primary rounded">Deliver. Manage. Grow.</span>
+
+            <mat-card-title class="f-s-24 m-b-20 m-t-30">
+              Transforming restaurant operations with technology, automation, and smarter delivery management.
+            </mat-card-title>
+
+            <p class="text-muted m-b-20">
+              All-in-one food delivery and restaurant management system empowering multi-vendor businesses with smart
+              POS, subscriptions, loyalty rewards, automation, and seamless dining experiences.
+            </p>
+
+            <mat-card-title class="f-s-24 m-b-20 m-t-30 text-primary f-w-700 head-tag">
+              Localwala - All from one powerful platform.
+            </mat-card-title>
+
+            <div class="d-flex align-items-center justify-content-start m-b-20 hero-btn">
+              <a href="#" target="_blank" class="text-decoration-none m-r-10 position-relative card-hover">
+                <img src="assets/images/playstore.png" alt="appstorelink" class="btn-navigate"
+                  onError="this.src='assets/images/logos/logo.png'">
+              </a>
+              <a href="#" target="_blank" class="text-decoration-none position-relative card-hover">
+                <img src="assets/images/appstore.png" alt="appstorelink" class="btn-navigate"
+                  onError="this.src='assets/images/logos/logo.png'">
+              </a>
+            </div>
+
+          </div>
+        </div>
+
+        <div class="col-lg-6">
+          <div class="hero-image">
+            <img src="assets/landing/hero-banner.png" alt="hero-image" class="hero-image-tag">
+
+            <div class="floating-elements">
+              <div class="floating-card card-1">
+                <img src="assets/landing/hashtags/all-in-one.png" alt="all-in-one" class="hash-img">
+                <span class="hash-lbl f-s-12 f-w-600">#AllInOneRestaurantSolution</span>
+              </div>
+              <div class="floating-card card-2">
+                <img src="assets/landing/hashtags/erp.png" alt="all-in-one" class="hash-img">
+                <span class="hash-lbl f-s-12 f-w-600">#RestaurantERP</span>
+              </div>
+              <div class="floating-card card-3">
+                <img src="assets/landing/hashtags/dining.png" alt="all-in-one" class="hash-img">
+                <span class="hash-lbl f-s-12 f-w-600">#SmartDining</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <mat-card class="cardWithShadow theme-card stats-row gy-4 m-t-30">
+        <mat-card-content>
+          <div class="row">
+            <div class="col-lg-3 col-sm-6 p-b-16">
+              <div class="stat-item d-flex align-items-center">
+                <button mat-mini-fab class="bg-light-primary text-primary icon-48" type="button">
+                  <img src="assets/landing/stat-restaurants.png" alt="stat-restaurants" class="stat-img">
+                </button>
+                <div class="m-l-12">
+                  <h4 class="m-b-0 f-s-16 f-w-600 m-t-0">10,000+ Restaurants</h4>
+                  <small class="text-muted f-s-12"> Partnered and growing across multiple regions. </small>
+                </div>
+              </div>
+            </div>
+
+            <div class="col-lg-3 col-sm-6 p-b-16">
+              <div class="stat-item d-flex align-items-center">
+                <button mat-mini-fab class="bg-light-primary text-primary icon-48" type="button">
+                  <img src="assets/landing/stat-location.png" alt="stat-location" class="stat-img">
+                </button>
+                <div class="m-l-12">
+                  <h4 class="m-b-0 f-s-16 f-w-600 m-t-0">120+ Cities Covered</h4>
+                  <small class="text-muted f-s-12"> Expanding food delivery networks nationwide. </small>
+                </div>
+              </div>
+            </div>
+
+            <div class="col-lg-3 col-sm-6 p-b-16">
+              <div class="stat-item d-flex align-items-center">
+                <button mat-mini-fab class="bg-light-primary text-primary icon-48" type="button">
+                  <img src="assets/landing/stat-orders.png" alt="stat-orders" class="stat-img">
+                </button>
+                <div class="m-l-12">
+                  <h4 class="m-b-0 f-s-16 f-w-600 m-t-0">5M+ Orders Delivered</h4>
+                  <small class="text-muted f-s-12"> Trusted by millions of happy customers. </small>
+                </div>
+              </div>
+            </div>
+
+            <div class="col-lg-3 col-sm-6 p-b-16">
+              <div class="stat-item d-flex align-items-center">
+                <button mat-mini-fab class="bg-light-primary text-primary icon-48" type="button">
+                  <img src="assets/landing/stat-delivery.png" alt="stat-delivery" class="stat-img">
+                </button>
+                <div class="m-l-12">
+                  <h4 class="m-b-0 f-s-16 f-w-600 m-t-0">25,000+ Delivery Heroes</h4>
+                  <small class="text-muted f-s-12"> Powering seamless and on-time deliveries. </small>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </mat-card-content>
+      </mat-card>
+    </div>
+    }
+
+    @if (haveHeroContent) {
+    <div class="container">
+      <div class="row align-items-center">
+        <div class="col-lg-6">
+          <div class="hero-content">
+            <span class="p-y-8 p-x-10 bg-light-primary text-primary rounded">{{ heroHighlight }}</span>
+
+            <mat-card-title class="f-s-24 m-b-20 m-t-30">
+              {{ heroTitle }}
+            </mat-card-title>
+
+            <p class="text-muted m-b-20">
+              {{ heroSubtitle }}
+            </p>
+
+            <mat-card-title class="f-s-24 m-b-20 m-t-30 text-primary f-w-700 head-tag">
+              {{ heroHeader }}
+            </mat-card-title>
+
+            <div class="d-flex align-items-center justify-content-start m-b-20 hero-btn">
+              @if (heroBtn1Enable) {
+              <a [href]="heroBtn1Href" target="_blank" class="text-decoration-none m-r-10 position-relative card-hover">
+                <img [src]="api.mediaUrl+heroBtn1Cover" alt="appstorelink" class="btn-navigate"
+                  onError="this.src='assets/images/playstore.png'">
+              </a>
+              }
+              @if (heroBtn2Enable) {
+              <a [href]="heroBtn2Href" target="_blank" class="text-decoration-none position-relative card-hover">
+                <img [src]="api.mediaUrl+heroBtn2Cover" alt="appstorelink" class="btn-navigate"
+                  onError="this.src='assets/images/appstore.png'">
+              </a>
+              }
+            </div>
+
+          </div>
+        </div>
+
+        <div class="col-lg-6">
+          <div class="hero-image">
+            <img [src]="api.mediaUrl+heroCover" alt="hero-image" class="hero-image-tag"
+              onError="this.src='assets/landing/hero-banner.png'">
+
+            <div class="floating-elements">
+              <div class="floating-card card-1">
+                <img [src]="api.mediaUrl+heroHash1Img" alt="all-in-one" class="hash-img"
+                  onError="this.src='assets/landing/hashtags/all-in-one.png'">
+                <span class="hash-lbl f-s-12 f-w-600">{{ heroHash1Txt }}</span>
+              </div>
+              <div class="floating-card card-2">
+                <img [src]="api.mediaUrl+heroHash2Img" alt="all-in-one" class="hash-img"
+                  onError="this.src='assets/landing/hashtags/erp.png'">
+                <span class="hash-lbl f-s-12 f-w-600">{{ heroHash2Txt }}</span>
+              </div>
+              <div class="floating-card card-3">
+                <img [src]="api.mediaUrl+heroHash3Img" alt="all-in-one" class="hash-img"
+                  onError="this.src='assets/landing/hashtags/dining.png'">
+                <span class="hash-lbl f-s-12 f-w-600">{{ heroHash3Txt }}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <mat-card class="cardWithShadow theme-card stats-row gy-4 m-t-30">
+        <mat-card-content>
+          <div class="row">
+            <div class="col-lg-3 col-sm-6 p-b-16">
+              <div class="stat-item d-flex align-items-center">
+                <button mat-mini-fab class="bg-light-primary text-primary icon-48" type="button">
+                  <img [src]="api.mediaUrl+heroStatsOneCover" alt="stat-restaurants" class="stat-img"
+                    onError="this.src='assets/landing/stat-restaurants.png'">
+                </button>
+                <div class="m-l-12">
+                  <h4 class="m-b-0 f-s-16 f-w-600 m-t-0">{{ heroStatsOneTitle }}</h4>
+                  <small class="text-muted f-s-12"> {{ heroStatsOneSubTitle}} </small>
+                </div>
+              </div>
+            </div>
+
+            <div class="col-lg-3 col-sm-6 p-b-16">
+              <div class="stat-item d-flex align-items-center">
+                <button mat-mini-fab class="bg-light-primary text-primary icon-48" type="button">
+                  <img [src]="api.mediaUrl+heroStatsTwoCover" alt="stat-location" class="stat-img"
+                    onError="this.src='assets/landing/stat-location.png'">
+                </button>
+                <div class="m-l-12">
+                  <h4 class="m-b-0 f-s-16 f-w-600 m-t-0">{{ heroStatsTwoTitle }}</h4>
+                  <small class="text-muted f-s-12"> {{ heroStatsTwoSubTitle}} </small>
+                </div>
+              </div>
+            </div>
+
+            <div class="col-lg-3 col-sm-6 p-b-16">
+              <div class="stat-item d-flex align-items-center">
+                <button mat-mini-fab class="bg-light-primary text-primary icon-48" type="button">
+                  <img [src]="api.mediaUrl+heroStatsThreeCover" alt="stat-orders" class="stat-img"
+                    onError="this.src='assets/landing/stat-orders.png'">
+                </button>
+                <div class="m-l-12">
+                  <h4 class="m-b-0 f-s-16 f-w-600 m-t-0">{{ heroStatsThreeTitle }}</h4>
+                  <small class="text-muted f-s-12"> {{ heroStatsThreeSubTitle}} </small>
+                </div>
+              </div>
+            </div>
+
+            <div class="col-lg-3 col-sm-6 p-b-16">
+              <div class="stat-item d-flex align-items-center">
+                <button mat-mini-fab class="bg-light-primary text-primary icon-48" type="button">
+                  <img [src]="api.mediaUrl+heroStatsFourCover" alt="stat-delivery" class="stat-img"
+                    onError="this.src='assets/landing/stat-delivery.png'">
+                </button>
+                <div class="m-l-12">
+                  <h4 class="m-b-0 f-s-16 f-w-600 m-t-0">{{ heroStatsFourTitle }}</h4>
+                  <small class="text-muted f-s-12"> {{ heroStatsFourSubTitle}} </small>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </mat-card-content>
+      </mat-card>
+    </div>
+    }
+  </section>
+  <!-- Hero Content -->
+
+  <!-- App Feature Content -->
+  <section class="app-feature-container m-t-30">
+    @if (!haveAppFeature) {
+    <div class="container">
+      <h2 class="f-s-24 m-b-10 m-t-30 text-center text-primary f-w-700">
+        Ready to explore our app’s best features?
+      </h2>
+
+      <p class="text-muted m-b-30 text-center">
+        Experience seamless food delivery powered by innovation. From quick reorders to live tracking — everything’s
+        within reach.
+      </p>
+
+      <div class="row align-items-center m-t-30">
+        <div class="col-lg-4">
+
+          <div class="feature-item text-right m-b-30">
+            <div class="d-flex align-items-center justify-content-end gap-8">
+              <div class="feature-content m-r-10">
+                <h3 class="m-b-0 f-s-16 f-w-600 m-t-0">Discover Nearby Restaurants</h3>
+                <span class="text-muted f-s-12">
+                  Explore top-rated eateries and trending spots.
+                  Filter by cuisine, budget, or dining type.
+                  Your next favorite meal is just around the corner.
+                </span>
+              </div>
+              <button mat-mini-fab class="bg-light-primary text-primary icon-48">
+                <img src="assets/landing/features-snap/fork.png" alt="stat-restaurants" class="feature-snap-img">
+              </button>
+            </div>
+          </div>
+
+          <div class="feature-item text-right m-b-30">
+            <div class="d-flex align-items-center justify-content-end gap-8">
+              <div class="feature-content m-r-10">
+                <h3 class="m-b-0 f-s-16 f-w-600 m-t-0">Smart Search & Personalized Picks</h3>
+                <span class="text-muted f-s-12">
+                  Search by dishes, restaurants, or chefs instantly.
+                  Get AI-powered meal suggestions just for you.
+                  Enjoy smarter browsing with every tap.
+                </span>
+              </div>
+              <button mat-mini-fab class="bg-light-primary text-primary icon-48">
+                <img src="assets/landing/features-snap/personalization.png" alt="stat-restaurants"
+                  class="feature-snap-img">
+              </button>
+            </div>
+          </div>
+
+          <div class="feature-item text-right m-b-30">
+            <div class="d-flex align-items-center justify-content-end gap-8">
+              <div class="feature-content m-r-10">
+                <h3 class="m-b-0 f-s-16 f-w-600 m-t-0">Seamless Ordering & Dining Booking</h3>
+                <span class="text-muted f-s-12">
+                  Order food for delivery or reserve a table.
+                  Book fine dining or quick bites in seconds.
+                  Your all-in-one food and dining experience app.
+                </span>
+              </div>
+              <button mat-mini-fab class="bg-light-primary text-primary icon-48">
+                <img src="assets/landing/features-snap/delivery-man.png" alt="stat-restaurants"
+                  class="feature-snap-img">
+              </button>
+            </div>
+          </div>
+
+          <div class="feature-item text-right m-b-30">
+            <div class="d-flex align-items-center justify-content-end gap-8">
+              <div class="feature-content m-r-10">
+                <h3 class="m-b-0 f-s-16 f-w-600 m-t-0">Real-Time Tracking & Updates</h3>
+                <span class="text-muted f-s-12">
+                  Know exactly where your food is right now.
+                  Track every step — from kitchen to doorstep.
+                  Stay updated till your meal is served fresh.
+                </span>
+              </div>
+              <button mat-mini-fab class="bg-light-primary text-primary icon-48">
+                <img src="assets/landing/features-snap/mouse-clicker.png" alt="stat-restaurants"
+                  class="feature-snap-img">
+              </button>
+            </div>
+          </div>
+
+          <div class="feature-item text-right m-b-30">
+            <div class="d-flex align-items-center justify-content-end gap-8">
+              <div class="feature-content m-r-10">
+                <h3 class="m-b-0 f-s-16 f-w-600 m-t-0">Multi-Language & Light Mode Experience</h3>
+                <span class="text-muted f-s-12">
+                  Choose your preferred language for comfort.
+                  Switch between light and dark themes easily.
+                  Enjoy a personalized, user-friendly interface.
+                </span>
+              </div>
+              <button mat-mini-fab class="bg-light-primary text-primary icon-48">
+                <img src="assets/landing/features-snap/language.png" alt="stat-restaurants" class="feature-snap-img">
+              </button>
+            </div>
+          </div>
+
+        </div>
+
+        <div class="col-lg-4">
+          <div class="phone-mockup text-center">
+            <img src="assets/landing/app_snapshot.png" alt="phone_screenshot" class="app-snapshot">
+          </div>
+        </div>
+
+        <div class="col-lg-4">
+          <div class="feature-item m-b-20">
+            <div class="d-flex align-items-center gap-8">
+              <button mat-mini-fab class="bg-light-primary text-primary icon-48">
+                <img src="assets/landing/features-snap/credit-card.png" alt="stat-restaurants" class="feature-snap-img">
+              </button>
+              <div class="feature-content m-l-10">
+                <h3 class="m-b-0 f-s-16 f-w-600 m-t-0">Flexible Payments & Wallet Rewards</h3>
+                <span class="text-muted f-s-12">
+                  Pay your way — cards, UPI, or wallet points.
+                  Earn loyalty rewards and instant cashback.
+                  Every meal makes your next one even cheaper.
+                </span>
+              </div>
+            </div>
+          </div>
+
+          <div class="feature-item m-b-20">
+            <div class="d-flex align-items-center gap-8">
+              <button mat-mini-fab class="bg-light-primary text-primary icon-48">
+                <img src="assets/landing/features-snap/food.png" alt="stat-restaurants" class="feature-snap-img">
+              </button>
+              <div class="feature-content m-l-10">
+                <h3 class="m-b-0 f-s-16 f-w-600 m-t-0">Tiffin Subscription & Meal Plans</h3>
+                <span class="text-muted f-s-12">
+                  Subscribe for homely meals on your schedule.
+                  Pause, skip, or resume anytime you wish.
+                  Ideal for students, professionals, or families.
+                </span>
+              </div>
+            </div>
+          </div>
+
+          <div class="feature-item m-b-20">
+            <div class="d-flex align-items-center gap-8">
+              <button mat-mini-fab class="bg-light-primary text-primary icon-48">
+                <img src="assets/landing/features-snap/customer-service.png" alt="stat-restaurants"
+                  class="feature-snap-img">
+              </button>
+              <div class="feature-content m-l-10">
+                <h3 class="m-b-0 f-s-16 f-w-600 m-t-0">Ratings, Reviews & Live Support</h3>
+                <span class="text-muted f-s-12">
+                  Rate your food and dining experience easily.
+                  Read genuine reviews before placing orders.
+                  Chat with support anytime for instant help.
+                </span>
+              </div>
+            </div>
+          </div>
+
+          <div class="feature-item m-b-20">
+            <div class="d-flex align-items-center gap-8">
+              <button mat-mini-fab class="bg-light-primary text-primary icon-48">
+                <img src="assets/landing/features-snap/discount.png" alt="stat-restaurants" class="feature-snap-img">
+              </button>
+              <div class="feature-content m-l-10">
+                <h3 class="m-b-0 f-s-16 f-w-600 m-t-0">Exclusive Offers & Promotions</h3>
+                <span class="text-muted f-s-12">
+                  Unlock daily deals and limited-time discounts.
+                  Get personalized offers based on your favorites.
+                  More food, more savings, more happiness!
+                </span>
+              </div>
+            </div>
+          </div>
+
+          <div class="feature-item m-b-20">
+            <div class="d-flex align-items-center gap-8">
+              <button mat-mini-fab class="bg-light-primary text-primary icon-48">
+                <img src="assets/landing/features-snap/notes.png" alt="stat-restaurants" class="feature-snap-img">
+              </button>
+              <div class="feature-content m-l-10">
+                <h3 class="m-b-0 f-s-16 f-w-600 m-t-0">Order History & Reorder Fast</h3>
+                <span class="text-muted f-s-12">
+                  View your entire order timeline anytime.
+                  Reorder your favorite meals in one tap.
+                  Quick, convenient, and perfectly tailored to you.
+                </span>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+    }
+
+    @if (haveAppFeature) {
+    <div class="container">
+      <h2 class="f-s-24 m-b-10 m-t-30 text-center text-primary f-w-700">
+        {{ appFeatureTitle }}
+      </h2>
+
+      <p class="text-muted m-b-30 text-center">
+        {{ appFeatureSubTitle }}
+      </p>
+
+      <div class="row align-items-center m-t-30">
+        @if (appFeatureList.length == 0) {
+        <div class="col-lg-4">
+
+          <div class="feature-item text-right m-b-30">
+            <div class="d-flex align-items-center justify-content-end gap-8">
+              <div class="feature-content m-r-10">
+                <h3 class="m-b-0 f-s-16 f-w-600 m-t-0">Discover Nearby Restaurants</h3>
+                <span class="text-muted f-s-12">
+                  Explore top-rated eateries and trending spots.
+                  Filter by cuisine, budget, or dining type.
+                  Your next favorite meal is just around the corner.
+                </span>
+              </div>
+              <button mat-mini-fab class="bg-light-primary text-primary icon-48">
+                <img src="assets/landing/features-snap/fork.png" alt="stat-restaurants" class="feature-snap-img">
+              </button>
+            </div>
+          </div>
+
+          <div class="feature-item text-right m-b-30">
+            <div class="d-flex align-items-center justify-content-end gap-8">
+              <div class="feature-content m-r-10">
+                <h3 class="m-b-0 f-s-16 f-w-600 m-t-0">Smart Search & Personalized Picks</h3>
+                <span class="text-muted f-s-12">
+                  Search by dishes, restaurants, or chefs instantly.
+                  Get AI-powered meal suggestions just for you.
+                  Enjoy smarter browsing with every tap.
+                </span>
+              </div>
+              <button mat-mini-fab class="bg-light-primary text-primary icon-48">
+                <img src="assets/landing/features-snap/personalization.png" alt="stat-restaurants"
+                  class="feature-snap-img">
+              </button>
+            </div>
+          </div>
+
+          <div class="feature-item text-right m-b-30">
+            <div class="d-flex align-items-center justify-content-end gap-8">
+              <div class="feature-content m-r-10">
+                <h3 class="m-b-0 f-s-16 f-w-600 m-t-0">Seamless Ordering & Dining Booking</h3>
+                <span class="text-muted f-s-12">
+                  Order food for delivery or reserve a table.
+                  Book fine dining or quick bites in seconds.
+                  Your all-in-one food and dining experience app.
+                </span>
+              </div>
+              <button mat-mini-fab class="bg-light-primary text-primary icon-48">
+                <img src="assets/landing/features-snap/delivery-man.png" alt="stat-restaurants"
+                  class="feature-snap-img">
+              </button>
+            </div>
+          </div>
+
+          <div class="feature-item text-right m-b-30">
+            <div class="d-flex align-items-center justify-content-end gap-8">
+              <div class="feature-content m-r-10">
+                <h3 class="m-b-0 f-s-16 f-w-600 m-t-0">Real-Time Tracking & Updates</h3>
+                <span class="text-muted f-s-12">
+                  Know exactly where your food is right now.
+                  Track every step — from kitchen to doorstep.
+                  Stay updated till your meal is served fresh.
+                </span>
+              </div>
+              <button mat-mini-fab class="bg-light-primary text-primary icon-48">
+                <img src="assets/landing/features-snap/mouse-clicker.png" alt="stat-restaurants"
+                  class="feature-snap-img">
+              </button>
+            </div>
+          </div>
+
+          <div class="feature-item text-right m-b-30">
+            <div class="d-flex align-items-center justify-content-end gap-8">
+              <div class="feature-content m-r-10">
+                <h3 class="m-b-0 f-s-16 f-w-600 m-t-0">Multi-Language & Light Mode Experience</h3>
+                <span class="text-muted f-s-12">
+                  Choose your preferred language for comfort.
+                  Switch between light and dark themes easily.
+                  Enjoy a personalized, user-friendly interface.
+                </span>
+              </div>
+              <button mat-mini-fab class="bg-light-primary text-primary icon-48">
+                <img src="assets/landing/features-snap/language.png" alt="stat-restaurants" class="feature-snap-img">
+              </button>
+            </div>
+          </div>
+
+        </div>
+        }
+
+        @if (appFeatureList.length != 0) {
+        <div class="col-lg-4">
+
+          @for (item of appFeatureList; track item; let i = $index; let odd = $odd; let even = $even) {
+          <div class="feature-item text-right m-b-30">
+            @if (odd) {
+            <div class="d-flex align-items-center justify-content-end gap-8">
+              <div class="feature-content m-r-10">
+                <h3 class="m-b-0 f-s-16 f-w-600 m-t-0">{{ item.displayTitle }}</h3>
+                <span class="text-muted f-s-12">
+                  {{ item.displaySubTitle }}
+                </span>
+              </div>
+              <button mat-mini-fab class="bg-light-primary text-primary icon-48">
+                <img [src]="api.mediaUrl+item.image" alt="stat-restaurants" class="feature-snap-img"
+                  onError="this.src='assets/landing/features-snap/fork.png'">
+              </button>
+            </div>
+            }
+          </div>
+          }
+
+        </div>
+        }
+
+        <div class="col-lg-4">
+          <div class="phone-mockup text-center">
+            <img [src]="api.mediaUrl+appFeatureCover" alt="phone_screenshot" class="app-snapshot"
+              onError="this.src='assets/landing/app_snapshot.png'">
+          </div>
+        </div>
+
+        @if (appFeatureList.length == 0) {
+        <div class="col-lg-4">
+          <div class="feature-item m-b-20">
+            <div class="d-flex align-items-center gap-8">
+              <button mat-mini-fab class="bg-light-primary text-primary icon-48">
+                <img src="assets/landing/features-snap/credit-card.png" alt="stat-restaurants" class="feature-snap-img">
+              </button>
+              <div class="feature-content m-l-10">
+                <h3 class="m-b-0 f-s-16 f-w-600 m-t-0">Flexible Payments & Wallet Rewards</h3>
+                <span class="text-muted f-s-12">
+                  Pay your way — cards, UPI, or wallet points.
+                  Earn loyalty rewards and instant cashback.
+                  Every meal makes your next one even cheaper.
+                </span>
+              </div>
+            </div>
+          </div>
+
+          <div class="feature-item m-b-20">
+            <div class="d-flex align-items-center gap-8">
+              <button mat-mini-fab class="bg-light-primary text-primary icon-48">
+                <img src="assets/landing/features-snap/food.png" alt="stat-restaurants" class="feature-snap-img">
+              </button>
+              <div class="feature-content m-l-10">
+                <h3 class="m-b-0 f-s-16 f-w-600 m-t-0">Tiffin Subscription & Meal Plans</h3>
+                <span class="text-muted f-s-12">
+                  Subscribe for homely meals on your schedule.
+                  Pause, skip, or resume anytime you wish.
+                  Ideal for students, professionals, or families.
+                </span>
+              </div>
+            </div>
+          </div>
+
+          <div class="feature-item m-b-20">
+            <div class="d-flex align-items-center gap-8">
+              <button mat-mini-fab class="bg-light-primary text-primary icon-48">
+                <img src="assets/landing/features-snap/customer-service.png" alt="stat-restaurants"
+                  class="feature-snap-img">
+              </button>
+              <div class="feature-content m-l-10">
+                <h3 class="m-b-0 f-s-16 f-w-600 m-t-0">Ratings, Reviews & Live Support</h3>
+                <span class="text-muted f-s-12">
+                  Rate your food and dining experience easily.
+                  Read genuine reviews before placing orders.
+                  Chat with support anytime for instant help.
+                </span>
+              </div>
+            </div>
+          </div>
+
+          <div class="feature-item m-b-20">
+            <div class="d-flex align-items-center gap-8">
+              <button mat-mini-fab class="bg-light-primary text-primary icon-48">
+                <img src="assets/landing/features-snap/discount.png" alt="stat-restaurants" class="feature-snap-img">
+              </button>
+              <div class="feature-content m-l-10">
+                <h3 class="m-b-0 f-s-16 f-w-600 m-t-0">Exclusive Offers & Promotions</h3>
+                <span class="text-muted f-s-12">
+                  Unlock daily deals and limited-time discounts.
+                  Get personalized offers based on your favorites.
+                  More food, more savings, more happiness!
+                </span>
+              </div>
+            </div>
+          </div>
+
+          <div class="feature-item m-b-20">
+            <div class="d-flex align-items-center gap-8">
+              <button mat-mini-fab class="bg-light-primary text-primary icon-48">
+                <img src="assets/landing/features-snap/notes.png" alt="stat-restaurants" class="feature-snap-img">
+              </button>
+              <div class="feature-content m-l-10">
+                <h3 class="m-b-0 f-s-16 f-w-600 m-t-0">Order History & Reorder Fast</h3>
+                <span class="text-muted f-s-12">
+                  View your entire order timeline anytime.
+                  Reorder your favorite meals in one tap.
+                  Quick, convenient, and perfectly tailored to you.
+                </span>
+              </div>
+            </div>
+          </div>
+
+        </div>
+        }
+
+        @if (appFeatureList.length != 0) {
+        <div class="col-lg-4">
+          @for (item of appFeatureList; track item; let i = $index; let odd = $odd; let even = $even) {
+          <div class="feature-item m-b-20">
+            @if (even) {
+            <div class="d-flex align-items-center gap-8">
+              <button mat-mini-fab class="bg-light-primary text-primary icon-48">
+                <img [src]="api.mediaUrl+item.image" onError="this.src='assets/landing/features-snap/credit-card.png'"
+                  alt="stat-restaurants" class="feature-snap-img">
+              </button>
+              <div class="feature-content m-l-10">
+                <h3 class="m-b-0 f-s-16 f-w-600 m-t-0">{{ item.displayTitle }}</h3>
+                <span class="text-muted f-s-12">
+                  {{ item.displaySubTitle }}
+                </span>
+              </div>
+            </div>
+            }
+          </div>
+          }
+        </div>
+        }
+      </div>
+    </div>
+    }
+  </section>
+  <!-- App Feature Content -->
+
+  <!-- Feature Content -->
+  <section class="feature-container m-t-30">
+    @if (!haveProjectFeature) {
+    <div class="container">
+      <h2 class="f-s-24 m-b-10 m-t-30 text-center text-primary f-w-700">Features</h2>
+      <p class="text-muted m-b-30 text-center">
+        From Ordering to Earning — Localwala Connects Customers, Restaurants, and Delivery Partners with Seamless
+        Payments and On-Time Delivery.
+      </p>
+
+      <mat-card class="cardWithShadow theme-card m-t-30 p-t-30">
+        <mat-card-content>
+          <div class="row">
+            <div class="col-lg-3 col-sm-6 p-b-16">
+              <mat-card class="cardWithShadow theme-card position-relative cursor-pointer card-hover"
+                (click)="onFeatureView('customer')" [ngClass]="{ 'bg-primary': currentFeatureId == 'customer' }">
+                <mat-card-content class="p-12">
+                  <div class="d-flex align-items-center feature-row">
+                    <button mat-mini-fab class="text-primary icon-48"
+                      [ngClass]="currentFeatureId == 'customer' ? 'bg-white' : 'bg-light-primary'">
+                      <img src="assets/landing/feature-customer.png" alt="feature-customer" class="feature-title-img">
+                    </button>
+                    <div class="m-l-12">
+                      <h4 class="m-b-0 f-s-16 f-w-600 m-t-0"
+                        [ngClass]="{ 'text-white': currentFeatureId == 'customer' }">
+                        For Customers
+                      </h4>
+                      <small class="text-muted f-s-12" [ngClass]="{ 'text-white': currentFeatureId == 'customer' }">
+                        Smart Ordering
+                      </small>
+                    </div>
+                  </div>
+                </mat-card-content>
+              </mat-card>
+            </div>
+
+            <div class="col-lg-3 col-sm-6 p-b-16">
+              <mat-card class="cardWithShadow theme-card position-relative cursor-pointer card-hover"
+                (click)="onFeatureView('restaurant')" [ngClass]="{ 'bg-primary': currentFeatureId == 'restaurant' }">
+                <mat-card-content class="p-12">
+                  <div class="d-flex align-items-center feature-row">
+                    <button mat-mini-fab class="text-primary icon-48"
+                      [ngClass]="currentFeatureId == 'restaurant' ? 'bg-white' : 'bg-light-primary'">
+                      <img src="assets/landing/feature-restaurant.png" alt="feature-restaurant"
+                        class="feature-title-img">
+                    </button>
+                    <div class="m-l-12">
+                      <h4 class="m-b-0 f-s-16 f-w-600 m-t-0"
+                        [ngClass]="{ 'text-white': currentFeatureId == 'restaurant' }">
+                        For Restaurants
+                      </h4>
+                      <small class="text-muted f-s-12" [ngClass]="{ 'text-white': currentFeatureId == 'restaurant' }">
+                        Effortless Management
+                      </small>
+                    </div>
+                  </div>
+                </mat-card-content>
+              </mat-card>
+            </div>
+
+            <div class="col-lg-3 col-sm-6 p-b-16">
+              <mat-card class="cardWithShadow theme-card position-relative cursor-pointer card-hover"
+                (click)="onFeatureView('deliveryman')" [ngClass]="{ 'bg-primary': currentFeatureId == 'deliveryman' }">
+                <mat-card-content class="p-12">
+                  <div class="d-flex align-items-center feature-row">
+                    <button mat-mini-fab class="text-primary icon-48"
+                      [ngClass]="currentFeatureId == 'deliveryman' ? 'bg-white' : 'bg-light-primary'">
+                      <img src="assets/landing/feature-deliveryman.png" alt="feature-deliveryman"
+                        class="feature-title-img">
+                    </button>
+                    <div class="m-l-12">
+                      <h4 class="m-b-0 f-s-16 f-w-600 m-t-0"
+                        [ngClass]="{ 'text-white': currentFeatureId == 'deliveryman' }">
+                        For Delivery Partners
+                      </h4>
+                      <small class="text-muted f-s-12" [ngClass]="{ 'text-white': currentFeatureId == 'deliveryman' }">
+                        Fast Deliveries
+                      </small>
+                    </div>
+                  </div>
+                </mat-card-content>
+              </mat-card>
+            </div>
+
+            <div class="col-lg-3 col-sm-6 p-b-16">
+              <mat-card class="cardWithShadow theme-card position-relative cursor-pointer card-hover"
+                (click)="onFeatureView('support')" [ngClass]="{ 'bg-primary': currentFeatureId == 'support' }">
+                <mat-card-content class="p-12">
+                  <div class="d-flex align-items-center feature-row">
+                    <button mat-mini-fab class="text-primary icon-48"
+                      [ngClass]="currentFeatureId == 'support' ? 'bg-white' : 'bg-light-primary'">
+                      <img src="assets/landing/feature-support.png" alt="feature-support" class="feature-title-img">
+                    </button>
+                    <div class="m-l-12">
+                      <h4 class="m-b-0 f-s-16 f-w-600 m-t-0"
+                        [ngClass]="{ 'text-white': currentFeatureId == 'support' }">
+                        For Support
+                      </h4>
+                      <small class="text-muted f-s-12" [ngClass]="{ 'text-white': currentFeatureId == 'support' }">
+                        24/7 Assistance
+                      </small>
+                    </div>
+                  </div>
+                </mat-card-content>
+              </mat-card>
+            </div>
+
+          </div>
+
+          @if (currentFeatureId == 'customer') {
+          <div class="feature-bloc m-t-30 row">
+            <div class="col-lg-6">
+              <div class="feature-content">
+                <button mat-mini-fab class="text-primary icon-48 bg-light-primary m-b-30">
+                  <img src="assets/landing/feature-customer.png" alt="feature-customer"
+                    class="feature-title-img-detail">
+                </button>
+
+                <h4 class="m-b-0 f-s-16 f-w-600 m-t-0 m-b-10">
+                  Order Easily, Track Instantly, Enjoy Effortlessly
+                </h4>
+                <p class="text-muted f-s-12 m-0 m-b-10">
+                  Discover nearby restaurants, explore trending cuisines, and enjoy flexible dining options — from
+                  doorstep delivery to advance table bookings.
+                  Experience homely comfort with customizable Tiffin Subscription Packages or plan your special evenings
+                  with smart dining reservations.
+                </p>
+
+                <div class="row m-t-10 m-b-10 w-100">
+                  <div class="col-lg-6 col-sm-12 m-b-10">
+                    <div class="d-flex align-items-center justify-content-start">
+                      <ng-icon name="tablerCheckbox" class="icon-24 text-primary d-flex"></ng-icon>
+                      <p class="text-muted f-s-12 m-0 m-l-10">Quick checkout with secure digital payments</p>
+                    </div>
+                  </div>
+                  <div class="col-lg-6 col-sm-12 m-b-10">
+                    <div class="d-flex align-items-center justify-content-start">
+                      <ng-icon name="tablerCheckbox" class="icon-24 text-primary d-flex"></ng-icon>
+                      <p class="text-muted f-s-12 m-0 m-l-10">Live tracking for every order and delivery update</p>
+                    </div>
+                  </div>
+                  <div class="col-lg-6 col-sm-12 m-b-10">
+                    <div class="d-flex align-items-center justify-content-start">
+                      <ng-icon name="tablerCheckbox" class="icon-24 text-primary d-flex"></ng-icon>
+                      <p class="text-muted f-s-12 m-0 m-l-10">Advance table booking for hassle-free dining</p>
+                    </div>
+                  </div>
+                  <div class="col-lg-6 col-sm-12 m-b-10">
+                    <div class="d-flex align-items-center justify-content-start">
+                      <ng-icon name="tablerCheckbox" class="icon-24 text-primary d-flex"></ng-icon>
+                      <p class="text-muted f-s-12 m-0 m-l-10">Daily meal subscriptions with flexible tiffin plans</p>
+                    </div>
+                  </div>
+                  <div class="col-lg-6 col-sm-12 m-b-10">
+                    <div class="d-flex align-items-center justify-content-start">
+                      <ng-icon name="tablerCheckbox" class="icon-24 text-primary d-flex"></ng-icon>
+                      <p class="text-muted f-s-12 m-0 m-l-10">Multi-language app interface for local comfort</p>
+                    </div>
+                  </div>
+                  <div class="col-lg-6 col-sm-12 m-b-10">
+                    <div class="d-flex align-items-center justify-content-start">
+                      <ng-icon name="tablerCheckbox" class="icon-24 text-primary d-flex"></ng-icon>
+                      <p class="text-muted f-s-12 m-0 m-l-10">Instant support through chat and call assistance</p>
+                    </div>
+                  </div>
+                  <div class="col-lg-6 col-sm-12 m-b-10">
+                    <div class="d-flex align-items-center justify-content-start">
+                      <ng-icon name="tablerCheckbox" class="icon-24 text-primary d-flex"></ng-icon>
+                      <p class="text-muted f-s-12 m-0 m-l-10">Exclusive offers, cashback, and loyalty rewards</p>
+                    </div>
+                  </div>
+                </div>
+
+                <a mat-flat-button color="primary" class="m-t-10" href="#" target="_blank">Download</a>
+              </div>
+            </div>
+            <div class="col-lg-6">
+              <div class="feature-content-image">
+                <img src="assets/landing/feature-customer-tag.png" alt="hero-image" class="feature-img-tag">
+              </div>
+            </div>
+          </div>
+          }
+
+          @if (currentFeatureId == 'restaurant') {
+          <div class="feature-bloc m-t-30 row">
+            <div class="col-lg-6">
+              <div class="feature-content">
+                <button mat-mini-fab class="text-primary icon-48 bg-light-primary m-b-30">
+                  <img src="assets/landing/feature-restaurant.png" alt="feature-restaurant"
+                    class="feature-title-img-detail">
+                </button>
+
+                <h4 class="m-b-0 f-s-16 f-w-600 m-t-0 m-b-10">
+                  Manage, Earn & Grow Effortlessly
+                </h4>
+                <p class="text-muted f-s-12 m-0 m-b-10">
+                  Take full control of your restaurant operations from a single, powerful dashboard.
+                  Easily manage menus, pricing, promotions, and multiple outlets — all in real time.
+                  Track every order, monitor kitchen performance, and make data-driven decisions with advanced insights.
+                  Receive instant payments, manage delivery partners, and keep your business running smoothly with
+                  automated tools built for restaurants of every size.
+                </p>
+
+                <div class="row m-t-10 m-b-10 w-100">
+                  <div class="col-lg-6 col-sm-12 m-b-10">
+                    <div class="d-flex align-items-center justify-content-start">
+                      <ng-icon name="tablerCheckbox" class="icon-24 text-primary d-flex"></ng-icon>
+                      <p class="text-muted f-s-12 m-0 m-l-10">Smart menu & order management — Add, edit, or pause items
+                        instantly</p>
+                    </div>
+                  </div>
+                  <div class="col-lg-6 col-sm-12 m-b-10">
+                    <div class="d-flex align-items-center justify-content-start">
+                      <ng-icon name="tablerCheckbox" class="icon-24 text-primary d-flex"></ng-icon>
+                      <p class="text-muted f-s-12 m-0 m-l-10">Real-time sales & earning insights — Track performance day
+                        by day</p>
+                    </div>
+                  </div>
+                  <div class="col-lg-6 col-sm-12 m-b-10">
+                    <div class="d-flex align-items-center justify-content-start">
+                      <ng-icon name="tablerCheckbox" class="icon-24 text-primary d-flex"></ng-icon>
+                      <p class="text-muted f-s-12 m-0 m-l-10">Instant payment settlement — No delays, direct to your
+                        account</p>
+                    </div>
+                  </div>
+                  <div class="col-lg-6 col-sm-12 m-b-10">
+                    <div class="d-flex align-items-center justify-content-start">
+                      <ng-icon name="tablerCheckbox" class="icon-24 text-primary d-flex"></ng-icon>
+                      <p class="text-muted f-s-12 m-0 m-l-10">Promotions & offers control — Create discounts or deals
+                        anytime</p>
+                    </div>
+                  </div>
+                  <div class="col-lg-6 col-sm-12 m-b-10">
+                    <div class="d-flex align-items-center justify-content-start">
+                      <ng-icon name="tablerCheckbox" class="icon-24 text-primary d-flex"></ng-icon>
+                      <p class="text-muted f-s-12 m-0 m-l-10">Multi-outlet management — Seamless control across branches
+                      </p>
+                    </div>
+                  </div>
+                  <div class="col-lg-6 col-sm-12 m-b-10">
+                    <div class="d-flex align-items-center justify-content-start">
+                      <ng-icon name="tablerCheckbox" class="icon-24 text-primary d-flex"></ng-icon>
+                      <p class="text-muted f-s-12 m-0 m-l-10">POS Integration — Sync dine-in and online orders
+                        effortlessly</p>
+                    </div>
+                  </div>
+                  <div class="col-lg-6 col-sm-12 m-b-10">
+                    <div class="d-flex align-items-center justify-content-start">
+                      <ng-icon name="tablerCheckbox" class="icon-24 text-primary d-flex"></ng-icon>
+                      <p class="text-muted f-s-12 m-0 m-l-10">Performance analytics — Understand what sells best and
+                        when</p>
+                    </div>
+                  </div>
+                </div>
+
+                <a mat-flat-button color="primary" class="m-t-10" href="#" target="_blank">Download</a>
+              </div>
+            </div>
+            <div class="col-lg-6">
+              <div class="feature-content-image">
+                <img src="assets/landing/feature-restaurant-tag.png" alt="hero-image" class="feature-img-tag">
+              </div>
+            </div>
+          </div>
+          }
+
+          @if (currentFeatureId == 'deliveryman') {
+          <div class="feature-bloc m-t-30 row">
+            <div class="col-lg-6">
+              <div class="feature-content">
+                <button mat-mini-fab class="text-primary icon-48 bg-light-primary m-b-30">
+                  <img src="assets/landing/feature-deliveryman.png" alt="feature-deliveryman"
+                    class="feature-title-img-detail">
+                </button>
+
+                <h4 class="m-b-0 f-s-16 f-w-600 m-t-0 m-b-10">
+                  Deliver Faster, Earn Smarter, Work Freely
+                </h4>
+                <p class="text-muted f-s-12 m-0 m-b-10">
+                  Join Localwala as a delivery partner and experience complete freedom to earn on your own schedule.
+                  Accept nearby orders with just one tap, follow optimized delivery routes, and ensure every order
+                  reaches customers on time — every time. Get rewarded for timely deliveries, high ratings, and
+                  consistent performance, with instant payouts and daily earning summaries available anytime.
+                </p>
+
+                <div class="row m-t-10 m-b-10 w-100">
+                  <div class="col-lg-6 col-sm-12 m-b-10">
+                    <div class="d-flex align-items-center justify-content-start">
+                      <ng-icon name="tablerCheckbox" class="icon-24 text-primary d-flex"></ng-icon>
+                      <p class="text-muted f-s-12 m-0 m-l-10">Live navigation & smart route optimization for faster
+                        deliveries</p>
+                    </div>
+                  </div>
+                  <div class="col-lg-6 col-sm-12 m-b-10">
+                    <div class="d-flex align-items-center justify-content-start">
+                      <ng-icon name="tablerCheckbox" class="icon-24 text-primary d-flex"></ng-icon>
+                      <p class="text-muted f-s-12 m-0 m-l-10">Flexible working hours — deliver when it suits you best
+                      </p>
+                    </div>
+                  </div>
+                  <div class="col-lg-6 col-sm-12 m-b-10">
+                    <div class="d-flex align-items-center justify-content-start">
+                      <ng-icon name="tablerCheckbox" class="icon-24 text-primary d-flex"></ng-icon>
+                      <p class="text-muted f-s-12 m-0 m-l-10">Instant withdrawals & earning history — no waiting for
+                        payouts</p>
+                    </div>
+                  </div>
+                  <div class="col-lg-6 col-sm-12 m-b-10">
+                    <div class="d-flex align-items-center justify-content-start">
+                      <ng-icon name="tablerCheckbox" class="icon-24 text-primary d-flex"></ng-icon>
+                      <p class="text-muted f-s-12 m-0 m-l-10">Performance bonuses & reward programs for top drivers</p>
+                    </div>
+                  </div>
+                  <div class="col-lg-6 col-sm-12 m-b-10">
+                    <div class="d-flex align-items-center justify-content-start">
+                      <ng-icon name="tablerCheckbox" class="icon-24 text-primary d-flex"></ng-icon>
+                      <p class="text-muted f-s-12 m-0 m-l-10">Order acceptance in real time with one-tap confirmations
+                      </p>
+                    </div>
+                  </div>
+                  <div class="col-lg-6 col-sm-12 m-b-10">
+                    <div class="d-flex align-items-center justify-content-start">
+                      <ng-icon name="tablerCheckbox" class="icon-24 text-primary d-flex"></ng-icon>
+                      <p class="text-muted f-s-12 m-0 m-l-10">In-app chat & customer support for smooth operations</p>
+                    </div>
+                  </div>
+                  <div class="col-lg-6 col-sm-12 m-b-10">
+                    <div class="d-flex align-items-center justify-content-start">
+                      <ng-icon name="tablerCheckbox" class="icon-24 text-primary d-flex"></ng-icon>
+                      <p class="text-muted f-s-12 m-0 m-l-10">Safety-first features with verified routes and emergency
+                        assist</p>
+                    </div>
+                  </div>
+                </div>
+
+                <a mat-flat-button color="primary" class="m-t-10" href="#" target="_blank">Download</a>
+              </div>
+            </div>
+            <div class="col-lg-6">
+              <div class="feature-content-image">
+                <img src="assets/landing/feature-deliveryman-tag.png" alt="hero-image" class="feature-img-tag">
+              </div>
+            </div>
+          </div>
+          }
+
+          @if (currentFeatureId == 'support') {
+          <div class="feature-bloc m-t-30 row">
+            <div class="col-lg-6">
+              <div class="feature-content">
+                <button mat-mini-fab class="text-primary icon-48 bg-light-primary m-b-30">
+                  <img src="assets/landing/feature-support.png" alt="feature-support" class="feature-title-img-detail">
+                </button>
+
+                <h4 class="m-b-0 f-s-16 f-w-600 m-t-0 m-b-10">
+                  Always Connected, Always Assisting
+                </h4>
+                <p class="text-muted f-s-12 m-0 m-b-10">
+                  At Localwala, support isn’t just a department — it’s the heartbeat of our platform.
+                  Our dedicated 24/7 operations team ensures that users, restaurants, and delivery partners receive
+                  immediate help whenever they need it.
+                  From order tracking issues to payout queries or account setup, we make sure every concern is handled
+                  promptly and professionally.
+                </p>
+
+                <div class="row m-t-10 m-b-10 w-100">
+                  <div class="col-lg-6 col-sm-12 m-b-10">
+                    <div class="d-flex align-items-center justify-content-start">
+                      <ng-icon name="tablerCheckbox" class="icon-24 text-primary d-flex"></ng-icon>
+                      <p class="text-muted f-s-12 m-0 m-l-10">24/7 multilingual customer support for all users and
+                        partners</p>
+                    </div>
+                  </div>
+                  <div class="col-lg-6 col-sm-12 m-b-10">
+                    <div class="d-flex align-items-center justify-content-start">
+                      <ng-icon name="tablerCheckbox" class="icon-24 text-primary d-flex"></ng-icon>
+                      <p class="text-muted f-s-12 m-0 m-l-10">AI + human-powered ticket resolution for faster outcomes
+                      </p>
+                    </div>
+                  </div>
+                  <div class="col-lg-6 col-sm-12 m-b-10">
+                    <div class="d-flex align-items-center justify-content-start">
+                      <ng-icon name="tablerCheckbox" class="icon-24 text-primary d-flex"></ng-icon>
+                      <p class="text-muted f-s-12 m-0 m-l-10">Real-time tracking of queries and escalations</p>
+                    </div>
+                  </div>
+                  <div class="col-lg-6 col-sm-12 m-b-10">
+                    <div class="d-flex align-items-center justify-content-start">
+                      <ng-icon name="tablerCheckbox" class="icon-24 text-primary d-flex"></ng-icon>
+                      <p class="text-muted f-s-12 m-0 m-l-10">Integrated helpdesk for restaurant and driver management
+                      </p>
+                    </div>
+                  </div>
+                  <div class="col-lg-6 col-sm-12 m-b-10">
+                    <div class="d-flex align-items-center justify-content-start">
+                      <ng-icon name="tablerCheckbox" class="icon-24 text-primary d-flex"></ng-icon>
+                      <p class="text-muted f-s-12 m-0 m-l-10">Performance dashboards to monitor service quality</p>
+                    </div>
+                  </div>
+                  <div class="col-lg-6 col-sm-12 m-b-10">
+                    <div class="d-flex align-items-center justify-content-start">
+                      <ng-icon name="tablerCheckbox" class="icon-24 text-primary d-flex"></ng-icon>
+                      <p class="text-muted f-s-12 m-0 m-l-10">Training & onboarding support for vendors and drivers</p>
+                    </div>
+                  </div>
+                  <div class="col-lg-6 col-sm-12 m-b-10">
+                    <div class="d-flex align-items-center justify-content-start">
+                      <ng-icon name="tablerCheckbox" class="icon-24 text-primary d-flex"></ng-icon>
+                      <p class="text-muted f-s-12 m-0 m-l-10">Secure communication channels with data privacy ensured
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
+                <a mat-flat-button color="primary" class="m-t-10" href="#" target="_blank">Connect Now</a>
+              </div>
+            </div>
+            <div class="col-lg-6">
+              <div class="feature-content-image">
+                <img src="assets/landing/feature-support-tag.png" alt="hero-image" class="feature-img-tag">
+              </div>
+            </div>
+          </div>
+          }
+
+        </mat-card-content>
+      </mat-card>
+
+    </div>
+    }
+
+    @if (haveProjectFeature) {
+    <div class="container">
+      <h2 class="f-s-24 m-b-10 m-t-30 text-center text-primary f-w-700">{{ projectFeatureTitle }}</h2>
+      <p class="text-muted m-b-30 text-center">
+        {{ projectFeatureSubTitle }}
+      </p>
+
+      <mat-card class="cardWithShadow theme-card m-t-30 p-t-30">
+        <mat-card-content>
+          <div class="row">
+            <div class="col-lg-3 col-sm-6 p-b-16">
+              <mat-card class="cardWithShadow theme-card position-relative cursor-pointer card-hover"
+                (click)="onFeatureView('customer')" [ngClass]="{ 'bg-primary': currentFeatureId == 'customer' }">
+                <mat-card-content class="p-12">
+                  <div class="d-flex align-items-center feature-row">
+                    <button mat-mini-fab class="text-primary icon-48"
+                      [ngClass]="currentFeatureId == 'customer' ? 'bg-white' : 'bg-light-primary'">
+                      <img [src]="api.mediaUrl+projectFeature1Icon" alt="feature-customer" class="feature-title-img"
+                        onError="this.src='assets/landing/feature-customer.png'">
+                    </button>
+                    <div class="m-l-12">
+                      <h4 class="m-b-0 f-s-16 f-w-600 m-t-0"
+                        [ngClass]="{ 'text-white': currentFeatureId == 'customer' }">
+                        {{ projectFeature1Title }}
+                      </h4>
+                      <small class="text-muted f-s-12" [ngClass]="{ 'text-white': currentFeatureId == 'customer' }">
+                        {{ projectFeature1SubTitle }}
+                      </small>
+                    </div>
+                  </div>
+                </mat-card-content>
+              </mat-card>
+            </div>
+
+            <div class="col-lg-3 col-sm-6 p-b-16">
+              <mat-card class="cardWithShadow theme-card position-relative cursor-pointer card-hover"
+                (click)="onFeatureView('restaurant')" [ngClass]="{ 'bg-primary': currentFeatureId == 'restaurant' }">
+                <mat-card-content class="p-12">
+                  <div class="d-flex align-items-center feature-row">
+                    <button mat-mini-fab class="text-primary icon-48"
+                      [ngClass]="currentFeatureId == 'restaurant' ? 'bg-white' : 'bg-light-primary'">
+                      <img [src]="api.mediaUrl+projectFeature2Icon" alt="feature-restaurant" class="feature-title-img"
+                        onError="this.src='assets/landing/feature-restaurant.png'">
+                    </button>
+                    <div class="m-l-12">
+                      <h4 class="m-b-0 f-s-16 f-w-600 m-t-0"
+                        [ngClass]="{ 'text-white': currentFeatureId == 'restaurant' }">
+                        {{ projectFeature2Title }}
+                      </h4>
+                      <small class="text-muted f-s-12" [ngClass]="{ 'text-white': currentFeatureId == 'restaurant' }">
+                        {{ projectFeature2SubTitle }}
+                      </small>
+                    </div>
+                  </div>
+                </mat-card-content>
+              </mat-card>
+            </div>
+
+            <div class="col-lg-3 col-sm-6 p-b-16">
+              <mat-card class="cardWithShadow theme-card position-relative cursor-pointer card-hover"
+                (click)="onFeatureView('deliveryman')" [ngClass]="{ 'bg-primary': currentFeatureId == 'deliveryman' }">
+                <mat-card-content class="p-12">
+                  <div class="d-flex align-items-center feature-row">
+                    <button mat-mini-fab class="text-primary icon-48"
+                      [ngClass]="currentFeatureId == 'deliveryman' ? 'bg-white' : 'bg-light-primary'">
+                      <img [src]="api.mediaUrl+projectFeature3Icon" alt="feature-deliveryman" class="feature-title-img"
+                        onError="this.src='assets/landing/feature-deliveryman.png'">
+                    </button>
+                    <div class="m-l-12">
+                      <h4 class="m-b-0 f-s-16 f-w-600 m-t-0"
+                        [ngClass]="{ 'text-white': currentFeatureId == 'deliveryman' }">
+                        {{ projectFeature3Title }}
+                      </h4>
+                      <small class="text-muted f-s-12" [ngClass]="{ 'text-white': currentFeatureId == 'deliveryman' }">
+                        {{ projectFeature3SubTitle }}
+                      </small>
+                    </div>
+                  </div>
+                </mat-card-content>
+              </mat-card>
+            </div>
+
+            <div class="col-lg-3 col-sm-6 p-b-16">
+              <mat-card class="cardWithShadow theme-card position-relative cursor-pointer card-hover"
+                (click)="onFeatureView('support')" [ngClass]="{ 'bg-primary': currentFeatureId == 'support' }">
+                <mat-card-content class="p-12">
+                  <div class="d-flex align-items-center feature-row">
+                    <button mat-mini-fab class="text-primary icon-48"
+                      [ngClass]="currentFeatureId == 'support' ? 'bg-white' : 'bg-light-primary'">
+                      <img [src]="api.mediaUrl+projectFeature4Icon" alt="feature-support" class="feature-title-img"
+                        onError="this.src='assets/landing/feature-support.png'">
+                    </button>
+                    <div class="m-l-12">
+                      <h4 class="m-b-0 f-s-16 f-w-600 m-t-0"
+                        [ngClass]="{ 'text-white': currentFeatureId == 'support' }">
+                        {{ projectFeature4Title }}
+                      </h4>
+                      <small class="text-muted f-s-12" [ngClass]="{ 'text-white': currentFeatureId == 'support' }">
+                        {{ projectFeature4SubTitle }}
+                      </small>
+                    </div>
+                  </div>
+                </mat-card-content>
+              </mat-card>
+            </div>
+
+          </div>
+
+          @if (currentFeatureId == 'customer') {
+          <div class="feature-bloc m-t-30 row">
+            <div class="col-lg-6">
+              <div class="feature-content">
+                <button mat-mini-fab class="text-primary icon-48 bg-light-primary m-b-30">
+                  <img [src]="api.mediaUrl+projectFeature1Icon" alt="feature-customer" class="feature-title-img-detail"
+                    onError="this.src='assets/landing/feature-customer.png'">
+                </button>
+
+                <h4 class="m-b-0 f-s-16 f-w-600 m-t-0 m-b-10">
+                  {{ projectFeature1DetailTitle }}
+                </h4>
+                <p class="text-muted f-s-12 m-0 m-b-10">
+                  {{ projectFeature1DetailSubTitle }}
+                </p>
+
+                @if (projectFeature1Bullet.length == 0) {
+                <div class="row m-t-10 m-b-10 w-100">
+                  <div class="col-lg-6 col-sm-12 m-b-10">
+                    <div class="d-flex align-items-center justify-content-start">
+                      <ng-icon name="tablerCheckbox" class="icon-24 text-primary d-flex"></ng-icon>
+                      <p class="text-muted f-s-12 m-0 m-l-10">Quick checkout with secure digital payments</p>
+                    </div>
+                  </div>
+                  <div class="col-lg-6 col-sm-12 m-b-10">
+                    <div class="d-flex align-items-center justify-content-start">
+                      <ng-icon name="tablerCheckbox" class="icon-24 text-primary d-flex"></ng-icon>
+                      <p class="text-muted f-s-12 m-0 m-l-10">Live tracking for every order and delivery update</p>
+                    </div>
+                  </div>
+                  <div class="col-lg-6 col-sm-12 m-b-10">
+                    <div class="d-flex align-items-center justify-content-start">
+                      <ng-icon name="tablerCheckbox" class="icon-24 text-primary d-flex"></ng-icon>
+                      <p class="text-muted f-s-12 m-0 m-l-10">Advance table booking for hassle-free dining</p>
+                    </div>
+                  </div>
+                  <div class="col-lg-6 col-sm-12 m-b-10">
+                    <div class="d-flex align-items-center justify-content-start">
+                      <ng-icon name="tablerCheckbox" class="icon-24 text-primary d-flex"></ng-icon>
+                      <p class="text-muted f-s-12 m-0 m-l-10">Daily meal subscriptions with flexible tiffin plans</p>
+                    </div>
+                  </div>
+                  <div class="col-lg-6 col-sm-12 m-b-10">
+                    <div class="d-flex align-items-center justify-content-start">
+                      <ng-icon name="tablerCheckbox" class="icon-24 text-primary d-flex"></ng-icon>
+                      <p class="text-muted f-s-12 m-0 m-l-10">Multi-language app interface for local comfort</p>
+                    </div>
+                  </div>
+                  <div class="col-lg-6 col-sm-12 m-b-10">
+                    <div class="d-flex align-items-center justify-content-start">
+                      <ng-icon name="tablerCheckbox" class="icon-24 text-primary d-flex"></ng-icon>
+                      <p class="text-muted f-s-12 m-0 m-l-10">Instant support through chat and call assistance</p>
+                    </div>
+                  </div>
+                  <div class="col-lg-6 col-sm-12 m-b-10">
+                    <div class="d-flex align-items-center justify-content-start">
+                      <ng-icon name="tablerCheckbox" class="icon-24 text-primary d-flex"></ng-icon>
+                      <p class="text-muted f-s-12 m-0 m-l-10">Exclusive offers, cashback, and loyalty rewards</p>
+                    </div>
+                  </div>
+                </div>
+                }
+
+                @if (projectFeature1Bullet.length != 0) {
+                <div class="row m-t-10 m-b-10 w-100">
+                  @for (item of projectFeature1Bullet; track $index) {
+                  <div class="col-lg-6 col-sm-12 m-b-10">
+                    <div class="d-flex align-items-center justify-content-start">
+                      <ng-icon name="tablerCheckbox" class="icon-24 text-primary d-flex"></ng-icon>
+                      <p class="text-muted f-s-12 m-0 m-l-10">{{ item.displayTitle }}</p>
+                    </div>
+                  </div>
+                  }
+                </div>
+                }
+
+                <a mat-flat-button color="primary" class="m-t-10" [href]="projectFeature1BtnHref" target="_blank">{{
+                  projectFeature1BtnLbl }}</a>
+              </div>
+            </div>
+            <div class="col-lg-6">
+              <div class="feature-content-image">
+                <img [src]="api.mediaUrl+projectFeature1DetailCover" alt="hero-image" class="feature-img-tag"
+                  onError="this.src='assets/landing/feature-customer-tag.png'">
+              </div>
+            </div>
+          </div>
+          }
+
+          @if (currentFeatureId == 'restaurant') {
+          <div class="feature-bloc m-t-30 row">
+            <div class="col-lg-6">
+              <div class="feature-content">
+                <button mat-mini-fab class="text-primary icon-48 bg-light-primary m-b-30">
+                  <img [src]="api.mediaUrl+projectFeature2Icon" alt="feature-restaurant"
+                    class="feature-title-img-detail" onError="this.src='assets/landing/feature-restaurant.png'">
+                </button>
+
+                <h4 class="m-b-0 f-s-16 f-w-600 m-t-0 m-b-10">
+                  {{ projectFeature2DetailTitle }}
+                </h4>
+                <p class="text-muted f-s-12 m-0 m-b-10">
+                  {{ projectFeature2DetailSubTitle }}
+                </p>
+
+                @if (projectFeature2Bullet.length == 0) {
+                <div class="row m-t-10 m-b-10 w-100">
+                  <div class="col-lg-6 col-sm-12 m-b-10">
+                    <div class="d-flex align-items-center justify-content-start">
+                      <ng-icon name="tablerCheckbox" class="icon-24 text-primary d-flex"></ng-icon>
+                      <p class="text-muted f-s-12 m-0 m-l-10">Smart menu & order management — Add, edit, or pause items
+                        instantly</p>
+                    </div>
+                  </div>
+                  <div class="col-lg-6 col-sm-12 m-b-10">
+                    <div class="d-flex align-items-center justify-content-start">
+                      <ng-icon name="tablerCheckbox" class="icon-24 text-primary d-flex"></ng-icon>
+                      <p class="text-muted f-s-12 m-0 m-l-10">Real-time sales & earning insights — Track performance day
+                        by day</p>
+                    </div>
+                  </div>
+                  <div class="col-lg-6 col-sm-12 m-b-10">
+                    <div class="d-flex align-items-center justify-content-start">
+                      <ng-icon name="tablerCheckbox" class="icon-24 text-primary d-flex"></ng-icon>
+                      <p class="text-muted f-s-12 m-0 m-l-10">Instant payment settlement — No delays, direct to your
+                        account</p>
+                    </div>
+                  </div>
+                  <div class="col-lg-6 col-sm-12 m-b-10">
+                    <div class="d-flex align-items-center justify-content-start">
+                      <ng-icon name="tablerCheckbox" class="icon-24 text-primary d-flex"></ng-icon>
+                      <p class="text-muted f-s-12 m-0 m-l-10">Promotions & offers control — Create discounts or deals
+                        anytime</p>
+                    </div>
+                  </div>
+                  <div class="col-lg-6 col-sm-12 m-b-10">
+                    <div class="d-flex align-items-center justify-content-start">
+                      <ng-icon name="tablerCheckbox" class="icon-24 text-primary d-flex"></ng-icon>
+                      <p class="text-muted f-s-12 m-0 m-l-10">Multi-outlet management — Seamless control across branches
+                      </p>
+                    </div>
+                  </div>
+                  <div class="col-lg-6 col-sm-12 m-b-10">
+                    <div class="d-flex align-items-center justify-content-start">
+                      <ng-icon name="tablerCheckbox" class="icon-24 text-primary d-flex"></ng-icon>
+                      <p class="text-muted f-s-12 m-0 m-l-10">POS Integration — Sync dine-in and online orders
+                        effortlessly</p>
+                    </div>
+                  </div>
+                  <div class="col-lg-6 col-sm-12 m-b-10">
+                    <div class="d-flex align-items-center justify-content-start">
+                      <ng-icon name="tablerCheckbox" class="icon-24 text-primary d-flex"></ng-icon>
+                      <p class="text-muted f-s-12 m-0 m-l-10">Performance analytics — Understand what sells best and
+                        when</p>
+                    </div>
+                  </div>
+                </div>
+                }
+
+                @if (projectFeature2Bullet.length != 0) {
+                <div class="row m-t-10 m-b-10 w-100">
+                  @for (item of projectFeature2Bullet; track $index) {
+                  <div class="col-lg-6 col-sm-12 m-b-10">
+                    <div class="d-flex align-items-center justify-content-start">
+                      <ng-icon name="tablerCheckbox" class="icon-24 text-primary d-flex"></ng-icon>
+                      <p class="text-muted f-s-12 m-0 m-l-10">{{ item.displayTitle }}</p>
+                    </div>
+                  </div>
+                  }
+                </div>
+                }
+
+                <a mat-flat-button color="primary" class="m-t-10" [href]="projectFeature2BtnHref" target="_blank">{{
+                  projectFeature2BtnLbl }}</a>
+              </div>
+            </div>
+            <div class="col-lg-6">
+              <div class="feature-content-image">
+                <img [src]="api.mediaUrl+projectFeature2DetailCover" alt="hero-image" class="feature-img-tag"
+                  onError="this.src='assets/landing/feature-restaurant-tag.png'">
+              </div>
+            </div>
+          </div>
+          }
+
+          @if (currentFeatureId == 'deliveryman') {
+          <div class="feature-bloc m-t-30 row">
+            <div class="col-lg-6">
+              <div class="feature-content">
+                <button mat-mini-fab class="text-primary icon-48 bg-light-primary m-b-30">
+                  <img [src]="api.mediaUrl+projectFeature3Icon" alt="feature-deliveryman"
+                    class="feature-title-img-detail" onError="this.src='assets/landing/feature-deliveryman.png'">
+                </button>
+
+                <h4 class="m-b-0 f-s-16 f-w-600 m-t-0 m-b-10">
+                  {{ projectFeature3DetailTitle }}
+                </h4>
+                <p class="text-muted f-s-12 m-0 m-b-10">
+                  {{ projectFeature3DetailSubTitle }}
+                </p>
+
+                @if (projectFeature3Bullet.length == 0) {
+                <div class="row m-t-10 m-b-10 w-100">
+                  <div class="col-lg-6 col-sm-12 m-b-10">
+                    <div class="d-flex align-items-center justify-content-start">
+                      <ng-icon name="tablerCheckbox" class="icon-24 text-primary d-flex"></ng-icon>
+                      <p class="text-muted f-s-12 m-0 m-l-10">Live navigation & smart route optimization for faster
+                        deliveries</p>
+                    </div>
+                  </div>
+                  <div class="col-lg-6 col-sm-12 m-b-10">
+                    <div class="d-flex align-items-center justify-content-start">
+                      <ng-icon name="tablerCheckbox" class="icon-24 text-primary d-flex"></ng-icon>
+                      <p class="text-muted f-s-12 m-0 m-l-10">Flexible working hours — deliver when it suits you best
+                      </p>
+                    </div>
+                  </div>
+                  <div class="col-lg-6 col-sm-12 m-b-10">
+                    <div class="d-flex align-items-center justify-content-start">
+                      <ng-icon name="tablerCheckbox" class="icon-24 text-primary d-flex"></ng-icon>
+                      <p class="text-muted f-s-12 m-0 m-l-10">Instant withdrawals & earning history — no waiting for
+                        payouts</p>
+                    </div>
+                  </div>
+                  <div class="col-lg-6 col-sm-12 m-b-10">
+                    <div class="d-flex align-items-center justify-content-start">
+                      <ng-icon name="tablerCheckbox" class="icon-24 text-primary d-flex"></ng-icon>
+                      <p class="text-muted f-s-12 m-0 m-l-10">Performance bonuses & reward programs for top drivers</p>
+                    </div>
+                  </div>
+                  <div class="col-lg-6 col-sm-12 m-b-10">
+                    <div class="d-flex align-items-center justify-content-start">
+                      <ng-icon name="tablerCheckbox" class="icon-24 text-primary d-flex"></ng-icon>
+                      <p class="text-muted f-s-12 m-0 m-l-10">Order acceptance in real time with one-tap confirmations
+                      </p>
+                    </div>
+                  </div>
+                  <div class="col-lg-6 col-sm-12 m-b-10">
+                    <div class="d-flex align-items-center justify-content-start">
+                      <ng-icon name="tablerCheckbox" class="icon-24 text-primary d-flex"></ng-icon>
+                      <p class="text-muted f-s-12 m-0 m-l-10">In-app chat & customer support for smooth operations</p>
+                    </div>
+                  </div>
+                  <div class="col-lg-6 col-sm-12 m-b-10">
+                    <div class="d-flex align-items-center justify-content-start">
+                      <ng-icon name="tablerCheckbox" class="icon-24 text-primary d-flex"></ng-icon>
+                      <p class="text-muted f-s-12 m-0 m-l-10">Safety-first features with verified routes and emergency
+                        assist</p>
+                    </div>
+                  </div>
+                </div>
+                }
+
+                @if (projectFeature3Bullet.length != 0) {
+                <div class="row m-t-10 m-b-10 w-100">
+                  @for (item of projectFeature3Bullet; track $index) {
+                  <div class="col-lg-6 col-sm-12 m-b-10">
+                    <div class="d-flex align-items-center justify-content-start">
+                      <ng-icon name="tablerCheckbox" class="icon-24 text-primary d-flex"></ng-icon>
+                      <p class="text-muted f-s-12 m-0 m-l-10">{{ item.displayTitle }}</p>
+                    </div>
+                  </div>
+                  }
+                </div>
+                }
+
+                <a mat-flat-button color="primary" class="m-t-10" [href]="projectFeature3BtnHref" target="_blank">
+                  {{ projectFeature3BtnLbl }}
+                </a>
+              </div>
+            </div>
+            <div class="col-lg-6">
+              <div class="feature-content-image">
+                <img [src]="api.mediaUrl+projectFeature3DetailCover" alt="hero-image" class="feature-img-tag"
+                  onError="this.src='assets/landing/feature-deliveryman-tag.png'">
+              </div>
+            </div>
+          </div>
+          }
+
+          @if (currentFeatureId == 'support') {
+          <div class="feature-bloc m-t-30 row">
+            <div class="col-lg-6">
+              <div class="feature-content">
+                <button mat-mini-fab class="text-primary icon-48 bg-light-primary m-b-30">
+                  <img [src]="api.mediaUrl+projectFeature4Icon" alt="feature-support" class="feature-title-img-detail"
+                    onError="this.src='assets/landing/feature-support.png'">
+                </button>
+
+                <h4 class="m-b-0 f-s-16 f-w-600 m-t-0 m-b-10">
+                  {{ projectFeature4DetailTitle }}
+                </h4>
+                <p class="text-muted f-s-12 m-0 m-b-10">
+                  {{ projectFeature4DetailSubTitle }}
+                </p>
+
+                @if (projectFeature4Bullet.length == 0) {
+                <div class="row m-t-10 m-b-10 w-100">
+                  <div class="col-lg-6 col-sm-12 m-b-10">
+                    <div class="d-flex align-items-center justify-content-start">
+                      <ng-icon name="tablerCheckbox" class="icon-24 text-primary d-flex"></ng-icon>
+                      <p class="text-muted f-s-12 m-0 m-l-10">24/7 multilingual customer support for all users and
+                        partners</p>
+                    </div>
+                  </div>
+                  <div class="col-lg-6 col-sm-12 m-b-10">
+                    <div class="d-flex align-items-center justify-content-start">
+                      <ng-icon name="tablerCheckbox" class="icon-24 text-primary d-flex"></ng-icon>
+                      <p class="text-muted f-s-12 m-0 m-l-10">AI + human-powered ticket resolution for faster outcomes
+                      </p>
+                    </div>
+                  </div>
+                  <div class="col-lg-6 col-sm-12 m-b-10">
+                    <div class="d-flex align-items-center justify-content-start">
+                      <ng-icon name="tablerCheckbox" class="icon-24 text-primary d-flex"></ng-icon>
+                      <p class="text-muted f-s-12 m-0 m-l-10">Real-time tracking of queries and escalations</p>
+                    </div>
+                  </div>
+                  <div class="col-lg-6 col-sm-12 m-b-10">
+                    <div class="d-flex align-items-center justify-content-start">
+                      <ng-icon name="tablerCheckbox" class="icon-24 text-primary d-flex"></ng-icon>
+                      <p class="text-muted f-s-12 m-0 m-l-10">Integrated helpdesk for restaurant and driver management
+                      </p>
+                    </div>
+                  </div>
+                  <div class="col-lg-6 col-sm-12 m-b-10">
+                    <div class="d-flex align-items-center justify-content-start">
+                      <ng-icon name="tablerCheckbox" class="icon-24 text-primary d-flex"></ng-icon>
+                      <p class="text-muted f-s-12 m-0 m-l-10">Performance dashboards to monitor service quality</p>
+                    </div>
+                  </div>
+                  <div class="col-lg-6 col-sm-12 m-b-10">
+                    <div class="d-flex align-items-center justify-content-start">
+                      <ng-icon name="tablerCheckbox" class="icon-24 text-primary d-flex"></ng-icon>
+                      <p class="text-muted f-s-12 m-0 m-l-10">Training & onboarding support for vendors and drivers</p>
+                    </div>
+                  </div>
+                  <div class="col-lg-6 col-sm-12 m-b-10">
+                    <div class="d-flex align-items-center justify-content-start">
+                      <ng-icon name="tablerCheckbox" class="icon-24 text-primary d-flex"></ng-icon>
+                      <p class="text-muted f-s-12 m-0 m-l-10">Secure communication channels with data privacy ensured
+                      </p>
+                    </div>
+                  </div>
+                </div>
+                }
+
+                @if (projectFeature4Bullet.length != 0) {
+                <div class="row m-t-10 m-b-10 w-100">
+                  @for (item of projectFeature4Bullet; track $index) {
+                  <div class="col-lg-6 col-sm-12 m-b-10">
+                    <div class="d-flex align-items-center justify-content-start">
+                      <ng-icon name="tablerCheckbox" class="icon-24 text-primary d-flex"></ng-icon>
+                      <p class="text-muted f-s-12 m-0 m-l-10">{{ item.displayTitle }}</p>
+                    </div>
+                  </div>
+                  }
+                </div>
+                }
+
+                <a mat-flat-button color="primary" class="m-t-10" [href]="projectFeature4BtnHref" target="_blank">
+                  {{ projectFeature4BtnLbl }}
+                </a>
+              </div>
+            </div>
+            <div class="col-lg-6">
+              <div class="feature-content-image">
+                <img [src]="api.mediaUrl+projectFeature4DetailCover" alt="hero-image" class="feature-img-tag"
+                  onError="this.src='assets/landing/feature-support-tag.png'">
+              </div>
+            </div>
+          </div>
+          }
+
+        </mat-card-content>
+      </mat-card>
+
+    </div>
+    }
+
+  </section>
+  <!-- Feature Content -->
+
+  <!-- Service Content -->
+  <section class="service-container m-t-30">
+    @if (!haveServiceContent) {
+    <div class="container">
+      <h2 class="f-s-24 m-b-10 m-t-30 text-center text-primary f-w-700">Services</h2>
+      <p class="text-muted m-b-30 text-center">
+        Your complete food delivery ecosystem — connecting customers, kitchens, and couriers with speed, security, and
+        simplicity.
+      </p>
+
+      <div class="service-grid m-t-30">
+        <div class="row">
+          @for (item of dummyServices; track item; let i = $index) {
+          <div class="col-lg-4 col-md-6">
+            <mat-card class="cardWithShadow theme-card position-relative card-hover">
+              <mat-card-content>
+                <div class="card-number bg-light-primary">
+                  <span class="f-s-12 f-w-700 text-primary">{{ ('0' + (i + 1)).slice(-2) }}</span>
+                </div>
+                <h5 class="m-b-0 f-s-16 f-w-600 m-t-0 m-b-10">
+                  {{ item.title }}
+                </h5>
+                <p class="text-muted f-s-12 m-0 m-b-10">
+                  {{ item.text }}
+                </p>
+              </mat-card-content>
+            </mat-card>
+          </div>
+          }
+        </div>
+      </div>
+    </div>
+    }
+
+    @if (haveServiceContent) {
+    <div class="container">
+      <h2 class="f-s-24 m-b-10 m-t-30 text-center text-primary f-w-700">{{ serviceTitle }}</h2>
+      <p class="text-muted m-b-30 text-center"> {{ serviceSubTitle }} </p>
+
+      <div class="service-grid m-t-30">
+        @if (servicesList.length == 0) {
+        <div class="row">
+          @for (item of dummyServices; track item; let i = $index) {
+          <div class="col-lg-4 col-md-6">
+            <mat-card class="cardWithShadow theme-card position-relative card-hover">
+              <mat-card-content>
+                <div class="card-number bg-light-primary">
+                  <span class="f-s-12 f-w-700 text-primary">{{ ('0' + (i + 1)).slice(-2) }}</span>
+                </div>
+                <h5 class="m-b-0 f-s-16 f-w-600 m-t-0 m-b-10">
+                  {{ item.title }}
+                </h5>
+                <p class="text-muted f-s-12 m-0 m-b-10">
+                  {{ item.text }}
+                </p>
+              </mat-card-content>
+            </mat-card>
+          </div>
+          }
+        </div>
+        }
+
+        @if (servicesList.length != 0) {
+        <div class="row">
+          @for (item of servicesList; track $index) {
+          <div class="col-lg-4 col-md-6">
+            <mat-card class="cardWithShadow theme-card position-relative card-hover">
+              <mat-card-content>
+                <div class="card-number bg-light-primary">
+                  <span class="f-s-12 f-w-700 text-primary">{{ ('0' + (item.serial)).slice(-2) }}</span>
+                </div>
+                <h5 class="m-b-0 f-s-16 f-w-600 m-t-0 m-b-10">
+                  {{ item.displayTitle }}
+                </h5>
+                <p class="text-muted f-s-12 m-0 m-b-10">
+                  {{ item.displaySubTitle }}
+                </p>
+              </mat-card-content>
+            </mat-card>
+          </div>
+          }
+        </div>
+        }
+
+      </div>
+    </div>
+    }
+  </section>
+  <!-- Service Content -->
+
+  <!-- FAQS Content -->
+  <section class="faqs-container m-t-30 m-b-30">
+    @if (!haveFaqContent) {
+    <div class="container">
+      <h2 class="f-s-24 m-b-10 m-t-30 text-center text-primary f-w-700">FAQs</h2>
+      <p class="text-muted m-b-30 text-center">
+        Find quick answers to common questions about ordering, payments, and deliveries.
+      </p>
+
+      <div class="m-b-30 m-t-30">
+        <mat-accordion>
+          @for (item of dummyFaqs; track $index) {
+          <mat-expansion-panel class="cardWithShadow theme-card m-b-10">
+            <mat-expansion-panel-header>
+              <mat-panel-title class="f-w-600 mat-body-1">
+                {{ item.title }}
+              </mat-panel-title>
+            </mat-expansion-panel-header>
+            <p class="mat-body-1">
+              {{ item.text }}
+            </p>
+          </mat-expansion-panel>
+          }
+        </mat-accordion>
+      </div>
+
+    </div>
+    }
+
+    @if (haveFaqContent) {
+    <div class="container">
+      <h2 class="f-s-24 m-b-10 m-t-30 text-center text-primary f-w-700">{{ faqTitle }}</h2>
+      <p class="text-muted m-b-30 text-center"> {{ faqSubTitle }} </p>
+
+      <div class="m-b-30 m-t-30">
+        @if (faqList.length == 0) {
+        <mat-accordion>
+          @for (item of dummyFaqs; track $index) {
+          <mat-expansion-panel class="cardWithShadow theme-card m-b-10">
+            <mat-expansion-panel-header>
+              <mat-panel-title class="f-w-600 mat-body-1">
+                {{ item.title }}
+              </mat-panel-title>
+            </mat-expansion-panel-header>
+            <p class="mat-body-1">
+              {{ item.text }}
+            </p>
+          </mat-expansion-panel>
+          }
+        </mat-accordion>
+        }
+
+        @if (faqList.length != 0) {
+        <mat-accordion>
+          @for (item of faqList; track $index) {
+          <mat-expansion-panel class="cardWithShadow theme-card m-b-10">
+            <mat-expansion-panel-header>
+              <mat-panel-title class="f-w-600 mat-body-1">
+                {{ item.displayTitle }}
+              </mat-panel-title>
+            </mat-expansion-panel-header>
+            <p class="mat-body-1" [innerHTML]="item.displaySubTitle"></p>
+          </mat-expansion-panel>
+          }
+        </mat-accordion>
+        }
+      </div>
+
+    </div>
+    }
+  </section>
+  <!-- FAQS Content -->
+
+  <!-- Reviews Content -->
+  <section class="reviews-container m-t-30">
+    @if (!haveReviewContent) {
+    <div class="container">
+      <h2 class="f-s-24 m-b-10 m-t-30 text-center text-primary f-w-700">Reviews</h2>
+      <p class="text-muted m-b-30 text-center">
+        Our customers, restaurants, and delivery partners share their real experiences about how Localwala has simplified
+        their daily routine — from quick orders to seamless deliveries.
+      </p>
+
+      <div class="review-grid m-t-30">
+        <div class="row">
+          @for (item of dummyReviews; track $index) {
+          <div class="col-lg-4 col-md-6">
+            <mat-card class="cardWithShadow theme-card position-relative card-hover">
+              <mat-card-content class="p-18">
+                <div class="d-flex align-items-center"><img src="assets/landing/customer-dummy.jpg" width="60"
+                    height="60" class="rounded-circle">
+                  <div class="m-l-16">
+                    <h4 class="m-0 f-s-14 f-w-600">{{ item.userName }}</h4>
+                    <span class="f-s-11"> {{ item.occupation }} </span> <br>
+                    <div class="d-flex align-items-center justify-content-start">
+                      <ng-icon name="tablerStar" class="icon-12 m-r-4 d-flex"
+                        [ngClass]="{ 'fill-warning': item.stars >= 1}"></ng-icon>
+                      <ng-icon name="tablerStar" class="icon-12 m-r-4 d-flex"
+                        [ngClass]="{ 'fill-warning': item.stars >= 2}"></ng-icon>
+                      <ng-icon name="tablerStar" class="icon-12 m-r-4 d-flex"
+                        [ngClass]="{ 'fill-warning': item.stars >= 3}"></ng-icon>
+                      <ng-icon name="tablerStar" class="icon-12 m-r-4 d-flex"
+                        [ngClass]="{ 'fill-warning': item.stars >= 4}"></ng-icon>
+                      <ng-icon name="tablerStar" class="icon-12 m-r-4 d-flex"
+                        [ngClass]="{ 'fill-warning': item.stars >= 5}"></ng-icon>
+                    </div>
+                  </div>
+                </div>
+
+                <p class="text-muted f-s-12 m-t-5 m-b-5">
+                  <ng-icon name="tablerQuote" class="icon-18 quote-icon-left"></ng-icon>
+                  <span> {{ item.review }} </span>
+                  <ng-icon name="tablerQuote" class="icon-18 quote-icon-right"></ng-icon>
+                </p>
+              </mat-card-content>
+            </mat-card>
+          </div>
+          }
+        </div>
+      </div>
+
+    </div>
+    }
+
+    @if (haveReviewContent) {
+    <div class="container">
+      <h2 class="f-s-24 m-b-10 m-t-30 text-center text-primary f-w-700">{{ reviewTitle }}</h2>
+      <p class="text-muted m-b-30 text-center"> {{ reviewSubTitle }} </p>
+
+      <div class="review-grid m-t-30">
+        @if (reviewList.length == 0) {
+        <div class="row">
+          @for (item of dummyReviews; track $index) {
+          <div class="col-lg-4 col-md-6">
+            <mat-card class="cardWithShadow theme-card position-relative card-hover">
+              <mat-card-content class="p-18">
+                <div class="d-flex align-items-center"><img src="assets/landing/customer-dummy.jpg" width="60"
+                    height="60" class="rounded-circle">
+                  <div class="m-l-16">
+                    <h4 class="m-0 f-s-14 f-w-600">{{ item.userName }}</h4>
+                    <span class="f-s-11"> {{ item.occupation }} </span> <br>
+                    <div class="d-flex align-items-center justify-content-start">
+                      <ng-icon name="tablerStar" class="icon-12 m-r-4 d-flex"
+                        [ngClass]="{ 'fill-warning': item.stars >= 1}"></ng-icon>
+                      <ng-icon name="tablerStar" class="icon-12 m-r-4 d-flex"
+                        [ngClass]="{ 'fill-warning': item.stars >= 2}"></ng-icon>
+                      <ng-icon name="tablerStar" class="icon-12 m-r-4 d-flex"
+                        [ngClass]="{ 'fill-warning': item.stars >= 3}"></ng-icon>
+                      <ng-icon name="tablerStar" class="icon-12 m-r-4 d-flex"
+                        [ngClass]="{ 'fill-warning': item.stars >= 4}"></ng-icon>
+                      <ng-icon name="tablerStar" class="icon-12 m-r-4 d-flex"
+                        [ngClass]="{ 'fill-warning': item.stars >= 5}"></ng-icon>
+                    </div>
+                  </div>
+                </div>
+
+                <p class="text-muted f-s-12 m-t-5 m-b-5">
+                  <ng-icon name="tablerQuote" class="icon-18 quote-icon-left"></ng-icon>
+                  <span> {{ item.review }} </span>
+                  <ng-icon name="tablerQuote" class="icon-18 quote-icon-right"></ng-icon>
+                </p>
+              </mat-card-content>
+            </mat-card>
+          </div>
+          }
+        </div>
+        }
+
+        @if (reviewList.length != 0) {
+        <div class="row">
+          @for (item of reviewList; track $index) {
+          <div class="col-lg-4 col-md-6">
+            <mat-card class="cardWithShadow theme-card position-relative card-hover">
+              <mat-card-content class="p-18">
+                <div class="d-flex align-items-center"><img [src]="api.mediaUrl+item.image" width="60" height="60"
+                    class="rounded-circle" onError="this.src='assets/landing/customer-dummy.jpg'">
+                  <div class="m-l-16">
+                    <h4 class="m-0 f-s-14 f-w-600">{{ item.userName }}</h4>
+                    <span class="f-s-11"> {{ item.occupation }} </span> <br>
+                    <div class="d-flex align-items-center justify-content-start">
+                      <ng-icon name="tablerStar" class="icon-12 m-r-4 d-flex"
+                        [ngClass]="{ 'fill-warning': item.star >= 1}"></ng-icon>
+                      <ng-icon name="tablerStar" class="icon-12 m-r-4 d-flex"
+                        [ngClass]="{ 'fill-warning': item.star >= 2}"></ng-icon>
+                      <ng-icon name="tablerStar" class="icon-12 m-r-4 d-flex"
+                        [ngClass]="{ 'fill-warning': item.star >= 3}"></ng-icon>
+                      <ng-icon name="tablerStar" class="icon-12 m-r-4 d-flex"
+                        [ngClass]="{ 'fill-warning': item.star >= 4}"></ng-icon>
+                      <ng-icon name="tablerStar" class="icon-12 m-r-4 d-flex"
+                        [ngClass]="{ 'fill-warning': item.star >= 5}"></ng-icon>
+                    </div>
+                  </div>
+                </div>
+
+                <p class="text-muted f-s-12 m-t-5 m-b-5">
+                  <ng-icon name="tablerQuote" class="icon-18 quote-icon-left"></ng-icon>
+                  <span> {{ item.displayMessage }} </span>
+                  <ng-icon name="tablerQuote" class="icon-18 quote-icon-right"></ng-icon>
+                </p>
+              </mat-card-content>
+            </mat-card>
+          </div>
+          }
+        </div>
+        }
+      </div>
+
+    </div>
+    }
+  </section>
+  <!-- Reviews Content -->
+
+  <!-- Scan QR Content -->
+  <section class="scan-qr-container m-t-30 m-b-30">
+    @if (!haveScanQrContent) {
+    <div class="container">
+      <div class="qr-code-content p-x-24">
+        <div class="row">
+          <div class="col-lg-7 col-md-12 p-b-16">
+            <div class="d-flex flex-column justify-content-center h-100">
+              <h2 class="f-s-24 m-b-10 m-t-30 text-primary f-w-700">Download the app now!</h2>
+              <p class="text-muted m-b-30">
+                Where your hunger meets convenience — Localwala has you covered.
+              </p>
+              <div class="d-flex align-items-center justify-content-start m-t-20 qr-btn">
+                <a href="#" target="_blank" class="text-decoration-none m-r-10 position-relative card-hover">
+                  <img src="assets/images/playstore.png" alt="appstorelink" class="btn-navigate"
+                    onError="this.src='assets/images/logos/logo.png'">
+                </a>
+                <a href="#" target="_blank" class="text-decoration-none position-relative card-hover">
+                  <img src="assets/images/appstore.png" alt="appstorelink" class="btn-navigate"
+                    onError="this.src='assets/images/logos/logo.png'">
+                </a>
+              </div>
+            </div>
+          </div>
+          <div class="col-lg-5 col-md-12 p-b-16">
+            <div class="qr-image-block">
+              <img src="assets/landing/qr-code.png" alt="qr-code" class="qr-code-img">
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    }
+
+    @if (haveScanQrContent) {
+    <div class="container">
+      <div class="qr-code-content p-x-24">
+        <div class="row">
+          <div class="col-lg-7 col-md-12 p-b-16">
+            <div class="d-flex flex-column justify-content-center h-100">
+              <h2 class="f-s-24 m-b-10 m-t-30 text-primary f-w-700">{{ scanQrTitle }}</h2>
+              <p class="text-muted m-b-30">
+                {{ scanQrSubTitle }}
+              </p>
+              <div class="d-flex align-items-center justify-content-start m-t-20 qr-btn">
+                @if (scanQrBtn1Eenable) {
+                <a [href]="scanQrBtn1Href" target="_blank"
+                  class="text-decoration-none m-r-10 position-relative card-hover">
+                  <img [src]="api.mediaUrl+scanQrBtn1Cover" alt="appstorelink" class="btn-navigate"
+                    onError="this.src='assets/images/playstore.png'">
+                </a>
+                }
+                @if (scanQrBtn2Eenable) {
+                <a [href]="scanQrBtn2Href" target="_blank" class="text-decoration-none position-relative card-hover">
+                  <img [src]="api.mediaUrl+scanQrBtn2Cover" alt="appstorelink" class="btn-navigate"
+                    onError="this.src='assets/images/appstore.png'">
+                </a>
+                }
+              </div>
+            </div>
+          </div>
+          <div class="col-lg-5 col-md-12 p-b-16">
+            <div class="qr-image-block">
+              <img [src]="api.mediaUrl+scanQrCover" alt="qr-code" class="qr-code-img"
+                onError="this.src='assets/landing/qr-code.png'">
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    }
+  </section>
+  <!-- Scan QR Content -->
+</div>
+}

@@ -1,0 +1,305 @@
+<mat-card class="cardWithShadow">
+  <mat-card-content class="p-0">
+    <mat-tab-group mat-stretch-tabs="false" animationDuration="0ms" [selectedIndex]="tabIndex"
+      (selectedTabChange)="tabChanged($event)">
+      <mat-tab>
+        <ng-template mat-tab-label>
+          <div class="d-flex align-items-center justify-content-center">
+            <ng-icon name="tablerUserCircle" class="icon-20 m-r-8"></ng-icon>
+          </div>
+          {{util.appTranslate('information')}}
+        </ng-template>
+        @if (tabIndex == 0) {
+        <mat-card-content class="p-y-24 b-t-0">
+          <app-cityzen-restaurant-detail-info [restaurantId]="restaurantId"> </app-cityzen-restaurant-detail-info>
+        </mat-card-content>
+        }
+      </mat-tab>
+
+      <mat-tab>
+        <ng-template mat-tab-label>
+          <div class="d-flex align-items-center justify-content-center">
+            <ng-icon name="tablerShoppingCartBolt" class="icon-20 m-r-8"></ng-icon>
+          </div>
+          {{util.appTranslate('orders')}}
+        </ng-template>
+        @if (tabIndex == 1) {
+        <mat-card-content class="p-y-24 b-t-0">
+          <app-cityzen-restaurant-detail-order-list
+            [restaurantId]="restaurantId"></app-cityzen-restaurant-detail-order-list>
+        </mat-card-content>
+        }
+      </mat-tab>
+
+      <mat-tab>
+        <ng-template mat-tab-label>
+          <div class="d-flex align-items-center justify-content-center">
+            <ng-icon name="tablerBrandMiniprogram" class="icon-20 m-r-8"></ng-icon>
+          </div>
+          {{util.appTranslate('pos_orders')}}
+        </ng-template>
+        @if (tabIndex == 2) {
+        <mat-card-content class="p-y-24 b-t-0">
+          <app-cityzen-restaurant-detail-pos-order-list
+            [restaurantId]="restaurantId"></app-cityzen-restaurant-detail-pos-order-list>
+        </mat-card-content>
+        }
+      </mat-tab>
+
+      <mat-tab>
+        <ng-template mat-tab-label>
+          <div class="d-flex align-items-center justify-content-center">
+            <ng-icon name="tablerGridScan" class="icon-20 m-r-8"></ng-icon>
+          </div>
+          {{util.appTranslate('table_orders')}}
+        </ng-template>
+        @if (tabIndex == 3) {
+        <mat-card-content class="p-y-24 b-t-0">
+          <app-cityzen-restaurant-detail-table-order-list
+            [restaurantId]="restaurantId"></app-cityzen-restaurant-detail-table-order-list>
+        </mat-card-content>
+        }
+      </mat-tab>
+
+      <mat-tab>
+        <ng-template mat-tab-label>
+          <div class="d-flex align-items-center justify-content-center">
+            <ng-icon name="tablerBrandAirtable" class="icon-20 m-r-8"></ng-icon>
+          </div>
+          {{util.appTranslate('th_dining_booking')}}
+        </ng-template>
+        @if (tabIndex == 4) {
+        <mat-card-content class="p-y-24 b-t-0">
+          <app-cityzen-restaurant-detail-dining-list
+            [restaurantId]="restaurantId"></app-cityzen-restaurant-detail-dining-list>
+        </mat-card-content>
+        }
+      </mat-tab>
+
+      <mat-tab>
+        <ng-template mat-tab-label>
+          <div class="d-flex align-items-center justify-content-center">
+            <ng-icon name="tablerToolsKitchen2" class="icon-20 m-r-8"></ng-icon>
+          </div>
+          {{util.appTranslate('th_food')}}
+        </ng-template>
+        @if (tabIndex == 5) {
+        <mat-card-content class="p-y-24 b-t-0">
+          <app-cityzen-restaurant-detail-food-list
+            [restaurantId]="restaurantId"></app-cityzen-restaurant-detail-food-list>
+        </mat-card-content>
+        }
+      </mat-tab>
+
+      <mat-tab>
+        <ng-template mat-tab-label>
+          <div class="d-flex align-items-center justify-content-center">
+            <ng-icon name="tablerUserBolt" class="icon-20 m-r-8"></ng-icon>
+          </div>
+          {{util.appTranslate('waiters')}}
+        </ng-template>
+        @if (tabIndex == 6) {
+        <mat-card-content class="p-y-24 b-t-0">
+          <app-cityzen-restaurant-detail-waiter-list
+            [restaurantId]="restaurantId"></app-cityzen-restaurant-detail-waiter-list>
+        </mat-card-content>
+        }
+      </mat-tab>
+
+      <mat-tab>
+        <ng-template mat-tab-label>
+          <div class="d-flex align-items-center justify-content-center">
+            <ng-icon name="tablerUserBolt" class="icon-20 m-r-8"></ng-icon>
+          </div>
+          {{util.appTranslate('kitchen_owners')}}
+        </ng-template>
+        @if (tabIndex == 7) {
+        <mat-card-content class="p-y-24 b-t-0">
+          <app-cityzen-restaurant-detail-kitchen-owner-list
+            [restaurantId]="restaurantId"></app-cityzen-restaurant-detail-kitchen-owner-list>
+        </mat-card-content>
+        }
+      </mat-tab>
+
+      <mat-tab>
+        <ng-template mat-tab-label>
+          <div class="d-flex align-items-center justify-content-center">
+            <ng-icon name="tablerBike" class="icon-20 m-r-8"></ng-icon>
+          </div>
+          {{util.appTranslate('deliveryman')}}
+        </ng-template>
+        @if (tabIndex == 8) {
+        <mat-card-content class="p-y-24 b-t-0">
+          <app-cityzen-restaurant-detail-deliveryman-list
+            [restaurantId]="restaurantId"></app-cityzen-restaurant-detail-deliveryman-list>
+        </mat-card-content>
+        }
+      </mat-tab>
+
+      <mat-tab>
+        <ng-template mat-tab-label>
+          <div class="d-flex align-items-center justify-content-center">
+            <ng-icon name="tablerPaperBag" class="icon-20 m-r-8"></ng-icon>
+          </div>
+          {{util.appTranslate('tiffin_packages')}}
+        </ng-template>
+        @if (tabIndex == 9) {
+        <mat-card-content class="p-y-24 b-t-0">
+          <app-cityzen-restaurant-detail-tiffin-packages
+            [restaurantId]="restaurantId"></app-cityzen-restaurant-detail-tiffin-packages>
+        </mat-card-content>
+        }
+      </mat-tab>
+
+      <mat-tab>
+        <ng-template mat-tab-label>
+          <div class="d-flex align-items-center justify-content-center">
+            <ng-icon name="tablerReceiptRefund" class="icon-20 m-r-8"></ng-icon>
+          </div>
+          {{util.appTranslate('refund_request')}}
+        </ng-template>
+        @if (tabIndex == 10) {
+        <mat-card-content class="p-y-24 b-t-0">
+          <app-cityzen-restaurant-detail-refund-request-list
+            [restaurantId]="restaurantId"></app-cityzen-restaurant-detail-refund-request-list>
+        </mat-card-content>
+        }
+      </mat-tab>
+
+      <mat-tab>
+        <ng-template mat-tab-label>
+          <div class="d-flex align-items-center justify-content-center">
+            <ng-icon name="tablerMoodSurprised" class="icon-20 m-r-8"></ng-icon>
+          </div>
+          {{util.appTranslate('complaints')}}
+        </ng-template>
+        @if (tabIndex == 11) {
+        <mat-card-content class="p-y-24 b-t-0">
+          <app-cityzen-restaurant-detail-complaints-list
+            [restaurantId]="restaurantId"></app-cityzen-restaurant-detail-complaints-list>
+        </mat-card-content>
+        }
+      </mat-tab>
+
+      <mat-tab>
+        <ng-template mat-tab-label>
+          <div class="d-flex align-items-center justify-content-center">
+            <ng-icon name="tablerRouteSquare" class="icon-20 m-r-8"></ng-icon>
+          </div>
+          {{util.appTranslate('outlets')}}
+        </ng-template>
+        @if (tabIndex == 12) {
+        <mat-card-content class="p-y-24 b-t-0">
+          <app-cityzen-restaurant-detail-outlet-list
+            [restaurantId]="restaurantId"></app-cityzen-restaurant-detail-outlet-list>
+        </mat-card-content>
+        }
+      </mat-tab>
+
+      <mat-tab>
+        <ng-template mat-tab-label>
+          <div class="d-flex align-items-center justify-content-center">
+            <ng-icon name="tablerCashBanknote" class="icon-20 m-r-8"></ng-icon>
+          </div>
+          {{util.appTranslate('disbursement')}}
+        </ng-template>
+        @if (tabIndex == 13) {
+        <mat-card-content class="p-y-24 b-t-0">
+          <app-cityzen-restaurant-detail-disbursement-list
+            [restaurantId]="restaurantId"></app-cityzen-restaurant-detail-disbursement-list>
+        </mat-card-content>
+        }
+      </mat-tab>
+
+      <mat-tab>
+        <ng-template mat-tab-label>
+          <div class="d-flex align-items-center justify-content-center">
+            <ng-icon name="tablerWallet" class="icon-20 m-r-8"></ng-icon>
+          </div>
+          {{util.appTranslate('collected_cash_history')}}
+        </ng-template>
+        @if (tabIndex == 14) {
+        <mat-card-content class="p-y-24 b-t-0">
+          <app-cityzen-restaurant-detail-collected-cash-list
+            [restaurantId]="restaurantId"></app-cityzen-restaurant-detail-collected-cash-list>
+        </mat-card-content>
+        }
+      </mat-tab>
+
+      <mat-tab>
+        <ng-template mat-tab-label>
+          <div class="d-flex align-items-center justify-content-center">
+            <ng-icon name="tablerPigMoney" class="icon-20 m-r-8"></ng-icon>
+          </div>
+          {{util.appTranslate('payout_method')}}
+        </ng-template>
+        @if (tabIndex == 15) {
+        <mat-card-content class="p-y-24 b-t-0">
+          <app-cityzen-restaurant-detail-payout-method-list
+            [restaurantId]="restaurantId"></app-cityzen-restaurant-detail-payout-method-list>
+        </mat-card-content>
+        }
+      </mat-tab>
+
+      <mat-tab>
+        <ng-template mat-tab-label>
+          <div class="d-flex align-items-center justify-content-center">
+            <ng-icon name="tablerReceipt2" class="icon-20 m-r-8"></ng-icon>
+          </div>
+          {{util.appTranslate('withdrawal_request')}}
+        </ng-template>
+        @if (tabIndex == 16) {
+        <mat-card-content class="p-y-24 b-t-0">
+          <app-cityzen-restaurant-detail-withdrawal-request-list
+            [restaurantId]="restaurantId"></app-cityzen-restaurant-detail-withdrawal-request-list>
+        </mat-card-content>
+        }
+      </mat-tab>
+
+      <mat-tab>
+        <ng-template mat-tab-label>
+          <div class="d-flex align-items-center justify-content-center">
+            <ng-icon name="tablerCalendarDollar" class="icon-20 m-r-8"></ng-icon>
+          </div>
+          {{util.appTranslate('transactions')}}
+        </ng-template>
+        @if (tabIndex == 17) {
+        <mat-card-content class="p-y-24 b-t-0">
+          <app-cityzen-restaurant-detail-wallet-transactions
+            [restaurantId]="restaurantId"></app-cityzen-restaurant-detail-wallet-transactions>
+        </mat-card-content>
+        }
+      </mat-tab>
+
+
+      <mat-tab>
+        <ng-template mat-tab-label>
+          <div class="d-flex align-items-center justify-content-center">
+            <ng-icon name="tablerStars" class="icon-20 m-r-8"></ng-icon>
+          </div>
+          {{util.appTranslate('reviews')}}
+        </ng-template>
+        @if (tabIndex == 18) {
+        <mat-card-content class="p-y-24 b-t-0">
+          <app-cityzen-restaurant-detail-reviews [restaurantId]="restaurantId"></app-cityzen-restaurant-detail-reviews>
+        </mat-card-content>
+        }
+      </mat-tab>
+
+      <mat-tab>
+        <ng-template mat-tab-label>
+          <div class="d-flex align-items-center justify-content-center">
+            <ng-icon name="tablerPhotoSearch" class="icon-20 m-r-8"></ng-icon>
+          </div>
+          {{util.appTranslate('media')}}
+        </ng-template>
+        @if (tabIndex == 19) {
+        <mat-card-content class="p-y-24 b-t-0">
+          <app-cityzen-restaurant-detail-media-files
+            [restaurantId]="restaurantId"></app-cityzen-restaurant-detail-media-files>
+        </mat-card-content>
+        }
+      </mat-tab>
+    </mat-tab-group>
+  </mat-card-content>
+</mat-card>

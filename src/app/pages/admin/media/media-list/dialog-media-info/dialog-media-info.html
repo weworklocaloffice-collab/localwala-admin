@@ -1,0 +1,42 @@
+<h2 mat-dialog-title class="dialog-title">
+  <span class="title-text">{{util.appTranslate('-')}}</span>
+  <button mat-icon-button mat-dialog-close class="close-btn">
+    <mat-icon>close</mat-icon>
+  </button>
+</h2>
+<div mat-dialog-content style="max-width: 600px;max-height: max-content;" class="m-t-12 p-t-12">
+  <img class="rounded" alt="products" width="500" height="500" [src]="api.mediaUrl+path"
+    onError="this.src='assets/images/onerror.png'" />
+  <div class="p-t-15 p-b-15">
+    <mat-divider></mat-divider>
+  </div>
+  <div class="p-t-15">
+    <h5 class="mat-subtitle-1 f-s-18 m-t-0 m-b-15">{{util.appTranslate('media_information')}}</h5>
+  </div>
+  <div class="d-flex align-items-center">
+    <img [src]="api.mediaUrl+userCover" alt="users" width="40" height="40" class="rounded-circle"
+      onError="this.src='assets/images/onerror.png'" />
+    <div class="m-l-16">
+      <h6 class="mat-subtitle-1 f-s-14 f-w-600">
+        {{ userName }}
+      </h6>
+      <span class="mat-body-1 f-s-12">
+        {{createdAt}} | {{ userRole | uppercase}}
+      </span>
+    </div>
+  </div>
+  <div class="p-t-15 p-b-15">
+    <mat-divider></mat-divider>
+  </div>
+  <div class="d-flex d-md-flex align-items-center justify-content-between m-t-15">
+    <button mat-flat-button class="bg-secondary text-white" type="button" (click)="onDelete()">{{util.appTranslate('delete')}}</button>
+    <button mat-fab extended class="bg-secondary text-white" (click)="copyClipboard()">
+      <div class="d-flex align-items-center">
+        <ng-icon name="tablerCopy" class="icon-20 m-r-4"></ng-icon>
+        <span>
+          {{util.appTranslate('copy_path_clipboard')}}
+        </span>
+      </div>
+    </button>
+  </div>
+</div>

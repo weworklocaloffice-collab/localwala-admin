@@ -1,0 +1,337 @@
+<mat-card class="cardWithShadow">
+  <mat-card-header>
+    <div class="d-sm-flex w-100 p-b-16">
+      <div>
+        <mat-card-title>{{util.appTranslate('filter')}}</mat-card-title>
+      </div>
+    </div>
+  </mat-card-header>
+
+  <mat-card-content>
+    <div class="row">
+      <div class="col-lg-4 col-sm-12 p-b-16">
+        <mat-form-field class="w-100" appearance="outline">
+          <mat-label>{{util.appTranslate('th_created_date')}}</mat-label>
+          <mat-date-range-input [formGroup]="filterDates" [rangePicker]="filterDatePicker"
+            [comparisonStart]="filterDates.value.start" [comparisonEnd]="filterDates.value.end">
+            <input matStartDate [placeholder]="util.appTranslate('start_date')" formControlName="start" />
+            <input matEndDate [placeholder]="util.appTranslate('end_date')" formControlName="end" />
+          </mat-date-range-input>
+          <mat-datepicker-toggle matIconSuffix [for]="filterDatePicker"></mat-datepicker-toggle>
+          <mat-date-range-picker #filterDatePicker></mat-date-range-picker>
+        </mat-form-field>
+      </div>
+
+      <div class="col-lg-4 col-sm-12 p-b-16">
+        <mat-form-field appearance="outline" class="w-100">
+          <mat-label>{{util.appTranslate('transaction_type')}}</mat-label>
+          <mat-select [(ngModel)]="transactionType">
+            <mat-option value="order">{{util.appTranslate('orders')}}</mat-option>
+            <mat-option value="wallet">{{util.appTranslate('wallet')}}</mat-option>
+            <mat-option value="tiffinsubscription">{{util.appTranslate('tiffin_subscription_package')}}</mat-option>
+            <mat-option value="booking">{{util.appTranslate('th_dining_booking')}}</mat-option>
+            <mat-option value="restaurant_register">{{util.appTranslate('restaurant_register_request')}}</mat-option>
+            <mat-option value="renew_subscription">{{util.appTranslate('renew_subscription')}}</mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
+
+      <div class="col-lg-4 col-sm-12 p-b-16">
+        <mat-form-field appearance="outline" class="w-100">
+          <mat-label>{{util.appTranslate('transaction_status')}}</mat-label>
+          <mat-select [(ngModel)]="transactionStatus">
+            <mat-option value="initiated">{{util.appTranslate('initiated')}}</mat-option>
+            <mat-option value="paid">{{util.appTranslate('paid')}}</mat-option>
+            <mat-option value="cancelled">{{util.appTranslate('cancelled')}}</mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
+
+      <div class="col-lg-4 col-sm-12 p-b-16">
+        <div class="d-flex flex-sm-row flex-column align-items-start justify-content-start gap-8">
+          <button mat-flat-button color="primary" (click)="onFilter()" class="m-r-5">
+            {{util.appTranslate('filter')}}
+          </button>
+          <button mat-flat-button class="bg-secondary text-white"(click)="clearFilter()">
+            {{util.appTranslate('clear_filter')}}
+          </button>
+        </div>
+      </div>
+
+    </div>
+  </mat-card-content>
+
+</mat-card>
+
+<mat-card class="cardWithShadow">
+  <mat-card-header>
+    <div class="d-sm-flex w-100">
+      <div>
+        <mat-form-field appearance="outline" class="theme-searchbar">
+          <input matInput type="text" [(ngModel)]="searchQuery" [placeholder]="util.appTranslate('search_by_name')"
+            (keyup.enter)="onSearch()" />
+          <button mat-icon-button matSuffix (click)="onSearch()">
+            <mat-icon class="op-5">search</mat-icon>
+          </button>
+        </mat-form-field>
+      </div>
+      <div class="m-l-auto">
+        <mat-form-field class="theme-select" appearance="outline">
+          <mat-select [value]="exportType" [(ngModel)]="exportType"
+            (selectionChange)="onExportCollection($event.value)">
+            <mat-option value="export">
+              {{util.appTranslate('export_kind')}}
+            </mat-option>
+            <mat-option value="excel">
+              {{util.appTranslate('excel_export_kind')}}
+            </mat-option>
+            <mat-option value="csv">
+              {{util.appTranslate('csv_export_kind')}}
+            </mat-option>
+            <mat-option value="raw">
+              {{util.appTranslate('raw_export_kind')}}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+        <a mat-button (click)="importCollection()" class="m-l-16 bg-secondary text-white" mat-flat-button>{{util.appTranslate('import_collection_btn')}}</a>
+      </div>
+    </div>
+  </mat-card-header>
+
+  <mat-card-content>
+    <div class="table-responsive">
+      @if (!isLoaded) {
+      <table mat-table [dataSource]="util.dummyArray" class="w-100">
+        <ng-container matColumnDef="id">
+          <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1 p-l-0">
+            {{util.appTranslate('uuid')}}
+          </th>
+          <td mat-cell *matCellDef="let element" class="p-l-0">
+            <mat-progress-bar mode="indeterminate" color="light"></mat-progress-bar>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="customer">
+          <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1 p-l-0">
+            {{util.appTranslate('th_customer')}}
+          </th>
+          <td mat-cell *matCellDef="let element" class="p-l-0">
+            <mat-progress-bar mode="indeterminate" color="light"></mat-progress-bar>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="kind">
+          <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1 p-l-0">
+            {{util.appTranslate('type')}}
+          </th>
+          <td mat-cell *matCellDef="let element" class="p-l-0">
+            <mat-progress-bar mode="indeterminate" color="light"></mat-progress-bar>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="amount">
+          <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1 p-l-0">
+            {{util.appTranslate('th_amount')}}
+          </th>
+          <td mat-cell *matCellDef="let element" class="p-l-0">
+            <mat-progress-bar mode="indeterminate" color="light"></mat-progress-bar>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="status">
+          <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1 p-l-0">
+            {{util.appTranslate('th_status')}}
+          </th>
+          <td mat-cell *matCellDef="let element" class="p-l-0">
+            <mat-progress-bar mode="indeterminate" color="light"></mat-progress-bar>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="date">
+          <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1 p-l-0">
+            {{util.appTranslate('th_date')}}
+          </th>
+          <td mat-cell *matCellDef="let element" class="p-l-0">
+            <mat-progress-bar mode="indeterminate" color="light"></mat-progress-bar>
+          </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="displayedColumn"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumn"></tr>
+
+      </table>
+      }
+
+      @if (isLoaded) {
+      <table mat-table [dataSource]="reports" class="w-100">
+        <ng-container matColumnDef="id">
+          <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1 p-l-0">
+            {{util.appTranslate('th_id')}}
+          </th>
+          <td mat-cell *matCellDef="let element" class="p-l-0 f-s-14 text-uppercase">
+            {{ util.refId(element.id) }}
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="customer">
+          <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1 p-l-0">
+            {{util.appTranslate('th_customer')}}
+          </th>
+          <td mat-cell *matCellDef="let element" class="p-l-0 cursor-pointer" (click)="onUserInfo(element)">
+            <div class="d-flex align-items-center">
+              <img [src]="api.mediaUrl+element.userInfo.image" alt="users" width="40" height="40" class="rounded-circle"
+                onError="this.src='assets/images/onerror.png'" />
+              <div class="m-l-16">
+                <h6 class="f-s-14 mat-subtitle-1 f-w-600">
+                  {{ element && element.userInfo && element.userInfo.firstName ? element.userInfo.firstName +' '+
+                  element.userInfo.lastName : util.appTranslate('invalid_data') }}
+                </h6>
+                @if (element.userInfo.role == '') {
+                <span class="mat-body-1 f-s-12">
+                  {{util.appTranslate('unknown')}}
+                </span>
+                }
+                @if (element.userInfo.role == 'user') {
+                <span class="mat-body-1 f-s-12">
+                  {{util.appTranslate('th_customer')}}
+                </span>
+                }
+                @if (element.userInfo.role == 'driver') {
+                <span class="mat-body-1 f-s-12">
+                  {{util.appTranslate('system_deliveryman')}}
+                </span>
+                }
+                @if (element.userInfo.role == 'vendor') {
+                <span class="mat-body-1 f-s-12">
+                  {{util.appTranslate('restaurant')}}
+                </span>
+                }
+                @if (element.userInfo.role == 'vendorDriver') {
+                <span class="mat-body-1 f-s-12">
+                  {{util.appTranslate('vendor_deliveryman')}}
+                </span>
+                }
+                @if (element.userInfo.role == 'vendorOutlet') {
+                <span class="mat-body-1 f-s-12">
+                  {{util.appTranslate('restaurant_outlet')}}
+                </span>
+                }
+              </div>
+            </div>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="kind">
+          <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1 p-l-0">
+            {{util.appTranslate('type')}}
+          </th>
+          <td mat-cell *matCellDef="let element" class="f-s-14">
+            @if (element.paymentFrom == 'order') {
+            <div class="m-l-0 cursor-pointer" (click)="onTransactionClick(element)">
+              <h6 class="mat-subtitle-1 f-s-14 f-w-600">
+                {{util.appTranslate('order')}}
+              </h6>
+              <h6 class="mat-subtitle-1 f-s-14 f-w-600">
+                {{ element.orderInfo.orderNo }}
+              </h6>
+              <span class="mat-body-1 f-s-10">
+                {{util.appTranslate('ref')}}: {{ util.refId(element.orderInfo.id) }}
+              </span>
+            </div>
+            }
+
+            @if (element.paymentFrom == 'wallet') {
+            <div class="m-l-0 cursor-pointer" (click)="onTransactionClick(element)">
+              <h6 class="mat-subtitle-1 f-s-14 f-w-600">
+                {{util.appTranslate('wallet')}}
+              </h6>
+            </div>
+            }
+
+            @if (element.paymentFrom == 'tiffinsubscription') {
+            <div class="m-l-0 cursor-pointer" (click)="onTransactionClick(element)">
+              <h6 class="mat-subtitle-1 f-s-14 f-w-600">
+                {{util.appTranslate('tiffin_subscription_package')}}
+              </h6>
+              <span class="mat-body-1 f-s-12">
+                {{ util.refId(element.tiffinSubscriptionPackageInfo.id) }}
+              </span>
+            </div>
+            }
+
+            @if (element.paymentFrom == 'booking') {
+            <div class="m-l-0 cursor-pointer" (click)="onTransactionClick(element)">
+              <h6 class="mat-subtitle-1 f-s-14 f-w-600">
+                {{util.appTranslate('th_dining_booking')}}
+              </h6>
+              <span class="mat-body-1 f-s-12">
+                {{ util.refId(element.diningBookingInfo.id) }}
+              </span>
+            </div>
+            }
+
+            @if (element.paymentFrom == 'restaurant_register') {
+            <div class="m-l-0 cursor-pointer" (click)="onTransactionClick(element)">
+              <h6 class="mat-subtitle-1 f-s-14 f-w-600">
+                {{util.appTranslate('restaurant_register_request')}}
+              </h6>
+            </div>
+            }
+
+            @if (element.paymentFrom == 'renew_subscription') {
+            <div class="m-l-0 cursor-pointer" (click)="onTransactionClick(element)">
+              <h6 class="mat-subtitle-1 f-s-14 f-w-600">
+                {{util.appTranslate('renew_subscription_package')}}
+              </h6>
+            </div>
+            }
+
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="amount">
+          <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1 p-l-0">
+            {{util.appTranslate('th_amount')}}
+          </th>
+          <td mat-cell *matCellDef="let element" class="f-s-14">
+            <h6 class="mat-subtitle-1 f-s-14 f-w-600">
+              {{ util.priceFormat(element.amount) }}
+            </h6>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="status">
+          <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1 p-l-0">
+            {{util.appTranslate('th_status')}}
+          </th>
+          <td mat-cell *matCellDef="let element" class="f-s-14">
+            <h6 class="mat-subtitle-1 f-s-14 f-w-600">
+              {{element.status | uppercase}}
+            </h6>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="date">
+          <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1 p-l-0">
+            {{util.appTranslate('th_date')}}
+          </th>
+          <td mat-cell *matCellDef="let element" class="f-s-14">
+            {{ getDate(element.createdAt) }}
+          </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="displayedColumn"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumn"></tr>
+
+        <tr *matNoDataRow>
+          <td colspan="5" class="m-b-16 m-t-16 text-center">{{util.appTranslate('table_no_data_found')}}</td>
+        </tr>
+
+      </table>
+      }
+
+      <mat-paginator [hidden]="!isLoaded" #paginator [pageSizeOptions]="[5,10, 20]" [pageSize]="pageSize"
+        (page)="onPageChange($event)" showFirstLastButtons></mat-paginator>
+    </div>
+  </mat-card-content>
+</mat-card>

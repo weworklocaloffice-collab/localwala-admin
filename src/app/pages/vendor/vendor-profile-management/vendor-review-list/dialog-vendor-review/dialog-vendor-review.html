@@ -1,0 +1,44 @@
+<h2 mat-dialog-title class="dialog-title">
+  <span class="title-text">{{util.appTranslate('review_detail')}}</span>
+  <button mat-icon-button mat-dialog-close class="close-btn">
+    <mat-icon>close</mat-icon>
+  </button>
+</h2>
+<mat-dialog-content class="mat-typography m-t-12 p-t-12">
+  <mat-card class="cardWithShadow">
+    <mat-card-content class="text-center p-y-24">
+      <img [src]="api.mediaUrl+detail.userInfo.image" class="rounded-circle" width="80" height="80"
+        onError="this.src='assets/images/onerror.png'" />
+      <mat-card-subtitle class="mat-body-2 f-w-600 m-l-12 text-center m-t-16">
+        {{detail && detail.userInfo && detail.userInfo.firstName ? detail.userInfo.firstName +' '+
+        detail.userInfo.lastName :util.appTranslate('invalid_data')}}
+      </mat-card-subtitle>
+      <mat-card-subtitle class="f-s-12 mat-body-1">
+        <span class="d-flex align-items-center justify-content-center">
+          <ng-icon name="tablerStars" class="icon-18 m-r-4"></ng-icon>
+          {{ detail.ratingCount }} {{detail.orders != null &&
+          detail.orders !='' ? util.appTranslate('verified') :''}} ({{getDate(detail.createdAt)}})
+        </span>
+      </mat-card-subtitle>
+
+      <p class="mat-body-1 m-t-16">
+        {{detail.shortReview}}
+      </p>
+      @for (hashtag of detail.hashtags; track $index) {
+      <p class="mat-body-1 m-t-16">
+        <ng-icon name="tablerQuote" class="icon-12"></ng-icon>
+        {{getTranslatedHashtag(hashtag)}}
+      </p>
+      }
+      <div class="d-flex align-items-center gap-6 m-t-16">
+        @for (img of detail.images; track $index) {
+        <img [src]="api.mediaUrl+img" onError="this.src='assets/images/onerror.png'" alt="user1" class="rounded"
+          width="40" height="40" />
+        }
+      </div>
+    </mat-card-content>
+  </mat-card>
+</mat-dialog-content>
+<mat-dialog-actions align="end">
+  <button mat-flat-button class="bg-secondary text-white" mat-dialog-close>{{util.appTranslate('cancel_btn')}}</button>
+</mat-dialog-actions>

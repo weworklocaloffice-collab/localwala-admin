@@ -1,0 +1,190 @@
+<div class="row">
+  <div class="col-lg-8 col-sm-12 p-b-16">
+    <mat-card class="cardWithShadow theme-card">
+      <mat-card-header>
+        <mat-card-title class="m-b-0">{{util.appTranslate('booking_details')}}</mat-card-title>
+      </mat-card-header>
+
+      <mat-card-content class="b-t-0">
+        <div class="row m-b-10">
+          <div class="col-sm-6">
+            <span class="f-w-600 f-s-15 mat-body-1"> {{util.appTranslate('booking_id')}}: <span
+                class="m-b-0 f-w-500 f-s-14 mat-body-2">{{util.refId(id) | uppercase}}</span> </span>
+          </div>
+          <div class="col-sm-6 text-right">
+            <span class="f-w-600 f-s-15 mat-body-1"> {{util.appTranslate('booking_time')}}: <span
+                class="m-b-0 f-w-500 f-s-14 mat-body-2">{{bookingDate}} {{bookingSlot}}</span> </span>
+          </div>
+        </div>
+
+        <div class="row m-b-10">
+          <div class="col-sm-6">
+            <span class="f-w-600 f-s-15 mat-body-1"> {{util.appTranslate('th_payment')}}: <span
+                class="m-b-0 f-w-500 f-s-14 mat-body-2">{{paymentName}}</span></span>
+          </div>
+          <div class="col-sm-6 text-right">
+            <span class="f-w-600 f-s-15 mat-body-1"> {{util.appTranslate('th_grand_total')}}:<span
+                class="m-b-0 f-w-500 f-s-14 mat-body-2">
+                {{util.priceFormat(grandTotal)}} </span></span>
+          </div>
+        </div>
+
+        <div class="row m-b-20">
+          <div class="col-sm-6">
+            <span class="f-w-600 f-s-15 mat-body-1"> {{util.appTranslate('booking_status')}}: <span
+                class="m-b-0 f-w-500 f-s-14 mat-body-2">{{ util.appTranslate(status) }}</span></span>
+          </div>
+        </div>
+
+        <mat-divider></mat-divider>
+
+        <div class="text-right m-t-30">
+          <h5 class="m-b-5 f-w-600 f-s-14">
+            {{util.appTranslate('th_pre_booking_charge')}} : <span
+              class="f-w-100 f-s-14 m-l-16">{{util.priceFormat(preBookingCharge)}}</span>
+          </h5>
+
+          <h5 class="m-b-5 f-w-600 f-s-14">
+            {{util.appTranslate('th_coupon_cover_charge')}} : <span
+              class="f-w-100 f-s-14 m-l-16">{{util.priceFormat(couponCoverCharge)}}</span>
+          </h5>
+
+          @if (couponName != '') {
+          <div class="row m-b-10">
+            <div class="col-sm-12">
+              <span class="f-w-600 f-s-15 mat-body-1"> {{util.appTranslate('coupon')}}:
+                <span class="m-b-0 f-w-500 f-s-14 mat-body-2">{{couponName}}</span>
+              </span>
+            </div>
+          </div>
+          }
+
+          @if (couponName != '') {
+          <h5 class="m-b-5 f-w-600 f-s-14">
+            {{util.appTranslate('coupon_min_discount')}} : <span class="f-w-100 f-s-14 m-l-16">{{ couponType == 'amount'
+              ?
+              util.priceFormat(couponMinDiscount) : couponMinDiscount+'%'}}</span>
+          </h5>
+          }
+
+          @if (couponName != '' && couponMaxDiscount) {
+          <h5 class="m-b-5 f-w-600 f-s-14">
+            {{util.appTranslate('coupon_max_discount')}} : <span class="f-w-100 f-s-14 m-l-16">{{ couponType == 'amount'
+              ?
+              util.priceFormat(couponMaxDiscount) : couponMaxDiscount+'%'}}</span>
+          </h5>
+          }
+
+          @if (specialRequest != '') {
+          <div class="row m-b-10">
+            <div class="col-sm-12">
+              <span class="f-w-600 f-s-15 mat-body-1"> {{util.appTranslate('special_instruction')}}:
+                <span class="m-b-0 f-w-500 f-s-14 mat-body-2">{{specialRequest}}</span>
+              </span>
+            </div>
+          </div>
+          }
+
+          <h3 class="m-b-0 b-t-1 p-t-20 f-s-18">
+            {{util.appTranslate('th_grand_total')}}: {{util.priceFormat(grandTotal)}}
+          </h3>
+
+        </div>
+      </mat-card-content>
+    </mat-card>
+  </div>
+
+  <div class="col-lg-4 col-sm-12 p-b-16">
+    <mat-card class="cardWithShadow theme-card">
+      <mat-card-header>
+        <mat-card-title class="m-b-0">
+          {{util.appTranslate('th_action')}}
+        </mat-card-title>
+      </mat-card-header>
+
+      <mat-card-content class="b-t-0">
+        <div class="row">
+          <div class="col-sm-4 col-md-4">
+            <h6 class="text-muted mat-body-1">{{util.appTranslate('booking_time')}}</h6>
+          </div>
+          <div class="col-sm-1 col-md-1">
+            <h6 class="text-muted mat-body-1"> : </h6>
+          </div>
+          <div class="col-sm-7 col-md-7">
+            <h6 class="f-w-500 mat-body-1 m-t-0">{{bookingDate}} {{bookingSlot}}</h6>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-sm-4 col-md-4">
+            <h6 class="text-muted mat-body-1">{{util.appTranslate('th_grand_total')}}</h6>
+          </div>
+          <div class="col-sm-1 col-md-1">
+            <h6 class="text-muted mat-body-1"> : </h6>
+          </div>
+          <div class="col-sm-7 col-md-7">
+            <h6 class="f-w-500 mat-body-1 m-t-0">{{util.priceFormat(grandTotal)}} ({{paymentName}})</h6>
+          </div>
+        </div>
+
+        @if (status =='created') {
+        <div class="row m-t-20 d-flex align-items-center justify-content-between">
+          @if (restaurantCanCancelRequest) {
+          <button mat-flat-button class="m-r-8" color="primary" (click)="rejectBooking()">
+            {{util.appTranslate('reject_booking')}}
+          </button>
+          }
+          <button mat-flat-button class="bg-secondary text-white" (click)="acceptBooking()">
+            {{util.appTranslate('accept_booking')}}
+          </button>
+        </div>
+        }
+
+        @if (status == 'accepted') {
+        <div class="row m-t-20 d-flex align-items-center">
+          <button mat-flat-button class="w-100 bg-secondary text-white" (click)="completeBooking()">
+            {{util.appTranslate('mark_as_complete')}}
+          </button>
+        </div>
+        }
+
+      </mat-card-content>
+    </mat-card>
+
+    <mat-card class="cardWithShadow theme-card">
+      <mat-card-header>
+        <mat-card-title class="m-b-0">
+          {{util.appTranslate('customer_details')}}
+        </mat-card-title>
+      </mat-card-header>
+
+      <mat-card-content class="b-t-1 text-center p-24">
+        <img [src]="api.mediaUrl+userInfoImage" class="rectangle-image border p-5" width="90" height="90"
+          onError="this.src='assets/images/onerror.png'" />
+        <h4 class="m-t-16 m-b-0 text-center">
+          {{userInfoName}} {{ userInfoRole =='guest' ? '(' + util.appTranslate('dd_guest') + ')':'' }}
+        </h4>
+        <span class="f-s-12">{{ userInfoEmail }}</span> <br>
+        <div class="m-t-10">
+          <span class="f-s-14">
+            {{util.appTranslate('mobile_number')}} {{ userInfoContact }}
+          </span>
+        </div>
+
+        <div class="m-t-20">
+          @if (canInitiateCall) {
+          <button mat-flat-button class="m-r-8" color="primary" (click)="onChatOrContact('user','call')">
+            {{util.appTranslate('call')}}
+          </button>
+          }
+          @if (canInitiateChat) {
+          <button mat-flat-button class="bg-secondary text-white" (click)="onChatOrContact('user','chat')">
+            {{util.appTranslate('chat')}}
+          </button>
+          }
+        </div>
+
+      </mat-card-content>
+    </mat-card>
+
+  </div>
+</div>

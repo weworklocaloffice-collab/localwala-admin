@@ -1,0 +1,62 @@
+<h2 mat-dialog-title class="dialog-title">
+  <span class="title-text">{{ util.appTranslate('dairy_change_status_title') }}</span>
+  <button mat-icon-button mat-dialog-close class="close-btn">
+    <mat-icon>close</mat-icon>
+  </button>
+</h2>
+
+<mat-dialog-content>
+  <p class="m-b-8 f-w-600">{{ row.settlementNo }}</p>
+  <p class="m-b-16 f-s-14 text-muted">
+    {{ util.appTranslate('dairy_status') }}: {{ util.appTranslate('dairy_status_' + row.status) }} →
+    <span class="f-w-600">{{ util.appTranslate('dairy_status_' + status) }}</span>
+  </p>
+
+  @if (status == 'void') {
+    <div class="mb-16 p-16 f-s-14" style="border-left: 4px solid #f44336; background: #fff5f5">
+      {{ util.appTranslate('ts_void_settlement_warning') }}
+    </div>
+  }
+
+  @if (status == 'approved') {
+    <p class="m-b-16 f-s-14 text-muted">{{ util.appTranslate('ts_approve_settlement_body') }}</p>
+  }
+
+  <form [formGroup]="statusForm">
+    <mat-form-field appearance="outline" class="w-100">
+      <mat-label>{{ util.appTranslate('th_reason') }}</mat-label>
+      <textarea
+        matInput
+        formControlName="reason"
+        rows="2"
+        [placeholder]="
+          status == 'void'
+            ? util.appTranslate('ph_reason_required')
+            : util.appTranslate('ph_reason_optional')
+        "
+      ></textarea>
+      @if (haveSubmitClicked && reasonRequired) {
+        <mat-hint class="m-b-16 error-msg">
+          <div class="text-error">{{ util.appTranslate('form_required') }}</div>
+        </mat-hint>
+      }
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="w-100">
+      <mat-label>{{ util.appTranslate('dairy_notes') }}</mat-label>
+      <textarea matInput formControlName="notes" rows="2"></textarea>
+    </mat-form-field>
+  </form>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-stroked-button (click)="onCancel()">{{ util.appTranslate('ts_cancel') }}</button>
+  <button
+    mat-flat-button
+    [color]="status == 'void' ? 'warn' : 'primary'"
+    [disabled]="isSubmit"
+    (click)="onConfirm()"
+  >
+    {{ util.appTranslate('ts_confirm') }}
+  </button>
+</mat-dialog-actions>

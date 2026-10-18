@@ -1,0 +1,24 @@
+<mat-card class="cardWithShadow theme-card">
+  <mat-card-header>
+    <mat-card-title class="m-b-0">
+      {{util.appTranslate('restaurant_report_issues')}}
+    </mat-card-title>
+  </mat-card-header>
+
+  <mat-card-content class="b-t-0">
+    <mat-tab-group mat-stretch-tabs="false" [selectedIndex]="tabIndex" mat-align-tabs="start"
+      (selectedTabChange)="tabChanged($event)">
+      <mat-tab [label]="util.appTranslate('reports')"></mat-tab>
+
+      <mat-tab [label]="util.appTranslate('reason_list')"></mat-tab>
+
+    </mat-tab-group>
+  </mat-card-content>
+</mat-card>
+
+@if(tabIndex == 0){
+<app-report-issue-restaurant-list></app-report-issue-restaurant-list>
+}
+@if(tabIndex == 1){
+<app-report-issue-restaurant-reason></app-report-issue-restaurant-reason>
+}

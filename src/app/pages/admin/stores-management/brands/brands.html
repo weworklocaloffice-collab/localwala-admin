@@ -1,0 +1,156 @@
+<mat-card class="cardWithShadow">
+  <mat-card-header class="m-b-16">
+    <mat-card-title>{{ util.appTranslate(listTitleKey) }}</mat-card-title>
+  </mat-card-header>
+
+  <mat-card-content>
+    <div class="d-flex flex-wrap align-center justify-content-between mb-24 gap-12">
+      <div class="search-box">
+        <mat-form-field appearance="outline" class="w-100">
+          <mat-label>{{ util.appTranslate('th_search') }}</mat-label>
+          <input
+            matInput
+            [(ngModel)]="searchQuery"
+            (keyup.enter)="onSearch()"
+            [placeholder]="util.appTranslate('th_search')"
+          />
+        </mat-form-field>
+      </div>
+
+      <div class="d-flex gap-12 align-center">
+        <mat-form-field appearance="outline" class="w-150">
+          <mat-label>{{ util.appTranslate('th_status') }}</mat-label>
+          <mat-select [(ngModel)]="statusFilter" (selectionChange)="onStatusFilter($event.value)">
+            <mat-option value="">{{ util.appTranslate('common_all') }}</mat-option>
+            <mat-option value="pending">{{ util.appTranslate('stores_brand_pending') }}</mat-option>
+            <mat-option value="approved">{{ util.appTranslate('stores_brand_approved') }}</mat-option>
+            <mat-option value="rejected">{{ util.appTranslate('stores_brand_rejected') }}</mat-option>
+            <mat-option value="archived">{{ util.appTranslate('stores_brand_archived') }}</mat-option>
+          </mat-select>
+        </mat-form-field>
+
+        @if (util.hasRight('stores_taxonomy_write')) {
+          <button mat-flat-button color="primary" (click)="onCreate()">
+            <mat-icon>add</mat-icon>
+            {{ util.appTranslate('ts_add_new') }}
+          </button>
+        }
+      </div>
+    </div>
+
+    <div class="table-responsive">
+      <table mat-table [dataSource]="list" class="w-100">
+        <ng-container matColumnDef="name">
+          <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1">
+            {{ util.appTranslate('th_name') }}
+          </th>
+          <td mat-cell *matCellDef="let element">
+            <div class="f-w-600">{{ element.name }}</div>
+            @if (element.originCountry) {
+              <div class="m-t-4 f-s-12 text-muted">{{ element.originCountry }}</div>
+            }
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="categories">
+          <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1">
+            {{ util.appTranslate('stores_categories') }}
+          </th>
+          <td mat-cell *matCellDef="let element">
+            <!--
+              Shown first and explicitly, because "approved with no category" is refused
+              by the API. An operator seeing the approved chip beside an empty cell
+              understands the rule without reading a 409.
+            -->
+            @if ((element.categories || []).length) {
+              <span class="f-s-14">
+                {{
+                  element.categories[0].name +
+                    ((element.categories || []).length > 1
+                      ? ' +' + (element.categories.length - 1)
+                      : '')
+                }}
+              </span>
+            } @else {
+              <span class="f-s-12 text-error">
+                {{ util.appTranslate('stores_no_category') }}
+              </span>
+            }
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="aliases">
+          <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1">
+            {{ util.appTranslate('stores_aliases') }}
+          </th>
+          <td mat-cell *matCellDef="let element">
+            <span class="f-s-12">{{ (element.aliases || []).join(', ') || '—' }}</span>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="status">
+          <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1">
+            {{ util.appTranslate('th_status') }}
+          </th>
+          <td mat-cell *matCellDef="let element">
+            <span class="status-chip" [ngClass]="element.status">{{ element.status }}</span>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="verified">
+          <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1">
+            {{ util.appTranslate('stores_verified') }}
+          </th>
+          <td mat-cell *matCellDef="let element">
+            @if (element.isVerified) {
+              <mat-icon class="text-success">verified</mat-icon>
+            } @else {
+              <span class="f-s-14 text-muted">—</span>
+            }
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="action">
+          <th mat-header-cell *matHeaderCellDef></th>
+          <td mat-cell *matCellDef="let element">
+            @if (util.hasRight('stores_taxonomy_write')) {
+              <a
+                (click)="onEdit(element)"
+                class="m-r-10 cursor-pointer text-primary"
+                [matTooltip]="util.appTranslate('click_to_edit')"
+              >
+                <mat-icon>edit</mat-icon>
+              </a>
+              <a
+                (click)="onArchive(element)"
+                class="m-r-10 cursor-pointer text-error"
+                [matTooltip]="util.appTranslate('stores_archive')"
+              >
+                <mat-icon>archive</mat-icon>
+              </a>
+            }
+          </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="displayedColumn"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumn"></tr>
+      </table>
+
+      @if (isLoaded && !list.length) {
+        <div class="p-24 text-center text-muted">
+          {{ util.appTranslate('ts_no_records_found') }}
+        </div>
+      }
+    </div>
+
+    <mat-paginator
+      [hidden]="!isLoaded"
+      #paginator
+      [pageSizeOptions]="[5, 10, 20]"
+      [pageSize]="pageSize"
+      (page)="onPageChange($event)"
+      showFirstLastButtons
+    >
+    </mat-paginator>
+  </mat-card-content>
+</mat-card>

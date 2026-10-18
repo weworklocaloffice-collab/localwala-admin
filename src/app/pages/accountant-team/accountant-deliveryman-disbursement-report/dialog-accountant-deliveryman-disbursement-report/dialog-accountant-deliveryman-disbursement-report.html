@@ -1,0 +1,77 @@
+<h2 mat-dialog-title class="dialog-title">
+  <span class="title-text">{{util.appTranslate('disbursement_detail')}}</span>
+  <button mat-icon-button mat-dialog-close class="close-btn">
+    <mat-icon>close</mat-icon>
+  </button>
+</h2>
+<mat-dialog-content class="mat-typography">
+  <div class="row">
+    <div class="col-lg-12 col-sm-12 col-md-12 p-b-4">
+      <h6 class="text-muted mat-body-1">{{util.appTranslate('disbursement_created_at')}} :
+        <span class="f-s-14 f-w-600">{{createdAt}}</span>
+      </h6>
+      <h6 class="text-muted mat-body-1">{{util.appTranslate('disbursement_amount')}} :
+        <span class="f-s-14 f-w-600">{{util.priceFormat(disbursementAmount)}}</span>
+      </h6>
+    </div>
+  </div>
+
+  <h3 class="mat-body-2 f-w-600 m-t-16 m-b-16">{{util.appTranslate('deliveryman_information')}}</h3>
+
+  <div class="row">
+    <div class="col-lg-12 col-sm-12 col-md-12 p-b-4">
+      <h6 class="text-muted mat-body-1">{{util.appTranslate('th_name')}} :
+        <span class="f-s-14 f-w-600">{{deliverymanName}}</span>
+      </h6>
+      <h6 class="text-muted mat-body-1">{{util.appTranslate('role')}} :
+        <span class="f-s-14 f-w-600">
+          {{ deliverymanRole == 'driver' ? util.appTranslate('system_deliveryman') :
+          util.appTranslate('vendor_deliveryman')}}
+        </span>
+      </h6>
+      <h6 class="text-muted mat-body-1">{{util.appTranslate('email_lbl')}} :
+        <span class="f-s-14 f-w-600">{{deliverymanEmail}}</span>
+      </h6>
+      <h6 class="text-muted mat-body-1">{{util.appTranslate('contact_no')}} :
+        <span class="f-s-14 f-w-600">{{deliverymanMobile}}</span>
+      </h6>
+    </div>
+  </div>
+
+  <h3 class="mat-body-2 f-w-600 m-t-16 m-b-16">{{util.appTranslate('payout_method')}}</h3>
+
+  <div class="row">
+    <div class="col-lg-12 col-sm-12 col-md-12 p-b-4">
+      <h6 class="text-muted mat-body-1">{{util.appTranslate('th_name')}} :
+        <span class="f-s-14 f-w-600">{{payoutMethodName}}</span>
+      </h6>
+    </div>
+  </div>
+
+  <h3 class="mat-body-2 f-w-600 m-t-16 m-b-16">{{util.appTranslate('payout_creds')}}</h3>
+
+  <div class="row">
+    @for (item of payoutCredential; track $index) {
+    <div class="col-lg-12 col-sm-12 col-md-12 p-b-4">
+      <h6 class="text-muted mat-body-1">{{item.fieldName}} :
+        <span class="f-s-14 f-w-600">{{item.fieldValue}}</span>
+      </h6>
+    </div>
+    }
+  </div>
+
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-flat-button class="bg-secondary text-white" mat-dialog-close>{{util.appTranslate('close')}}</button>
+  @if (status == 'created') {
+  <button mat-flat-button color="primary" cdkFocusInitial [disabled]="isSubmit == true" (click)="onAccept()">
+    @if (isSubmit == true) {
+    <mat-icon>
+      <mat-spinner diameter="15"></mat-spinner>
+    </mat-icon>
+    }
+    {{util.appTranslate('complete_disbursement')}}
+  </button>
+  }
+</mat-dialog-actions>

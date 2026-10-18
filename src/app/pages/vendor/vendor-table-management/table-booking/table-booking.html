@@ -1,0 +1,83 @@
+<mat-card class="cardWithShadow theme-card">
+  <mat-card-header>
+    <mat-card-title class="m-b-0">
+      {{util.appTranslate('table_bookings')}}
+    </mat-card-title>
+  </mat-card-header>
+
+  <mat-card-content class="b-t-0">
+    <mat-tab-group mat-stretch-tabs="false" [selectedIndex]="tabIndex" mat-align-tabs="start"
+      (selectedTabChange)="tabChanged($event)">
+
+      <mat-tab>
+        <ng-template matTabLabel>
+          <span>{{util.appTranslate('new_bookings')}}</span>
+        </ng-template>
+      </mat-tab>
+
+      <mat-tab>
+        <ng-template matTabLabel>
+          <span>{{util.appTranslate('accepted_bookings')}}</span>
+        </ng-template>
+      </mat-tab>
+
+      <mat-tab>
+        <ng-template matTabLabel>
+          <span>{{util.appTranslate('completed_bookings')}}</span>
+        </ng-template>
+      </mat-tab>
+
+      <mat-tab>
+        <ng-template matTabLabel>
+          <span>{{util.appTranslate('cancelled_bookings')}}</span>
+        </ng-template>
+      </mat-tab>
+
+      <mat-tab>
+        <ng-template matTabLabel>
+          <span>{{util.appTranslate('rejected_bookings')}}</span>
+        </ng-template>
+      </mat-tab>
+
+      <mat-tab>
+        <ng-template matTabLabel>
+          <span>{{util.appTranslate('refunded_bookings')}}</span>
+        </ng-template>
+      </mat-tab>
+
+      <mat-tab>
+        <ng-template matTabLabel>
+          <span>{{util.appTranslate('partially_refunded_bookings')}}</span>
+        </ng-template>
+      </mat-tab>
+    </mat-tab-group>
+  </mat-card-content>
+</mat-card>
+
+@if (tabIndex == 0) {
+<app-new-table-booking></app-new-table-booking>
+}
+
+@if (tabIndex == 1) {
+<app-accepted-table-booking></app-accepted-table-booking>
+}
+
+@if (tabIndex == 2) {
+<app-completed-table-booking></app-completed-table-booking>
+}
+
+@if (tabIndex == 3) {
+<app-cancelled-table-booking></app-cancelled-table-booking>
+}
+
+@if (tabIndex == 4) {
+<app-rejected-table-booking></app-rejected-table-booking>
+}
+
+@if (tabIndex == 5) {
+<app-refunded-table-booking></app-refunded-table-booking>
+}
+
+@if (tabIndex == 6) {
+<app-partially-refunded-table-booking></app-partially-refunded-table-booking>
+}

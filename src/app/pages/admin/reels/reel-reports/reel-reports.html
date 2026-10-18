@@ -1,0 +1,78 @@
+<mat-card class="cardWithShadow">
+  <mat-card-header>
+    <mat-card-title>{{util.appTranslate('reel_reports')}}</mat-card-title>
+  </mat-card-header>
+
+  <mat-card-content>
+    <mat-tab-group (selectedTabChange)="onTabChange($event.index)" mat-stretch-tabs="false">
+      <mat-tab [label]="util.appTranslate('th_all')"></mat-tab>
+      @for (status of statuses; track status) {
+      <mat-tab [label]="status"></mat-tab>
+      }
+    </mat-tab-group>
+
+    <div class="table-responsive">
+      <table mat-table [dataSource]="reports" class="w-100">
+        <ng-container matColumnDef="reel">
+          <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1 p-l-0">
+            {{util.appTranslate('th_reel')}}
+          </th>
+          <td mat-cell *matCellDef="let element" class="p-l-0">{{reelLabel(element)}}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="reporter">
+          <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1">
+            {{util.appTranslate('th_reporter')}}
+          </th>
+          <td mat-cell *matCellDef="let element">{{reporterLabel(element)}}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="reason">
+          <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1">
+            {{util.appTranslate('th_reason')}}
+          </th>
+          <td mat-cell *matCellDef="let element">{{element.reason}}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="status">
+          <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1">
+            {{util.appTranslate('th_status')}}
+          </th>
+          <td mat-cell *matCellDef="let element"><mat-chip>{{element.status}}</mat-chip></td>
+        </ng-container>
+
+        <ng-container matColumnDef="created">
+          <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1">
+            {{util.appTranslate('th_created')}}
+          </th>
+          <td mat-cell *matCellDef="let element">{{element.createdAt | date:'short'}}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="action">
+          <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1 p-r-0 text-right">
+            {{util.appTranslate('th_action')}}
+          </th>
+          <td mat-cell *matCellDef="let element" class="p-r-0 text-right">
+            <button mat-icon-button [matMenuTriggerFor]="menu">
+              <mat-icon>more_vert</mat-icon>
+            </button>
+            <mat-menu #menu="matMenu">
+              @for (decision of decisions; track decision) {
+              <button mat-menu-item (click)="review(element, decision)" [disabled]="element.status !== 'OPEN' && element.status !== 'REVIEWING'">{{decision}}</button>
+              }
+            </mat-menu>
+          </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="displayedColumn"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumn;"></tr>
+      </table>
+
+      @if (isLoaded && reports.data.length === 0) {
+      <div class="text-center op-5 p-16">{{util.appTranslate('th_no_records')}}</div>
+      }
+
+      <mat-paginator #paginator [pageSize]="pageSize" [pageSizeOptions]="[5, 10, 20, 50]" (page)="onPageChange($event)" showFirstLastButtons></mat-paginator>
+    </div>
+  </mat-card-content>
+</mat-card>

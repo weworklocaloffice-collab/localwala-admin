@@ -1,0 +1,12 @@
+<mat-card class="bg-light-primary cardWithShadow">
+  <mat-card-content class="p-y-24 text-center register-request-saved">
+    <img src="assets/images/request_saved.png" alt="request saved" class="img">
+    <h4 class="mat-headline-5 f-w-600 f-s-18 m-t-30 m-b-30 title-lbl text-center">
+      {{ util.appTranslate('register_request_saved_title') }}
+    </h4>
+    <p class="mat-body-1 sub-title-lbl text-center m-b-16">
+      {{ util.appTranslate('register_request_saved_sub_title') }}
+    </p>
+    <button mat-flat-button color="primary" (click)="onHome()">{{ util.appTranslate('thank_you_btn') }}</button>
+  </mat-card-content>
+</mat-card>

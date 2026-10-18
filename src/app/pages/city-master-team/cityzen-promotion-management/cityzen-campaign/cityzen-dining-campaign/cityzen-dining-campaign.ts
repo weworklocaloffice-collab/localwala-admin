@@ -1,0 +1,182 @@
+import { Component, ViewChild } from '@angular/core';
+import { HttpParams } from '@angular/common/http';
+import { MatDialog } from '@angular/material/dialog';
+import { MatPaginator, PageEvent } from '@angular/material/paginator';
+import { MatSlideToggleChange } from '@angular/material/slide-toggle';
+import { MatTableDataSource } from '@angular/material/table';
+import { Router } from '@angular/router';
+import { DateTime } from 'luxon';
+import { CityzenDiningCampaignListInterface } from 'src/app/interfaces/cityzen.dining.campaign.list.interface';
+import { ApiService } from 'src/app/services/api-service';
+import { UtilService } from 'src/app/services/util-service';
+import { ConfirmDialog } from 'src/app/ui-components/confirm-dialog/confirm-dialog';
+import { DialogCityzenDiningCampaignRequest } from './dialog-cityzen-dining-campaign-request/dialog-cityzen-dining-campaign-request';
+import { CommonModule } from '@angular/common';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { MaterialModule } from 'src/app/material.module';
+
+@Component({
+  selector: 'app-cityzen-dining-campaign',
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, MaterialModule],
+  templateUrl: './cityzen-dining-campaign.html',
+})
+export class CityzenDiningCampaign {
+
+  @ViewChild('paginator', { read: MatPaginator }) paginator: MatPaginator;
+  campaigns = new MatTableDataSource<CityzenDiningCampaignListInterface>([]);
+  displayedColumn = ['title', 'duration', 'time', 'restaurant', 'request', 'status', 'action'];
+  pageSize: number = 5;
+  currentPage: number = 0;
+  isLoaded: boolean = false;
+  searchQuery: string = '';
+
+  constructor(
+    public api: ApiService,
+    public util: UtilService,
+    private router: Router,
+    private dialog: MatDialog
+  ) {
+    this.getList();
+  }
+
+  getList() {
+    this.isLoaded = false;
+    const param: any = {
+      'limit': this.pageSize,
+      'page': this.currentPage,
+      'search': this.searchQuery,
+    };
+    let httpParams = new HttpParams();
+    Object.keys(param).forEach((key: any) => {
+      httpParams = httpParams.set(key, param[key]);
+    });
+    this.api.get_private('v1/cityzen/dining_campaign_list/' + this.util.getItem('_uid') + '?' + httpParams.toString()).subscribe({
+      next: (response: any) => {
+        console.log(response);
+        this.isLoaded = true;
+        if (response && response.results) {
+          const mappedList = response.results.map(
+            (item: CityzenDiningCampaignListInterface) => {
+              if (item.translations) {
+                const translation = item.translations.find((t) => t.code == this.util.appLocaleName());
+                item.displayName = translation?.title || item.title;
+              } else {
+                item.displayName = item?.title || '';
+              }
+              return item;
+            }
+          );
+          this.campaigns = new MatTableDataSource<CityzenDiningCampaignListInterface>(mappedList);
+          this.paginator.length = response.totalResults;
+          this.paginator.hidePageSize = response.totalResults <= 0 ? true : false;
+          console.log(this.campaigns);
+        }
+      }, error: (error: any) => {
+        console.log(error);
+        this.isLoaded = true;
+        this.util.handleError(error, 'cityzen');
+      }
+    });
+  }
+
+  onAddCampaign() {
+    this.router.navigate(['cityzen-team/u/add-dining-campaign']);
+  }
+
+  onStatusChange(event: MatSlideToggleChange, campaigns: CityzenDiningCampaignListInterface) {
+    console.log(event);
+    console.log(campaigns);
+    campaigns.status = event.checked;
+    this.api.patch_private('v1/cityzen/update_dining_campaign_status/' + campaigns.id, { status: event.checked }).subscribe({
+      next: (response: any) => {
+        console.log(response);
+        this.util.onSuccess('ts_status_updated');
+      }, error: (error: any) => {
+        console.log(error);
+        this.util.handleError(error, 'cityzen');
+      }
+    });
+  }
+
+  onEdit(campaigns: CityzenDiningCampaignListInterface) {
+    console.log(campaigns);
+    console.log(campaigns.id);
+    this.router.navigate(['cityzen-team/u/manage-dining-campaign', campaigns.id]);
+  }
+
+  onDelete(campaigns: CityzenDiningCampaignListInterface) {
+    console.log(campaigns);
+    const dialogRef = this.dialog.open(ConfirmDialog, {
+      data: { title: 'ts_are_you_sure', subTitle: 'ts_campaign_will_removed_instruction', okTitle: 'ts_yes_delete_it', closeTitle: 'ts_cancel' },
+      disableClose: true
+    });
+    dialogRef.afterClosed().subscribe((result) => {
+      console.log(result);
+      if (result && result.action && result.action == "confirm") {
+        console.log('confirmed');
+        const spinnerRef = this.util.start();
+        this.api.delete_private('v1/cityzen/delete_dining_campaign/' + campaigns.id).subscribe({
+          next: (response: any) => {
+            console.log(response);
+            this.util.stop(spinnerRef);
+            this.getList();
+          }, error: (error: any) => {
+            console.log(error);
+            this.util.stop(spinnerRef);
+            this.util.handleError(error, 'cityzen');
+          }
+        });
+      }
+    });
+  }
+
+  onPageChange(event: PageEvent) {
+    console.log(event);
+    this.currentPage = event.pageIndex + 1;
+    this.pageSize = event.pageSize;
+    this.getList();
+  }
+
+  getFormatedDate(date: string) {
+    return DateTime.fromISO(date).setLocale(this.util.appLocaleName()).toFormat('dd LLL yyyy');
+  }
+
+  getFormatedTime(time: string) {
+    return DateTime.fromFormat(time, 'HH:mm', { locale: this.util.appLocaleName() }).toFormat('hh:mm a');
+  }
+
+  onJoiningRequest(campaigns: CityzenDiningCampaignListInterface) {
+    console.log(campaigns);
+    console.log('on image picker');
+    const dialogRef = this.dialog.open(DialogCityzenDiningCampaignRequest, {
+      data: { id: campaigns.id, name: campaigns.displayName },
+      disableClose: true,
+      autoFocus: false,
+      restoreFocus: false,
+      height: "calc(100% - 30px)",
+      width: "calc(100% - 30px)",
+      maxWidth: "100%",
+      maxHeight: "100%",
+      panelClass: 'full-width-dialog'
+    });
+
+    dialogRef.afterClosed().subscribe((result) => {
+      console.log(result);
+      this.getList();
+    });
+  }
+
+  onDetail(id: string) {
+    console.log(id);
+    this.router.navigate(['cityzen-team/u/dining-campaign-detail', id]);
+  }
+
+  onSearch() {
+    console.log(`on search ${this.searchQuery}`);
+    this.pageSize = 5;
+    this.currentPage = 0;
+    this.paginator.firstPage();
+    this.getList();
+  }
+
+}

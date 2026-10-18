@@ -1,0 +1,145 @@
+<mat-card class="cardWithShadow theme-card">
+  <mat-card-header>
+    <mat-card-title class="m-b-0">
+      {{util.appTranslate('orders')}}
+    </mat-card-title>
+  </mat-card-header>
+
+  <mat-card-content class="b-t-0">
+    <mat-tab-group mat-stretch-tabs="false" [selectedIndex]="tabIndex" mat-align-tabs="start"
+      (selectedTabChange)="tabChanged($event)">
+      <mat-tab>
+        <ng-template matTabLabel>
+          <span [matBadge]="allOrders" matBadgeOverlap="false">{{util.appTranslate('all_orders')}}</span>
+        </ng-template>
+      </mat-tab>
+
+      <mat-tab>
+        <ng-template matTabLabel>
+          <span [matBadge]="freshOrders" matBadgeOverlap="false">{{util.appTranslate('new_orders')}}</span>
+        </ng-template>
+      </mat-tab>
+
+      <mat-tab>
+        <ng-template matTabLabel>
+          <span [matBadge]="accepted" matBadgeOverlap="false">{{util.appTranslate('accepted_orders')}}</span>
+        </ng-template>
+      </mat-tab>
+
+      <mat-tab>
+        <ng-template matTabLabel>
+          <span [matBadge]="scheduleOrder" matBadgeOverlap="false">{{util.appTranslate('schedule_orders')}}</span>
+        </ng-template>
+      </mat-tab>
+
+      <mat-tab>
+        <ng-template matTabLabel>
+          <span [matBadge]="preparingOrders" matBadgeOverlap="false">{{util.appTranslate('preparing_orders')}}</span>
+        </ng-template>
+      </mat-tab>
+
+      <mat-tab>
+        <ng-template matTabLabel>
+          <span [matBadge]="readyOrder" matBadgeOverlap="false">{{util.appTranslate('ready_orders')}}</span>
+        </ng-template>
+      </mat-tab>
+
+      <mat-tab>
+        <ng-template matTabLabel>
+          <span [matBadge]="handoverOrder" matBadgeOverlap="false">{{util.appTranslate('handover_orders')}}</span>
+        </ng-template>
+      </mat-tab>
+
+      <mat-tab>
+        <ng-template matTabLabel>
+          <span [matBadge]="ongoingOrder" matBadgeOverlap="false">{{util.appTranslate('ongoing_orders')}}</span>
+        </ng-template>
+      </mat-tab>
+
+      <mat-tab>
+        <ng-template matTabLabel>
+          <span [matBadge]="deliveredOrder" matBadgeOverlap="false">{{util.appTranslate('delivered_orders')}}</span>
+        </ng-template>
+      </mat-tab>
+
+      <mat-tab>
+        <ng-template matTabLabel>
+          <span [matBadge]="cancelledOrder" matBadgeOverlap="false">{{util.appTranslate('cancelled_orders')}}</span>
+        </ng-template>
+      </mat-tab>
+
+
+      <mat-tab>
+        <ng-template matTabLabel>
+          <span [matBadge]="rejectedOrder" matBadgeOverlap="false">{{util.appTranslate('rejected_orders')}}</span>
+        </ng-template>
+      </mat-tab>
+
+
+      <mat-tab>
+        <ng-template matTabLabel>
+          <span [matBadge]="refundedOrder" matBadgeOverlap="false">{{util.appTranslate('refunded_orders')}}</span>
+        </ng-template>
+      </mat-tab>
+
+      <mat-tab>
+        <ng-template matTabLabel>
+          <span [matBadge]="partiallyOrder"
+            matBadgeOverlap="false">{{util.appTranslate('partially_refunded_orders')}}</span>
+        </ng-template>
+      </mat-tab>
+
+      <mat-tab>
+        <ng-template matTabLabel>
+          <span [matBadge]="pendingOrder" matBadgeOverlap="false">{{util.appTranslate('pending_orders')}}</span>
+        </ng-template>
+      </mat-tab>
+
+    </mat-tab-group>
+  </mat-card-content>
+</mat-card>
+
+@if (tabIndex == 0) {
+<app-cityzen-order-list [status]="'all'" [name]="util.appTranslate('all_orders')"></app-cityzen-order-list>
+}
+@if (tabIndex == 1) {
+<app-cityzen-order-list [status]="'created'" [name]="util.appTranslate('new_orders')"></app-cityzen-order-list>
+}
+@if (tabIndex == 2) {
+<app-cityzen-order-list [status]="'accepted'" [name]="util.appTranslate('accepted_orders')"></app-cityzen-order-list>
+}
+@if (tabIndex == 3) {
+<app-cityzen-order-list [status]="'schedule'" [name]="util.appTranslate('schedule_orders')"></app-cityzen-order-list>
+}
+@if (tabIndex == 4) {
+<app-cityzen-order-list [status]="'preparing'" [name]="util.appTranslate('preparing_orders')"></app-cityzen-order-list>
+}
+@if (tabIndex == 5) {
+<app-cityzen-order-list [status]="'ready'" [name]="util.appTranslate('ready_orders')"></app-cityzen-order-list>
+}
+@if (tabIndex == 6) {
+<app-cityzen-order-list [status]="'handover'" [name]="util.appTranslate('handover_orders')"></app-cityzen-order-list>
+}
+@if (tabIndex == 7) {
+<app-cityzen-order-list [status]="'ongoing'" [name]="util.appTranslate('ongoing_orders')"></app-cityzen-order-list>
+}
+@if (tabIndex == 8) {
+<app-cityzen-order-list [status]="'delivered'" [name]="util.appTranslate('delivered_orders')"></app-cityzen-order-list>
+}
+@if (tabIndex == 9) {
+<app-cityzen-order-list [status]="'cancelled'" [name]="util.appTranslate('cancelled_orders')"></app-cityzen-order-list>
+}
+@if (tabIndex == 10) {
+<app-cityzen-order-list [status]="'rejected'" [name]="util.appTranslate('rejected_orders')"></app-cityzen-order-list>
+}
+@if (tabIndex == 11) {
+<app-cityzen-order-list [status]="'refunded'" [name]="util.appTranslate('refunded_orders')"></app-cityzen-order-list>
+}
+@if (tabIndex == 12) {
+<app-cityzen-order-list [status]="'partially_refunded'"
+  [name]="util.appTranslate('partially_refunded_orders')"></app-cityzen-order-list>
+}
+@if (tabIndex == 13) {
+<app-cityzen-order-list [status]="'pending_payments'"
+  [name]="util.appTranslate('pending_payments_orders')"></app-cityzen-order-list>
+}

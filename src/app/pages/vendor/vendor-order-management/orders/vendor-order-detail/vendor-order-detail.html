@@ -1,0 +1,501 @@
+<div class="row">
+  <div class="col-lg-8 col-sm-12 p-b-16">
+    <mat-card class="cardWithShadow theme-card">
+      <mat-card-header>
+        <mat-card-title class="m-b-0">{{util.appTranslate('order_details')}}</mat-card-title>
+        <div class="m-l-auto">
+          <button mat-flat-button class="w-100 bg-secondary text-white" extended (click)="onPrintInvoice()">
+            <div class="d-flex align-items-center">
+              <ng-icon name="tablerFileInvoice" class="icon-15 m-r-4 d-flex"></ng-icon>
+              <span>{{util.appTranslate('print_invoice')}}</span>
+            </div>
+          </button>
+        </div>
+      </mat-card-header>
+
+      <mat-card-content class="b-t-0">
+        <div class="row m-b-10">
+          <div class="col-sm-6">
+            <span class="f-w-600 f-s-15 mat-body-1"> {{util.appTranslate('th_order_id')}}: <span
+                class="m-b-0 f-w-500 f-s-14 mat-body-2">{{util.refId(id) | uppercase}}</span> </span>
+          </div>
+          <div class="col-sm-6 text-right">
+            <span class="f-w-600 f-s-15 mat-body-1"> {{util.appTranslate('th_order_date')}}: <span
+                class="m-b-0 f-w-500 f-s-14 mat-body-2">{{orderDateTime}}</span> </span>
+          </div>
+        </div>
+        <div class="row m-b-10">
+          <div class="col-sm-6">
+            <span class="f-w-600 f-s-15 mat-body-1"> {{util.appTranslate('restaurant')}}: <span
+                class="m-b-0 f-w-500 f-s-14 mat-body-2">{{restaurantName}}</span></span>
+          </div>
+          <div class="col-sm-6 text-right">
+            <span class="f-w-600 f-s-15 mat-body-1"> {{util.appTranslate('th_customer')}}:<span
+                class="m-b-0 f-w-500 f-s-14 mat-body-2">
+                {{userName}} </span></span>
+          </div>
+        </div>
+        <div class="row m-b-10">
+          <div class="col-sm-6">
+            <span class="f-w-600 f-s-15 mat-body-1"> {{util.appTranslate('th_payment')}}: <span
+                class="m-b-0 f-w-500 f-s-14 mat-body-2">{{paymentName}}</span></span>
+          </div>
+          <div class="col-sm-6 text-right">
+            <span class="f-w-600 f-s-15 mat-body-1"> {{util.appTranslate('th_grand_total')}}:<span
+                class="m-b-0 f-w-500 f-s-14 mat-body-2">
+                {{util.priceFormat(grandTotal)}} </span></span>
+          </div>
+        </div>
+        <div class="row m-b-20">
+          <div class="col-sm-6">
+            <span class="f-w-600 f-s-15 mat-body-1"> {{util.appTranslate('order_status')}}: <span
+                class="m-b-0 f-w-500 f-s-14 mat-body-2">{{ util.appTranslate(orderStatus) }}</span></span>
+          </div>
+          <div class="col-sm-6 text-right">
+            <span class="f-w-600 f-s-15 mat-body-1"> {{util.appTranslate('delivery_type')}}:
+              <span class="m-b-0 f-w-500 f-s-14 mat-body-2">
+                {{ deliveryType == 'homedelivery' ? util.appTranslate('home_delivery'):util.appTranslate('self_pickup')
+                }}
+              </span>
+            </span>
+          </div>
+        </div>
+
+        <mat-divider></mat-divider>
+
+        <div class="table-responsive">
+          <table mat-table [dataSource]="cartItem" class="w-100">
+            <ng-container matColumnDef="id">
+              <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-14 mat-subtitle-1 p-l-0">
+                {{util.appTranslate('th_id')}}
+              </th>
+              <td mat-cell *matCellDef="let element" class="p-l-0">
+                {{ util.refId(element.id) | uppercase }}
+              </td>
+            </ng-container>
+
+            <ng-container matColumnDef="detail">
+              <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-14 mat-subtitle-1">
+                {{util.appTranslate('th_details')}}
+              </th>
+              <td mat-cell *matCellDef="let element" class="mat-body-1">
+                <div class="d-flex align-items-center">
+                  <img [src]="api.mediaUrl+ element.image" alt="users" width="40" height="40" class="rounded"
+                    onError="this.src='assets/images/onerror.png'" />
+                  <div class="m-l-16">
+                    <h6 class="f-s-14 mat-subtitle-1 f-w-600">
+                      {{ element.displayName }}
+                    </h6>
+                    <span class="mat-body-1 f-s-12">
+                      {{element.optionName}}
+                    </span>
+                  </div>
+                </div>
+              </td>
+            </ng-container>
+
+            <ng-container matColumnDef="qty">
+              <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-14 mat-subtitle-1">
+                {{util.appTranslate('th_quantity')}}
+              </th>
+              <td mat-cell *matCellDef="let element" class="mat-body-1">
+                {{element.quantity}}
+              </td>
+            </ng-container>
+
+            <ng-container matColumnDef="price">
+              <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-14 mat-subtitle-1">
+                {{util.appTranslate('th_price')}}
+              </th>
+              <td mat-cell *matCellDef="let element" class="mat-body-1">
+                {{util.priceFormat(element.totalPrice)}}
+              </td>
+            </ng-container>
+
+            <tr mat-header-row *matHeaderRowDef="displayedColumn"></tr>
+            <tr mat-row *matRowDef="let row; columns: displayedColumn"></tr>
+          </table>
+        </div>
+
+        <div class="text-right m-t-30">
+          <h5 class="m-b-5 f-w-600 f-s-14">
+            {{util.appTranslate('th_item_total')}} : <span
+              class="f-w-100 f-s-14 m-l-16">+{{util.priceFormat(realTotal)}}</span>
+          </h5>
+          <h5 class="m-b-5 f-w-600 f-s-14">
+            {{util.appTranslate('th_item_discount')}} : <span
+              class="f-w-100 f-s-14 m-l-16">-{{util.priceFormat(itemDiscount)}}</span>
+          </h5>
+          <h5 class="m-b-5 f-w-600 f-s-14">
+            {{util.appTranslate('th_sub_total')}} : <span
+              class="f-w-100 f-s-14 m-l-16">+{{util.priceFormat(itemTotal)}}</span>
+          </h5>
+          @if (foodServiceCharge > 0) {
+          <h5 class="m-b-5 f-w-600 f-s-14">
+            {{util.appTranslate('th_food_service_charge')}} : <span
+              class="f-w-100 f-s-14 m-l-16">+{{util.priceFormat(foodServiceCharge)}}</span>
+          </h5>
+          }
+          @if (serviceCharge > 0) {
+          <h5 class="m-b-5 f-w-600 f-s-14">
+            {{util.appTranslate('service_charge')}} : <span
+              class="f-w-100 f-s-14 m-l-16">+{{util.priceFormat(serviceCharge)}}</span>
+          </h5>
+          }
+          @if (extraCharge > 0) {
+          <h5 class="m-b-5 f-w-600 f-s-14">
+            {{util.appTranslate('th_extra_service_charge')}} : <span
+              class="f-w-100 f-s-14 m-l-16">+{{util.priceFormat(extraCharge)}}</span>
+          </h5>
+          }
+          @if (deliveryCharge > 0) {
+          <h5 class="m-b-5 f-w-600 f-s-14">
+            {{util.appTranslate('th_delivery_charge')}} : <span
+              class="f-w-100 f-s-14 m-l-16">+{{util.priceFormat(deliveryCharge)}}</span>
+          </h5>
+          }
+          @if (deliveryTip > 0) {
+          <h5 class="m-b-5 f-w-600 f-s-14">
+            {{util.appTranslate('th_delivery_tip')}} : <span
+              class="f-w-100 f-s-14 m-l-16">+{{util.priceFormat(deliveryTip)}}</span>
+          </h5>
+          }
+          @if (packageCharge > 0) {
+          <h5 class="m-b-5 f-w-600 f-s-14">
+            {{util.appTranslate('packaging_charge')}} : <span
+              class="f-w-100 f-s-14 m-l-16">+{{util.priceFormat(packageCharge)}}</span>
+          </h5>
+          }
+          @if (packageChargeTax > 0) {
+          <h5 class="m-b-5 f-w-600 f-s-14">
+            {{util.appTranslate('packaging_charge_tax')}} : <span
+              class="f-w-100 f-s-14 m-l-16">+{{util.priceFormat(packageChargeTax)}}</span>
+          </h5>
+          }
+          @if (couponDiscountCharge > 0) {
+          <h5 class="m-b-5 f-w-600 f-s-14">
+            {{util.appTranslate('th_discount')}} : <span class="f-w-100 f-s-14 m-l-16">-
+              {{util.priceFormat(couponDiscountCharge)}}</span>
+          </h5>
+          }
+
+          @if (cookingInstruction != '') {
+          <div class="row m-b-10">
+            <div class="col-sm-12">
+              <span class="f-w-600 f-s-15 mat-body-1"> {{util.appTranslate('cooking_instruction')}}:
+                <span class="m-b-0 f-w-500 f-s-14 mat-body-2">{{cookingInstruction}}</span>
+              </span>
+            </div>
+          </div>
+          }
+
+          @if (deliveryInstructionInfo != '') {
+          <div class="row m-b-10">
+            <div class="col-sm-12">
+              <span class="f-w-600 f-s-15 mat-body-1"> {{util.appTranslate('delivery_instruction')}}:
+                <span class="m-b-0 f-w-500 f-s-14 mat-body-2">{{deliveryInstructionInfo}}</span>
+              </span>
+            </div>
+          </div>
+          }
+
+          <h3 class="m-b-0 b-t-1 p-t-20 f-s-18">
+            {{util.appTranslate('th_grand_total')}}: {{util.priceFormat(grandTotal)}}
+          </h3>
+        </div>
+      </mat-card-content>
+
+    </mat-card>
+  </div>
+
+  <div class="col-lg-4 col-sm-12 p-b-16">
+    <mat-card class="cardWithShadow theme-card">
+      <mat-card-header>
+        <mat-card-title class="m-b-0">
+          {{util.appTranslate('th_action')}}
+        </mat-card-title>
+      </mat-card-header>
+
+      <mat-card-content class="b-t-0">
+        <div class="row">
+          <div class="col-sm-4 col-md-4">
+            <h6 class="text-muted mat-body-1">{{util.appTranslate('th_order_date')}}</h6>
+          </div>
+          <div class="col-sm-1 col-md-1">
+            <h6 class="text-muted mat-body-1"> : </h6>
+          </div>
+          <div class="col-sm-7 col-md-7">
+            <h6 class="f-w-500 mat-body-1 m-t-0">{{orderDateTime}}</h6>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-sm-4 col-md-4">
+            <h6 class="text-muted mat-body-1">{{util.appTranslate('order_type')}}</h6>
+          </div>
+          <div class="col-sm-1 col-md-1">
+            <h6 class="text-muted mat-body-1"> : </h6>
+          </div>
+          <div class="col-sm-7 col-md-7">
+            <h6 class="f-w-500 mat-body-1 m-t-0">{{orderType}}</h6>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-sm-4 col-md-4">
+            <h6 class="text-muted mat-body-1">{{util.appTranslate('delivery_type')}}</h6>
+          </div>
+          <div class="col-sm-1 col-md-1">
+            <h6 class="text-muted mat-body-1"> : </h6>
+          </div>
+          <div class="col-sm-7 col-md-7">
+            <h6 class="f-w-500 mat-body-1 m-t-0">
+              {{ deliveryType == 'homedelivery' ? util.appTranslate('home_delivery'):util.appTranslate('self_pickup') }}
+            </h6>
+          </div>
+        </div>
+
+        @if (orderStatus == 'created' && isInstantOrder == true) {
+        <div class="row m-t-10">
+          <div class="col-sm-12 d-flex align-items-center">
+            <mat-label
+              class="mat-subtitle-2 f-w-600 d-block m-b-16">{{util.appTranslate('set_preparing_time')}}</mat-label>
+          </div>
+        </div>
+        }
+
+        @if (orderStatus == 'accepted' && isInstantOrder == false) {
+        <div class="row m-t-10">
+          <div class="col-sm-12 d-flex align-items-center">
+            <mat-label
+              class="mat-subtitle-2 f-w-600 d-block m-b-16">{{util.appTranslate('set_preparing_time')}}</mat-label>
+          </div>
+        </div>
+        }
+
+        @if (orderStatus == 'created' && isInstantOrder == true) {
+        <div class="row">
+          <div class="col-sm-2">
+            <button mat-icon-button class="d-flex" (click)="changePrepareTime('remove')">
+              <ng-icon name="tablerSquareRoundedMinus" class="icon-20"></ng-icon>
+            </button>
+          </div>
+          <div class="col-sm-8">
+            <mat-form-field appearance="outline" class="w-100">
+              <input matInput [placeholder]="util.appTranslate('preparing_time')" type="number"
+                [(ngModel)]="preparationTime" />
+            </mat-form-field>
+          </div>
+          <div class="col-sm-2">
+            <button mat-icon-button class="d-flex" (click)="changePrepareTime('add')">
+              <ng-icon name="tablerSquareRoundedPlus" class="icon-20"></ng-icon>
+            </button>
+          </div>
+        </div>
+        }
+
+        @if (orderStatus == 'accepted' && isInstantOrder == false) {
+        <div class="row">
+          <div class="col-sm-2">
+            <button mat-icon-button class="d-flex" (click)="changePrepareTime('remove')">
+              <ng-icon name="tablerSquareRoundedMinus" class="icon-20"></ng-icon>
+            </button>
+          </div>
+          <div class="col-sm-8">
+            <mat-form-field appearance="outline" class="w-100">
+              <input matInput [placeholder]="util.appTranslate('preparing_time')" type="number"
+                [(ngModel)]="preparationTime" />
+            </mat-form-field>
+          </div>
+          <div class="col-sm-2">
+            <button mat-icon-button class="d-flex" (click)="changePrepareTime('add')">
+              <ng-icon name="tablerSquareRoundedPlus" class="icon-20"></ng-icon>
+            </button>
+          </div>
+        </div>
+        }
+
+        @if (orderStatus == 'created') {
+        <div class="m-t-20 d-flex align-items-center">
+          @if (restaurantCanCancelOrder) {
+          <button mat-flat-button class="m-r-8" color="primary"
+            (click)="rejectOrder()">{{util.appTranslate('reject_order')}}</button>
+          }
+          <button mat-flat-button class="bg-secondary text-white" (click)="acceptOrder()">{{util.appTranslate('accept_order')}}</button>
+        </div>
+        }
+
+        @if (orderStatus == 'accepted') {
+        <div>
+          <button mat-flat-button class="w-100 bg-secondary text-white" (click)="acceptScheduleOrder()">
+            {{util.appTranslate('prepare_schedule_order')}}
+          </button>
+        </div>
+        }
+        @if (orderStatus == 'preparing') {
+        <div>
+          @if (driverId =='' && deliveryType == 'homedelivery') {
+          <div class="d-flex justify-content-center m-t-8">
+            <span class="m-r-8 d-flex">
+              <ng-icon name="tablerBike" class="icon-18 m-r-8"></ng-icon>
+            </span>
+            <div class="m-l-auto text-end">
+              <span class="f-s-12 text-nowrap">{{nearDeliveryman}}
+                {{util.appTranslate('rider_nearby_assign_soon')}}</span>
+            </div>
+          </div>
+          }
+          @if (driverId != '' && deliveryType == 'homedelivery') {
+          <div>
+            <div class="d-flex align-items-center m-t-8">
+              <img [src]="api.mediaUrl+driverCover" alt="users" width="40" height="40" class="rounded-circle"
+                onError="this.src='assets/images/onerror.png'" />
+              <div class="m-l-16">
+                <h6 class="f-s-14 mat-subtitle-1 f-w-600">
+                  {{ driverName }}
+                </h6>
+                <span class="mat-body-1 f-s-12">
+                  {{util.appTranslate('deliveryman_waiting_for_order_ready')}}
+                </span>
+              </div>
+            </div>
+          </div>
+          }
+          @if (deliveryType == 'selfpickup') {
+          <div>
+            <div class="d-flex align-items-center m-t-8">
+              <img [src]="api.mediaUrl+userCover" alt="users" width="40" height="40" class="rounded-circle"
+                onError="this.src='assets/images/onerror.png'" />
+              <div class="m-l-16">
+                <h6 class="f-s-14 mat-subtitle-1 f-w-600">
+                  {{ userName }}
+                </h6>
+                <span class="mat-body-1 f-s-12">
+                  {{util.appTranslate('customer_waiting_for_order_ready')}}
+                </span>
+              </div>
+            </div>
+          </div>
+          }
+          <button mat-flat-button class="w-100 m-t-10 bg-secondary text-white" (click)="orderReady()">
+            {{util.appTranslate('order_ready')}}
+          </button>
+        </div>
+        }
+        @if (orderStatus == 'ready') {
+        <div>
+          @if (driverId =='' && deliveryType == 'homedelivery') {
+          <button mat-flat-button class="w-100 m-t-10 bg-secondary text-white" (click)="findDriver()">
+            {{util.appTranslate('find_deliveryman')}}
+          </button>
+          }
+          @if (driverId !='' && deliveryType == 'homedelivery') {
+          <button mat-flat-button class="w-100 m-t-10 bg-secondary text-white" (click)="handoverToDeliveryman()">
+            {{util.appTranslate('handover_to_deliveryman')}}
+          </button>
+          }
+          @if (deliveryType == 'selfpickup') {
+          <button mat-flat-button class="w-100 m-t-10 bg-secondary text-white" (click)="handoverToCustomer()">
+            {{util.appTranslate('deliver_to_customer')}}
+          </button>
+          }
+        </div>
+        }
+      </mat-card-content>
+    </mat-card>
+
+    <mat-card class="cardWithShadow theme-card">
+      <mat-card-header>
+        <mat-card-title class="m-b-0">
+          {{util.appTranslate('customer_details')}}
+        </mat-card-title>
+      </mat-card-header>
+
+      <mat-card-content class="b-t-1 text-center p-24">
+        <img [src]="api.mediaUrl+userCover" class="rectangle-image border p-5" width="90" height="90"
+          onError="this.src='assets/images/onerror.png'" />
+        <h4 class="m-t-16 m-b-0 text-center">
+          {{userName}} {{ userRole =='guest' ? '(' + util.appTranslate('dd_guest') + ')':'' }}
+        </h4>
+        <span class="f-s-12">{{ userEmail }}</span> <br>
+        <div class="m-t-10">
+          <span class="f-s-14">
+            {{util.appTranslate('mobile_number')}} {{ userMobile }}
+          </span>
+        </div>
+        @if (deliveryType == 'homedelivery') {
+        <div class="m-t-10">
+          <span class="f-s-14">
+            {{util.appTranslate('receiver_name')}} : {{receiverName}}
+            <br />
+            {{util.appTranslate('receiver_contact_number')}}: {{ receiverMobile }}
+          </span>
+        </div>
+        }
+        @if (deliveryType == 'homedelivery') {
+        <div class="m-t-10">
+          <span class="f-s-14">
+            {{util.appTranslate('delivery')}} : {{deliveryAddress}}
+          </span>
+        </div>
+        }
+        @if (deliveryType != 'homedelivery') {
+        <div class="m-t-10">
+          <span class="f-s-14">
+            {{util.appTranslate('delivery')}} : {{util.appTranslate('self_pickup')}}
+          </span>
+        </div>
+        }
+
+        <div class="m-t-20">
+          @if (canInitiateCall) {
+          <button mat-flat-button class="m-r-8" color="primary"
+            (click)="onChatOrContact('user','call')">{{util.appTranslate('call')}}</button>
+          }
+          @if (canInitiateChat) {
+          <button mat-flat-button class="bg-secondary text-white"
+            (click)="onChatOrContact('user','chat')">{{util.appTranslate('chat')}}</button>
+          }
+        </div>
+
+      </mat-card-content>
+    </mat-card>
+
+    @if (deliveryType == 'homedelivery' && driverId !='') {
+    <mat-card class="cardWithShadow theme-card">
+      <mat-card-header>
+        <mat-card-title class="m-b-0">
+          {{util.appTranslate('deliveryman_information')}}
+        </mat-card-title>
+      </mat-card-header>
+
+      <mat-card-content class="b-t-1 text-center p-24">
+        <img [src]="api.mediaUrl+driverCover" class="rectangle-image border p-5" width="90" height="90"
+          onError="this.src='assets/images/onerror.png'" />
+        <h4 class="m-t-16 m-b-0 text-center">
+          {{driverName}} {{ driverRole == 'vendorDriver' ? '('+ util.appTranslate('vendor_deliveryman') +')':'' }}
+        </h4>
+        <span class="f-s-12">{{ driverEmail }}</span>
+        <div class="m-t-10">
+          <span class="f-s-14">
+            {{util.appTranslate('mobile_number')}} {{ driverMobile }}
+          </span>
+        </div>
+
+        <div class="m-t-20">
+          @if (canInitiateCall) {
+          <button mat-flat-button class="m-r-8" color="primary"
+            (click)="onChatOrContact('deliveryman','call')">{{util.appTranslate('call')}}
+          </button>
+          }
+          @if (canInitiateChat) {
+          <button mat-flat-button class="bg-secondary text-white"
+            (click)="onChatOrContact('deliveryman','chat')">{{util.appTranslate('chat')}}
+          </button>
+          }
+        </div>
+
+      </mat-card-content>
+    </mat-card>
+    }
+
+  </div>
+</div>

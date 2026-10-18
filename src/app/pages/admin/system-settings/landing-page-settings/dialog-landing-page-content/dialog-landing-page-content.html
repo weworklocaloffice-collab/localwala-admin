@@ -1,0 +1,395 @@
+@if(from == 'service'){
+<div>
+  <h2 mat-dialog-title class="dialog-title">
+    <span class="title-text">
+      {{ action == 'create' ? util.appTranslate('add_service') : util.appTranslate('update_service') }}
+    </span>
+    <button mat-icon-button mat-dialog-close class="close-btn">
+      <mat-icon>close</mat-icon>
+    </button>
+  </h2>
+  <div mat-dialog-content style="max-width: 600px;max-height: max-content;" class="m-t-12 p-t-12">
+    <form name="eventForm" [formGroup]="serviceForm" class="event-form" (ngSubmit)="onServiceSubmit()">
+      <div class="row">
+        <div class="col-12">
+          <mat-form-field appearance="outline" class="w-100" color="primary">
+            <mat-label>{{ util.appTranslate('title') }}</mat-label>
+            <input matInput formControlName="title" type="text" />
+            @if(haveSubmitClicked == true && serviceF['title'].invalid){
+            <mat-hint class="m-b-16 error-msg">
+              @if(serviceF['title'].errors && serviceF['title'].errors['required']){
+              <div class="text-error">
+                {{util.appTranslate('form_required')}}
+              </div>
+              }
+            </mat-hint>
+            }
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="w-100" color="primary">
+            <mat-label>{{ util.appTranslate('sub_title') }}</mat-label>
+            <textarea matInput formControlName="subtitle" type="text" row="2"></textarea>
+            @if(haveSubmitClicked == true && serviceF['subtitle'].invalid){
+            <mat-hint class="m-b-16 error-msg">
+              @if(serviceF['subtitle'].errors && serviceF['subtitle'].errors['required']){
+              <div class="text-error">
+                {{util.appTranslate('form_required')}}
+              </div>
+              }
+            </mat-hint>
+            }
+          </mat-form-field>
+
+        </div>
+
+        <div class="col-12 m-b-16 p-b-16">
+          <mat-tab-group mat-stretch-tabs="false" mat-align-tabs="start">
+            @for (item of languages; track $index) {
+            <mat-tab [label]="item.nativeName">
+              <div class="mat-body-1 px-16 m-t-12">
+                <mat-form-field appearance="outline" class="w-100" color="primary">
+                  <input matInput type="text" placeholder="{{ util.appTranslate('title') }} ({{item.nativeName}})"
+                    [(ngModel)]="item.title" [ngModelOptions]="{standalone: true}" />
+                </mat-form-field>
+
+                <mat-form-field appearance="outline" class="w-100" color="primary">
+                  <textarea matInput [(ngModel)]="item.subtitle" [ngModelOptions]="{standalone: true}" type="text"
+                    row="2" placeholder="{{ util.appTranslate('sub_title') }} ({{item.nativeName}})"></textarea>
+                </mat-form-field>
+              </div>
+            </mat-tab>
+            }
+          </mat-tab-group>
+        </div>
+      </div>
+      <div mat-dialog-actions class="p-b-24">
+        <button mat-button mat-flat-button color="primary" type="submit">
+          {{util.appTranslate('save_btn')}}
+        </button>
+        <button mat-button mat-dialog-close class="m-l-8 bg-secondary text-white">{{util.appTranslate('cancel_btn')}}</button>
+      </div>
+    </form>
+  </div>
+</div>
+}
+
+@if(from == 'faqs'){
+<div>
+  <form name="eventForm" [formGroup]="faqsForm" class="event-form" (ngSubmit)="onFaqsSubmit()">
+    <h2 mat-dialog-title class="dialog-title">
+      <span class="title-text">
+        {{ action == 'create' ? util.appTranslate('add_faqs') : util.appTranslate('update_faqs') }}
+      </span>
+      <button mat-icon-button mat-dialog-close class="close-btn">
+        <mat-icon>close</mat-icon>
+      </button>
+    </h2>
+    <mat-dialog-content class="mat-typography w-100 m-t-12 p-t-12">
+      <div class="row">
+        <div class="col-12 p-b-16">
+          <mat-form-field appearance="outline" class="w-100" color="primary">
+            <mat-label>{{ util.appTranslate('title') }}</mat-label>
+            <input matInput formControlName="title" type="text" />
+            @if(haveSubmitClicked == true && faqsF['title'].invalid){
+            <mat-hint class="m-b-16 error-msg">
+              @if(faqsF['title'].errors && faqsF['title'].errors['required']){
+              <div class="text-error">
+                {{util.appTranslate('form_required')}}
+              </div>
+              }
+            </mat-hint>
+            }
+          </mat-form-field>
+        </div>
+
+        <div class="col-12 p-b-16 w-100">
+          <angular-editor [placeholder]="util.appTranslate('content')" formControlName="subtitle" name="subtitle"
+            [config]="config">
+          </angular-editor>
+          @if(haveSubmitClicked == true && faqsF['subtitle'].value == ''){
+          <mat-hint class="m-b-16 text-right w-100">
+            @if(faqsF['subtitle'].errors && faqsF['subtitle'].errors['required']){
+            <div class="text-error">
+              {{util.appTranslate('form_required')}}
+            </div>
+            }
+          </mat-hint>
+          }
+        </div>
+
+
+        <div class="col-12 m-b-16 p-b-16">
+          <mat-tab-group mat-stretch-tabs="false" mat-align-tabs="start">
+            @for (item of languages; track $index) {
+            <mat-tab [label]="item.nativeName">
+              <div class="mat-body-1 px-16 m-t-12">
+                <mat-form-field appearance="outline" class="w-100" color="primary">
+                  <input matInput type="text" placeholder="{{ util.appTranslate('title') }} ({{item.nativeName}})"
+                    [(ngModel)]="item.title" [ngModelOptions]="{standalone: true}" />
+                </mat-form-field>
+
+                <angular-editor placeholder="{{ util.appTranslate('content') }} ({{item.nativeName}})"
+                  [(ngModel)]="item.subtitle" [ngModelOptions]="{standalone: true}" [config]="config" [config]="config">
+                </angular-editor>
+
+              </div>
+            </mat-tab>
+            }
+          </mat-tab-group>
+        </div>
+      </div>
+    </mat-dialog-content>
+    <mat-dialog-actions align="end">
+      <button mat-button mat-dialog-close class="m-l-8 bg-secondary text-white">{{util.appTranslate('cancel_btn')}}</button>
+      <button mat-button mat-flat-button color="primary" type="submit">
+        {{util.appTranslate('save_btn')}}
+      </button>
+    </mat-dialog-actions>
+  </form>
+</div>
+}
+
+@if(from == 'review'){
+<div>
+  <h2 mat-dialog-title class="dialog-title">
+    <span class="title-text">
+      {{ action == 'create' ? util.appTranslate('add_review') : util.appTranslate('update_review') }}
+    </span>
+    <button mat-icon-button mat-dialog-close class="close-btn">
+      <mat-icon>close</mat-icon>
+    </button>
+  </h2>
+  <div mat-dialog-content style="max-width: 600px;max-height: max-content;" class="m-t-12 p-t-12">
+    <form name="eventForm" [formGroup]="reviewForm" class="event-form" (ngSubmit)="onReviewSubmit()">
+      <div class="row">
+        <div class="col-12 text-center m-b-16 p-b-24 d-flex flex-column justify-content-center align-items-center">
+          <img [src]="api.mediaUrl+reviewF['image'].value" class="custom-image-upload border p-5 m-b-16" width="100"
+            height="100" onError="this.src='assets/images/placeholder.png'" (click)="onImagePicker()"
+            [ngStyle]="{'border': haveSubmitClicked == true &&  reviewF['image'].invalid ? '2px dashed red' : '2px dashed #e5e5e5'}" />
+          <span [ngClass]="haveSubmitClicked == true &&  reviewF['image'].invalid ? 'f-s-12 text-error' :'f-s-12' "
+            [matTooltip]="util.appTranslate('upload_image_ratio_1_o_1')">{{util.appTranslate('image_ratio_1_o_1')}}</span>
+        </div>
+        <div class="col-12">
+          <mat-form-field appearance="outline" class="w-100" color="primary">
+            <mat-label>{{ util.appTranslate('th_name') }}</mat-label>
+            <input matInput formControlName="userName" type="text" />
+            @if(haveSubmitClicked == true && reviewF['userName'].invalid){
+            <mat-hint class="m-b-16 error-msg">
+              @if(reviewF['userName'].errors && reviewF['userName'].errors['required']){
+              <div class="text-error">
+                {{util.appTranslate('form_required')}}
+              </div>
+              }
+            </mat-hint>
+            }
+          </mat-form-field>
+        </div>
+
+        <div class="col-lg-6 col-sm-12">
+          <mat-form-field appearance="outline" class="w-100" color="primary">
+            <mat-label>{{ util.appTranslate('occupation') }}</mat-label>
+            <input matInput formControlName="occupation" type="text" />
+            @if(haveSubmitClicked == true && reviewF['occupation'].invalid){
+            <mat-hint class="m-b-16 error-msg">
+              @if(reviewF['occupation'].errors && reviewF['occupation'].errors['required']){
+              <div class="text-error">
+                {{util.appTranslate('form_required')}}
+              </div>
+              }
+            </mat-hint>
+            }
+          </mat-form-field>
+        </div>
+
+        <div class="col-lg-6 col-sm-12">
+          <mat-form-field appearance="outline" class="w-100">
+            <mat-label>{{ util.appTranslate('review_star') }}</mat-label>
+            <mat-select formControlName="star">
+              <mat-option [value]="1">{{ util.appTranslate('1_start') }}</mat-option>
+              <mat-option [value]="2">{{ util.appTranslate('2_start') }}</mat-option>
+              <mat-option [value]="3">{{ util.appTranslate('3_start') }}</mat-option>
+              <mat-option [value]="4">{{ util.appTranslate('4_start') }}</mat-option>
+              <mat-option [value]="5">{{ util.appTranslate('5_start') }}</mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
+
+        <div class="col-12">
+          <mat-form-field appearance="outline" class="w-100" color="primary">
+            <mat-label>{{ util.appTranslate('message') }}</mat-label>
+            <textarea matInput formControlName="message" type="text" row="2"></textarea>
+            @if(haveSubmitClicked == true && reviewF['message'].invalid){
+            <mat-hint class="m-b-16 error-msg">
+              @if(reviewF['message'].errors && reviewF['message'].errors['required']){
+              <div class="text-error">
+                {{util.appTranslate('form_required')}}
+              </div>
+              }
+            </mat-hint>
+            }
+          </mat-form-field>
+        </div>
+
+        <div class="col-12 m-b-16 p-b-16">
+          <mat-tab-group mat-stretch-tabs="false" mat-align-tabs="start">
+            @for (item of languages; track $index) {
+            <mat-tab [label]="item.nativeName">
+              <div class="mat-body-1 px-16 m-t-12">
+                <mat-form-field appearance="outline" class="w-100" color="primary">
+                  <textarea matInput [(ngModel)]="item.value" [ngModelOptions]="{standalone: true}" type="text" row="2"
+                    placeholder="{{ util.appTranslate('message') }} ({{item.nativeName}})"></textarea>
+                </mat-form-field>
+              </div>
+            </mat-tab>
+            }
+          </mat-tab-group>
+        </div>
+      </div>
+      <div mat-dialog-actions class="p-b-24">
+        <button mat-button mat-flat-button color="primary" type="submit">
+          {{util.appTranslate('save_btn')}}
+        </button>
+        <button mat-button mat-dialog-close class="m-l-8 bg-secondary text-white">{{util.appTranslate('cancel_btn')}}</button>
+      </div>
+    </form>
+  </div>
+</div>
+}
+
+@if(from == 'appfeature'){
+<div>
+  <h2 mat-dialog-title class="dialog-title">
+    <span class="title-text">
+      {{ action == 'create' ? util.appTranslate('add_feature') : util.appTranslate('update_feature') }}
+    </span>
+    <button mat-icon-button mat-dialog-close class="close-btn">
+      <mat-icon>close</mat-icon>
+    </button>
+  </h2>
+  <div mat-dialog-content style="max-width: 600px;max-height: max-content;" class="m-t-12 p-t-12">
+    <form name="eventForm" [formGroup]="appFeatureForm" class="event-form" (ngSubmit)="onAppFeatureSubmit()">
+      <div class="row">
+        <div class="col-12 text-center m-b-8 p-b-8 d-flex flex-column justify-content-center align-items-center">
+          <img [src]="api.mediaUrl+appFeatureF['image'].value" class="custom-image-upload border p-5 m-b-16" width="100"
+            height="100" onError="this.src='assets/images/placeholder.png'" (click)="onImagePicker()"
+            [ngStyle]="{'border': haveSubmitClicked == true &&  appFeatureF['image'].invalid ? '2px dashed red' : '2px dashed #e5e5e5'}" />
+          <span [ngClass]="haveSubmitClicked == true &&  appFeatureF['image'].invalid ? 'f-s-12 text-error' :'f-s-12' "
+            [matTooltip]="util.appTranslate('upload_image_ratio_1_o_1')">{{util.appTranslate('image_ratio_1_o_1')}}</span>
+        </div>
+        <div class="col-12 m-b-8 p-b-8">
+          <mat-form-field appearance="outline" class="w-100" color="primary">
+            <mat-label>{{ util.appTranslate('title') }}</mat-label>
+            <input matInput formControlName="title" type="text" />
+            @if(haveSubmitClicked == true && appFeatureF['title'].invalid){
+            <mat-hint class="m-b-16 error-msg">
+              @if(appFeatureF['title'].errors && appFeatureF['title'].errors['required']){
+              <div class="text-error">
+                {{util.appTranslate('form_required')}}
+              </div>
+              }
+            </mat-hint>
+            }
+          </mat-form-field>
+        </div>
+
+        <div class="col-12 m-b-8 p-b-8">
+          <mat-form-field appearance="outline" class="w-100" color="primary">
+            <mat-label>{{ util.appTranslate('sub_title') }}</mat-label>
+            <textarea matInput formControlName="subtitle" type="text" row="2"></textarea>
+            @if(haveSubmitClicked == true && appFeatureF['subtitle'].invalid){
+            <mat-hint class="m-b-16 error-msg">
+              @if(appFeatureF['subtitle'].errors && appFeatureF['subtitle'].errors['required']){
+              <div class="text-error">
+                {{util.appTranslate('form_required')}}
+              </div>
+              }
+            </mat-hint>
+            }
+          </mat-form-field>
+        </div>
+
+        <div class="col-12 m-b-8 p-b-8">
+          <mat-tab-group mat-stretch-tabs="false" mat-align-tabs="start">
+            @for (item of languages; track $index) {
+            <mat-tab [label]="item.nativeName">
+              <div class="mat-body-1 px-16 m-t-12">
+                <mat-form-field appearance="outline" class="w-100" color="primary">
+                  <input matInput type="text" placeholder="{{ util.appTranslate('title') }} ({{item.nativeName}})"
+                    [(ngModel)]="item.title" [ngModelOptions]="{standalone: true}" />
+                </mat-form-field>
+
+                <mat-form-field appearance="outline" class="w-100" color="primary">
+                  <textarea matInput [(ngModel)]="item.subtitle" [ngModelOptions]="{standalone: true}" type="text"
+                    row="2" placeholder="{{ util.appTranslate('sub_title') }} ({{item.nativeName}})"></textarea>
+                </mat-form-field>
+              </div>
+            </mat-tab>
+            }
+          </mat-tab-group>
+        </div>
+      </div>
+      <div mat-dialog-actions class="p-b-24">
+        <button mat-button mat-flat-button color="primary" type="submit">
+          {{util.appTranslate('save_btn')}}
+        </button>
+        <button mat-button mat-dialog-close class="m-l-8 bg-secondary text-white">{{util.appTranslate('cancel_btn')}}</button>
+      </div>
+    </form>
+  </div>
+</div>
+}
+
+@if(from == 'bullet'){
+<div>
+  <h2 mat-dialog-title class="dialog-title">
+    <span class="title-text">
+      {{ action == 'create' ? util.appTranslate('add_bullet_point') : util.appTranslate('update_bullet_point') }}
+    </span>
+    <button mat-icon-button mat-dialog-close class="close-btn">
+      <mat-icon>close</mat-icon>
+    </button>
+  </h2>
+  <div mat-dialog-content style="max-width: 600px;max-height: max-content;" class="m-t-12 p-t-12">
+    <form name="eventForm" [formGroup]="bulletForm" class="event-form" (ngSubmit)="onBulletSubmit()">
+      <div class="row">
+        <div class="col-12">
+          <mat-form-field appearance="outline" class="w-100" color="primary">
+            <mat-label>{{ util.appTranslate('title') }}</mat-label>
+            <input matInput formControlName="lbl" type="text" />
+            @if(haveSubmitClicked == true && buttletF['lbl'].invalid){
+            <mat-hint class="m-b-16 error-msg">
+              @if(buttletF['lbl'].errors && buttletF['lbl'].errors['required']){
+              <div class="text-error">
+                {{util.appTranslate('form_required')}}
+              </div>
+              }
+            </mat-hint>
+            }
+          </mat-form-field>
+        </div>
+
+        <div class="col-12 m-b-16 p-b-16">
+          <mat-tab-group mat-stretch-tabs="false" mat-align-tabs="start">
+            @for (item of languages; track $index) {
+            <mat-tab [label]="item.nativeName">
+              <div class="mat-body-1 px-16 m-t-12">
+                <mat-form-field appearance="outline" class="w-100" color="primary">
+                  <input matInput type="text" placeholder="{{ util.appTranslate('title') }} ({{item.nativeName}})"
+                    [(ngModel)]="item.value" [ngModelOptions]="{standalone: true}" />
+                </mat-form-field>
+              </div>
+            </mat-tab>
+            }
+          </mat-tab-group>
+        </div>
+      </div>
+      <div mat-dialog-actions class="p-b-24">
+        <button mat-button mat-flat-button color="primary" type="submit">
+          {{util.appTranslate('save_btn')}}
+        </button>
+        <button mat-button mat-dialog-close class="m-l-8 bg-secondary text-white">{{util.appTranslate('cancel_btn')}}</button>
+      </div>
+    </form>
+  </div>
+</div>
+}

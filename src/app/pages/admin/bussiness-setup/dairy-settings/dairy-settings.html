@@ -1,0 +1,154 @@
+<form
+  name="eventForm"
+  [formGroup]="settingForm"
+  class="event-form"
+  (ngSubmit)="onSubmit()"
+  id="topContent"
+>
+  <div class="row">
+    <div class="col-lg-12 col-sm-12 p-b-16">
+      <mat-card class="cardWithShadow theme-card">
+        <mat-card-header>
+          <mat-card-title class="m-b-0">
+            {{ util.appTranslate('dairy_settings') }}
+          </mat-card-title>
+        </mat-card-header>
+
+        <mat-card-content class="b-t-0">
+          <!-- Enforced settings. Each of these is read by live code. -->
+          <div class="row">
+            <div class="col-lg-12 col-sm-12 p-b-8">
+              <h4 class="m-b-8">{{ util.appTranslate('dairy_settings_operational') }}</h4>
+              <p class="m-b-16 text-muted">
+                {{ util.appTranslate('dairy_settings_operational_hint') }}
+              </p>
+            </div>
+
+            <div class="col-lg-4 col-sm-12 p-b-16">
+              <mat-form-field appearance="outline" class="w-100">
+                <mat-label>{{ util.appTranslate('dairy_fefo_warning_days') }}</mat-label>
+                <input
+                  matInput
+                  type="number"
+                  formControlName="fefoWarningDays"
+                  name="fefoWarningDays"
+                  min="1"
+                  max="365"
+                />
+                <mat-hint>{{ util.appTranslate('dairy_fefo_warning_days_hint') }}</mat-hint>
+                @if (haveSubmitClicked == true && f['fefoWarningDays'].invalid) {
+                  <mat-hint class="m-b-16 error-msg">
+                    @if (f['fefoWarningDays'].errors && f['fefoWarningDays'].errors['required']) {
+                      <div class="text-error">
+                        {{ util.appTranslate('form_required') }}
+                      </div>
+                    }
+                    @if (f['fefoWarningDays'].errors && f['fefoWarningDays'].errors['min']) {
+                      <div class="text-error">
+                        {{ util.appTranslate('dairy_fefo_warning_days_min') }}
+                      </div>
+                    }
+                    @if (f['fefoWarningDays'].errors && f['fefoWarningDays'].errors['max']) {
+                      <div class="text-error">
+                        {{ util.appTranslate('dairy_fefo_warning_days_max') }}
+                      </div>
+                    }
+                  </mat-hint>
+                }
+              </mat-form-field>
+            </div>
+
+            <div class="col-lg-4 col-sm-12 p-b-16">
+              <mat-form-field appearance="outline" class="w-100">
+                <mat-label>{{
+                  util.appTranslate('dairy_subscription_skip_cutoff_hours')
+                }}</mat-label>
+                <input
+                  matInput
+                  type="number"
+                  formControlName="subscriptionSkipCutoffHours"
+                  name="subscriptionSkipCutoffHours"
+                  min="0"
+                  max="48"
+                />
+                <mat-hint>{{
+                  util.appTranslate('dairy_subscription_skip_cutoff_hours_hint')
+                }}</mat-hint>
+                @if (haveSubmitClicked == true && f['subscriptionSkipCutoffHours'].invalid) {
+                  <mat-hint class="m-b-16 error-msg">
+                    @if (
+                      f['subscriptionSkipCutoffHours'].errors &&
+                      f['subscriptionSkipCutoffHours'].errors['required']
+                    ) {
+                      <div class="text-error">
+                        {{ util.appTranslate('form_required') }}
+                      </div>
+                    }
+                    @if (
+                      f['subscriptionSkipCutoffHours'].errors &&
+                      f['subscriptionSkipCutoffHours'].errors['min']
+                    ) {
+                      <div class="text-error">
+                        {{ util.appTranslate('dairy_subscription_skip_cutoff_hours_min') }}
+                      </div>
+                    }
+                    @if (
+                      f['subscriptionSkipCutoffHours'].errors &&
+                      f['subscriptionSkipCutoffHours'].errors['max']
+                    ) {
+                      <div class="text-error">
+                        {{ util.appTranslate('dairy_subscription_skip_cutoff_hours_max') }}
+                      </div>
+                    }
+                  </mat-hint>
+                }
+              </mat-form-field>
+            </div>
+          </div>
+
+          <!-- Stored for parity with the other verticals, NOT enforced yet. Labelled
+               rather than silently decorative. -->
+          <div class="row">
+            <div class="col-lg-12 col-sm-12 p-b-8">
+              <h4 class="m-b-8">{{ util.appTranslate('dairy_settings_platform') }}</h4>
+              <p class="m-b-16 text-muted">
+                {{ util.appTranslate('dairy_settings_platform_hint') }}
+              </p>
+            </div>
+
+            <div class="col-lg-4 col-sm-12 p-b-16">
+              <mat-slide-toggle formControlName="selfRegistration" name="selfRegistration">
+                {{ util.appTranslate('dairy_self_registration') }}
+              </mat-slide-toggle>
+              <div class="text-muted mt-4 text-sm">
+                {{ util.appTranslate('dairy_self_registration_hint') }}
+              </div>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col-lg-2 col-sm-6 p-b-16">
+              <button mat-flat-button color="primary" type="submit" class="w-100">
+                {{
+                  action == 'add'
+                    ? util.appTranslate('submit_btn')
+                    : util.appTranslate('update_btn')
+                }}
+              </button>
+            </div>
+            <div class="col-lg-2 col-sm-6 p-b-16">
+              <button
+                mat-flat-button
+                (click)="onReset()"
+                class="w-100 bg-secondary text-white"
+                type="button"
+              >
+                {{ util.appTranslate('reset_btn') }}
+              </button>
+            </div>
+          </div>
+        </mat-card-content>
+      </mat-card>
+    </div>
+  </div>
+</form>

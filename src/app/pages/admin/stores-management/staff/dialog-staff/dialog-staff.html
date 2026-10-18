@@ -1,0 +1,60 @@
+<div mat-dialog-content class="dialog-form">
+  <form [formGroup]="staffForm" (ngSubmit)="onSubmit()">
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>{{ util.appTranslate('stores_staff_user') }} <span class="required">*</span></mat-label>
+      <input matInput formControlName="user" placeholder="User id">
+      @if (f.user.invalid && haveSubmitClicked) {
+        <mat-error>{{ util.appTranslate('ts_field_required') }}</mat-error>
+      }
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>{{ util.appTranslate('stores_chain_name') }} <span class="required">*</span></mat-label>
+      <input matInput formControlName="chain" placeholder="Chain id">
+      @if (f.chain.invalid && haveSubmitClicked) {
+        <mat-error>{{ util.appTranslate('ts_field_required') }}</mat-error>
+      }
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>{{ util.appTranslate('stores_staff_role') }} <span class="required">*</span></mat-label>
+      <mat-select formControlName="role">
+        @for (r of roles; track r) {
+          <mat-option [value]="r">{{ r }}</mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>{{ util.appTranslate('stores_staff_scope_type') }} <span class="required">*</span></mat-label>
+      <mat-select formControlName="scopeType">
+        @for (s of scopeTypes; track s) {
+          <mat-option [value]="s">{{ s }}</mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>{{ util.appTranslate('stores_staff_outlets') }}</mat-label>
+      <input matInput formControlName="outletIds" placeholder="Comma-separated outlet ids (required for outlet scope)">
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>{{ util.appTranslate('th_status') }}</mat-label>
+      <mat-select formControlName="status">
+        @for (s of statuses; track s) {
+          <mat-option [value]="s">{{ s }}</mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+
+    <div mat-dialog-actions class="dialog-actions">
+      <button mat-button type="button" (click)="dialogRef.close()" cdkFocusInitial>
+        {{ util.appTranslate('common_cancel') }}
+      </button>
+      <button mat-raised-button color="primary" type="submit" [disabled]="staffForm.invalid">
+        {{ util.appTranslate('ts_add_new') }}
+      </button>
+    </div>
+  </form>
+</div>

@@ -1,0 +1,66 @@
+<h2 mat-dialog-title class="dialog-title">
+  <span class="title-text">
+    {{
+      action == 'create'
+        ? util.appTranslate('add_dairy_sub_category')
+        : util.appTranslate('update_dairy_sub_category')
+    }}
+  </span>
+  <button mat-icon-button mat-dialog-close class="close-btn">
+    <mat-icon>close</mat-icon>
+  </button>
+</h2>
+
+<mat-dialog-content>
+  <form [formGroup]="subCategoryForm" class="pt-8">
+    <mat-form-field appearance="outline" class="w-100">
+      <mat-label>{{ util.appTranslate('choose_main_category') }}</mat-label>
+      <!--
+        A select of real categories rather than free text: the API validates the
+        value as an ObjectId, so a typed name would be rejected.
+      -->
+      <mat-select formControlName="category">
+        @for (option of listOfCategories; track option._id) {
+          <mat-option [value]="option._id">{{ option.name }}</mat-option>
+        }
+      </mat-select>
+      @if (haveSubmitClicked && f['category'].invalid) {
+        <mat-hint class="m-b-16 error-msg">
+          <div class="text-error">{{ util.appTranslate('form_required') }}</div>
+        </mat-hint>
+      }
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="w-100">
+      <mat-label>{{ util.appTranslate('th_name') }}</mat-label>
+      <input matInput formControlName="name" [placeholder]="util.appTranslate('th_name')" />
+      @if (haveSubmitClicked && f['name'].invalid) {
+        <mat-hint class="m-b-16 error-msg">
+          <div class="text-error">{{ util.appTranslate('form_required') }}</div>
+        </mat-hint>
+      }
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="w-100">
+      <mat-label>{{ util.appTranslate('description') }}</mat-label>
+      <textarea matInput formControlName="description" rows="3"></textarea>
+    </mat-form-field>
+
+    <div class="d-flex align-center gap-16">
+      <mat-form-field appearance="outline" class="w-100">
+        <mat-label>{{ util.appTranslate('sort_order') }}</mat-label>
+        <input matInput type="number" formControlName="sortOrder" />
+      </mat-form-field>
+      <mat-slide-toggle formControlName="status">{{
+        util.appTranslate('th_status')
+      }}</mat-slide-toggle>
+    </div>
+  </form>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-stroked-button mat-dialog-close>{{ util.appTranslate('ts_cancel') }}</button>
+  <button mat-flat-button color="primary" (click)="onSubmit()">
+    {{ util.appTranslate('ts_submit') }}
+  </button>
+</mat-dialog-actions>

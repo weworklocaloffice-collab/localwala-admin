@@ -1,0 +1,427 @@
+@if (!isSupervisor()) {
+<mat-card class="cardWithShadow theme-card">
+  <mat-card-content class="p-24 text-center text-muted">
+    {{util.appTranslate('team_only')}}
+  </mat-card-content>
+</mat-card>
+} @else {
+<mat-card class="cardWithShadow theme-card overflow-hidden m-b-16">
+  <mat-card-header>
+    <mat-card-title class="m-b-0">{{util.appTranslate('coverage_title')}}</mat-card-title>
+  </mat-card-header>
+  <mat-card-content class="b-t-0">
+    @if (!coverage) {
+    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+    } @else {
+    <div class="d-flex align-items-center flex-wrap">
+      <div class="m-r-24">
+        <div class="f-s-22 f-w-700 text-primary">{{coverage.present}} / {{coverage.scheduled}}</div>
+        <div class="f-s-11 text-muted">{{util.appTranslate('coverage_present')}}</div>
+      </div>
+      <div class="m-r-24">
+        <div class="f-s-22 f-w-700" [ngClass]="coverage.missing?.length ? 'text-error' : 'text-success'">{{(coverage.missing || []).length}}</div>
+        <div class="f-s-11 text-muted">{{util.appTranslate('coverage_missing')}}</div>
+      </div>
+      @if ((coverage.missing || []).length) {
+      <span class="f-s-12 text-error">{{coverage.missing.join(', ')}}</span>
+      }
+    </div>
+    }
+  </mat-card-content>
+</mat-card>
+
+<mat-card class="cardWithShadow theme-card overflow-hidden m-b-16">
+  <mat-card-header>
+    <mat-card-title class="m-b-0">{{util.appTranslate('qa_title')}}</mat-card-title>
+    <button mat-stroked-button class="m-l-auto" [disabled]="qaBusy" (click)="loadQaSample()">
+      {{qaBusy ? '...' : util.appTranslate('qa_sample_btn')}}
+    </button>
+  </mat-card-header>
+  <mat-card-content class="b-t-0">
+    <div class="f-s-12 text-muted m-b-8">{{util.appTranslate('qa_hint')}}</div>
+    @if (!qaQualityRows.length) {
+    <div class="f-s-12 text-muted">{{util.appTranslate('qa_empty')}}</div>
+    } @else {
+    <div class="table-responsive">
+      <table class="w-100 f-s-12">
+        <thead>
+          <tr class="f-w-600">
+            <th class="p-8 b-t-1">{{util.appTranslate('agent_lbl2')}}</th>
+            <th class="p-8 b-t-1">{{util.appTranslate('qa_overall')}}</th>
+            <th class="p-8 b-t-1">{{util.appTranslate('crit_accuracy')}}</th>
+            <th class="p-8 b-t-1">{{util.appTranslate('crit_empathy')}}</th>
+            <th class="p-8 b-t-1">{{util.appTranslate('crit_resolution')}}</th>
+            <th class="p-8 b-t-1">{{util.appTranslate('crit_compliance')}}</th>
+            <th class="p-8 b-t-1">{{util.appTranslate('csat')}}</th>
+            <th class="p-8 b-t-1">n</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (q of qaQualityRows; track q.agentId) {
+          <tr>
+            <td class="p-8 b-t-1">{{q.name}}</td>
+            <td class="p-8 b-t-1 f-w-600">{{q.overall === null ? '-' : q.overall}}</td>
+            <td class="p-8 b-t-1">{{q.criteria.accuracy === null ? '-' : q.criteria.accuracy}}</td>
+            <td class="p-8 b-t-1">{{q.criteria.empathy === null ? '-' : q.criteria.empathy}}</td>
+            <td class="p-8 b-t-1">{{q.criteria.resolution === null ? '-' : q.criteria.resolution}}</td>
+            <td class="p-8 b-t-1">{{q.criteria.compliance === null ? '-' : q.criteria.compliance}}</td>
+            <td class="p-8 b-t-1">{{q.csat === null ? '-' : q.csat}}</td>
+            <td class="p-8 b-t-1">{{q.reviewed}}</td>
+          </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+    }
+  </mat-card-content>
+</mat-card>
+
+@if (qaOpen) {
+<mat-card class="cardWithShadow theme-card overflow-hidden m-b-16">
+  <mat-card-header>
+    <mat-card-title class="m-b-0">{{util.appTranslate('qa_sample_title')}}</mat-card-title>
+    <button mat-icon-button class="m-l-auto" (click)="qaOpen = false"><mat-icon>close</mat-icon></button>
+  </mat-card-header>
+  <mat-card-content class="b-t-0">
+    <div class="f-s-12 text-muted m-b-12">{{util.appTranslate('qa_sample_hint')}}</div>
+    @if (!qaSample.length) {
+    <div class="f-s-12 text-muted">{{util.appTranslate('qa_sample_empty')}}</div>
+    }
+    @for (t of qaSample; track t.roomId) {
+    <div class="p-12 b-t-1">
+      <div class="d-flex align-items-center justify-content-between flex-wrap">
+        <span class="f-s-13">
+          <span class="f-w-600 text-warning">{{t.riskScore}}</span>
+          <span class="text-muted"> {{util.appTranslate('risk_lbl')}}</span>
+          · {{t.supportType}} · {{t.priority}}
+          @if (t.csat) { · {{util.appTranslate('csat')}} {{t.csat}} }
+          <div class="f-s-11 text-muted">{{util.appTranslate('reason')}}: {{t.sampleReason}}</div>
+          <div class="f-s-11 text-muted">{{t.lastMessage}}</div>
+        </span>
+        <span class="d-flex align-items-center">
+          <button mat-stroked-button class="f-s-11 m-r-8" (click)="api.get_private('v1/support_team/chat/' + t.roomId)">{{util.appTranslate('qa_open')}}</button>
+          <button mat-flat-button color="primary" class="f-s-11" [disabled]="!canSubmitQa(t.roomId)" (click)="submitQa(t.roomId)">{{util.appTranslate('qa_submit')}}</button>
+        </span>
+      </div>
+      <div class="d-flex align-items-center flex-wrap m-t-8">
+        @for (c of criteria; track c) {
+        <span class="d-flex align-items-center m-r-12 f-s-11">
+          <span class="m-r-4">{{util.appTranslate('crit_' + c)}}</span>
+          <mat-select [ngModel]="scoreOf(t.roomId, c)" (ngModelChange)="setScore(t.roomId, c, $event)" style="width:70px;">
+            <mat-option [value]="0">-</mat-option>
+            @for (n of [1,2,3,4,5]; track n) {
+            <mat-option [value]="n">{{n}}</mat-option>
+            }
+          </mat-select>
+        </span>
+        }
+        <input class="m-t-8 p-6 f-s-11" style="flex:1;min-width:180px;" placeholder="{{util.appTranslate('qa_comment')}}"
+          [ngModel]="qaComment[t.roomId] || ''" (ngModelChange)="qaComment[t.roomId] = $event" />
+      </div>
+    </div>
+    }
+  </mat-card-content>
+</mat-card>
+}
+
+@if (shiftEdit) {
+<mat-card class="cardWithShadow theme-card overflow-hidden m-b-16">
+  <mat-card-header>
+    <mat-card-title class="m-b-0">{{util.appTranslate('shift_edit')}}: {{shiftEdit.name}}</mat-card-title>
+    <button mat-icon-button class="m-l-auto" (click)="shiftEdit = null"><mat-icon>close</mat-icon></button>
+  </mat-card-header>
+  <mat-card-content class="b-t-0">
+    <div class="d-flex align-items-center flex-wrap m-b-12">
+      <mat-form-field appearance="outline" style="max-width:200px;" class="m-r-12 m-b-0">
+        <mat-label>{{util.appTranslate('timezone')}}</mat-label>
+        <mat-select [(ngModel)]="shiftEdit.timezone">
+          @for (tz of timezones; track tz) {
+          <mat-option [value]="tz">{{tz}}</mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+      <mat-checkbox [(ngModel)]="shiftEdit.autoOffline">{{util.appTranslate('shift_autoffline')}}</mat-checkbox>
+    </div>
+    <div class="f-s-12 text-muted m-b-8">{{util.appTranslate('shift_hint')}}</div>
+    <div class="d-flex flex-wrap">
+      @for (d of dayKeys; track d.k) {
+      <div class="m-r-8 m-b-8" style="min-width:150px;">
+        <div class="d-flex align-items-center justify-content-between">
+          <button mat-button class="f-s-11 p-4" [color]="shiftWindowsOf(shiftEdit, d.k).length ? 'primary' : ''" (click)="shiftToggleDay(shiftEdit, d.k)">{{d.l}}</button>
+          @if (shiftWindowsOf(shiftEdit, d.k).length) {
+          <mat-icon class="f-s-14 cursor-pointer" (click)="shiftAddWindow(shiftEdit, d.k)">add</mat-icon>
+          }
+        </div>
+        @for (w of shiftWindowsOf(shiftEdit, d.k); track $index) {
+        <div class="d-flex align-items-center f-s-11">
+          <input type="time" class="p-4 m-b-4" [ngModel]="toHHMM(w[0])" (ngModelChange)="shiftSetWindow(shiftEdit, d.k, $index, 0, $event)" />
+          <span class="m-x-4">-</span>
+          <input type="time" class="p-4 m-b-4" [ngModel]="toHHMM(w[1])" (ngModelChange)="shiftSetWindow(shiftEdit, d.k, $index, 1, $event)" />
+          <mat-icon class="f-s-14 cursor-pointer m-l-4" (click)="shiftRemoveWindow(shiftEdit, d.k, $index)">close</mat-icon>
+        </div>
+        }
+      </div>
+      }
+    </div>
+    <div class="d-flex mt-12">
+      <button mat-flat-button color="primary" class="m-r-8" [disabled]="shiftSaving" (click)="saveShift()">{{util.appTranslate('save_btn')}}</button>
+      <button mat-stroked-button color="warn" [disabled]="shiftSaving" (click)="removeShift()">{{util.appTranslate('shift_remove')}}</button>
+    </div>
+  </mat-card-content>
+</mat-card>
+}
+<mat-card class="cardWithShadow theme-card overflow-hidden m-b-16">
+  <mat-card-header>
+    <mat-card-title class="m-b-0">{{util.appTranslate('queues_staffing')}}</mat-card-title>
+  </mat-card-header>
+  <mat-card-content class="b-t-0">
+    @if (!isLoaded) {
+    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+    } @else if (!queues.length) {
+    <p class="text-center text-muted m-t-16">{{util.appTranslate('no_queues')}}</p>
+    }
+    @for (q of queues; track q._id || q.id) {
+    <div class="p-12 b-t-1">
+      <div class="d-flex align-items-center justify-content-between flex-wrap">
+        <div class="f-s-15 f-w-600">{{q.name}}
+          <span class="f-s-11 text-muted m-l-8">{{(q.skills || []).join(', ')}}</span>
+          @if (!q.isActive) { <span class="f-s-11 f-w-600 text-error m-l-8">OFF</span> }
+        </div>
+        <div class="d-flex align-items-center">
+          <span class="f-s-12 text-muted m-r-8">WIP</span>
+          <button mat-icon-button (click)="setWip(q, -1)" [disabled]="(q.wipLimit || 3) <= 1"><mat-icon>remove</mat-icon></button>
+          <span class="f-s-16 f-w-600 m-x-8">{{q.wipLimit || 3}}</span>
+          <button mat-icon-button (click)="setWip(q, 1)" [disabled]="(q.wipLimit || 3) >= 20"><mat-icon>add</mat-icon></button>
+          <button mat-stroked-button class="m-l-8" (click)="toggleQueue(q)">{{q.isActive ? util.appTranslate('disable_btn') : util.appTranslate('enable_btn')}}</button>
+        </div>
+      </div>
+      <!-- Working hours: SLA deadlines pause outside staffed time. Empty = 24x7. -->
+      <div class="m-t-12 p-12 rounded bg-light">
+        <div class="d-flex align-items-center justify-content-between flex-wrap m-b-8">
+          <span class="f-s-13 f-w-600">{{util.appTranslate('working_hours')}}
+            <span class="f-s-11 text-muted f-w-400">— {{whIs24x7(q) ? util.appTranslate('wh_24x7') : util.appTranslate('wh_staffed')}}</span>
+          </span>
+          <span class="d-flex align-items-center">
+            <mat-form-field appearance="outline" style="width:170px;" class="m-b-0 m-r-8">
+              <mat-label>{{util.appTranslate('timezone')}}</mat-label>
+              <mat-select [ngModel]="whTz(q)" (selectionChange)="setWhTz(q, $event.value)">
+                @for (tz of timezones; track tz) {
+                <mat-option [value]="tz">{{tz}}</mat-option>
+                }
+              </mat-select>
+            </mat-form-field>
+            <button mat-stroked-button class="f-s-11" (click)="saveWh(q)">{{util.appTranslate('save_btn')}}</button>
+          </span>
+        </div>
+        <div class="d-flex flex-wrap">
+          @for (d of dayKeys; track d.k) {
+          <div class="m-r-8 m-b-8" style="min-width:150px;">
+            <div class="d-flex align-items-center justify-content-between">
+              <button mat-button class="f-s-11 p-4" [color]="wh(q, d.k).length ? 'primary' : ''" (click)="toggleWhDay(q, d.k)">{{d.l}}</button>
+              @if (wh(q, d.k).length) {
+              <mat-icon class="f-s-14 cursor-pointer" (click)="addWhWindow(q, d.k)">add</mat-icon>
+              }
+            </div>
+            @for (w of wh(q, d.k); track $index) {
+            <div class="d-flex align-items-center f-s-11">
+              <input type="time" class="p-4 m-b-4" [ngModel]="toHHMM(w[0])" (ngModelChange)="setWhWindow(q, d.k, $index, 0, $event)" />
+              <span class="m-x-4">-</span>
+              <input type="time" class="p-4 m-b-4" [ngModel]="toHHMM(w[1])" (ngModelChange)="setWhWindow(q, d.k, $index, 1, $event)" />
+              <mat-icon class="f-s-14 cursor-pointer m-l-4" (click)="removeWhWindow(q, d.k, $index)">close</mat-icon>
+            </div>
+            }
+          </div>
+          }
+        </div>
+      </div>
+      <div class="d-flex align-items-center flex-wrap m-t-8">
+        @for (m of (q.members || []); track m._id || m.id || $index) {
+        <span class="d-inline-flex align-items-center bg-light-secondary rounded p-6 m-r-8 m-b-4 f-s-12">
+          {{m.firstName || ''}} {{m.lastName || ''}}
+          <mat-icon class="m-l-4 cursor-pointer" style="font-size:15px;" (click)="removeMember(q, m._id || m.id || m)">close</mat-icon>
+        </span>
+        }
+        @if (!(q.members || []).length) {
+        <span class="f-s-12 text-muted m-r-8">No members — auto-assign skips this queue.</span>
+        }
+        <mat-form-field appearance="outline" style="max-width:220px;" class="m-b-4">
+          <mat-label>{{util.appTranslate('add_agent')}}</mat-label>
+          <mat-select [(ngModel)]="addMemberSel[q._id || q.id]" (selectionChange)="addMember(q)">
+            @for (a of allAgents; track a.id) {
+            <mat-option [value]="a.id">{{a.name}} ({{a.role === 'supportSupervisor' ? util.appTranslate('supervisor_lbl') : util.appTranslate('agent_lbl2')}})</mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
+      </div>
+    </div>
+    }
+  </mat-card-content>
+</mat-card>
+
+<mat-card class="cardWithShadow theme-card overflow-hidden m-b-16">
+  <mat-card-header>
+    <mat-card-title class="m-b-0">{{util.appTranslate('agents_roster')}}</mat-card-title>
+  </mat-card-header>
+  <mat-card-content class="b-t-0">
+    <div class="f-s-12 text-muted m-b-8">{{util.appTranslate('agents_roster_hint')}}</div>
+    <mat-button-toggle-group [(ngModel)]="roleFilter" class="m-b-8">
+      <mat-button-toggle value="all">All</mat-button-toggle>
+      <mat-button-toggle value="agent">Agents</mat-button-toggle>
+      <mat-button-toggle value="supervisor">Supervisors</mat-button-toggle>
+    </mat-button-toggle-group>
+    @if (!allAgents.length) {
+    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+    }
+    @for (a of visibleAgents(); track a.id) {
+    <div class="p-12 b-t-1 flex-wrap">
+      <div class="d-flex align-items-center justify-content-between flex-wrap">
+        <span class="f-s-13 f-w-600 d-flex align-items-center">
+          <span class="rounded-circle d-inline-block m-r-8" style="width:9px;height:9px;" [style.background]="statusColor(a)"></span>
+          {{a.name}}
+          <span class="f-s-11 text-muted m-l-8 f-w-400">
+            {{a.role === 'supportSupervisor' ? util.appTranslate('supervisor_lbl') : util.appTranslate('agent_lbl2')}}
+            · {{a.openNow}} {{util.appTranslate('open_lbl')}}
+            · {{util.appTranslate('seen_lbl')}} {{lastSeenAge(a)}}
+          </span>
+          <span class="f-s-11 m-l-8" [ngClass]="a.offShift ? 'text-warning' : 'text-muted'"
+            [matTooltip]="util.appTranslate('shift_hint')">
+            · {{shiftLabel(a.id)}}
+          </span>
+        </span>
+        <span class="d-flex align-items-center">
+          <span class="f-s-12 f-w-600 m-r-8" [style.color]="statusColor(a)">{{statusLabel(a)}}</span>
+          <button mat-stroked-button class="m-r-4 f-s-11" (click)="openShiftEditor(a)">{{util.appTranslate('shift')}}</button>
+          <button mat-stroked-button class="m-r-4 f-s-11"
+            [disabled]="busyAgentId === a.id || statusOf(a) === 'available'"
+            (click)="setAgentStatus(a, 'available')">{{util.appTranslate('available')}}</button>
+          <button mat-stroked-button class="m-r-4 f-s-11"
+            [disabled]="busyAgentId === a.id || statusOf(a) === 'busy'"
+            (click)="setAgentStatus(a, 'busy')">{{util.appTranslate('busy')}}</button>
+          <button mat-stroked-button class="f-s-11"
+            [disabled]="busyAgentId === a.id || statusOf(a) === 'offline'"
+            (click)="setAgentStatus(a, 'offline')">{{util.appTranslate('offline')}}</button>
+        </span>
+      </div>
+    </div>
+    }
+  </mat-card-content>
+</mat-card>
+
+<mat-card class="cardWithShadow theme-card overflow-hidden m-b-16">
+  <mat-card-header>
+    <mat-card-title class="m-b-0">{{util.appTranslate('lang_routing_title')}}</mat-card-title>
+  </mat-card-header>
+  <mat-card-content class="b-t-0">
+    <div class="f-s-12 text-muted m-b-8">{{util.appTranslate('lang_hint')}}</div>
+    @if (!allAgents.length) {
+    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+    }
+    @for (a of visibleAgents(); track a.id) {
+    <div class="d-flex align-items-center justify-content-between p-8 b-t-1 flex-wrap">
+      <span class="f-s-13 f-w-600">{{a.name}}
+        <span class="f-s-11 text-muted">· {{(a.languages || []).length ? (a.languages || []).join(', ') : util.appTranslate('any_lang')}}</span>
+      </span>
+      <span class="d-flex align-items-center flex-wrap">
+        @for (lang of langOptions; track lang) {
+        <button mat-stroked-button class="m-r-4 m-b-4 f-s-11" [color]="hasLang(a, lang) ? 'primary' : ''" (click)="toggleLang(a, lang)">{{lang}}</button>
+        }
+      </span>
+    </div>
+    }
+  </mat-card-content>
+</mat-card>
+
+<mat-card class="cardWithShadow theme-card overflow-hidden m-b-16">
+  <mat-card-header>
+    <mat-card-title class="m-b-0">{{util.appTranslate('sla_policies_title')}}</mat-card-title>
+  </mat-card-header>
+  <mat-card-content class="b-t-0">
+    @if (!policies.length) {
+    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+    }
+    @if (policies.length) {
+    <div class="table-responsive">
+      <table mat-table [dataSource]="policies" class="w-100">
+        <ng-container matColumnDef="type">
+          <th mat-header-cell *matHeaderCellDef class="f-w-600">Type / priority</th>
+          <td mat-cell *matCellDef="let p">{{p.supportType}} · {{p.priority}}</td>
+        </ng-container>
+        <ng-container matColumnDef="fr">
+          <th mat-header-cell *matHeaderCellDef class="f-w-600">{{util.appTranslate('first_reply_s')}}</th>
+          <td mat-cell *matCellDef="let p">
+            <mat-form-field appearance="outline" style="max-width:130px;">
+              <input matInput type="number" [(ngModel)]="p.firstResponseSec" />
+              <mat-hint>{{(p.firstResponseSec / 60) + ' min'}}</mat-hint>
+            </mat-form-field>
+          </td>
+        </ng-container>
+        <ng-container matColumnDef="res">
+          <th mat-header-cell *matHeaderCellDef class="f-w-600">{{util.appTranslate('resolve_s')}}</th>
+          <td mat-cell *matCellDef="let p">
+            <mat-form-field appearance="outline" style="max-width:130px;">
+              <input matInput type="number" [(ngModel)]="p.resolutionSec" />
+              <mat-hint>{{(p.resolutionSec / 3600) + ' hr'}}</mat-hint>
+            </mat-form-field>
+          </td>
+        </ng-container>
+        <ng-container matColumnDef="esc">
+          <th mat-header-cell *matHeaderCellDef class="f-w-600">{{util.appTranslate('escalation')}}</th>
+          <td mat-cell *matCellDef="let p">
+            <div class="d-flex align-items-center flex-wrap">
+              <mat-form-field appearance="outline" style="max-width:130px;" class="m-r-8 m-b-4">
+                <mat-label>{{util.appTranslate('esc_mode')}}</mat-label>
+                <mat-select [(ngModel)]="p.escalationMode">
+                  <mat-option value="off">{{util.appTranslate('esc_off')}}</mat-option>
+                  <mat-option value="notify">{{util.appTranslate('esc_notify')}}</mat-option>
+                  <mat-option value="reassign">{{util.appTranslate('esc_reassign')}}</mat-option>
+                </mat-select>
+              </mat-form-field>
+              @if (p.escalationMode && p.escalationMode !== 'off') {
+              <mat-form-field appearance="outline" style="max-width:130px;" class="m-b-4">
+                <mat-label>{{util.appTranslate('esc_grace')}}</mat-label>
+                <input matInput type="number" [(ngModel)]="p.escalateAfterSec" />
+                <mat-hint>{{util.appTranslate('seconds')}}</mat-hint>
+              </mat-form-field>
+              <mat-form-field appearance="outline" style="max-width:160px;" class="m-b-4">
+                <mat-label>{{util.appTranslate('esc_to')}}</mat-label>
+                <mat-select [(ngModel)]="p.escalateTo" multiple>
+                  @for (a of supervisorsOnly(); track a.id) {
+                  <mat-option [value]="a.id">{{a.name}}</mat-option>
+                  }
+                </mat-select>
+              </mat-form-field>
+              @if (!(p.escalateTo || []).length) {
+              <span class="f-s-11 text-muted m-l-8">{{util.appTranslate('esc_all_available')}}</span>
+              }
+              }
+            </div>
+          </td>
+        </ng-container>
+        <ng-container matColumnDef="save">
+          <th mat-header-cell *matHeaderCellDef></th>
+          <td mat-cell *matCellDef="let p"><button mat-stroked-button (click)="savePolicy(p)">{{util.appTranslate('save_btn')}}</button></td>
+        </ng-container>
+        <tr mat-header-row *matHeaderRowDef="['type','fr','res','esc','save']"></tr>
+        <tr mat-row *matRowDef="let row; columns: ['type','fr','res','esc','save']"></tr>
+      </table>
+    </div>
+    }
+  </mat-card-content>
+</mat-card>
+
+<mat-card class="cardWithShadow theme-card overflow-hidden">
+  <mat-card-header>
+    <mat-card-title class="m-b-0">{{util.appTranslate('broadcast_title')}}</mat-card-title>
+  </mat-card-header>
+  <mat-card-content class="b-t-0">
+    <div class="d-flex align-items-center flex-wrap">
+      <mat-form-field appearance="outline" class="w-100 m-r-8" style="max-width:520px;">
+        <mat-label>{{util.appTranslate('broadcast_msg')}}</mat-label>
+        <input matInput [(ngModel)]="broadcastMsg" maxlength="500" />
+        <mat-hint align="end">{{(broadcastMsg || '').length}} / 500</mat-hint>
+      </mat-form-field>
+      <button mat-flat-button color="primary" [disabled]="broadcastBusy || !broadcastMsg.trim()" (click)="sendBroadcast()">{{util.appTranslate('send_btn')}}</button>
+    </div>
+  </mat-card-content>
+</mat-card>
+}

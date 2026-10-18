@@ -1,0 +1,19 @@
+<mat-card class="cardWithShadow m-b-16">
+  <mat-card-header class="m-b-16">
+    <mat-card-title>{{ util.appTranslate('bank_profile') }}</mat-card-title>
+    <mat-card-subtitle>{{ bank?.name || '' }}</mat-card-subtitle>
+  </mat-card-header>
+
+  <mat-card-content>
+    @if (!isLoaded) {
+      <div class="p-24 text-center text-muted">{{ util.appTranslate('ts_loading') }}</div>
+    } @else {
+      <p class="f-s-13">{{ member?.user?.firstName || '' }} {{ member?.user?.lastName || '' }}</p>
+      <p class="f-s-13 text-muted">{{ member?.user?.mobile || '' }} · {{ member?.user?.email || '' }}</p>
+      <p class="f-s-13 text-muted">{{ util.appTranslate('th_role') }}: {{ member?.role || 'bank' }}</p>
+      <a [routerLink]="['/bank-team/u/change-password']" class="cursor-pointer text-success f-s-13">
+        {{ util.appTranslate('change_password') }}
+      </a>
+    }
+  </mat-card-content>
+</mat-card>

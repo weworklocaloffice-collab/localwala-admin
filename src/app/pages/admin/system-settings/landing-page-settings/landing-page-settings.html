@@ -1,0 +1,2613 @@
+<mat-card class="cardWithShadow">
+  <mat-card-content class="p-0">
+    <mat-tab-group mat-stretch-tabs="false" animationDuration="0ms" [selectedIndex]="tabIndex"
+      (selectedTabChange)="tabChanged($event)">
+      <!-- Hero Content -->
+      <mat-tab>
+        <ng-template mat-tab-label>
+          <div class="d-flex align-items-center justify-content-center">
+            <ng-icon name="tablerBatteryAutomotive" class="icon-20 m-r-8"></ng-icon>
+          </div>
+          {{ util.appTranslate('hero_content') }}
+        </ng-template>
+        @if(tabIndex == 0){
+        <mat-card-content class="p-y-24 b-t-0">
+          <form name="eventForm" [formGroup]="heroForm" class="event-form" (ngSubmit)="onHeroSubmit()" id="topContent">
+            <div class="row">
+
+              <div class="col-lg-8 col-sm-12 p-b-16">
+                <mat-card class="cardWithShadow theme-card">
+                  <mat-card-header>
+                    <mat-card-title class="m-b-0 f-s-12">
+                      {{ util.appTranslate('top_hero_content') }}
+                    </mat-card-title>
+                  </mat-card-header>
+
+                  <mat-card-content class="b-t-0">
+                    <div class="row">
+                      <div class="col-lg-12 col-sm-12 p-b-16">
+                        <mat-form-field appearance="outline" class="w-100" color="primary">
+                          <mat-label>{{ util.appTranslate('highlight_text') }}</mat-label>
+                          <input matInput formControlName="highlight" type="text" />
+                          @if(haveHeroSubmitClicked == true && heroF['highlight'].invalid){
+                          <mat-hint class="m-b-16 error-msg">
+                            @if(heroF['highlight'].errors && heroF['highlight'].errors['required']){
+                            <div class="text-error">
+                              {{util.appTranslate('form_required')}}
+                            </div>
+                            }
+                          </mat-hint>
+                          }
+                        </mat-form-field>
+
+                        <mat-form-field appearance="outline" class="w-100" color="primary">
+                          <mat-label>{{ util.appTranslate('title') }}</mat-label>
+                          <textarea matInput formControlName="title" type="text" row="2"></textarea>
+                          @if(haveHeroSubmitClicked == true && heroF['title'].invalid){
+                          <mat-hint class="m-b-16 error-msg">
+                            @if(heroF['title'].errors && heroF['title'].errors['required']){
+                            <div class="text-error">
+                              {{util.appTranslate('form_required')}}
+                            </div>
+                            }
+                          </mat-hint>
+                          }
+                        </mat-form-field>
+
+                        <mat-form-field appearance="outline" class="w-100" color="primary">
+                          <mat-label>{{ util.appTranslate('sub_title') }}</mat-label>
+                          <textarea matInput formControlName="subtitle" type="text" row="2"></textarea>
+                          @if(haveHeroSubmitClicked == true && heroF['subtitle'].invalid){
+                          <mat-hint class="m-b-16 error-msg">
+                            @if(heroF['subtitle'].errors && heroF['subtitle'].errors['required']){
+                            <div class="text-error">
+                              {{util.appTranslate('form_required')}}
+                            </div>
+                            }
+                          </mat-hint>
+                          }
+                        </mat-form-field>
+
+                        <mat-form-field appearance="outline" class="w-100" color="primary">
+                          <mat-label>{{ util.appTranslate('header_text') }}</mat-label>
+                          <input matInput formControlName="header" type="text" />
+                          @if(haveHeroSubmitClicked == true && heroF['header'].invalid){
+                          <mat-hint class="m-b-16 error-msg">
+                            @if(heroF['header'].errors && heroF['header'].errors['required']){
+                            <div class="text-error">
+                              {{util.appTranslate('form_required')}}
+                            </div>
+                            }
+                          </mat-hint>
+                          }
+                        </mat-form-field>
+
+                        <mat-tab-group mat-stretch-tabs="false" mat-align-tabs="start">
+                          @for (item of heroLanguages; track $index) {
+                          <mat-tab [label]="item.nativeName">
+                            <div class="mat-body-1 px-16 m-t-12">
+                              <mat-form-field appearance="outline" class="w-100" color="primary">
+                                <input matInput type="text"
+                                  placeholder="{{ util.appTranslate('highlight_text') }} ({{item.nativeName}})"
+                                  [(ngModel)]="item.highlight" [ngModelOptions]="{standalone: true}" />
+                              </mat-form-field>
+
+                              <mat-form-field appearance="outline" class="w-100" color="primary">
+                                <textarea matInput type="text"
+                                  placeholder="{{ util.appTranslate('title') }} ({{item.nativeName}})"
+                                  [(ngModel)]="item.title" [ngModelOptions]="{standalone: true}" row="2"> </textarea>
+                              </mat-form-field>
+
+                              <mat-form-field appearance="outline" class="w-100" color="primary">
+                                <textarea matInput type="text"
+                                  placeholder="{{ util.appTranslate('sub_title') }} ({{item.nativeName}})"
+                                  [(ngModel)]="item.subtitle" [ngModelOptions]="{standalone: true}" row="2"> </textarea>
+                              </mat-form-field>
+
+                              <mat-form-field appearance="outline" class="w-100" color="primary">
+                                <input matInput type="text"
+                                  placeholder="{{ util.appTranslate('header_text') }} ({{item.nativeName}})"
+                                  [(ngModel)]="item.header" [ngModelOptions]="{standalone: true}" />
+                              </mat-form-field>
+                            </div>
+                          </mat-tab>
+                          }
+                        </mat-tab-group>
+                      </div>
+                    </div>
+                  </mat-card-content>
+                </mat-card>
+
+                <div class="row">
+                  <div class="col-lg-6 col-sm-12 p-b-16">
+                    <mat-card class="cardWithShadow theme-card">
+                      <mat-card-header>
+                        <mat-card-title class="m-b-0 f-s-12">
+                          {{ util.appTranslate('first_stat_detail') }}
+                        </mat-card-title>
+                      </mat-card-header>
+                      <mat-card-content class="b-t-0">
+                        <div class="row" [formGroup]="heroForm.controls['stats_one']">
+                          <div
+                            class="col-12 text-center m-b-16 p-b-24 d-flex flex-column justify-content-center align-items-center">
+                            <img [src]="api.mediaUrl+heroStatsOne['cover'].value"
+                              class="custom-image-upload border p-5 m-b-16" width="100" height="100"
+                              onError="this.src='assets/images/placeholder.png'"
+                              (click)="onImageClick('hero','stat_one')"
+                              [ngStyle]="{'border': haveHeroSubmitClicked == true &&  heroStatsOne['cover'].invalid ? '2px dashed red' : '2px dashed #e5e5e5'}" />
+                            <span
+                              [ngClass]="haveHeroSubmitClicked == true &&  heroStatsOne['cover'].invalid ? 'f-s-10 text-error' :'f-s-10' ">
+                              ({{ util.appTranslate('cover_validation') }})
+                            </span>
+                          </div>
+
+                          <div class="col-lg-12 col-sm-12 p-b-16">
+                            <mat-form-field appearance="outline" class="w-100" color="primary">
+                              <mat-label>{{ util.appTranslate('title') }}</mat-label>
+                              <input matInput formControlName="title" type="text" />
+                              @if(haveHeroSubmitClicked == true && heroStatsOne['title'].invalid){
+                              <mat-hint class="m-b-16 error-msg">
+                                @if(heroStatsOne['title'].errors && heroStatsOne['title'].errors['required']){
+                                <div class="text-error">
+                                  {{util.appTranslate('form_required')}}
+                                </div>
+                                }
+                              </mat-hint>
+                              }
+                            </mat-form-field>
+
+                            <mat-form-field appearance="outline" class="w-100" color="primary">
+                              <mat-label>{{ util.appTranslate('sub_title') }}</mat-label>
+                              <input matInput formControlName="subtitle" type="text" />
+                              @if(haveHeroSubmitClicked == true && heroStatsOne['subtitle'].invalid){
+                              <mat-hint class="m-b-16 error-msg">
+                                @if(heroStatsOne['subtitle'].errors && heroStatsOne['subtitle'].errors['required']){
+                                <div class="text-error">
+                                  {{util.appTranslate('form_required')}}
+                                </div>
+                                }
+                              </mat-hint>
+                              }
+                            </mat-form-field>
+
+                            <mat-tab-group mat-stretch-tabs="false" mat-align-tabs="start">
+                              @for (item of statOneLanguages; track $index) {
+                              <mat-tab [label]="item.nativeName">
+                                <div class="mat-body-1 px-16 m-t-12">
+                                  <mat-form-field appearance="outline" class="w-100" color="primary">
+                                    <input matInput type="text"
+                                      placeholder="{{util.appTranslate('title')}} ({{item.nativeName}})"
+                                      [(ngModel)]="item.title" [ngModelOptions]="{standalone: true}" />
+                                  </mat-form-field>
+
+                                  <mat-form-field appearance="outline" class="w-100" color="primary">
+                                    <input matInput type="text"
+                                      placeholder="{{util.appTranslate('sub_title')}} ({{item.nativeName}})"
+                                      [(ngModel)]="item.subtitle" [ngModelOptions]="{standalone: true}" />
+                                  </mat-form-field>
+                                </div>
+                              </mat-tab>
+                              }
+                            </mat-tab-group>
+                          </div>
+
+                        </div>
+                      </mat-card-content>
+                    </mat-card>
+                  </div>
+
+                  <div class="col-lg-6 col-sm-12 p-b-16">
+                    <mat-card class="cardWithShadow theme-card">
+                      <mat-card-header>
+                        <mat-card-title class="m-b-0 f-s-12">
+                          {{ util.appTranslate('second_stat_detail') }}
+                        </mat-card-title>
+                      </mat-card-header>
+                      <mat-card-content class="b-t-0">
+                        <div class="row" [formGroup]="heroForm.controls['stats_two']">
+                          <div
+                            class="col-12 text-center m-b-16 p-b-24 d-flex flex-column justify-content-center align-items-center">
+                            <img [src]="api.mediaUrl+heroStatsTwo['cover'].value"
+                              class="custom-image-upload border p-5 m-b-16" width="100" height="100"
+                              onError="this.src='assets/images/placeholder.png'"
+                              (click)="onImageClick('hero','stat_two')"
+                              [ngStyle]="{'border': haveHeroSubmitClicked == true &&  heroStatsTwo['cover'].invalid ? '2px dashed red' : '2px dashed #e5e5e5'}" />
+                            <span
+                              [ngClass]="haveHeroSubmitClicked == true &&  heroStatsTwo['cover'].invalid ? 'f-s-10 text-error' :'f-s-10' ">
+                              ({{ util.appTranslate('cover_validation') }})
+                            </span>
+                          </div>
+
+                          <div class="col-lg-12 col-sm-12 p-b-16">
+                            <mat-form-field appearance="outline" class="w-100" color="primary">
+                              <mat-label>{{ util.appTranslate('title') }}</mat-label>
+                              <input matInput formControlName="title" type="text" />
+                              @if(haveHeroSubmitClicked == true && heroStatsTwo['title'].invalid){
+                              <mat-hint class="m-b-16 error-msg">
+                                @if(heroStatsTwo['title'].errors && heroStatsTwo['title'].errors['required']){
+                                <div class="text-error">
+                                  {{util.appTranslate('form_required')}}
+                                </div>
+                                }
+                              </mat-hint>
+                              }
+                            </mat-form-field>
+
+                            <mat-form-field appearance="outline" class="w-100" color="primary">
+                              <mat-label>{{ util.appTranslate('sub_title') }}</mat-label>
+                              <input matInput formControlName="subtitle" type="text" />
+                              @if(haveHeroSubmitClicked == true && heroStatsTwo['subtitle'].invalid){
+                              <mat-hint class="m-b-16 error-msg">
+                                @if(heroStatsTwo['subtitle'].errors && heroStatsTwo['subtitle'].errors['required']){
+                                <div class="text-error">
+                                  {{util.appTranslate('form_required')}}
+                                </div>
+                                }
+                              </mat-hint>
+                              }
+                            </mat-form-field>
+
+                            <mat-tab-group mat-stretch-tabs="false" mat-align-tabs="start">
+                              @for (item of statTwoLanguages; track $index) {
+                              <mat-tab [label]="item.nativeName">
+                                <div class="mat-body-1 px-16 m-t-12">
+                                  <mat-form-field appearance="outline" class="w-100" color="primary">
+                                    <input matInput type="text"
+                                      placeholder="{{util.appTranslate('title')}} ({{item.nativeName}})"
+                                      [(ngModel)]="item.title" [ngModelOptions]="{standalone: true}" />
+                                  </mat-form-field>
+
+                                  <mat-form-field appearance="outline" class="w-100" color="primary">
+                                    <input matInput type="text"
+                                      placeholder="{{util.appTranslate('sub_title')}} ({{item.nativeName}})"
+                                      [(ngModel)]="item.subtitle" [ngModelOptions]="{standalone: true}" />
+                                  </mat-form-field>
+                                </div>
+                              </mat-tab>
+                              }
+                            </mat-tab-group>
+                          </div>
+
+                        </div>
+                      </mat-card-content>
+                    </mat-card>
+                  </div>
+
+                  <div class="col-lg-6 col-sm-12 p-b-16">
+                    <mat-card class="cardWithShadow theme-card">
+                      <mat-card-header>
+                        <mat-card-title class="m-b-0 f-s-12">
+                          {{ util.appTranslate('third_stat_detail') }}
+                        </mat-card-title>
+                      </mat-card-header>
+                      <mat-card-content class="b-t-0">
+                        <div class="row" [formGroup]="heroForm.controls['stats_three']">
+                          <div
+                            class="col-12 text-center m-b-16 p-b-24 d-flex flex-column justify-content-center align-items-center">
+                            <img [src]="api.mediaUrl+heroStatsThree['cover'].value"
+                              class="custom-image-upload border p-5 m-b-16" width="100" height="100"
+                              onError="this.src='assets/images/placeholder.png'"
+                              (click)="onImageClick('hero','stat_three')"
+                              [ngStyle]="{'border': haveHeroSubmitClicked == true &&  heroStatsThree['cover'].invalid ? '2px dashed red' : '2px dashed #e5e5e5'}" />
+                            <span
+                              [ngClass]="haveHeroSubmitClicked == true &&  heroStatsThree['cover'].invalid ? 'f-s-10 text-error' :'f-s-10' ">
+                              ({{ util.appTranslate('cover_validation') }})
+                            </span>
+                          </div>
+
+                          <div class="col-lg-12 col-sm-12 p-b-16">
+                            <mat-form-field appearance="outline" class="w-100" color="primary">
+                              <mat-label>{{ util.appTranslate('title') }}</mat-label>
+                              <input matInput formControlName="title" type="text" />
+                              @if(haveHeroSubmitClicked == true && heroStatsThree['title'].invalid){
+                              <mat-hint class="m-b-16 error-msg">
+                                @if(heroStatsThree['title'].errors && heroStatsThree['title'].errors['required']){
+                                <div class="text-error">
+                                  {{util.appTranslate('form_required')}}
+                                </div>
+                                }
+                              </mat-hint>
+                              }
+                            </mat-form-field>
+
+                            <mat-form-field appearance="outline" class="w-100" color="primary">
+                              <mat-label>{{ util.appTranslate('sub_title') }}</mat-label>
+                              <input matInput formControlName="subtitle" type="text" />
+                              @if(haveHeroSubmitClicked == true && heroStatsThree['subtitle'].invalid){
+                              <mat-hint class="m-b-16 error-msg">
+                                @if(heroStatsThree['subtitle'].errors && heroStatsThree['subtitle'].errors['required']){
+                                <div class="text-error">
+                                  {{util.appTranslate('form_required')}}
+                                </div>
+                                }
+                              </mat-hint>
+                              }
+                            </mat-form-field>
+
+                            <mat-tab-group mat-stretch-tabs="false" mat-align-tabs="start">
+                              @for (item of statThreeLanguages; track $index) {
+                              <mat-tab [label]="item.nativeName">
+                                <div class="mat-body-1 px-16 m-t-12">
+                                  <mat-form-field appearance="outline" class="w-100" color="primary">
+                                    <input matInput type="text"
+                                      placeholder="{{util.appTranslate('title')}} ({{item.nativeName}})"
+                                      [(ngModel)]="item.title" [ngModelOptions]="{standalone: true}" />
+                                  </mat-form-field>
+
+                                  <mat-form-field appearance="outline" class="w-100" color="primary">
+                                    <input matInput type="text"
+                                      placeholder="{{util.appTranslate('sub_title')}} ({{item.nativeName}})"
+                                      [(ngModel)]="item.subtitle" [ngModelOptions]="{standalone: true}" />
+                                  </mat-form-field>
+                                </div>
+                              </mat-tab>
+                              }
+                            </mat-tab-group>
+                          </div>
+
+                        </div>
+                      </mat-card-content>
+                    </mat-card>
+                  </div>
+
+                  <div class="col-lg-6 col-sm-12 p-b-16">
+                    <mat-card class="cardWithShadow theme-card">
+                      <mat-card-header>
+                        <mat-card-title class="m-b-0 f-s-12">
+                          {{ util.appTranslate('fourth_stat_detail') }}
+                        </mat-card-title>
+                      </mat-card-header>
+                      <mat-card-content class="b-t-0">
+                        <div class="row" [formGroup]="heroForm.controls['stats_four']">
+                          <div
+                            class="col-12 text-center m-b-16 p-b-24 d-flex flex-column justify-content-center align-items-center">
+                            <img [src]="api.mediaUrl+heroStatsFour['cover'].value"
+                              class="custom-image-upload border p-5 m-b-16" width="100" height="100"
+                              onError="this.src='assets/images/placeholder.png'"
+                              (click)="onImageClick('hero','stat_four')"
+                              [ngStyle]="{'border': haveHeroSubmitClicked == true &&  heroStatsFour['cover'].invalid ? '2px dashed red' : '2px dashed #e5e5e5'}" />
+                            <span
+                              [ngClass]="haveHeroSubmitClicked == true &&  heroStatsFour['cover'].invalid ? 'f-s-10 text-error' :'f-s-10' ">
+                              ({{ util.appTranslate('cover_validation') }})
+                            </span>
+                          </div>
+
+                          <div class="col-lg-12 col-sm-12 p-b-16">
+                            <mat-form-field appearance="outline" class="w-100" color="primary">
+                              <mat-label>{{ util.appTranslate('title') }}</mat-label>
+                              <input matInput formControlName="title" type="text" />
+                              @if(haveHeroSubmitClicked == true && heroStatsFour['title'].invalid){
+                              <mat-hint class="m-b-16 error-msg">
+                                @if(heroStatsFour['title'].errors && heroStatsFour['title'].errors['required']){
+                                <div class="text-error">
+                                  {{util.appTranslate('form_required')}}
+                                </div>
+                                }
+                              </mat-hint>
+                              }
+                            </mat-form-field>
+
+                            <mat-form-field appearance="outline" class="w-100" color="primary">
+                              <mat-label>{{ util.appTranslate('sub_title') }}</mat-label>
+                              <input matInput formControlName="subtitle" type="text" />
+                              @if(haveHeroSubmitClicked == true && heroStatsFour['subtitle'].invalid){
+                              <mat-hint class="m-b-16 error-msg">
+                                @if(heroStatsFour['subtitle'].errors && heroStatsFour['subtitle'].errors['required']){
+                                <div class="text-error">
+                                  {{util.appTranslate('form_required')}}
+                                </div>
+                                }
+                              </mat-hint>
+                              }
+                            </mat-form-field>
+
+                            <mat-tab-group mat-stretch-tabs="false" mat-align-tabs="start">
+                              @for (item of statFourLanguages; track $index) {
+                              <mat-tab [label]="item.nativeName">
+                                <div class="mat-body-1 px-16 m-t-12">
+                                  <mat-form-field appearance="outline" class="w-100" color="primary">
+                                    <input matInput type="text"
+                                      placeholder="{{util.appTranslate('title')}} ({{item.nativeName}})"
+                                      [(ngModel)]="item.title" [ngModelOptions]="{standalone: true}" />
+                                  </mat-form-field>
+
+                                  <mat-form-field appearance="outline" class="w-100" color="primary">
+                                    <input matInput type="text"
+                                      placeholder="{{util.appTranslate('sub_title')}} ({{item.nativeName}})"
+                                      [(ngModel)]="item.subtitle" [ngModelOptions]="{standalone: true}" />
+                                  </mat-form-field>
+                                </div>
+                              </mat-tab>
+                              }
+                            </mat-tab-group>
+                          </div>
+
+                        </div>
+                      </mat-card-content>
+                    </mat-card>
+                  </div>
+                </div>
+              </div>
+
+              <div class="col-lg-4 col-sm-12 p-b-16">
+                <mat-card class="cardWithShadow theme-card">
+                  <mat-card-header>
+                    <mat-card-title class="m-b-0 f-s-12"
+                      [ngClass]="{ 'text-error': haveHeroSubmitClicked == true && heroF['cover'].invalid }">
+                      {{ util.appTranslate('cover_hero_validation') }}
+                    </mat-card-title>
+                  </mat-card-header>
+                  <mat-card-content class="b-t-0">
+                    <div class="row">
+                      <div class="col-lg-12 col-sm-12 p-b-16">
+                        <img [src]="api.mediaUrl+heroF['cover'].value"
+                          class="custom-image-upload border p-5 m-t-16 w-100" (click)="onImageClick('hero','cover')"
+                          onError="this.src='assets/images/placeholder.png'"
+                          [ngStyle]="{'border': haveHeroSubmitClicked == true && heroF['cover'].invalid ? '2px dashed red' : '2px dashed #e5e5e5', 'height' : '120px'}" />
+                      </div>
+                    </div>
+                  </mat-card-content>
+                </mat-card>
+
+                <mat-card class="cardWithShadow theme-card">
+                  <mat-card-header>
+                    <mat-card-title class="m-b-0 f-s-12">
+                      {{ util.appTranslate('first_button') }}
+                    </mat-card-title>
+                    <mat-slide-toggle class="m-l-auto" [checked]="heroF['btn1_enable'].value"
+                      (change)="heroOneBtnChange($event)"></mat-slide-toggle>
+                  </mat-card-header>
+                  <mat-card-content class="b-t-0">
+                    <div class="row">
+                      <div class="col-lg-12 col-sm-12 p-b-16">
+                        <img [src]="api.mediaUrl+heroF['btn1_cover'].value"
+                          class="custom-image-upload border p-5 m-t-16 w-100"
+                          (click)="heroF['btn1_enable'].value ? onImageClick('hero','btn1_cover') : null"
+                          onError="this.src='assets/images/placeholder.png'"
+                          [ngStyle]="{'border': haveHeroSubmitClicked == true && heroF['btn1_cover'].invalid ? '2px dashed red' : '2px dashed #e5e5e5', 'height' : '120px'}" />
+                      </div>
+
+                      <div class="col-lg-12 col-sm-12 p-b-16">
+                        <mat-form-field appearance="outline" class="w-100" color="primary">
+                          <mat-label>{{ util.appTranslate('link') }}</mat-label>
+                          <input matInput formControlName="btn1_href" type="url"
+                            [disabled]="heroF['btn1_enable'].value ?? false" />
+                          @if(haveHeroSubmitClicked == true && heroF['btn1_href'].invalid){
+                          <mat-hint class="m-b-16 error-msg">
+                            @if(heroF['btn1_href'].errors && heroF['btn1_href'].errors['required']){
+                            <div class="text-error">
+                              {{util.appTranslate('form_required')}}
+                            </div>
+                            }
+                          </mat-hint>
+                          }
+                        </mat-form-field>
+                      </div>
+
+                    </div>
+                  </mat-card-content>
+                </mat-card>
+
+                <mat-card class="cardWithShadow theme-card">
+                  <mat-card-header>
+                    <mat-card-title class="m-b-0 f-s-12">
+                      {{ util.appTranslate('second_button') }}
+                    </mat-card-title>
+                    <mat-slide-toggle class="m-l-auto" [checked]="heroF['btn2_enable'].value"
+                      (change)="heroTwoBtnChange($event)"></mat-slide-toggle>
+                  </mat-card-header>
+                  <mat-card-content class="b-t-0">
+                    <div class="row">
+                      <div class="col-lg-12 col-sm-12 p-b-16">
+                        <img [src]="api.mediaUrl+heroF['btn2_cover'].value"
+                          class="custom-image-upload border p-5 m-t-16 w-100"
+                          (click)="heroF['btn2_enable'].value ? onImageClick('hero','btn2_cover') : null"
+                          onError="this.src='assets/images/placeholder.png'"
+                          [ngStyle]="{'border': haveHeroSubmitClicked == true && heroF['btn2_cover'].invalid ? '2px dashed red' : '2px dashed #e5e5e5', 'height' : '120px'}" />
+                      </div>
+
+                      <div class="col-lg-12 col-sm-12 p-b-16">
+                        <mat-form-field appearance="outline" class="w-100" color="primary">
+                          <mat-label>{{ util.appTranslate('link') }}</mat-label>
+                          <input matInput formControlName="btn2_href" type="url"
+                            [disabled]="heroF['btn2_enable'].value ?? false" />
+                          @if(haveHeroSubmitClicked == true && heroF['btn2_href'].invalid){
+                          <mat-hint class="m-b-16 error-msg">
+                            @if(heroF['btn2_href'].errors && heroF['btn2_href'].errors['required']){
+                            <div class="text-error">
+                              {{util.appTranslate('form_required')}}
+                            </div>
+                            }
+                          </mat-hint>
+                          }
+                        </mat-form-field>
+                      </div>
+
+                    </div>
+                  </mat-card-content>
+                </mat-card>
+
+                <mat-card class="cardWithShadow theme-card">
+                  <mat-card-header>
+                    <mat-card-title class="m-b-0 f-s-12">
+                      {{ util.appTranslate('first_hash_tag') }}
+                    </mat-card-title>
+                  </mat-card-header>
+                  <mat-card-content class="b-t-0">
+                    <div class="row">
+                      <div class="col-lg-4 col-sm-12 p-b-16">
+                        <mat-label
+                          [ngClass]="haveHeroSubmitClicked == true && heroF['hash1_img'].invalid ? 'f-s-10 text-error' :'f-s-10' ">
+                          {{ util.appTranslate('hash_img_validation') }}
+                        </mat-label>
+                        <img [src]="api.mediaUrl+heroF['hash1_img'].value"
+                          class="custom-image-upload border p-5 m-t-16 w-100" (click)="onImageClick('hero','hash1_img')"
+                          onError="this.src='assets/images/placeholder.png'"
+                          [ngStyle]="{'border': haveHeroSubmitClicked == true && heroF['hash1_img'].invalid ? '2px dashed red' : '2px dashed #e5e5e5', 'height' : '120px'}" />
+                      </div>
+                      <div class="col-lg-8 col-sm-12 p-b-16 d-flex flex-column justify-content-end align-items-end">
+                        <mat-form-field appearance="outline" class="w-100" color="primary">
+                          <mat-label> {{ util.appTranslate('hash') }} </mat-label>
+                          <input matInput formControlName="hash1_txt" type="text" />
+                          @if(haveHeroSubmitClicked == true && heroF['hash1_txt'].invalid){
+                          <mat-hint class="m-b-16 error-msg">
+                            @if(heroF['hash1_txt'].errors && heroF['hash1_txt'].errors['required']){
+                            <div class="text-error">
+                              {{util.appTranslate('form_required')}}
+                            </div>
+                            }
+                          </mat-hint>
+                          }
+                        </mat-form-field>
+                      </div>
+                    </div>
+                  </mat-card-content>
+                </mat-card>
+
+                <mat-card class="cardWithShadow theme-card">
+                  <mat-card-header>
+                    <mat-card-title class="m-b-0 f-s-12">
+                      {{ util.appTranslate('second_hash_tag') }}
+                    </mat-card-title>
+                  </mat-card-header>
+                  <mat-card-content class="b-t-0">
+                    <div class="row">
+                      <div class="col-lg-4 col-sm-12 p-b-16">
+                        <mat-label
+                          [ngClass]="haveHeroSubmitClicked == true && heroF['hash2_img'].invalid ? 'f-s-10 text-error' :'f-s-10' ">
+                          {{ util.appTranslate('hash_img_validation') }}
+                        </mat-label>
+                        <img [src]="api.mediaUrl+heroF['hash2_img'].value"
+                          class="custom-image-upload border p-5 m-t-16 w-100" (click)="onImageClick('hero','hash2_img')"
+                          onError="this.src='assets/images/placeholder.png'"
+                          [ngStyle]="{'border': haveHeroSubmitClicked == true && heroF['hash2_img'].invalid ? '2px dashed red' : '2px dashed #e5e5e5', 'height' : '120px'}" />
+                      </div>
+                      <div class="col-lg-8 col-sm-12 p-b-16 d-flex flex-column justify-content-end align-items-end">
+                        <mat-form-field appearance="outline" class="w-100" color="primary">
+                          <mat-label> {{ util.appTranslate('hash') }} </mat-label>
+                          <input matInput formControlName="hash2_txt" type="text" />
+                          @if(haveHeroSubmitClicked == true && heroF['hash2_txt'].invalid){
+                          <mat-hint class="m-b-16 error-msg">
+                            @if(heroF['hash2_txt'].errors && heroF['hash2_txt'].errors['required']){
+                            <div class="text-error">
+                              {{util.appTranslate('form_required')}}
+                            </div>
+                            }
+                          </mat-hint>
+                          }
+                        </mat-form-field>
+                      </div>
+                    </div>
+                  </mat-card-content>
+                </mat-card>
+
+                <mat-card class="cardWithShadow theme-card">
+                  <mat-card-header>
+                    <mat-card-title class="m-b-0 f-s-12">
+                      {{ util.appTranslate('third_hash_tag') }}
+                    </mat-card-title>
+                  </mat-card-header>
+                  <mat-card-content class="b-t-0">
+                    <div class="row">
+                      <div class="col-lg-4 col-sm-12 p-b-16">
+                        <mat-label
+                          [ngClass]="haveHeroSubmitClicked == true && heroF['hash3_img'].invalid ? 'f-s-10 text-error' :'f-s-10' ">
+                          {{ util.appTranslate('hash_img_validation') }}
+                        </mat-label>
+                        <img [src]="api.mediaUrl+heroF['hash3_img'].value"
+                          class="custom-image-upload border p-5 m-t-16 w-100" (click)="onImageClick('hero','hash3_img')"
+                          onError="this.src='assets/images/placeholder.png'"
+                          [ngStyle]="{'border': haveHeroSubmitClicked == true && heroF['hash3_img'].invalid ? '2px dashed red' : '2px dashed #e5e5e5', 'height' : '120px'}" />
+                      </div>
+                      <div class="col-lg-8 col-sm-12 p-b-16 d-flex flex-column justify-content-end align-items-end">
+                        <mat-form-field appearance="outline" class="w-100" color="primary">
+                          <mat-label> {{ util.appTranslate('hash') }} </mat-label>
+                          <input matInput formControlName="hash3_txt" type="text" />
+                          @if(haveHeroSubmitClicked == true && heroF['hash3_txt'].invalid){
+                          <mat-hint class="m-b-16 error-msg">
+                            @if(heroF['hash3_txt'].errors && heroF['hash3_txt'].errors['required']){
+                            <div class="text-error">
+                              {{util.appTranslate('form_required')}}
+                            </div>
+                            }
+                          </mat-hint>
+                          }
+                        </mat-form-field>
+                      </div>
+                    </div>
+                  </mat-card-content>
+                </mat-card>
+
+              </div>
+
+            </div>
+
+            <div class="d-flex align-items-center justify-content-start m-t-30">
+              <button mat-flat-button color="primary" type="submit">
+                {{ util.appTranslate('save_btn') }}
+              </button>
+
+              <button mat-flat-button (click)="onHeroReset()" class="m-l-10 bg-secondary text-white" type="button">
+                {{util.appTranslate('reset_btn')}}
+              </button>
+            </div>
+          </form>
+        </mat-card-content>
+        }
+      </mat-tab>
+      <!-- Hero Content -->
+
+      <!-- App Feature Content -->
+      <mat-tab>
+        <ng-template mat-tab-label>
+          <div class="d-flex align-items-center justify-content-center">
+            <ng-icon name="tablerDevices" class="icon-20 m-r-8"></ng-icon>
+          </div>
+          {{ util.appTranslate('app_feature_content') }}
+        </ng-template>
+        @if(tabIndex == 1){
+        <mat-card-content class="p-y-24 b-t-0">
+          <form name="eventForm" [formGroup]="appFeaturesForm" class="event-form" (ngSubmit)="onAppFeatureSubmit()"
+            id="topContent">
+            <div class="row">
+              <div class="col-lg-8 col-sm-12 p-b-16">
+                <mat-card class="cardWithShadow theme-card">
+                  <mat-card-header>
+                    <mat-card-title class="m-b-0 f-s-12">
+                      {{ util.appTranslate('app_feature_content') }}
+                    </mat-card-title>
+                  </mat-card-header>
+
+                  <mat-card-content class="b-t-0">
+                    <div class="row">
+                      <div class="col-lg-12 col-sm-12 p-b-16">
+                        <mat-form-field appearance="outline" class="w-100" color="primary">
+                          <mat-label>{{ util.appTranslate('title') }}</mat-label>
+                          <input matInput formControlName="title" name="title" type="text" />
+                          @if(haveAppFeatureSubmitClicked == true && appFeatureF['title'].invalid){
+                          <mat-hint class="m-b-16 error-msg">
+                            @if(appFeatureF['title'].errors && appFeatureF['title'].errors['required']){
+                            <div class="text-error">
+                              {{util.appTranslate('form_required')}}
+                            </div>
+                            }
+                          </mat-hint>
+                          }
+                        </mat-form-field>
+
+                        <mat-form-field appearance="outline" class="w-100" color="primary">
+                          <mat-label>{{ util.appTranslate('sub_title') }}</mat-label>
+                          <input matInput formControlName="subtitle" name="subtitle" type="text" />
+                          @if(haveAppFeatureSubmitClicked == true && appFeatureF['subtitle'].invalid){
+                          <mat-hint class="m-b-16 error-msg">
+                            @if(appFeatureF['subtitle'].errors && appFeatureF['subtitle'].errors['required']){
+                            <div class="text-error">
+                              {{util.appTranslate('form_required')}}
+                            </div>
+                            }
+                          </mat-hint>
+                          }
+                        </mat-form-field>
+
+                        <mat-tab-group mat-stretch-tabs="false" mat-align-tabs="start">
+                          @for (item of appFeatureLanguages; track $index) {
+                          <mat-tab [label]="item.nativeName">
+                            <div class="mat-body-1 px-16 m-t-12">
+
+                              <mat-form-field appearance="outline" class="w-100" color="primary">
+                                <input matInput type="text"
+                                  placeholder="{{util.appTranslate('title')}} ({{item.nativeName}})"
+                                  [(ngModel)]="item.title" [ngModelOptions]="{standalone: true}" />
+                              </mat-form-field>
+
+                              <mat-form-field appearance="outline" class="w-100" color="primary">
+                                <input matInput type="text"
+                                  placeholder="{{util.appTranslate('sub_title')}} ({{item.nativeName}})"
+                                  [(ngModel)]="item.subtitle" [ngModelOptions]="{standalone: true}" />
+                              </mat-form-field>
+
+                            </div>
+                          </mat-tab>
+                          }
+                        </mat-tab-group>
+
+                      </div>
+                    </div>
+                  </mat-card-content>
+                </mat-card>
+              </div>
+              <div class="col-lg-4 col-sm-12 p-b-16">
+                <mat-card class="cardWithShadow theme-card">
+                  <mat-card-header>
+                    <mat-card-title class="m-b-0 f-s-12"
+                      [ngClass]="{ 'text-error': haveAppFeatureSubmitClicked == true && appFeatureF['cover'].invalid }">
+                      {{ util.appTranslate('app_feature_snapshot_validation') }}
+                    </mat-card-title>
+                  </mat-card-header>
+                  <mat-card-content class="b-t-0">
+                    <div class="row">
+                      <div class="col-lg-12 col-sm-12 p-b-16">
+                        <img [src]="api.mediaUrl+appFeatureF['cover'].value"
+                          class="custom-image-upload border p-5 m-t-16 w-100 phone-mockup-setting"
+                          (click)="onImageClick('appfeature','cover')"
+                          onError="this.src='assets/images/placeholder.png'"
+                          [ngStyle]="{'border': haveAppFeatureSubmitClicked == true && appFeatureF['cover'].invalid ? '2px dashed red' : '2px dashed #e5e5e5', 'height' : '120px'}" />
+                      </div>
+                    </div>
+                  </mat-card-content>
+                </mat-card>
+              </div>
+            </div>
+
+            <mat-card class="cardWithShadow theme-card">
+              <mat-card-header>
+                <mat-card-title class="m-b-0 f-s-12">
+                  {{ util.appTranslate('feature_list') }}
+                </mat-card-title>
+                <div class="m-l-auto">
+                  <button mat-flat-button class="w-100 bg-secondary text-white" extended type="button"
+                    (click)="onAddAppFeature()">
+                    <div class="d-flex align-items-center">
+                      <ng-icon name="tablerPlus" class="icon-15 m-r-4"></ng-icon>
+                      <span>{{util.appTranslate('add')}}</span>
+                    </div>
+                  </button>
+                </div>
+              </mat-card-header>
+              <mat-card-content class="b-t-0">
+                <div class="table-responsive">
+                  <table mat-table [dataSource]="appFeatureArray" class="w-100">
+                    <ng-container matColumnDef="name">
+                      <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1 p-l-0">
+                        {{ util.appTranslate('content') }}
+                      </th>
+                      <td mat-cell *matCellDef="let element" class="p-l-0">
+                        <div class="d-flex align-items-center">
+                          <img [src]="api.mediaUrl+element.image" alt="cover" width="40" height="40" class="rounded p-4"
+                            onError="this.src='assets/images/onerror.png'" />
+                          <div class="m-l-16">
+                            <h6 class="mat-subtitle-1 f-s-14 f-w-600 lh-sm">
+                              {{ element.displayTitle }}
+                            </h6>
+                            <span class="mat-body-1 f-s-12">
+                              {{ util.trimText(element.displaySubTitle,60) }}
+                            </span>
+                          </div>
+                        </div>
+                      </td>
+                    </ng-container>
+
+                    <ng-container matColumnDef="action">
+                      <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1 p-r-0 text-right">
+                        {{util.appTranslate('th_action')}}
+                      </th>
+                      <td mat-cell *matCellDef="let element" class="f-w-500 text-right p-r-0">
+                        <a (click)="onEditAppFeature(element)" class="m-r-10 cursor-pointer text-primary"
+                          [matTooltip]="util.appTranslate('click_to_edit')">
+                          <mat-icon>edit</mat-icon>
+                        </a>
+                        <a (click)="onDeleteAppFeature(element)" class="m-r-10 cursor-pointer text-error"
+                          [matTooltip]="util.appTranslate('click_to_delete')">
+                          <mat-icon>delete</mat-icon>
+                        </a>
+
+                      </td>
+                    </ng-container>
+
+                    <tr mat-header-row *matHeaderRowDef="displayedCommanColumn"></tr>
+                    <tr mat-row *matRowDef="let row; columns: displayedCommanColumn"></tr>
+
+                    <tr *matNoDataRow>
+                      <td colspan="6" class="m-b-16 m-t-16 text-center">{{ util.appTranslate('no_feature_found') }}</td>
+                    </tr>
+
+                  </table>
+                </div>
+              </mat-card-content>
+            </mat-card>
+            <div class="d-flex align-items-center justify-content-start m-t-30">
+              <button mat-flat-button color="primary" type="submit">
+                {{ util.appTranslate('save_btn') }}
+              </button>
+              <button mat-flat-button (click)="onAppFeatureReset()" class="m-l-10 bg-secondary text-white" type="button">
+                {{util.appTranslate('reset_btn')}}
+              </button>
+            </div>
+          </form>
+        </mat-card-content>
+        }
+      </mat-tab>
+      <!-- App Feature Content -->
+
+      <!-- Feature Content -->
+      <mat-tab>
+        <ng-template mat-tab-label>
+          <div class="d-flex align-items-center justify-content-center">
+            <ng-icon name="tablerDatabaseStar" class="icon-20 m-r-8"></ng-icon>
+          </div>
+          {{ util.appTranslate('project_feature_content') }}
+        </ng-template>
+        @if(tabIndex == 2){
+        <mat-card-content class="p-y-24 b-t-0">
+          <form name="eventForm" [formGroup]="projectFeatureForm" class="event-form"
+            (ngSubmit)="onProjectFeatureSubmit()" id="topContent">
+
+            <mat-card class="cardWithShadow theme-card">
+              <mat-card-header>
+                <mat-card-title class="m-b-0 f-s-12">
+                  {{ util.appTranslate('project_feature_content') }}
+                </mat-card-title>
+              </mat-card-header>
+              <mat-card-content class="b-t-0">
+                <div class="row">
+                  <div class="col-lg-12 col-sm-12 p-b-16">
+                    <mat-form-field appearance="outline" class="w-100" color="primary">
+                      <mat-label>{{ util.appTranslate('title') }}</mat-label>
+                      <input matInput formControlName="title" name="title" type="text" />
+                      @if(haveProjectFeatureSubmitClicked == true && projectFeatureF['title'].invalid){
+                      <mat-hint class="m-b-16 error-msg">
+                        @if(projectFeatureF['title'].errors && projectFeatureF['title'].errors['required']){
+                        <div class="text-error">
+                          {{util.appTranslate('form_required')}}
+                        </div>
+                        }
+                      </mat-hint>
+                      }
+                    </mat-form-field>
+
+                    <mat-form-field appearance="outline" class="w-100" color="primary">
+                      <mat-label>{{ util.appTranslate('sub_title') }}</mat-label>
+                      <input matInput formControlName="subtitle" name="subtitle" type="text" />
+                      @if(haveProjectFeatureSubmitClicked == true && projectFeatureF['subtitle'].invalid){
+                      <mat-hint class="m-b-16 error-msg">
+                        @if(projectFeatureF['subtitle'].errors && projectFeatureF['subtitle'].errors['required']){
+                        <div class="text-error">
+                          {{util.appTranslate('form_required')}}
+                        </div>
+                        }
+                      </mat-hint>
+                      }
+                    </mat-form-field>
+
+                    <mat-tab-group mat-stretch-tabs="false" mat-align-tabs="start">
+                      @for (item of projectFeatureLanguages; track $index) {
+                      <mat-tab [label]="item.nativeName">
+                        <div class="mat-body-1 px-16 m-t-12">
+
+                          <mat-form-field appearance="outline" class="w-100" color="primary">
+                            <input matInput type="text"
+                              placeholder="{{util.appTranslate('title')}} ({{item.nativeName}})"
+                              [(ngModel)]="item.title" [ngModelOptions]="{standalone: true}" />
+                          </mat-form-field>
+
+                          <mat-form-field appearance="outline" class="w-100" color="primary">
+                            <input matInput type="text"
+                              placeholder="{{util.appTranslate('sub_title')}} ({{item.nativeName}})"
+                              [(ngModel)]="item.subtitle" [ngModelOptions]="{standalone: true}" />
+                          </mat-form-field>
+
+                        </div>
+                      </mat-tab>
+                      }
+                    </mat-tab-group>
+
+                  </div>
+                </div>
+              </mat-card-content>
+            </mat-card>
+
+            <mat-card class="cardWithShadow theme-card" [formGroup]="projectFeatureForm.controls['firstFeature']">
+              <mat-card-header>
+                <mat-card-title class="m-b-0 f-s-12">
+                  {{ util.appTranslate('first_feature_tab') }}
+                </mat-card-title>
+              </mat-card-header>
+              <mat-card-content class="b-t-0">
+                <div class="row">
+                  <div class="col-lg-8 col-sm-12 p-b-16">
+                    <div class="row">
+                      <div class="col-lg-6 col-sm-12 p-b-12">
+                        <mat-form-field appearance="outline" class="w-100" color="primary">
+                          <mat-label>{{ util.appTranslate('tab_title') }}</mat-label>
+                          <input matInput formControlName="title" type="text" />
+                          @if(haveProjectFeatureSubmitClicked == true && projectFeatureFirst['title'].invalid){
+                          <mat-hint class="m-b-16 error-msg">
+                            @if(projectFeatureFirst['title'].errors && projectFeatureFirst['title'].errors['required']){
+                            <div class="text-error">
+                              {{util.appTranslate('form_required')}}
+                            </div>
+                            }
+                          </mat-hint>
+                          }
+                        </mat-form-field>
+                      </div>
+
+                      <div class="col-lg-6 col-sm-12 p-b-12">
+                        <mat-form-field appearance="outline" class="w-100" color="primary">
+                          <mat-label>{{ util.appTranslate('tab_sub_title') }}</mat-label>
+                          <input matInput formControlName="subtitle" type="text" />
+                          @if(haveProjectFeatureSubmitClicked == true && projectFeatureFirst['subtitle'].invalid){
+                          <mat-hint class="m-b-16 error-msg">
+                            @if(projectFeatureFirst['subtitle'].errors &&
+                            projectFeatureFirst['subtitle'].errors['required']){
+                            <div class="text-error">
+                              {{util.appTranslate('form_required')}}
+                            </div>
+                            }
+                          </mat-hint>
+                          }
+                        </mat-form-field>
+                      </div>
+
+                      <div class="col-lg-12 col-sm-12 p-b-12">
+                        <mat-form-field appearance="outline" class="w-100" color="primary">
+                          <mat-label>{{ util.appTranslate('content_title') }}</mat-label>
+                          <input matInput formControlName="detail_title" type="text" />
+                          @if(haveProjectFeatureSubmitClicked == true && projectFeatureFirst['detail_title'].invalid){
+                          <mat-hint class="m-b-16 error-msg">
+                            @if(projectFeatureFirst['detail_title'].errors &&
+                            projectFeatureFirst['detail_title'].errors['required']){
+                            <div class="text-error">
+                              {{util.appTranslate('form_required')}}
+                            </div>
+                            }
+                          </mat-hint>
+                          }
+                        </mat-form-field>
+
+                        <mat-form-field appearance="outline" class="w-100" color="primary">
+                          <mat-label>{{ util.appTranslate('content_desc') }}</mat-label>
+                          <textarea matInput formControlName="detail_subtitle" type="text" row="2"></textarea>
+                          @if(haveProjectFeatureSubmitClicked == true &&
+                          projectFeatureFirst['detail_subtitle'].invalid){
+                          <mat-hint class="m-b-16 error-msg">
+                            @if(projectFeatureFirst['detail_subtitle'].errors &&
+                            projectFeatureFirst['detail_subtitle'].errors['required']){
+                            <div class="text-error">
+                              {{util.appTranslate('form_required')}}
+                            </div>
+                            }
+                          </mat-hint>
+                          }
+                        </mat-form-field>
+
+                      </div>
+
+                      <div class="col-lg-6 col-sm-12 p-b-12">
+                        <mat-form-field appearance="outline" class="w-100" color="primary">
+                          <mat-label>{{ util.appTranslate('button_text') }}</mat-label>
+                          <input matInput formControlName="btn_lbl" type="text" />
+                          @if(haveProjectFeatureSubmitClicked == true && projectFeatureFirst['btn_lbl'].invalid){
+                          <mat-hint class="m-b-16 error-msg">
+                            @if(projectFeatureFirst['btn_lbl'].errors &&
+                            projectFeatureFirst['btn_lbl'].errors['required']){
+                            <div class="text-error">
+                              {{util.appTranslate('form_required')}}
+                            </div>
+                            }
+                          </mat-hint>
+                          }
+                        </mat-form-field>
+                      </div>
+
+                      <div class="col-lg-6 col-sm-12 p-b-12">
+                        <mat-form-field appearance="outline" class="w-100" color="primary">
+                          <mat-label>{{ util.appTranslate('button_link') }}</mat-label>
+                          <input matInput formControlName="btn_href" type="text" />
+                          @if(haveProjectFeatureSubmitClicked == true && projectFeatureFirst['btn_href'].invalid){
+                          <mat-hint class="m-b-16 error-msg">
+                            @if(projectFeatureFirst['btn_href'].errors &&
+                            projectFeatureFirst['btn_href'].errors['required']){
+                            <div class="text-error">
+                              {{util.appTranslate('form_required')}}
+                            </div>
+                            }
+                          </mat-hint>
+                          }
+                        </mat-form-field>
+                      </div>
+
+                      <div class="col-lg-12 col-sm-12 p-b-12">
+                        <mat-tab-group mat-stretch-tabs="false" mat-align-tabs="start">
+                          @for (item of firstFeatureLanguages; track $index) {
+                          <mat-tab [label]="item.nativeName">
+                            <div class="mat-body-1 px-16 m-t-12">
+                              <mat-form-field appearance="outline" class="w-100" color="primary">
+                                <input matInput type="text"
+                                  placeholder="{{ util.appTranslate('tab_title') }} ({{item.nativeName}})"
+                                  [(ngModel)]="item.title" [ngModelOptions]="{standalone: true}" />
+                              </mat-form-field>
+
+                              <mat-form-field appearance="outline" class="w-100" color="primary">
+                                <input matInput type="text"
+                                  placeholder="{{ util.appTranslate('tab_sub_title') }} ({{item.nativeName}})"
+                                  [(ngModel)]="item.subtitle" [ngModelOptions]="{standalone: true}" />
+                              </mat-form-field>
+
+                              <mat-form-field appearance="outline" class="w-100" color="primary">
+                                <input matInput type="text"
+                                  placeholder="{{ util.appTranslate('button_text') }} ({{item.nativeName}})"
+                                  [(ngModel)]="item.btnLbl" [ngModelOptions]="{standalone: true}" />
+                              </mat-form-field>
+
+                              <mat-form-field appearance="outline" class="w-100" color="primary">
+                                <input matInput type="text"
+                                  placeholder="{{ util.appTranslate('content_title') }} ({{item.nativeName}})"
+                                  [(ngModel)]="item.detailTitle" [ngModelOptions]="{standalone: true}" />
+                              </mat-form-field>
+
+                              <mat-form-field appearance="outline" class="w-100" color="primary">
+                                <textarea matInput type="text"
+                                  placeholder="{{ util.appTranslate('content_desc') }} ({{item.nativeName}})"
+                                  [(ngModel)]="item.detailSubTitle" [ngModelOptions]="{standalone: true}"
+                                  row="2"> </textarea>
+                              </mat-form-field>
+
+                            </div>
+                          </mat-tab>
+                          }
+                        </mat-tab-group>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-lg-4 col-sm-12 p-b-16">
+                    <mat-card class="cardWithShadow theme-card">
+                      <mat-card-header>
+                        <mat-card-title class="m-b-0 f-s-12"
+                          [ngClass]="{ 'text-error': haveProjectFeatureSubmitClicked == true && projectFeatureFirst['icon'].invalid }">
+                          {{ util.appTranslate('tab_icon_validation') }}
+                        </mat-card-title>
+                      </mat-card-header>
+                      <mat-card-content class="b-t-0">
+                        <div class="row">
+                          <div class="col-lg-12 col-sm-12 p-b-16">
+                            <img [src]="api.mediaUrl+projectFeatureFirst['icon'].value"
+                              class="custom-image-upload border p-5 m-t-16 w-100"
+                              (click)="onImageClick('projectfirstfeature','icon')"
+                              onError="this.src='assets/images/placeholder.png'"
+                              [ngStyle]="{'border': haveProjectFeatureSubmitClicked == true && projectFeatureFirst['icon'].invalid ? '2px dashed red' : '2px dashed #e5e5e5', 'height' : '120px'}" />
+                          </div>
+                        </div>
+                      </mat-card-content>
+                    </mat-card>
+
+                    <mat-card class="cardWithShadow theme-card">
+                      <mat-card-header>
+                        <mat-card-title class="m-b-0 f-s-12"
+                          [ngClass]="{ 'text-error': haveProjectFeatureSubmitClicked == true && projectFeatureFirst['detail_cover'].invalid }">
+                          {{ util.appTranslate('tab_detail_cover_validation') }}
+                        </mat-card-title>
+                      </mat-card-header>
+                      <mat-card-content class="b-t-0">
+                        <div class="row">
+                          <div class="col-lg-12 col-sm-12 p-b-16">
+                            <img [src]="api.mediaUrl+projectFeatureFirst['detail_cover'].value"
+                              class="custom-image-upload border p-5 m-t-16 w-100"
+                              (click)="onImageClick('projectfirstfeature','cover')"
+                              onError="this.src='assets/images/placeholder.png'"
+                              [ngStyle]="{'border': haveProjectFeatureSubmitClicked == true && projectFeatureFirst['detail_cover'].invalid ? '2px dashed red' : '2px dashed #e5e5e5', 'height' : '120px'}" />
+                          </div>
+                        </div>
+                      </mat-card-content>
+                    </mat-card>
+                  </div>
+                </div>
+              </mat-card-content>
+
+              <mat-card-header>
+                <mat-card-title class="m-b-0 f-s-12">
+                  {{ util.appTranslate('bullet_points') }}
+                </mat-card-title>
+                <div class="m-l-auto">
+                  <button mat-flat-button class="w-100 bg-secondary text-white" extended type="button"
+                    (click)="onAddFeatureBullet(1)">
+                    <div class="d-flex align-items-center">
+                      <ng-icon name="tablerPlus" class="icon-15 m-r-4"></ng-icon>
+                      <span>{{util.appTranslate('add')}}</span>
+                    </div>
+                  </button>
+                </div>
+              </mat-card-header>
+
+              <mat-card-content class="b-t-0">
+                <div class="table-responsive">
+                  <table mat-table [dataSource]="firstBulletArray" class="w-100">
+                    <ng-container matColumnDef="name">
+                      <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1 p-l-0">
+                        {{ util.appTranslate('bullet_list') }}
+                      </th>
+                      <td mat-cell *matCellDef="let element" class="p-l-0">
+                        <h6 class="mat-subtitle-1 f-s-14 f-w-600 lh-sm">
+                          {{ util.trimText(element.displayName,50) }}
+                        </h6>
+                      </td>
+                    </ng-container>
+
+                    <ng-container matColumnDef="action">
+                      <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1 p-r-0 text-right">
+                        {{util.appTranslate('th_action')}}
+                      </th>
+                      <td mat-cell *matCellDef="let element" class="f-w-500 text-right p-r-0">
+                        <a (click)="onFeatureBulletEdit(element,1)" class="m-r-10 cursor-pointer text-primary"
+                          [matTooltip]="util.appTranslate('click_to_edit')">
+                          <mat-icon>edit</mat-icon>
+                        </a>
+                        <a (click)="onFeatureBulletDelete(element,1)" class="m-r-10 cursor-pointer text-error"
+                          [matTooltip]="util.appTranslate('click_to_delete')">
+                          <mat-icon>delete</mat-icon>
+                        </a>
+                      </td>
+                    </ng-container>
+
+                    <tr mat-header-row *matHeaderRowDef="displayedCommanColumn"></tr>
+                    <tr mat-row *matRowDef="let row; columns: displayedCommanColumn"></tr>
+
+                    <tr *matNoDataRow>
+                      <td colspan="6" class="m-b-16 m-t-16 text-center">{{ util.appTranslate('no_bullet_list_found') }}
+                      </td>
+                    </tr>
+
+                  </table>
+                </div>
+              </mat-card-content>
+
+            </mat-card>
+
+            <mat-card class="cardWithShadow theme-card" [formGroup]="projectFeatureForm.controls['secondFeature']">
+              <mat-card-header>
+                <mat-card-title class="m-b-0 f-s-12">
+                  {{ util.appTranslate('second_feature_tab') }}
+                </mat-card-title>
+              </mat-card-header>
+              <mat-card-content class="b-t-0">
+                <div class="row">
+                  <div class="col-lg-8 col-sm-12 p-b-16">
+                    <div class="row">
+                      <div class="col-lg-6 col-sm-12 p-b-12">
+                        <mat-form-field appearance="outline" class="w-100" color="primary">
+                          <mat-label>{{ util.appTranslate('tab_title') }}</mat-label>
+                          <input matInput formControlName="title" type="text" />
+                          @if(haveProjectFeatureSubmitClicked == true && projectFeatureSecond['title'].invalid){
+                          <mat-hint class="m-b-16 error-msg">
+                            @if(projectFeatureSecond['title'].errors &&
+                            projectFeatureSecond['title'].errors['required']){
+                            <div class="text-error">
+                              {{util.appTranslate('form_required')}}
+                            </div>
+                            }
+                          </mat-hint>
+                          }
+                        </mat-form-field>
+                      </div>
+
+                      <div class="col-lg-6 col-sm-12 p-b-12">
+                        <mat-form-field appearance="outline" class="w-100" color="primary">
+                          <mat-label>{{ util.appTranslate('tab_sub_title') }}</mat-label>
+                          <input matInput formControlName="subtitle" type="text" />
+                          @if(haveProjectFeatureSubmitClicked == true && projectFeatureSecond['subtitle'].invalid){
+                          <mat-hint class="m-b-16 error-msg">
+                            @if(projectFeatureSecond['subtitle'].errors &&
+                            projectFeatureSecond['subtitle'].errors['required']){
+                            <div class="text-error">
+                              {{util.appTranslate('form_required')}}
+                            </div>
+                            }
+                          </mat-hint>
+                          }
+                        </mat-form-field>
+                      </div>
+
+                      <div class="col-lg-12 col-sm-12 p-b-12">
+                        <mat-form-field appearance="outline" class="w-100" color="primary">
+                          <mat-label>{{ util.appTranslate('content_title') }}</mat-label>
+                          <input matInput formControlName="detail_title" type="text" />
+                          @if(haveProjectFeatureSubmitClicked == true && projectFeatureSecond['detail_title'].invalid){
+                          <mat-hint class="m-b-16 error-msg">
+                            @if(projectFeatureSecond['detail_title'].errors &&
+                            projectFeatureSecond['detail_title'].errors['required']){
+                            <div class="text-error">
+                              {{util.appTranslate('form_required')}}
+                            </div>
+                            }
+                          </mat-hint>
+                          }
+                        </mat-form-field>
+
+                        <mat-form-field appearance="outline" class="w-100" color="primary">
+                          <mat-label>{{ util.appTranslate('content_desc') }}</mat-label>
+                          <textarea matInput formControlName="detail_subtitle" type="text" row="2"></textarea>
+                          @if(haveProjectFeatureSubmitClicked == true &&
+                          projectFeatureSecond['detail_subtitle'].invalid){
+                          <mat-hint class="m-b-16 error-msg">
+                            @if(projectFeatureSecond['detail_subtitle'].errors &&
+                            projectFeatureSecond['detail_subtitle'].errors['required']){
+                            <div class="text-error">
+                              {{util.appTranslate('form_required')}}
+                            </div>
+                            }
+                          </mat-hint>
+                          }
+                        </mat-form-field>
+
+                      </div>
+
+                      <div class="col-lg-6 col-sm-12 p-b-12">
+                        <mat-form-field appearance="outline" class="w-100" color="primary">
+                          <mat-label>{{ util.appTranslate('button_text') }}</mat-label>
+                          <input matInput formControlName="btn_lbl" type="text" />
+                          @if(haveProjectFeatureSubmitClicked == true && projectFeatureSecond['btn_lbl'].invalid){
+                          <mat-hint class="m-b-16 error-msg">
+                            @if(projectFeatureSecond['btn_lbl'].errors &&
+                            projectFeatureSecond['btn_lbl'].errors['required']){
+                            <div class="text-error">
+                              {{util.appTranslate('form_required')}}
+                            </div>
+                            }
+                          </mat-hint>
+                          }
+                        </mat-form-field>
+                      </div>
+
+                      <div class="col-lg-6 col-sm-12 p-b-12">
+                        <mat-form-field appearance="outline" class="w-100" color="primary">
+                          <mat-label>{{ util.appTranslate('button_link') }}</mat-label>
+                          <input matInput formControlName="btn_href" type="text" />
+                          @if(haveProjectFeatureSubmitClicked == true && projectFeatureSecond['btn_href'].invalid){
+                          <mat-hint class="m-b-16 error-msg">
+                            @if(projectFeatureSecond['btn_href'].errors &&
+                            projectFeatureSecond['btn_href'].errors['required']){
+                            <div class="text-error">
+                              {{util.appTranslate('form_required')}}
+                            </div>
+                            }
+                          </mat-hint>
+                          }
+                        </mat-form-field>
+                      </div>
+
+                      <div class="col-lg-12 col-sm-12 p-b-12">
+                        <mat-tab-group mat-stretch-tabs="false" mat-align-tabs="start">
+                          @for (item of secondFeatureLanguages; track $index) {
+                          <mat-tab [label]="item.nativeName">
+                            <div class="mat-body-1 px-16 m-t-12">
+                              <mat-form-field appearance="outline" class="w-100" color="primary">
+                                <input matInput type="text"
+                                  placeholder="{{ util.appTranslate('tab_title') }} ({{item.nativeName}})"
+                                  [(ngModel)]="item.title" [ngModelOptions]="{standalone: true}" />
+                              </mat-form-field>
+
+                              <mat-form-field appearance="outline" class="w-100" color="primary">
+                                <input matInput type="text"
+                                  placeholder="{{ util.appTranslate('tab_sub_title') }} ({{item.nativeName}})"
+                                  [(ngModel)]="item.subtitle" [ngModelOptions]="{standalone: true}" />
+                              </mat-form-field>
+
+                              <mat-form-field appearance="outline" class="w-100" color="primary">
+                                <input matInput type="text"
+                                  placeholder="{{ util.appTranslate('button_text') }} ({{item.nativeName}})"
+                                  [(ngModel)]="item.btnLbl" [ngModelOptions]="{standalone: true}" />
+                              </mat-form-field>
+
+                              <mat-form-field appearance="outline" class="w-100" color="primary">
+                                <input matInput type="text"
+                                  placeholder="{{ util.appTranslate('content_title') }} ({{item.nativeName}})"
+                                  [(ngModel)]="item.detailTitle" [ngModelOptions]="{standalone: true}" />
+                              </mat-form-field>
+
+                              <mat-form-field appearance="outline" class="w-100" color="primary">
+                                <textarea matInput type="text"
+                                  placeholder="{{ util.appTranslate('content_desc') }} ({{item.nativeName}})"
+                                  [(ngModel)]="item.detailSubTitle" [ngModelOptions]="{standalone: true}"
+                                  row="2"> </textarea>
+                              </mat-form-field>
+
+                            </div>
+                          </mat-tab>
+                          }
+                        </mat-tab-group>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-lg-4 col-sm-12 p-b-16">
+                    <mat-card class="cardWithShadow theme-card">
+                      <mat-card-header>
+                        <mat-card-title class="m-b-0 f-s-12"
+                          [ngClass]="{ 'text-error': haveProjectFeatureSubmitClicked == true && projectFeatureSecond['icon'].invalid }">
+                          {{ util.appTranslate('tab_icon_validation') }}
+                        </mat-card-title>
+                      </mat-card-header>
+                      <mat-card-content class="b-t-0">
+                        <div class="row">
+                          <div class="col-lg-12 col-sm-12 p-b-16">
+                            <img [src]="api.mediaUrl+projectFeatureSecond['icon'].value"
+                              class="custom-image-upload border p-5 m-t-16 w-100"
+                              (click)="onImageClick('projectsecondfeature','icon')"
+                              onError="this.src='assets/images/placeholder.png'"
+                              [ngStyle]="{'border': haveProjectFeatureSubmitClicked == true && projectFeatureSecond['icon'].invalid ? '2px dashed red' : '2px dashed #e5e5e5', 'height' : '120px'}" />
+                          </div>
+                        </div>
+                      </mat-card-content>
+                    </mat-card>
+
+                    <mat-card class="cardWithShadow theme-card">
+                      <mat-card-header>
+                        <mat-card-title class="m-b-0 f-s-12"
+                          [ngClass]="{ 'text-error': haveProjectFeatureSubmitClicked == true && projectFeatureSecond['detail_cover'].invalid }">
+                          {{ util.appTranslate('tab_detail_cover_validation') }}
+                        </mat-card-title>
+                      </mat-card-header>
+                      <mat-card-content class="b-t-0">
+                        <div class="row">
+                          <div class="col-lg-12 col-sm-12 p-b-16">
+                            <img [src]="api.mediaUrl+projectFeatureSecond['detail_cover'].value"
+                              class="custom-image-upload border p-5 m-t-16 w-100"
+                              (click)="onImageClick('projectsecondfeature','cover')"
+                              onError="this.src='assets/images/placeholder.png'"
+                              [ngStyle]="{'border': haveProjectFeatureSubmitClicked == true && projectFeatureSecond['detail_cover'].invalid ? '2px dashed red' : '2px dashed #e5e5e5', 'height' : '120px'}" />
+                          </div>
+                        </div>
+                      </mat-card-content>
+                    </mat-card>
+                  </div>
+                </div>
+              </mat-card-content>
+
+              <mat-card-header>
+                <mat-card-title class="m-b-0 f-s-12">
+                  {{ util.appTranslate('bullet_points') }}
+                </mat-card-title>
+                <div class="m-l-auto">
+                  <button mat-flat-button class="w-100 bg-secondary text-white" extended type="button"
+                    (click)="onAddFeatureBullet(2)">
+                    <div class="d-flex align-items-center">
+                      <ng-icon name="tablerPlus" class="icon-15 m-r-4"></ng-icon>
+                      <span>{{util.appTranslate('add')}}</span>
+                    </div>
+                  </button>
+                </div>
+              </mat-card-header>
+
+              <mat-card-content class="b-t-0">
+                <div class="table-responsive">
+                  <table mat-table [dataSource]="secondBulletArray" class="w-100">
+                    <ng-container matColumnDef="name">
+                      <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1 p-l-0">
+                        {{ util.appTranslate('bullet_list') }}
+                      </th>
+                      <td mat-cell *matCellDef="let element" class="p-l-0">
+                        <h6 class="mat-subtitle-1 f-s-14 f-w-600 lh-sm">
+                          {{ util.trimText(element.displayName,50) }}
+                        </h6>
+                      </td>
+                    </ng-container>
+
+                    <ng-container matColumnDef="action">
+                      <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1 p-r-0 text-right">
+                        {{util.appTranslate('th_action')}}
+                      </th>
+                      <td mat-cell *matCellDef="let element" class="f-w-500 text-right p-r-0">
+                        <a (click)="onFeatureBulletEdit(element,2)" class="m-r-10 cursor-pointer text-primary"
+                          [matTooltip]="util.appTranslate('click_to_edit')">
+                          <mat-icon>edit</mat-icon>
+                        </a>
+                        <a (click)="onFeatureBulletDelete(element,2)" class="m-r-10 cursor-pointer text-error"
+                          [matTooltip]="util.appTranslate('click_to_delete')">
+                          <mat-icon>delete</mat-icon>
+                        </a>
+                      </td>
+                    </ng-container>
+
+                    <tr mat-header-row *matHeaderRowDef="displayedCommanColumn"></tr>
+                    <tr mat-row *matRowDef="let row; columns: displayedCommanColumn"></tr>
+
+                    <tr *matNoDataRow>
+                      <td colspan="6" class="m-b-16 m-t-16 text-center">{{ util.appTranslate('no_bullet_list_found') }}
+                      </td>
+                    </tr>
+
+                  </table>
+                </div>
+              </mat-card-content>
+
+            </mat-card>
+
+            <mat-card class="cardWithShadow theme-card" [formGroup]="projectFeatureForm.controls['thirdFeature']">
+              <mat-card-header>
+                <mat-card-title class="m-b-0 f-s-12">
+                  {{ util.appTranslate('third_feature_tab') }}
+                </mat-card-title>
+              </mat-card-header>
+              <mat-card-content class="b-t-0">
+                <div class="row">
+                  <div class="col-lg-8 col-sm-12 p-b-16">
+                    <div class="row">
+                      <div class="col-lg-6 col-sm-12 p-b-12">
+                        <mat-form-field appearance="outline" class="w-100" color="primary">
+                          <mat-label>{{ util.appTranslate('tab_title') }}</mat-label>
+                          <input matInput formControlName="title" type="text" />
+                          @if(haveProjectFeatureSubmitClicked == true && projectFeatureThird['title'].invalid){
+                          <mat-hint class="m-b-16 error-msg">
+                            @if(projectFeatureThird['title'].errors && projectFeatureThird['title'].errors['required']){
+                            <div class="text-error">
+                              {{util.appTranslate('form_required')}}
+                            </div>
+                            }
+                          </mat-hint>
+                          }
+                        </mat-form-field>
+                      </div>
+
+                      <div class="col-lg-6 col-sm-12 p-b-12">
+                        <mat-form-field appearance="outline" class="w-100" color="primary">
+                          <mat-label>{{ util.appTranslate('tab_sub_title') }}</mat-label>
+                          <input matInput formControlName="subtitle" type="text" />
+                          @if(haveProjectFeatureSubmitClicked == true && projectFeatureThird['subtitle'].invalid){
+                          <mat-hint class="m-b-16 error-msg">
+                            @if(projectFeatureThird['subtitle'].errors &&
+                            projectFeatureThird['subtitle'].errors['required']){
+                            <div class="text-error">
+                              {{util.appTranslate('form_required')}}
+                            </div>
+                            }
+                          </mat-hint>
+                          }
+                        </mat-form-field>
+                      </div>
+
+                      <div class="col-lg-12 col-sm-12 p-b-12">
+                        <mat-form-field appearance="outline" class="w-100" color="primary">
+                          <mat-label>{{ util.appTranslate('content_title') }}</mat-label>
+                          <input matInput formControlName="detail_title" type="text" />
+                          @if(haveProjectFeatureSubmitClicked == true && projectFeatureThird['detail_title'].invalid){
+                          <mat-hint class="m-b-16 error-msg">
+                            @if(projectFeatureThird['detail_title'].errors &&
+                            projectFeatureThird['detail_title'].errors['required']){
+                            <div class="text-error">
+                              {{util.appTranslate('form_required')}}
+                            </div>
+                            }
+                          </mat-hint>
+                          }
+                        </mat-form-field>
+
+                        <mat-form-field appearance="outline" class="w-100" color="primary">
+                          <mat-label>{{ util.appTranslate('content_desc') }}</mat-label>
+                          <textarea matInput formControlName="detail_subtitle" type="text" row="2"></textarea>
+                          @if(haveProjectFeatureSubmitClicked == true &&
+                          projectFeatureThird['detail_subtitle'].invalid){
+                          <mat-hint class="m-b-16 error-msg">
+                            @if(projectFeatureThird['detail_subtitle'].errors &&
+                            projectFeatureThird['detail_subtitle'].errors['required']){
+                            <div class="text-error">
+                              {{util.appTranslate('form_required')}}
+                            </div>
+                            }
+                          </mat-hint>
+                          }
+                        </mat-form-field>
+
+                      </div>
+
+                      <div class="col-lg-6 col-sm-12 p-b-12">
+                        <mat-form-field appearance="outline" class="w-100" color="primary">
+                          <mat-label>{{ util.appTranslate('button_text') }}</mat-label>
+                          <input matInput formControlName="btn_lbl" type="text" />
+                          @if(haveProjectFeatureSubmitClicked == true && projectFeatureThird['btn_lbl'].invalid){
+                          <mat-hint class="m-b-16 error-msg">
+                            @if(projectFeatureThird['btn_lbl'].errors &&
+                            projectFeatureThird['btn_lbl'].errors['required']){
+                            <div class="text-error">
+                              {{util.appTranslate('form_required')}}
+                            </div>
+                            }
+                          </mat-hint>
+                          }
+                        </mat-form-field>
+                      </div>
+
+                      <div class="col-lg-6 col-sm-12 p-b-12">
+                        <mat-form-field appearance="outline" class="w-100" color="primary">
+                          <mat-label>{{ util.appTranslate('button_link') }}</mat-label>
+                          <input matInput formControlName="btn_href" type="text" />
+                          @if(haveProjectFeatureSubmitClicked == true && projectFeatureThird['btn_href'].invalid){
+                          <mat-hint class="m-b-16 error-msg">
+                            @if(projectFeatureThird['btn_href'].errors &&
+                            projectFeatureThird['btn_href'].errors['required']){
+                            <div class="text-error">
+                              {{util.appTranslate('form_required')}}
+                            </div>
+                            }
+                          </mat-hint>
+                          }
+                        </mat-form-field>
+                      </div>
+
+                      <div class="col-lg-12 col-sm-12 p-b-12">
+                        <mat-tab-group mat-stretch-tabs="false" mat-align-tabs="start">
+                          @for (item of thirdFeatureLanguages; track $index) {
+                          <mat-tab [label]="item.nativeName">
+                            <div class="mat-body-1 px-16 m-t-12">
+                              <mat-form-field appearance="outline" class="w-100" color="primary">
+                                <input matInput type="text"
+                                  placeholder="{{ util.appTranslate('tab_title') }} ({{item.nativeName}})"
+                                  [(ngModel)]="item.title" [ngModelOptions]="{standalone: true}" />
+                              </mat-form-field>
+
+                              <mat-form-field appearance="outline" class="w-100" color="primary">
+                                <input matInput type="text"
+                                  placeholder="{{ util.appTranslate('tab_sub_title') }} ({{item.nativeName}})"
+                                  [(ngModel)]="item.subtitle" [ngModelOptions]="{standalone: true}" />
+                              </mat-form-field>
+
+                              <mat-form-field appearance="outline" class="w-100" color="primary">
+                                <input matInput type="text"
+                                  placeholder="{{ util.appTranslate('button_text') }} ({{item.nativeName}})"
+                                  [(ngModel)]="item.btnLbl" [ngModelOptions]="{standalone: true}" />
+                              </mat-form-field>
+
+                              <mat-form-field appearance="outline" class="w-100" color="primary">
+                                <input matInput type="text"
+                                  placeholder="{{ util.appTranslate('content_title') }} ({{item.nativeName}})"
+                                  [(ngModel)]="item.detailTitle" [ngModelOptions]="{standalone: true}" />
+                              </mat-form-field>
+
+                              <mat-form-field appearance="outline" class="w-100" color="primary">
+                                <textarea matInput type="text"
+                                  placeholder="{{ util.appTranslate('content_desc') }} ({{item.nativeName}})"
+                                  [(ngModel)]="item.detailSubTitle" [ngModelOptions]="{standalone: true}"
+                                  row="2"> </textarea>
+                              </mat-form-field>
+
+                            </div>
+                          </mat-tab>
+                          }
+                        </mat-tab-group>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-lg-4 col-sm-12 p-b-16">
+                    <mat-card class="cardWithShadow theme-card">
+                      <mat-card-header>
+                        <mat-card-title class="m-b-0 f-s-12"
+                          [ngClass]="{ 'text-error': haveProjectFeatureSubmitClicked == true && projectFeatureThird['icon'].invalid }">
+                          {{ util.appTranslate('tab_icon_validation') }}
+                        </mat-card-title>
+                      </mat-card-header>
+                      <mat-card-content class="b-t-0">
+                        <div class="row">
+                          <div class="col-lg-12 col-sm-12 p-b-16">
+                            <img [src]="api.mediaUrl+projectFeatureThird['icon'].value"
+                              class="custom-image-upload border p-5 m-t-16 w-100"
+                              (click)="onImageClick('projectthirdfeature','icon')"
+                              onError="this.src='assets/images/placeholder.png'"
+                              [ngStyle]="{'border': haveProjectFeatureSubmitClicked == true && projectFeatureThird['icon'].invalid ? '2px dashed red' : '2px dashed #e5e5e5', 'height' : '120px'}" />
+                          </div>
+                        </div>
+                      </mat-card-content>
+                    </mat-card>
+
+                    <mat-card class="cardWithShadow theme-card">
+                      <mat-card-header>
+                        <mat-card-title class="m-b-0 f-s-12"
+                          [ngClass]="{ 'text-error': haveProjectFeatureSubmitClicked == true && projectFeatureThird['detail_cover'].invalid }">
+                          {{ util.appTranslate('tab_detail_cover_validation') }}
+                        </mat-card-title>
+                      </mat-card-header>
+                      <mat-card-content class="b-t-0">
+                        <div class="row">
+                          <div class="col-lg-12 col-sm-12 p-b-16">
+                            <img [src]="api.mediaUrl+projectFeatureThird['detail_cover'].value"
+                              class="custom-image-upload border p-5 m-t-16 w-100"
+                              (click)="onImageClick('projectthirdfeature','cover')"
+                              onError="this.src='assets/images/placeholder.png'"
+                              [ngStyle]="{'border': haveProjectFeatureSubmitClicked == true && projectFeatureThird['detail_cover'].invalid ? '2px dashed red' : '2px dashed #e5e5e5', 'height' : '120px'}" />
+                          </div>
+                        </div>
+                      </mat-card-content>
+                    </mat-card>
+                  </div>
+                </div>
+              </mat-card-content>
+
+              <mat-card-header>
+                <mat-card-title class="m-b-0 f-s-12">
+                  {{ util.appTranslate('bullet_points') }}
+                </mat-card-title>
+                <div class="m-l-auto">
+                  <button mat-flat-button class="w-100 bg-secondary text-white" extended type="button"
+                    (click)="onAddFeatureBullet(3)">
+                    <div class="d-flex align-items-center">
+                      <ng-icon name="tablerPlus" class="icon-15 m-r-4"></ng-icon>
+                      <span>{{util.appTranslate('add')}}</span>
+                    </div>
+                  </button>
+                </div>
+              </mat-card-header>
+
+              <mat-card-content class="b-t-0">
+                <div class="table-responsive">
+                  <table mat-table [dataSource]="thirdBulletArray" class="w-100">
+                    <ng-container matColumnDef="name">
+                      <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1 p-l-0">
+                        {{ util.appTranslate('bullet_list') }}
+                      </th>
+                      <td mat-cell *matCellDef="let element" class="p-l-0">
+                        <h6 class="mat-subtitle-1 f-s-14 f-w-600 lh-sm">
+                          {{ util.trimText(element.displayName,50) }}
+                        </h6>
+                      </td>
+                    </ng-container>
+
+                    <ng-container matColumnDef="action">
+                      <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1 p-r-0 text-right">
+                        {{util.appTranslate('th_action')}}
+                      </th>
+                      <td mat-cell *matCellDef="let element" class="f-w-500 text-right p-r-0">
+                        <a (click)="onFeatureBulletEdit(element,3)" class="m-r-10 cursor-pointer text-primary"
+                          [matTooltip]="util.appTranslate('click_to_edit')">
+                          <mat-icon>edit</mat-icon>
+                        </a>
+                        <a (click)="onFeatureBulletDelete(element,3)" class="m-r-10 cursor-pointer text-error"
+                          [matTooltip]="util.appTranslate('click_to_delete')">
+                          <mat-icon>delete</mat-icon>
+                        </a>
+                      </td>
+                    </ng-container>
+
+                    <tr mat-header-row *matHeaderRowDef="displayedCommanColumn"></tr>
+                    <tr mat-row *matRowDef="let row; columns: displayedCommanColumn"></tr>
+
+                    <tr *matNoDataRow>
+                      <td colspan="6" class="m-b-16 m-t-16 text-center">{{ util.appTranslate('no_bullet_list_found') }}
+                      </td>
+                    </tr>
+
+                  </table>
+                </div>
+              </mat-card-content>
+
+            </mat-card>
+
+            <mat-card class="cardWithShadow theme-card" [formGroup]="projectFeatureForm.controls['fourthFeature']">
+              <mat-card-header>
+                <mat-card-title class="m-b-0 f-s-12">
+                  {{ util.appTranslate('fourth_feature_tab') }}
+                </mat-card-title>
+              </mat-card-header>
+              <mat-card-content class="b-t-0">
+                <div class="row">
+                  <div class="col-lg-8 col-sm-12 p-b-16">
+                    <div class="row">
+                      <div class="col-lg-6 col-sm-12 p-b-12">
+                        <mat-form-field appearance="outline" class="w-100" color="primary">
+                          <mat-label>{{ util.appTranslate('tab_title') }}</mat-label>
+                          <input matInput formControlName="title" type="text" />
+                          @if(haveProjectFeatureSubmitClicked == true && projectFeatureFourth['title'].invalid){
+                          <mat-hint class="m-b-16 error-msg">
+                            @if(projectFeatureFourth['title'].errors &&
+                            projectFeatureFourth['title'].errors['required']){
+                            <div class="text-error">
+                              {{util.appTranslate('form_required')}}
+                            </div>
+                            }
+                          </mat-hint>
+                          }
+                        </mat-form-field>
+                      </div>
+
+                      <div class="col-lg-6 col-sm-12 p-b-12">
+                        <mat-form-field appearance="outline" class="w-100" color="primary">
+                          <mat-label>{{ util.appTranslate('tab_sub_title') }}</mat-label>
+                          <input matInput formControlName="subtitle" type="text" />
+                          @if(haveProjectFeatureSubmitClicked == true && projectFeatureFourth['subtitle'].invalid){
+                          <mat-hint class="m-b-16 error-msg">
+                            @if(projectFeatureFourth['subtitle'].errors &&
+                            projectFeatureFourth['subtitle'].errors['required']){
+                            <div class="text-error">
+                              {{util.appTranslate('form_required')}}
+                            </div>
+                            }
+                          </mat-hint>
+                          }
+                        </mat-form-field>
+                      </div>
+
+                      <div class="col-lg-12 col-sm-12 p-b-12">
+                        <mat-form-field appearance="outline" class="w-100" color="primary">
+                          <mat-label>{{ util.appTranslate('content_title') }}</mat-label>
+                          <input matInput formControlName="detail_title" type="text" />
+                          @if(haveProjectFeatureSubmitClicked == true && projectFeatureFourth['detail_title'].invalid){
+                          <mat-hint class="m-b-16 error-msg">
+                            @if(projectFeatureFourth['detail_title'].errors &&
+                            projectFeatureFourth['detail_title'].errors['required']){
+                            <div class="text-error">
+                              {{util.appTranslate('form_required')}}
+                            </div>
+                            }
+                          </mat-hint>
+                          }
+                        </mat-form-field>
+
+                        <mat-form-field appearance="outline" class="w-100" color="primary">
+                          <mat-label>{{ util.appTranslate('content_desc') }}</mat-label>
+                          <textarea matInput formControlName="detail_subtitle" type="text" row="2"></textarea>
+                          @if(haveProjectFeatureSubmitClicked == true &&
+                          projectFeatureFourth['detail_subtitle'].invalid){
+                          <mat-hint class="m-b-16 error-msg">
+                            @if(projectFeatureFourth['detail_subtitle'].errors &&
+                            projectFeatureFourth['detail_subtitle'].errors['required']){
+                            <div class="text-error">
+                              {{util.appTranslate('form_required')}}
+                            </div>
+                            }
+                          </mat-hint>
+                          }
+                        </mat-form-field>
+
+                      </div>
+
+                      <div class="col-lg-6 col-sm-12 p-b-12">
+                        <mat-form-field appearance="outline" class="w-100" color="primary">
+                          <mat-label>{{ util.appTranslate('button_text') }}</mat-label>
+                          <input matInput formControlName="btn_lbl" type="text" />
+                          @if(haveProjectFeatureSubmitClicked == true && projectFeatureFourth['btn_lbl'].invalid){
+                          <mat-hint class="m-b-16 error-msg">
+                            @if(projectFeatureFourth['btn_lbl'].errors &&
+                            projectFeatureFourth['btn_lbl'].errors['required']){
+                            <div class="text-error">
+                              {{util.appTranslate('form_required')}}
+                            </div>
+                            }
+                          </mat-hint>
+                          }
+                        </mat-form-field>
+                      </div>
+
+                      <div class="col-lg-6 col-sm-12 p-b-12">
+                        <mat-form-field appearance="outline" class="w-100" color="primary">
+                          <mat-label>{{ util.appTranslate('button_link') }}</mat-label>
+                          <input matInput formControlName="btn_href" type="text" />
+                          @if(haveProjectFeatureSubmitClicked == true && projectFeatureFourth['btn_href'].invalid){
+                          <mat-hint class="m-b-16 error-msg">
+                            @if(projectFeatureFourth['btn_href'].errors &&
+                            projectFeatureFourth['btn_href'].errors['required']){
+                            <div class="text-error">
+                              {{util.appTranslate('form_required')}}
+                            </div>
+                            }
+                          </mat-hint>
+                          }
+                        </mat-form-field>
+                      </div>
+
+                      <div class="col-lg-12 col-sm-12 p-b-12">
+                        <mat-tab-group mat-stretch-tabs="false" mat-align-tabs="start">
+                          @for (item of fourthFeatureLanguages; track $index) {
+                          <mat-tab [label]="item.nativeName">
+                            <div class="mat-body-1 px-16 m-t-12">
+                              <mat-form-field appearance="outline" class="w-100" color="primary">
+                                <input matInput type="text"
+                                  placeholder="{{ util.appTranslate('tab_title') }} ({{item.nativeName}})"
+                                  [(ngModel)]="item.title" [ngModelOptions]="{standalone: true}" />
+                              </mat-form-field>
+
+                              <mat-form-field appearance="outline" class="w-100" color="primary">
+                                <input matInput type="text"
+                                  placeholder="{{ util.appTranslate('tab_sub_title') }} ({{item.nativeName}})"
+                                  [(ngModel)]="item.subtitle" [ngModelOptions]="{standalone: true}" />
+                              </mat-form-field>
+
+                              <mat-form-field appearance="outline" class="w-100" color="primary">
+                                <input matInput type="text"
+                                  placeholder="{{ util.appTranslate('button_text') }} ({{item.nativeName}})"
+                                  [(ngModel)]="item.btnLbl" [ngModelOptions]="{standalone: true}" />
+                              </mat-form-field>
+
+                              <mat-form-field appearance="outline" class="w-100" color="primary">
+                                <input matInput type="text"
+                                  placeholder="{{ util.appTranslate('content_title') }} ({{item.nativeName}})"
+                                  [(ngModel)]="item.detailTitle" [ngModelOptions]="{standalone: true}" />
+                              </mat-form-field>
+
+                              <mat-form-field appearance="outline" class="w-100" color="primary">
+                                <textarea matInput type="text"
+                                  placeholder="{{ util.appTranslate('content_desc') }} ({{item.nativeName}})"
+                                  [(ngModel)]="item.detailSubTitle" [ngModelOptions]="{standalone: true}"
+                                  row="2"> </textarea>
+                              </mat-form-field>
+
+                            </div>
+                          </mat-tab>
+                          }
+                        </mat-tab-group>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-lg-4 col-sm-12 p-b-16">
+                    <mat-card class="cardWithShadow theme-card">
+                      <mat-card-header>
+                        <mat-card-title class="m-b-0 f-s-12"
+                          [ngClass]="{ 'text-error': haveProjectFeatureSubmitClicked == true && projectFeatureFourth['icon'].invalid }">
+                          {{ util.appTranslate('tab_icon_validation') }}
+                        </mat-card-title>
+                      </mat-card-header>
+                      <mat-card-content class="b-t-0">
+                        <div class="row">
+                          <div class="col-lg-12 col-sm-12 p-b-16">
+                            <img [src]="api.mediaUrl+projectFeatureFourth['icon'].value"
+                              class="custom-image-upload border p-5 m-t-16 w-100"
+                              (click)="onImageClick('projectfourthfeature','icon')"
+                              onError="this.src='assets/images/placeholder.png'"
+                              [ngStyle]="{'border': haveProjectFeatureSubmitClicked == true && projectFeatureFourth['icon'].invalid ? '2px dashed red' : '2px dashed #e5e5e5', 'height' : '120px'}" />
+                          </div>
+                        </div>
+                      </mat-card-content>
+                    </mat-card>
+
+                    <mat-card class="cardWithShadow theme-card">
+                      <mat-card-header>
+                        <mat-card-title class="m-b-0 f-s-12"
+                          [ngClass]="{ 'text-error': haveProjectFeatureSubmitClicked == true && projectFeatureFourth['detail_cover'].invalid }">
+                          {{ util.appTranslate('tab_detail_cover_validation') }}
+                        </mat-card-title>
+                      </mat-card-header>
+                      <mat-card-content class="b-t-0">
+                        <div class="row">
+                          <div class="col-lg-12 col-sm-12 p-b-16">
+                            <img [src]="api.mediaUrl+projectFeatureFourth['detail_cover'].value"
+                              class="custom-image-upload border p-5 m-t-16 w-100"
+                              (click)="onImageClick('projectfourthfeature','cover')"
+                              onError="this.src='assets/images/placeholder.png'"
+                              [ngStyle]="{'border': haveProjectFeatureSubmitClicked == true && projectFeatureFourth['detail_cover'].invalid ? '2px dashed red' : '2px dashed #e5e5e5', 'height' : '120px'}" />
+                          </div>
+                        </div>
+                      </mat-card-content>
+                    </mat-card>
+                  </div>
+                </div>
+              </mat-card-content>
+
+              <mat-card-header>
+                <mat-card-title class="m-b-0 f-s-12">
+                  {{ util.appTranslate('bullet_points') }}
+                </mat-card-title>
+                <div class="m-l-auto">
+                  <button mat-flat-button class="w-100 bg-secondary text-white" extended type="button"
+                    (click)="onAddFeatureBullet(4)">
+                    <div class="d-flex align-items-center">
+                      <ng-icon name="tablerPlus" class="icon-15 m-r-4"></ng-icon>
+                      <span>{{util.appTranslate('add')}}</span>
+                    </div>
+                  </button>
+                </div>
+              </mat-card-header>
+
+              <mat-card-content class="b-t-0">
+                <div class="table-responsive">
+                  <table mat-table [dataSource]="fourthBulletArray" class="w-100">
+                    <ng-container matColumnDef="name">
+                      <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1 p-l-0">
+                        {{ util.appTranslate('bullet_list') }}
+                      </th>
+                      <td mat-cell *matCellDef="let element" class="p-l-0">
+                        <h6 class="mat-subtitle-1 f-s-14 f-w-600 lh-sm">
+                          {{ util.trimText(element.displayName,50) }}
+                        </h6>
+                      </td>
+                    </ng-container>
+
+                    <ng-container matColumnDef="action">
+                      <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1 p-r-0 text-right">
+                        {{util.appTranslate('th_action')}}
+                      </th>
+                      <td mat-cell *matCellDef="let element" class="f-w-500 text-right p-r-0">
+                        <a (click)="onFeatureBulletEdit(element,4)" class="m-r-10 cursor-pointer text-primary"
+                          [matTooltip]="util.appTranslate('click_to_edit')">
+                          <mat-icon>edit</mat-icon>
+                        </a>
+                        <a (click)="onFeatureBulletDelete(element,4)" class="m-r-10 cursor-pointer text-error"
+                          [matTooltip]="util.appTranslate('click_to_delete')">
+                          <mat-icon>delete</mat-icon>
+                        </a>
+                      </td>
+                    </ng-container>
+
+                    <tr mat-header-row *matHeaderRowDef="displayedCommanColumn"></tr>
+                    <tr mat-row *matRowDef="let row; columns: displayedCommanColumn"></tr>
+
+                    <tr *matNoDataRow>
+                      <td colspan="6" class="m-b-16 m-t-16 text-center">{{ util.appTranslate('no_bullet_list_found') }}
+                      </td>
+                    </tr>
+
+                  </table>
+                </div>
+              </mat-card-content>
+
+            </mat-card>
+
+            <div class="d-flex align-items-center justify-content-start m-t-30">
+              <button mat-flat-button color="primary" type="submit">
+                {{ util.appTranslate('save_btn') }}
+              </button>
+              <button mat-flat-button (click)="onProjectFeatureReset()" class="m-l-10 bg-secondary text-white" type="button">
+                {{util.appTranslate('reset_btn')}}
+              </button>
+            </div>
+
+          </form>
+        </mat-card-content>
+        }
+      </mat-tab>
+      <!-- Feature Content -->
+
+      <!-- Service Content -->
+      <mat-tab>
+        <ng-template mat-tab-label>
+          <div class="d-flex align-items-center justify-content-center">
+            <ng-icon name="tablerDeviceGamepad3" class="icon-20 m-r-8"></ng-icon>
+          </div>
+          {{ util.appTranslate('service_content') }}
+        </ng-template>
+        @if(tabIndex == 3){
+        <mat-card-content class="p-y-24 b-t-0">
+          <form name="eventForm" [formGroup]="serviceForm" class="event-form" (ngSubmit)="onServiceSubmit()"
+            id="topContent">
+            <mat-card class="cardWithShadow theme-card">
+              <mat-card-header>
+                <mat-card-title class="m-b-0 f-s-12">
+                  {{ util.appTranslate('service_content') }}
+                </mat-card-title>
+              </mat-card-header>
+              <mat-card-content class="b-t-0">
+                <div class="row">
+                  <div class="col-lg-12 col-sm-12 p-b-16">
+                    <mat-form-field appearance="outline" class="w-100" color="primary">
+                      <mat-label>{{ util.appTranslate('title') }}</mat-label>
+                      <input matInput formControlName="title" name="title" type="text" />
+                      @if(haveServiceSubmitClicked == true && serviceF['title'].invalid){
+                      <mat-hint class="m-b-16 error-msg">
+                        @if(serviceF['title'].errors && serviceF['title'].errors['required']){
+                        <div class="text-error">
+                          {{util.appTranslate('form_required')}}
+                        </div>
+                        }
+                      </mat-hint>
+                      }
+                    </mat-form-field>
+
+                    <mat-form-field appearance="outline" class="w-100" color="primary">
+                      <mat-label>{{ util.appTranslate('sub_title') }}</mat-label>
+                      <input matInput formControlName="subtitle" name="subtitle" type="text" />
+                      @if(haveServiceSubmitClicked == true && serviceF['subtitle'].invalid){
+                      <mat-hint class="m-b-16 error-msg">
+                        @if(serviceF['subtitle'].errors && serviceF['subtitle'].errors['required']){
+                        <div class="text-error">
+                          {{util.appTranslate('form_required')}}
+                        </div>
+                        }
+                      </mat-hint>
+                      }
+                    </mat-form-field>
+
+                    <mat-tab-group mat-stretch-tabs="false" mat-align-tabs="start">
+                      @for (item of serviceLanguages; track $index) {
+                      <mat-tab [label]="item.nativeName">
+                        <div class="mat-body-1 px-16 m-t-12">
+
+                          <mat-form-field appearance="outline" class="w-100" color="primary">
+                            <input matInput type="text"
+                              placeholder="{{util.appTranslate('title')}} ({{item.nativeName}})"
+                              [(ngModel)]="item.title" [ngModelOptions]="{standalone: true}" />
+                          </mat-form-field>
+
+                          <mat-form-field appearance="outline" class="w-100" color="primary">
+                            <input matInput type="text"
+                              placeholder="{{util.appTranslate('sub_title')}} ({{item.nativeName}})"
+                              [(ngModel)]="item.subtitle" [ngModelOptions]="{standalone: true}" />
+                          </mat-form-field>
+
+                        </div>
+                      </mat-tab>
+                      }
+                    </mat-tab-group>
+
+                  </div>
+                </div>
+              </mat-card-content>
+            </mat-card>
+
+            <mat-card class="cardWithShadow theme-card">
+              <mat-card-header>
+                <mat-card-title class="m-b-0 f-s-12">
+                  {{ util.appTranslate('service_list') }}
+                </mat-card-title>
+                <div class="m-l-auto">
+                  <button mat-flat-button class="w-100 bg-secondary text-white" extended type="button" (click)="addService()">
+                    <div class="d-flex align-items-center">
+                      <ng-icon name="tablerPlus" class="icon-15 m-r-4"></ng-icon>
+                      <span>{{util.appTranslate('add')}}</span>
+                    </div>
+                  </button>
+                </div>
+              </mat-card-header>
+              <mat-card-content class="b-t-0">
+                <div class="table-responsive">
+                  <table mat-table [dataSource]="serviceArray" class="w-100">
+                    <ng-container matColumnDef="name">
+                      <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1 p-l-0">
+                        {{ util.appTranslate('content') }}
+                      </th>
+                      <td mat-cell *matCellDef="let element" class="p-l-0">
+                        <div class="d-flex flex-column align-items-start justify-content-start">
+                          <h6 class="mat-subtitle-1 f-s-14 f-w-600 lh-sm">
+                            {{ element.displayTitle }}
+                          </h6>
+                          <span class="mat-body-1 f-s-12">
+                            {{ util.trimText(element.displaySubTitle,50) }}
+                          </span>
+                        </div>
+                      </td>
+                    </ng-container>
+
+                    <ng-container matColumnDef="action">
+                      <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1 p-r-0 text-right">
+                        {{util.appTranslate('th_action')}}
+                      </th>
+                      <td mat-cell *matCellDef="let element" class="f-w-500 text-right p-r-0">
+                        <a (click)="onEditService(element)" class="m-r-10 cursor-pointer text-primary"
+                          [matTooltip]="util.appTranslate('click_to_edit')">
+                          <mat-icon>edit</mat-icon>
+                        </a>
+                        <a (click)="onDeleteService(element)" class="m-r-10 cursor-pointer text-error"
+                          [matTooltip]="util.appTranslate('click_to_delete')">
+                          <mat-icon>delete</mat-icon>
+                        </a>
+                      </td>
+                    </ng-container>
+
+                    <tr mat-header-row *matHeaderRowDef="displayedCommanColumn"></tr>
+                    <tr mat-row *matRowDef="let row; columns: displayedCommanColumn"></tr>
+
+                    <tr *matNoDataRow>
+                      <td colspan="6" class="m-b-16 m-t-16 text-center">{{ util.appTranslate('no_service_found') }}</td>
+                    </tr>
+
+                  </table>
+                </div>
+              </mat-card-content>
+            </mat-card>
+            <div class="d-flex align-items-center justify-content-start m-t-30">
+              <button mat-flat-button color="primary" type="submit">
+                {{ util.appTranslate('save_btn') }}
+              </button>
+              <button mat-flat-button (click)="onServiceReset()" class="m-l-10 bg-secondary text-white" type="button">
+                {{util.appTranslate('reset_btn')}}
+              </button>
+            </div>
+          </form>
+        </mat-card-content>
+        }
+      </mat-tab>
+      <!-- Service Content -->
+
+      <!-- FAQS Content -->
+      <mat-tab>
+        <ng-template mat-tab-label>
+          <div class="d-flex align-items-center justify-content-center">
+            <ng-icon name="tablerHelpOctagon" class="icon-20 m-r-8"></ng-icon>
+          </div>
+          {{ util.appTranslate('faqs_content') }}
+        </ng-template>
+        @if(tabIndex == 4){
+        <mat-card-content class="p-y-24 b-t-0">
+          <form name="eventForm" [formGroup]="faqsForm" class="event-form" (ngSubmit)="onFaqsSubmit()" id="topContent">
+            <mat-card class="cardWithShadow theme-card">
+              <mat-card-header>
+                <mat-card-title class="m-b-0 f-s-12">
+                  {{ util.appTranslate('faqs_content') }}
+                </mat-card-title>
+              </mat-card-header>
+              <mat-card-content class="b-t-0">
+                <div class="row">
+                  <div class="col-lg-12 col-sm-12 p-b-16">
+                    <mat-form-field appearance="outline" class="w-100" color="primary">
+                      <mat-label>{{ util.appTranslate('title') }}</mat-label>
+                      <input matInput formControlName="title" name="title" type="text" />
+                      @if(haveFaqsSubmitClicked == true && faqsF['title'].invalid){
+                      <mat-hint class="m-b-16 error-msg">
+                        @if(faqsF['title'].errors && faqsF['title'].errors['required']){
+                        <div class="text-error">
+                          {{util.appTranslate('form_required')}}
+                        </div>
+                        }
+                      </mat-hint>
+                      }
+                    </mat-form-field>
+
+                    <mat-form-field appearance="outline" class="w-100" color="primary">
+                      <mat-label>{{ util.appTranslate('sub_title') }}</mat-label>
+                      <input matInput formControlName="subtitle" name="subtitle" type="text" />
+                      @if(haveFaqsSubmitClicked == true && faqsF['subtitle'].invalid){
+                      <mat-hint class="m-b-16 error-msg">
+                        @if(faqsF['subtitle'].errors && faqsF['subtitle'].errors['required']){
+                        <div class="text-error">
+                          {{util.appTranslate('form_required')}}
+                        </div>
+                        }
+                      </mat-hint>
+                      }
+                    </mat-form-field>
+
+                    <mat-tab-group mat-stretch-tabs="false" mat-align-tabs="start">
+                      @for (item of faqsLanguages; track $index) {
+                      <mat-tab [label]="item.nativeName">
+                        <div class="mat-body-1 px-16 m-t-12">
+
+                          <mat-form-field appearance="outline" class="w-100" color="primary">
+                            <input matInput type="text"
+                              placeholder="{{util.appTranslate('title')}} ({{item.nativeName}})"
+                              [(ngModel)]="item.title" [ngModelOptions]="{standalone: true}" />
+                          </mat-form-field>
+
+                          <mat-form-field appearance="outline" class="w-100" color="primary">
+                            <input matInput type="text"
+                              placeholder="{{util.appTranslate('sub_title')}} ({{item.nativeName}})"
+                              [(ngModel)]="item.subtitle" [ngModelOptions]="{standalone: true}" />
+                          </mat-form-field>
+
+                        </div>
+                      </mat-tab>
+                      }
+                    </mat-tab-group>
+
+                  </div>
+                </div>
+              </mat-card-content>
+            </mat-card>
+
+            <mat-card class="cardWithShadow theme-card">
+              <mat-card-header>
+                <mat-card-title class="m-b-0 f-s-12">
+                  {{ util.appTranslate('faq_list') }}
+                </mat-card-title>
+                <div class="m-l-auto">
+                  <button mat-flat-button class="w-100 bg-secondary text-white" extended type="button" (click)="addFaqs()">
+                    <div class="d-flex align-items-center">
+                      <ng-icon name="tablerPlus" class="icon-15 m-r-4"></ng-icon>
+                      <span>{{util.appTranslate('add')}}</span>
+                    </div>
+                  </button>
+                </div>
+              </mat-card-header>
+              <mat-card-content class="b-t-0">
+                <div class="table-responsive">
+                  <table mat-table [dataSource]="faqsArray" class="w-100">
+                    <ng-container matColumnDef="name">
+                      <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1 p-l-0">
+                        {{ util.appTranslate('content') }}
+                      </th>
+                      <td mat-cell *matCellDef="let element" class="p-l-0">
+                        <h6 class="mat-subtitle-1 f-s-14 f-w-600 lh-sm">
+                          {{ element.displayTitle }}
+                        </h6>
+                      </td>
+                    </ng-container>
+
+                    <ng-container matColumnDef="action">
+                      <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1 p-r-0 text-right">
+                        {{util.appTranslate('th_action')}}
+                      </th>
+                      <td mat-cell *matCellDef="let element" class="f-w-500 text-right p-r-0">
+                        <a (click)="onEditFaqs(element)" class="m-r-10 cursor-pointer text-primary"
+                          [matTooltip]="util.appTranslate('click_to_edit')">
+                          <mat-icon>edit</mat-icon>
+                        </a>
+                        <a (click)="onDeleteFaqs(element)" class="m-r-10 cursor-pointer text-error"
+                          [matTooltip]="util.appTranslate('click_to_delete')">
+                          <mat-icon>delete</mat-icon>
+                        </a>
+                      </td>
+                    </ng-container>
+
+                    <tr mat-header-row *matHeaderRowDef="displayedCommanColumn"></tr>
+                    <tr mat-row *matRowDef="let row; columns: displayedCommanColumn"></tr>
+
+                    <tr *matNoDataRow>
+                      <td colspan="6" class="m-b-16 m-t-16 text-center">{{ util.appTranslate('no_faqs_found') }}</td>
+                    </tr>
+
+                  </table>
+                </div>
+              </mat-card-content>
+            </mat-card>
+
+            <div class="d-flex align-items-center justify-content-start m-t-30">
+              <button mat-flat-button color="primary" type="submit">
+                {{ util.appTranslate('save_btn') }}
+              </button>
+              <button mat-flat-button (click)="onFaqsReset()" class="m-l-10 bg-secondary text-white" type="button">
+                {{util.appTranslate('reset_btn')}}
+              </button>
+            </div>
+
+          </form>
+        </mat-card-content>
+        }
+      </mat-tab>
+      <!-- FAQS Content -->
+
+      <!-- Reviews Content -->
+      <mat-tab>
+        <ng-template mat-tab-label>
+          <div class="d-flex align-items-center justify-content-center">
+            <ng-icon name="tablerSparkles" class="icon-20 m-r-8"></ng-icon>
+          </div>
+          {{ util.appTranslate('reviews_content') }}
+        </ng-template>
+        @if(tabIndex == 5){
+        <mat-card-content class="p-y-24 b-t-0">
+          <form name="eventForm" [formGroup]="reviewForm" class="event-form" (ngSubmit)="onReviewSubmit()"
+            id="topContent">
+            <mat-card class="cardWithShadow theme-card">
+              <mat-card-header>
+                <mat-card-title class="m-b-0 f-s-12">
+                  {{ util.appTranslate('reviews_content') }}
+                </mat-card-title>
+              </mat-card-header>
+              <mat-card-content class="b-t-0">
+                <div class="row">
+                  <div class="col-lg-12 col-sm-12 p-b-16">
+                    <mat-form-field appearance="outline" class="w-100" color="primary">
+                      <mat-label>{{ util.appTranslate('title') }}</mat-label>
+                      <input matInput formControlName="title" name="title" type="text" />
+                      @if(haveReviewSubmitClicked == true && reviewF['title'].invalid){
+                      <mat-hint class="m-b-16 error-msg">
+                        @if(reviewF['title'].errors && reviewF['title'].errors['required']){
+                        <div class="text-error">
+                          {{util.appTranslate('form_required')}}
+                        </div>
+                        }
+                      </mat-hint>
+                      }
+                    </mat-form-field>
+
+                    <mat-form-field appearance="outline" class="w-100" color="primary">
+                      <mat-label>{{ util.appTranslate('sub_title') }}</mat-label>
+                      <input matInput formControlName="subtitle" name="subtitle" type="text" />
+                      @if(haveReviewSubmitClicked == true && reviewF['subtitle'].invalid){
+                      <mat-hint class="m-b-16 error-msg">
+                        @if(reviewF['subtitle'].errors && reviewF['subtitle'].errors['required']){
+                        <div class="text-error">
+                          {{util.appTranslate('form_required')}}
+                        </div>
+                        }
+                      </mat-hint>
+                      }
+                    </mat-form-field>
+
+                    <mat-tab-group mat-stretch-tabs="false" mat-align-tabs="start">
+                      @for (item of reviewLanguages; track $index) {
+                      <mat-tab [label]="item.nativeName">
+                        <div class="mat-body-1 px-16 m-t-12">
+
+                          <mat-form-field appearance="outline" class="w-100" color="primary">
+                            <input matInput type="text"
+                              placeholder="{{util.appTranslate('title')}} ({{item.nativeName}})"
+                              [(ngModel)]="item.title" [ngModelOptions]="{standalone: true}" />
+                          </mat-form-field>
+
+                          <mat-form-field appearance="outline" class="w-100" color="primary">
+                            <input matInput type="text"
+                              placeholder="{{util.appTranslate('sub_title')}} ({{item.nativeName}})"
+                              [(ngModel)]="item.subtitle" [ngModelOptions]="{standalone: true}" />
+                          </mat-form-field>
+
+                        </div>
+                      </mat-tab>
+                      }
+                    </mat-tab-group>
+
+                  </div>
+                </div>
+              </mat-card-content>
+            </mat-card>
+
+            <mat-card class="cardWithShadow theme-card">
+              <mat-card-header>
+                <mat-card-title class="m-b-0 f-s-12">
+                  {{ util.appTranslate('review_list') }}
+                </mat-card-title>
+                <div class="m-l-auto">
+                  <button mat-flat-button class="w-100 bg-secondary text-white" extended type="button" (click)="onAddReview()">
+                    <div class="d-flex align-items-center">
+                      <ng-icon name="tablerPlus" class="icon-15 m-r-4"></ng-icon>
+                      <span>{{util.appTranslate('add')}}</span>
+                    </div>
+                  </button>
+                </div>
+              </mat-card-header>
+              <mat-card-content class="b-t-0">
+                <div class="table-responsive">
+                  <table mat-table [dataSource]="reviewArray" class="w-100">
+                    <ng-container matColumnDef="name">
+                      <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1 p-l-0">
+                        {{ util.appTranslate('content') }}
+                      </th>
+                      <td mat-cell *matCellDef="let element" class="p-l-0">
+                        <div class="d-flex align-items-center">
+                          <img [src]="api.mediaUrl+element.image" alt="cover" width="40" height="40"
+                            class="rounded-circle" onError="this.src='assets/images/onerror.png'" />
+                          <div class="m-l-16">
+                            <h6 class="mat-subtitle-1 f-s-14 f-w-600 lh-sm">
+                              {{ element.userName }}
+                            </h6>
+                            <span class="mat-body-1 f-s-12">
+                              {{ element.occupation }} | {{ element.star }} {{ util.appTranslate('star_rating') }}
+                            </span>
+                          </div>
+                        </div>
+                      </td>
+                    </ng-container>
+
+                    <ng-container matColumnDef="action">
+                      <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1 p-r-0 text-right">
+                        {{util.appTranslate('th_action')}}
+                      </th>
+                      <td mat-cell *matCellDef="let element" class="f-w-500 text-right p-r-0">
+                        <a (click)="onEditReview(element)" class="m-r-10 cursor-pointer text-primary"
+                          [matTooltip]="util.appTranslate('click_to_edit')">
+                          <mat-icon>edit</mat-icon>
+                        </a>
+                        <a (click)="onDeleteReview(element)" class="m-r-10 cursor-pointer text-error"
+                          [matTooltip]="util.appTranslate('click_to_delete')">
+                          <mat-icon>delete</mat-icon>
+                        </a>
+                      </td>
+                    </ng-container>
+
+                    <tr mat-header-row *matHeaderRowDef="displayedCommanColumn"></tr>
+                    <tr mat-row *matRowDef="let row; columns: displayedCommanColumn"></tr>
+
+                    <tr *matNoDataRow>
+                      <td colspan="6" class="m-b-16 m-t-16 text-center">{{ util.appTranslate('no_review_found') }}</td>
+                    </tr>
+
+                  </table>
+                </div>
+              </mat-card-content>
+            </mat-card>
+            <div class="d-flex align-items-center justify-content-start m-t-30">
+              <button mat-flat-button color="primary" type="submit">
+                {{ util.appTranslate('save_btn') }}
+              </button>
+              <button mat-flat-button (click)="onReviewReset()" class="m-l-10 bg-secondary text-white" type="button">
+                {{util.appTranslate('reset_btn')}}
+              </button>
+            </div>
+          </form>
+        </mat-card-content>
+        }
+      </mat-tab>
+      <!-- Reviews Content -->
+
+      <!-- Scan QR Content -->
+      <mat-tab>
+        <ng-template mat-tab-label>
+          <div class="d-flex align-items-center justify-content-center">
+            <ng-icon name="tablerScan" class="icon-20 m-r-8"></ng-icon>
+          </div>
+          {{ util.appTranslate('scan_qr_content') }}
+        </ng-template>
+        @if(tabIndex == 6){
+        <mat-card-content class="p-y-24 b-t-0">
+          <form name="eventForm" [formGroup]="scanQrForm" class="event-form" (ngSubmit)="onScanQrSubmit()"
+            id="topContent">
+
+            <mat-card class="cardWithShadow theme-card">
+              <mat-card-header>
+                <mat-card-title class="m-b-0 f-s-12">
+                  {{ util.appTranslate('scan_qr_content') }}
+                </mat-card-title>
+              </mat-card-header>
+              <mat-card-content class="b-t-0">
+                <div class="row">
+                  <div class="col-lg-12 col-sm-12 p-b-16">
+                    <mat-form-field appearance="outline" class="w-100" color="primary">
+                      <mat-label>{{ util.appTranslate('title') }}</mat-label>
+                      <input matInput formControlName="title" name="title" type="text" />
+                      @if(haveScanQrSubmitClicked == true && scanQrF['title'].invalid){
+                      <mat-hint class="m-b-16 error-msg">
+                        @if(scanQrF['title'].errors && scanQrF['title'].errors['required']){
+                        <div class="text-error">
+                          {{util.appTranslate('form_required')}}
+                        </div>
+                        }
+                      </mat-hint>
+                      }
+                    </mat-form-field>
+
+                    <mat-form-field appearance="outline" class="w-100" color="primary">
+                      <mat-label>{{ util.appTranslate('sub_title') }}</mat-label>
+                      <input matInput formControlName="subtitle" name="subtitle" type="text" />
+                      @if(haveScanQrSubmitClicked == true && scanQrF['subtitle'].invalid){
+                      <mat-hint class="m-b-16 error-msg">
+                        @if(scanQrF['subtitle'].errors && scanQrF['subtitle'].errors['required']){
+                        <div class="text-error">
+                          {{util.appTranslate('form_required')}}
+                        </div>
+                        }
+                      </mat-hint>
+                      }
+                    </mat-form-field>
+
+                    <mat-tab-group mat-stretch-tabs="false" mat-align-tabs="start">
+                      @for (item of scanQrLanguages; track $index) {
+                      <mat-tab [label]="item.nativeName">
+                        <div class="mat-body-1 px-16 m-t-12">
+
+                          <mat-form-field appearance="outline" class="w-100" color="primary">
+                            <input matInput type="text"
+                              placeholder="{{util.appTranslate('title')}} ({{item.nativeName}})"
+                              [(ngModel)]="item.title" [ngModelOptions]="{standalone: true}" />
+                          </mat-form-field>
+
+                          <mat-form-field appearance="outline" class="w-100" color="primary">
+                            <input matInput type="text"
+                              placeholder="{{util.appTranslate('sub_title')}} ({{item.nativeName}})"
+                              [(ngModel)]="item.subtitle" [ngModelOptions]="{standalone: true}" />
+                          </mat-form-field>
+
+                        </div>
+                      </mat-tab>
+                      }
+                    </mat-tab-group>
+
+                  </div>
+                </div>
+              </mat-card-content>
+            </mat-card>
+
+            <div class="row">
+              <div class="col-lg-4 col-sm-12 p-b-16">
+                <mat-card class="cardWithShadow theme-card">
+                  <mat-card-header>
+                    <mat-card-title class="m-b-0 f-s-12"
+                      [ngClass]="{ 'text-error': haveScanQrSubmitClicked == true && scanQrF['cover'].invalid }">
+                      {{ util.appTranslate('scan_qr_cover_validation') }}
+                    </mat-card-title>
+                  </mat-card-header>
+                  <mat-card-content class="b-t-0">
+                    <div class="row">
+                      <div class="col-lg-12 col-sm-12 p-b-16">
+                        <img [src]="api.mediaUrl+scanQrF['cover'].value"
+                          class="custom-image-upload border p-5 m-t-16 w-100" (click)="onImageClick('scanQr','cover')"
+                          onError="this.src='assets/images/placeholder.png'"
+                          [ngStyle]="{'border': haveScanQrSubmitClicked == true && scanQrF['cover'].invalid ? '2px dashed red' : '2px dashed #e5e5e5', 'height' : '120px'}" />
+                      </div>
+                    </div>
+                  </mat-card-content>
+                </mat-card>
+              </div>
+
+              <div class="col-lg-4 col-sm-12 p-b-16">
+                <mat-card class="cardWithShadow theme-card">
+                  <mat-card-header>
+                    <mat-card-title class="m-b-0 f-s-12">
+                      {{ util.appTranslate('first_button') }}
+                    </mat-card-title>
+                    <mat-slide-toggle class="m-l-auto" [checked]="scanQrF['btn1_enable'].value"
+                      (change)="scanQrOneBtnChange($event)"></mat-slide-toggle>
+                  </mat-card-header>
+                  <mat-card-content class="b-t-0">
+                    <div class="row">
+                      <div class="col-lg-12 col-sm-12 p-b-16">
+                        <img [src]="api.mediaUrl+scanQrF['btn1_cover'].value"
+                          class="custom-image-upload border p-5 m-t-16 w-100"
+                          (click)="scanQrF['btn1_enable'].value ? onImageClick('scanQr','btn1_cover') : null"
+                          onError="this.src='assets/images/placeholder.png'"
+                          [ngStyle]="{'border': haveScanQrSubmitClicked == true && scanQrF['btn1_cover'].invalid ? '2px dashed red' : '2px dashed #e5e5e5', 'height' : '120px'}" />
+                      </div>
+
+                      <div class="col-lg-12 col-sm-12 p-b-16">
+                        <mat-form-field appearance="outline" class="w-100" color="primary">
+                          <mat-label>{{ util.appTranslate('link') }}</mat-label>
+                          <input matInput formControlName="btn1_href" type="url"
+                            [disabled]="scanQrF['btn1_enable'].value ?? false" />
+                          @if(haveScanQrSubmitClicked == true && scanQrF['btn1_href'].invalid){
+                          <mat-hint class="m-b-16 error-msg">
+                            @if(scanQrF['btn1_href'].errors && scanQrF['btn1_href'].errors['required']){
+                            <div class="text-error">
+                              {{util.appTranslate('form_required')}}
+                            </div>
+                            }
+                          </mat-hint>
+                          }
+                        </mat-form-field>
+                      </div>
+
+                    </div>
+                  </mat-card-content>
+                </mat-card>
+              </div>
+
+              <div class="col-lg-4 col-sm-12 p-b-16">
+                <mat-card class="cardWithShadow theme-card">
+                  <mat-card-header>
+                    <mat-card-title class="m-b-0 f-s-12">
+                      {{ util.appTranslate('second_button') }}
+                    </mat-card-title>
+                    <mat-slide-toggle class="m-l-auto" [checked]="scanQrF['btn2_enable'].value"
+                      (change)="scanQrTwoBtnChange($event)"></mat-slide-toggle>
+                  </mat-card-header>
+                  <mat-card-content class="b-t-0">
+                    <div class="row">
+                      <div class="col-lg-12 col-sm-12 p-b-16">
+                        <img [src]="api.mediaUrl+scanQrF['btn2_cover'].value"
+                          class="custom-image-upload border p-5 m-t-16 w-100"
+                          (click)="scanQrF['btn2_enable'].value ? onImageClick('scanQr','btn2_cover') : null"
+                          onError="this.src='assets/images/placeholder.png'"
+                          [ngStyle]="{'border': haveScanQrSubmitClicked == true && scanQrF['btn2_cover'].invalid ? '2px dashed red' : '2px dashed #e5e5e5', 'height' : '120px'}" />
+                      </div>
+
+                      <div class="col-lg-12 col-sm-12 p-b-16">
+                        <mat-form-field appearance="outline" class="w-100" color="primary">
+                          <mat-label>{{ util.appTranslate('link') }}</mat-label>
+                          <input matInput formControlName="btn2_href" type="url"
+                            [disabled]="scanQrF['btn2_enable'].value ?? false" />
+                          @if(haveScanQrSubmitClicked == true && scanQrF['btn2_href'].invalid){
+                          <mat-hint class="m-b-16 error-msg">
+                            @if(scanQrF['btn2_href'].errors && scanQrF['btn2_href'].errors['required']){
+                            <div class="text-error">
+                              {{util.appTranslate('form_required')}}
+                            </div>
+                            }
+                          </mat-hint>
+                          }
+                        </mat-form-field>
+                      </div>
+
+                    </div>
+                  </mat-card-content>
+                </mat-card>
+              </div>
+            </div>
+
+            <div class="d-flex align-items-center justify-content-start m-t-30">
+              <button mat-flat-button color="primary" type="submit">
+                {{ util.appTranslate('save_btn') }}
+              </button>
+              <button mat-flat-button (click)="onScanQrReset()" class="m-l-10 bg-secondary text-white" type="button">
+                {{util.appTranslate('reset_btn')}}
+              </button>
+            </div>
+
+          </form>
+        </mat-card-content>
+        }
+      </mat-tab>
+      <!-- Scan QR Content -->
+
+    </mat-tab-group>
+  </mat-card-content>
+</mat-card>

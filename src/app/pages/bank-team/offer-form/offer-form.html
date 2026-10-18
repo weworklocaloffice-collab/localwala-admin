@@ -1,0 +1,42 @@
+<mat-card class="cardWithShadow m-b-16">
+  <mat-card-header class="m-b-16">
+    <mat-card-title>{{ util.appTranslate('bank_new_offer') }}</mat-card-title>
+    <mat-card-subtitle>{{ util.appTranslate('bank_new_offer_subtitle') }}</mat-card-subtitle>
+  </mat-card-header>
+
+  <mat-card-content>
+    <mat-form-field appearance="outline" class="w-100 m-b-16">
+      <mat-label>{{ util.appTranslate('th_application') }}</mat-label>
+      <mat-select [(ngModel)]="selectedApplication" (ngModelChange)="onAppChange()">
+        <mat-option [value]="null">{{ util.appTranslate('select_application') }}</mat-option>
+        <mat-option *ngFor="let app of applications" [value]="app">
+          <span>{{ app._id }}</span>
+          <span class="text-muted small">(₹{{ app.requestedAmount }} – {{ app.status }})</span>
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="w-100 m-b-16">
+      <mat-label>{{ util.appTranslate('th_amount') }} ₹</mat-label>
+      <input matInput type="number" [(ngModel)]="loanAmount" />
+    </mat-form-field>
+    <mat-form-field appearance="outline" class="w-100 m-b-16">
+      <mat-label>{{ util.appTranslate('th_rate') }} %</mat-label>
+      <input matInput type="number" [(ngModel)]="interestRate" />
+    </mat-form-field>
+    <mat-form-field appearance="outline" class="w-100 m-b-16">
+      <mat-label>{{ util.appTranslate('th_tenure') }} (months)</mat-label>
+      <input matInput type="number" [(ngModel)]="tenureMonths" />
+    </mat-form-field>
+    <mat-form-field appearance="outline" class="w-100">
+      <mat-label>{{ util.appTranslate('th_processing_fee') }} ₹</mat-label>
+      <input matInput type="number" [(ngModel)]="processingFee" />
+    </mat-form-field>
+
+    <div class="d-flex gap-8 m-t-16">
+      <button mat-flat-button color="primary" [disabled]="!selectedApplication || isSaving || loanAmount === null" (click)="onSubmit()">
+        {{ util.appTranslate('th_create') }}
+      </button>
+    </div>
+  </mat-card-content>
+</mat-card>

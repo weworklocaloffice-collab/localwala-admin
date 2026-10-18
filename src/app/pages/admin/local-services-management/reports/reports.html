@@ -1,0 +1,76 @@
+<mat-card class="cardWithShadow">
+  <mat-card-header class="m-b-16">
+    <mat-card-title>Reports & Revenue</mat-card-title>
+    <mat-card-subtitle>Revenue summary, GBV, commissions, payable, settlements</mat-card-subtitle>
+  </mat-card-header>
+
+  <mat-card-content>
+    <div class="d-flex flex-wrap align-center justify-content-between mb-24 gap-12">
+      <button mat-flat-button color="primary" (click)="onCreate()">{{ util.appTranslate('ls_new_report') }}</button>
+      <button mat-flat-button color="accent" (click)="exportCsv()" matTooltip="Export to CSV">
+        <mat-icon>download</mat-icon>
+      </button>
+    </div>
+
+    <div class="table-responsive">
+      <table mat-table [dataSource]="list" class="w-100">
+
+        <ng-container matColumnDef="booking">
+          <th mat-header-cell *matHeaderCellDef class="f-w-600">Booking</th>
+          <td mat-cell *matCellDef="let element">
+            <div class="f-w-600">{{ element.bookingCode }}</div>
+            <div class="f-s-12 text-muted">{{ element.bookedAt }}</div>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="date">
+          <th mat-header-cell *matHeaderCellDef class="f-w-600">Date</th>
+          <td mat-cell *matCellDef="let element">{{ element.date }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="gross">
+          <th mat-header-cell *matHeaderCellDef class="f-w-600">Gross</th>
+          <td mat-cell *matCellDef="let element">{{ element.gross }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="commission">
+          <th mat-header-cell *matHeaderCellDef class="f-w-600">Commission</th>
+          <td mat-cell *matCellDef="let element">{{ element.commission }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="net">
+          <th mat-header-cell *matHeaderCellDef class="f-w-600">Net</th>
+          <td mat-cell *matCellDef="let element">{{ element.net }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="status">
+          <th mat-header-cell *matHeaderCellDef class="f-w-600">Status</th>
+          <td mat-cell *matCellDef="let element">
+            <span class="f-s-14" [ngClass]="element.status === 'paid' ? 'text-success' : 'text-warning'">{{ element.status }}</span>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="action">
+          <th mat-header-cell *matHeaderCellDef></th>
+          <td mat-cell *matCellDef="let element">
+            @if (element.status !== 'paid') {
+              <a (click)="onStatus(element, 'paid')" class="m-r-10 cursor-pointer text-success" matTooltip="Mark as paid"><mat-icon>check_circle</mat-icon></a>
+            }
+            @if (element.status === 'paid') {
+              <a (click)="onStatus(element, 'refunded')" class="m-r-10 cursor-pointer text-warning" matTooltip="Issue refund"><mat-icon>undo</mat-icon></a>
+            }
+          </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="displayedColumn"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumn"></tr>
+      </table>
+
+      @if (isLoaded && !list.length) {
+        <div class="p-24 text-center text-muted">{{ util.appTranslate('ts_no_records_found') }}</div>
+      }
+    </div>
+
+    <mat-paginator [hidden]="!isLoaded" #paginator [pageSizeOptions]="[5, 10, 20]" [pageSize]="pageSize" (page)="onPageChange($event)" showFirstLastButtons></mat-paginator>
+  </mat-card-content>
+</mat-card>

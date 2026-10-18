@@ -1,0 +1,28 @@
+<mat-card class="cardWithShadow theme-card">
+  <mat-card-header>
+    <mat-card-title class="m-b-0">
+      {{util.appTranslate('deliveryman')}}
+    </mat-card-title>
+  </mat-card-header>
+
+  <mat-card-content class="b-t-0">
+    <mat-tab-group mat-stretch-tabs="false" [selectedIndex]="tabIndex" mat-align-tabs="start"
+      (selectedTabChange)="tabChanged($event)">
+      <!-- System Deliveryman -->
+      <mat-tab [label]="util.appTranslate('system_deliveryman')"></mat-tab>
+      <!-- System Deliveryman -->
+
+      <!-- Vendor Deliveryman -->
+      <mat-tab [label]="util.appTranslate('vendor_deliveryman')"></mat-tab>
+      <!-- Vendor Deliveryman -->
+
+    </mat-tab-group>
+  </mat-card-content>
+</mat-card>
+
+@if(tabIndex == 0){
+<app-system-driver-list></app-system-driver-list>
+}
+@if(tabIndex == 1){
+<app-vendor-driver-list></app-vendor-driver-list>
+}

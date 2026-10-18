@@ -1,0 +1,243 @@
+<mat-card class="cardWithShadow m-b-16">
+  <mat-card-header class="m-b-16">
+    <mat-card-title>{{ util.appTranslate('dairy_settlements') }}</mat-card-title>
+    <mat-card-subtitle>{{ util.appTranslate('dairy_settlements_subtitle') }}</mat-card-subtitle>
+  </mat-card-header>
+
+  <mat-card-content>
+    <div class="d-flex flex-wrap align-center justify-content-between mb-24 gap-12">
+      <div class="d-flex gap-12">
+        <mat-form-field appearance="outline" class="w-100">
+          <mat-label>{{ util.appTranslate('th_status') }}</mat-label>
+          <mat-select [(ngModel)]="selectedStatus" (selectionChange)="onFilter()">
+            <mat-option value="draft">{{ util.appTranslate('dairy_status_draft') }}</mat-option>
+            <mat-option value="submitted">{{
+              util.appTranslate('dairy_status_submitted')
+            }}</mat-option>
+            <mat-option value="approved">{{
+              util.appTranslate('dairy_status_approved')
+            }}</mat-option>
+            <mat-option value="disputed">{{
+              util.appTranslate('dairy_status_disputed')
+            }}</mat-option>
+            <mat-option value="paid">{{ util.appTranslate('dairy_status_paid') }}</mat-option>
+            <mat-option value="void">{{ util.appTranslate('dairy_status_void') }}</mat-option>
+            <mat-option value="">{{ util.appTranslate('th_all') }}</mat-option>
+          </mat-select>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="w-100">
+          <mat-label>{{ util.appTranslate('th_type') }}</mat-label>
+          <mat-select [(ngModel)]="selectedType" (selectionChange)="onFilter()">
+            <mat-option value="commission">{{
+              util.appTranslate('dairy_type_commission')
+            }}</mat-option>
+            <mat-option value="franchise">{{
+              util.appTranslate('dairy_type_franchise')
+            }}</mat-option>
+            <mat-option value="">{{ util.appTranslate('th_all') }}</mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
+
+      @if (util.hasRight('dairy_settlement_generate')) {
+        <button mat-flat-button color="primary" (click)="onGenerate()">
+          <mat-icon>add</mat-icon>
+          {{ util.appTranslate('dairy_generate_settlement') }}
+        </button>
+      }
+    </div>
+
+    <!--
+      Totals by status, per settlement type.
+
+      Approval and payout are decided per document, but an operator's first question
+      is always "how much is waiting", so that is answered above the table rather
+      than by making them sum a column by hand.
+    -->
+    <div class="d-flex flex-wrap gap-16 mb-24">
+      @for (type of ['commission', 'franchise']; track type) {
+        <div class="p-16" style="min-width: 320px; flex: 1; background: #f5f5f5">
+          <div class="f-w-600 f-s-14 m-b-8">{{ util.appTranslate('dairy_type_' + type) }}</div>
+          <div class="d-flex flex-wrap gap-16">
+            @for (status of ['draft', 'submitted', 'approved', 'disputed']; track status) {
+              <div>
+                <div class="f-s-12 text-muted">
+                  {{ util.appTranslate('dairy_status_' + status) }}
+                </div>
+                <div class="f-w-600 f-s-16">{{ netFor(type, status) | number: '1.2-2' }}</div>
+                <div class="f-s-12 text-muted">
+                  {{ util.appTranslate('th_count') }}: {{ countFor(type, status) }}
+                </div>
+              </div>
+            }
+          </div>
+        </div>
+      }
+    </div>
+
+    <div class="table-responsive">
+      <table mat-table [dataSource]="list" class="w-100">
+        <ng-container matColumnDef="settlementNo">
+          <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1">
+            {{ util.appTranslate('th_settlement_no') }}
+          </th>
+          <td mat-cell *matCellDef="let element">
+            <div class="f-w-600">{{ element.settlementNo }}</div>
+            <div class="m-t-4 f-s-12 text-muted">
+              {{ util.appTranslate('dairy_type_' + element.settlementType) }}
+            </div>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="party">
+          <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1">
+            {{ util.appTranslate('th_party') }}
+          </th>
+          <td mat-cell *matCellDef="let element">
+            @if (element.partner) {
+              <div class="f-s-14">{{ element.partner.name }}</div>
+              <div class="m-t-4 f-s-12 text-muted">{{ element.partner.partnerCode }}</div>
+            } @else if (element.franchise) {
+              <div class="f-s-14">{{ element.franchise.name }}</div>
+              <div class="m-t-4 f-s-12 text-muted">{{ element.franchise.franchiseCode }}</div>
+            } @else {
+              <span class="text-muted">—</span>
+            }
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="period">
+          <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1">
+            {{ util.appTranslate('th_period') }}
+          </th>
+          <td mat-cell *matCellDef="let element">
+            <div class="f-s-14">{{ util.appTranslate('dairy_period_' + element.period) }}</div>
+            <div class="m-t-4 f-s-12 text-muted">
+              {{ element.from | date: 'dd MMM' }} –
+              {{ element.to | date: 'dd MMM yyyy' }}
+            </div>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="net">
+          <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1">
+            {{ util.appTranslate('th_net_amount') }}
+          </th>
+          <td mat-cell *matCellDef="let element">
+            @if (element.totals) {
+              <div
+                class="f-w-600 f-s-14"
+                [ngClass]="element.totals.netAmount < 0 ? 'text-error' : ''"
+              >
+                {{ element.totals.netAmount | number: '1.2-2' }}
+              </div>
+              <div class="m-t-4 f-s-12 text-muted">
+                {{ util.appTranslate('th_rate') }}: {{ element.ratePercentage }}%
+              </div>
+            } @else {
+              <span class="text-muted">—</span>
+            }
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="status">
+          <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1">
+            {{ util.appTranslate('th_status') }}
+          </th>
+          <td mat-cell *matCellDef="let element">
+            <span
+              class="f-s-14"
+              [ngClass]="
+                element.status === 'paid'
+                  ? 'text-success'
+                  : element.status === 'void'
+                    ? 'text-muted'
+                    : element.status === 'disputed'
+                      ? 'text-error'
+                      : ''
+              "
+            >
+              {{ util.appTranslate('dairy_status_' + element.status) }}
+            </span>
+            @if (element.paidAt) {
+              <div class="m-t-4 f-s-12 text-muted">
+                {{ util.appTranslate('dairy_paid_on') }} {{ element.paidAt | date: 'dd MMM yyyy' }}
+              </div>
+            }
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="action">
+          <th mat-header-cell *matHeaderCellDef></th>
+          <td mat-cell *matCellDef="let element">
+            <!--
+              Only the transitions the API accepts from this status are offered. A
+              paid or voided settlement is a closed financial statement and gets no
+              controls at all.
+            -->
+            @if (util.hasRight('dairy_settlement_approve')) {
+              @for (action of actionsFor(element); track action) {
+                <a
+                  (click)="onChangeStatus(element, action)"
+                  class="m-r-10 cursor-pointer"
+                  [ngClass]="
+                    action === 'void'
+                      ? 'text-error'
+                      : action === 'approved'
+                        ? 'text-success'
+                        : action === 'disputed'
+                          ? 'text-warning'
+                          : 'text-primary'
+                  "
+                  [matTooltip]="util.appTranslate('dairy_do_' + action)"
+                >
+                  <mat-icon>{{
+                    action === 'void'
+                      ? 'cancel'
+                      : action === 'approved'
+                        ? 'check'
+                        : action === 'disputed'
+                          ? 'help'
+                          : action === 'submitted'
+                            ? 'send'
+                            : 'undo'
+                  }}</mat-icon>
+                </a>
+              }
+            }
+
+            @if (element.status === 'approved' && util.hasRight('dairy_settlement_pay')) {
+              <a
+                (click)="onPay(element)"
+                class="m-r-10 cursor-pointer text-primary"
+                [matTooltip]="util.appTranslate('dairy_pay')"
+              >
+                <mat-icon>payments</mat-icon>
+              </a>
+            }
+          </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="displayedColumn"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumn"></tr>
+      </table>
+
+      @if (isLoaded && !list.length) {
+        <div class="p-24 text-center text-muted">
+          {{ util.appTranslate('ts_no_records_found') }}
+        </div>
+      }
+    </div>
+
+    <mat-paginator
+      [hidden]="!isLoaded"
+      #paginator
+      [pageSizeOptions]="[5, 10, 20]"
+      [pageSize]="pageSize"
+      (page)="onPageChange($event)"
+      showFirstLastButtons
+    >
+    </mat-paginator>
+  </mat-card-content>
+</mat-card>
