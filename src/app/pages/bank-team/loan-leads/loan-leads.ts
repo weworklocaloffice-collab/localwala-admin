@@ -46,4 +46,9 @@ export class LoanLeads {
       },
     });
   }
+
+  /** The row id. The API returns `_id` on the hydrated rows. */
+  rowId(row: any): string {
+    return row?._id || row?.id || '';
+  }
 }

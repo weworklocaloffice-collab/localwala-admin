@@ -12,7 +12,9 @@
             {{ util.appTranslate('th_application') }}
           </th>
           <td mat-cell *matCellDef="let element">
-            <div class="f-w-600 f-s-12">{{ element.property?.title || element.property || element._id }}</div>
+            <a [routerLink]="['/bank-team/u/applications', rowId(element)]" class="f-w-600 f-s-12 text-primary">
+              {{ element.property?.title || element.property?.propertyCode || '—' }}
+            </a>
             <div class="m-t-4 f-s-12 text-muted">{{ element.customer?.firstName || '' }} {{ element.customer?.lastName || '' }}</div>
           </td>
         </ng-container>
@@ -21,7 +23,7 @@
           <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1">
             {{ util.appTranslate('th_amount') }}
           </th>
-          <td mat-cell *matCellDef="let element">{{ element.requestedAmount || '—' }}</td>
+          <td mat-cell *matCellDef="let element">₹{{ element.requestedAmount || '—' }}</td>
         </ng-container>
 
         <ng-container matColumnDef="status">
@@ -34,7 +36,7 @@
         <ng-container matColumnDef="action">
           <th mat-header-cell *matHeaderCellDef></th>
           <td mat-cell *matCellDef="let element">
-            <a [routerLink]="['/bank-team/u/applications', element._id]" class="cursor-pointer text-success">
+            <a [routerLink]="['/bank-team/u/applications', rowId(element)]" class="cursor-pointer text-success">
               {{ util.appTranslate('th_review') }}
             </a>
           </td>

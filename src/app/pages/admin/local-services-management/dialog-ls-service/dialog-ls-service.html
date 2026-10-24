@@ -26,6 +26,10 @@
         <mat-option value="INSPECTION_QUOTE">INSPECTION_QUOTE</mat-option>
       </mat-select>
     </mat-form-field>
+    <mat-form-field appearance="outline">
+      <mat-label>Deposit percent (0 = full prepayment)</mat-label>
+      <input matInput type="number" min="0" max="100" formControlName="depositPercent" />
+    </mat-form-field>
   </form>
 </mat-dialog-content>
 <mat-dialog-actions align="end">

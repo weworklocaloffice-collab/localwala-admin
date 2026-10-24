@@ -15,8 +15,8 @@
               {{ util.appTranslate('th_application') }}
             </th>
             <td mat-cell *matCellDef="let element">
-              <a [routerLink]="['/bank-team/u/applications', element._id]" class="f-w-600 f-s-12 cursor-pointer">
-                {{ element.property?.title || element.property || element._id }}
+              <a [routerLink]="['/bank-team/u/applications', rowId(element)]" class="f-w-600 f-s-12 cursor-pointer">
+                {{ element.property?.title || element.property?.propertyCode || '—' }}
               </a>
             </td>
           </ng-container>
@@ -25,7 +25,7 @@
             <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1">
               {{ util.appTranslate('th_amount') }}
             </th>
-            <td mat-cell *matCellDef="let element">{{ element.requestedAmount || '—' }}</td>
+            <td mat-cell *matCellDef="let element">₹{{ element.requestedAmount || '—' }}</td>
           </ng-container>
 
           <ng-container matColumnDef="status">

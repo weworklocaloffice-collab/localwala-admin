@@ -301,6 +301,55 @@
   transition: none;
 }
 
+/* Shared media canvas.
+ *
+ * When the banner's media is also painted into the app bar, the two surfaces are windows
+ * onto ONE canvas of height (app bar + banner). Each surface gets a full-bleed wrapper
+ * that clips, and the canvas inside it is pinned to that surface's own edge - the app bar
+ * pins the top, the banner pins the bottom.
+ *
+ * The clipping lives on the wrapper rather than on the app bar itself so the app bar's
+ * resize handle, which deliberately overhangs its box, is not cut off by it.
+ *
+ * Laid out per-surface instead, the same asset would be cropped twice and the seam would
+ * show the image restarting - which is exactly what this avoids. */
+.header-banner__preview-shared-window {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+/* The operator's colour/gradient, repainted ABOVE the shared artwork. Without this the
+   background is bound to the app bar and the media simply covers it, so switching on app
+   bar media silently dropped the background. */
+.header-banner__preview-shared-tint {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.header-banner__preview-shared-canvas {
+  position: absolute;
+  left: 0;
+  width: 100%;
+}
+
+.header-banner__preview-shared-canvas--top {
+  top: 0;
+}
+
+.header-banner__preview-shared-canvas--bottom {
+  bottom: 0;
+}
+
+.header-banner__preview-shared-img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
 /* Absolutely positioned so a drag can translate it. A CSS `background-image`
    cannot be transformed, which is why the artwork is an element. */
 .header-banner__preview-media {

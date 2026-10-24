@@ -12,8 +12,13 @@
             {{ util.appTranslate('th_application') }}
           </th>
           <td mat-cell *matCellDef="let element">
-            <div class="f-w-600 f-s-12">{{ element._id }}</div>
-            <div class="m-t-4 f-s-12 text-muted">{{ element.property }}</div>
+            <a [routerLink]="['/bank-team/u/applications', rowId(element)]" class="f-w-600 f-s-12 text-primary">
+              {{ element.property?.title || element.property?.propertyCode || '—' }}
+            </a>
+            <div class="m-t-4 f-s-12 text-muted">
+              {{ element.customer?.firstName || '' }} {{ element.customer?.lastName || '' }}
+            </div>
+            <div class="f-s-12 text-muted">{{ rowId(element) }}</div>
           </td>
         </ng-container>
 
@@ -34,6 +39,11 @@
         <ng-container matColumnDef="action">
           <th mat-header-cell *matHeaderCellDef></th>
           <td mat-cell *matCellDef="let element">
+            @if (element.status === 'DOCUMENTS_PENDING') {
+              <a (click)="setStatus(element, 'UNDER_BANK_REVIEW')" class="m-r-10 cursor-pointer text-primary">
+                {{ util.appTranslate('th_review') }}
+              </a>
+            }
             @if (element.status === 'UNDER_BANK_REVIEW') {
               <a (click)="setStatus(element, 'SANCTIONED')" class="m-r-10 cursor-pointer text-success">
                 {{ util.appTranslate('bank_sanction') }}

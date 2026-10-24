@@ -1,0 +1,62 @@
+<mat-card class="cardWithShadow">
+  <mat-card-header class="m-b-16">
+    <mat-card-title>Availability rules</mat-card-title>
+    <mat-card-subtitle>Provider working hours, capacity and buffer by day</mat-card-subtitle>
+  </mat-card-header>
+
+  <mat-card-content>
+    <div class="d-flex flex-wrap align-center mb-24 gap-12">
+      <mat-form-field appearance="outline">
+        <mat-label>{{ util.appTranslate('th_status') }}</mat-label>
+        <mat-select [(ngModel)]="selectedStatus" (selectionChange)="onStatusFilter()">
+          <mat-option value="active">active</mat-option>
+          <mat-option value="inactive">inactive</mat-option>
+          <mat-option value="">{{ util.appTranslate('th_all') }}</mat-option>
+        </mat-select>
+      </mat-form-field>
+    </div>
+
+    <div class="table-responsive">
+      <table mat-table [dataSource]="list" class="w-100">
+        <ng-container matColumnDef="provider">
+          <th mat-header-cell *matHeaderCellDef class="f-w-600">Provider</th>
+          <td mat-cell *matCellDef="let element">{{ element.provider }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="service">
+          <th mat-header-cell *matHeaderCellDef class="f-w-600">Service</th>
+          <td mat-cell *matCellDef="let element">{{ element.service || 'All services' }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="day">
+          <th mat-header-cell *matHeaderCellDef class="f-w-600">Day</th>
+          <td mat-cell *matCellDef="let element">{{ dayName(element.day) }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="hours">
+          <th mat-header-cell *matHeaderCellDef class="f-w-600">Hours</th>
+          <td mat-cell *matCellDef="let element">{{ element.open }} – {{ element.close }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="capacity">
+          <th mat-header-cell *matHeaderCellDef class="f-w-600">Capacity</th>
+          <td mat-cell *matCellDef="let element">{{ element.capacity || 1 }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="buffer">
+          <th mat-header-cell *matHeaderCellDef class="f-w-600">Buffer</th>
+          <td mat-cell *matCellDef="let element">{{ element.bufferMinutes || 0 }} min</td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="displayedColumn"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumn"></tr>
+      </table>
+
+      @if (isLoaded && !list.length) {
+        <div class="p-24 text-center text-muted">{{ util.appTranslate('ts_no_records_found') }}</div>
+      }
+    </div>
+
+    <mat-paginator [hidden]="!isLoaded" #paginator [pageSizeOptions]="[5, 10, 20]" [pageSize]="pageSize" (page)="onPageChange($event)" showFirstLastButtons></mat-paginator>
+  </mat-card-content>
+</mat-card>

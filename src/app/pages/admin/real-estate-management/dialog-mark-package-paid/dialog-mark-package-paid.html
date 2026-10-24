@@ -1,0 +1,31 @@
+<h2 mat-dialog-title>Mark package payment paid</h2>
+
+<mat-dialog-content>
+  <p class="text-muted">
+    This grants the vendor the package entitlement and records the payment
+    in the ledger. Use it only after confirming the money was received.
+  </p>
+
+  <mat-form-field appearance="outline" class="w-100">
+    <mat-label>{{ util.appTranslate('th_reason') }}</mat-label>
+    <textarea matInput rows="3" [(ngModel)]="form.reason"></textarea>
+  </mat-form-field>
+
+  <mat-form-field appearance="outline" class="w-100">
+    <mat-label>{{ util.appTranslate('th_reference') }} (optional)</mat-label>
+    <input matInput [(ngModel)]="form.paymentRef" />
+    <mat-hint>Gateway payment id or bank statement reference</mat-hint>
+  </mat-form-field>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button (click)="onClose()">{{ util.appTranslate('th_cancel') }}</button>
+  <button
+    mat-flat-button
+    color="primary"
+    [disabled]="!canSubmit"
+    (click)="onSubmit()"
+  >
+    Mark paid
+  </button>
+</mat-dialog-actions>

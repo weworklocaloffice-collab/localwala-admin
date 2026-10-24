@@ -75,7 +75,17 @@ export interface AdminHeaderBannerListInterface {
   deepLink?: string;
   enableOverlayText?: boolean;
 
-  /** Show the CTA button. Independent of `enableOverlayText`, which also covers title/subtitle. */
+  /**
+ * Paint the same media in the app bar as well as the banner slot.
+ *
+ * When on, the two surfaces become windows onto ONE canvas of height
+ * `collapsedHeight + bannerHeight`, so the picture runs continuously from the top of the
+ * screen down through the banner. Off by default, which keeps the header as the single
+ * gradient sweep it has always been.
+ */
+showMediaInAppBar?: boolean;
+
+/** Show the CTA button. Independent of `enableOverlayText`, which also covers title/subtitle. */
   showCta?: boolean;
 
   // CTA appearance. See `HEADER_BANNER_CTA_PRESETS` for what the presets write.

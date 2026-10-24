@@ -7,6 +7,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { ApiService } from 'src/app/services/api-service';
 import { UtilService } from 'src/app/services/util-service';
 import { DialogLsStatus } from '../dialog-ls-status/dialog-ls-status';
+import { DialogLsPlan } from '../dialog-ls-plan/dialog-ls-plan';
 
 @Component({
   selector: 'app-featured-plans',
@@ -18,7 +19,7 @@ export class FeaturedPlans {
   list: any[] = [];
   currentPage: number = 0;
   pageSize: number = 10;
-  displayedColumn: string[] = ['service', 'placement', 'duration', 'active', 'action'];
+  displayedColumn: string[] = ['plan', 'price', 'interval', 'entitlements', 'status', 'action'];
 
   @ViewChild('paginator', { read: MatPaginator })
   paginator: MatPaginator;
@@ -58,6 +59,18 @@ export class FeaturedPlans {
     this.currentPage = event.pageIndex;
     this.pageSize = event.pageSize;
     this.getList();
+  }
+
+  onCreate() {
+    this.dialog
+      .open(DialogLsPlan, { disableClose: true, width: '480px' })
+      .afterClosed()
+      .subscribe((result: any) => {
+        if (result && result.event == 'update') {
+          this.util.onSuccess('ts_record_created');
+          this.getList();
+        }
+      });
   }
 
   onStatus(row: any, status: string) {

@@ -23,6 +23,10 @@
           <mat-select [(ngModel)]="statusFilter" (selectionChange)="onStatusFilter($event.value)">
             <mat-option value="">{{ util.appTranslate('common_all') }}</mat-option>
             <mat-option value="active">{{ util.appTranslate('common_enabled') }}</mat-option>
+            <mat-option value="live">Live</mat-option>
+            <mat-option value="scheduled">Scheduled</mat-option>
+            <mat-option value="draft">Draft</mat-option>
+            <mat-option value="paused">Paused</mat-option>
             <mat-option value="expired">{{ util.appTranslate('stores_promotion_expired') }}</mat-option>
           </mat-select>
         </mat-form-field>

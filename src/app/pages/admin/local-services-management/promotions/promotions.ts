@@ -18,19 +18,18 @@
 
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
 import { MaterialModule } from 'src/app/material.module';
 import { HttpParams } from '@angular/common/http';
 import { MatPaginator } from '@angular/material/paginator';
 import { ApiService } from 'src/app/services/api-service';
 import { UtilService } from 'src/app/services/util-service';
 import { MatDialog } from '@angular/material/dialog';
-import { DialogLsFacet } from '../dialog-ls-facet/dialog-ls-facet';
+import { DialogLsFeatured } from '../dialog-ls-featured/dialog-ls-featured';
 import { DialogLsStatus } from '../dialog-ls-status/dialog-ls-status';
 
 @Component({
   selector: 'app-promotions',
-  imports: [CommonModule, FormsModule, MaterialModule],
+  imports: [CommonModule, MaterialModule],
   templateUrl: './promotions.html',
 })
 export class Promotions implements OnInit {
@@ -38,7 +37,7 @@ export class Promotions implements OnInit {
   list: any[] = [];
   currentPage: number = 0;
   pageSize: number = 10;
-  displayedColumn: string[] = ['name', 'type', 'discount', 'target', 'status', 'action'];
+  displayedColumn: string[] = ['target', 'placement', 'window', 'price', 'status', 'action'];
 
   @ViewChild('paginator', { read: MatPaginator })
   paginator: MatPaginator;
@@ -55,13 +54,10 @@ export class Promotions implements OnInit {
 
   getList() {
     this.isLoaded = false;
-    const param: any = { limit: this.pageSize, page: this.currentPage };
-    let httpParams = new HttpParams();
-    Object.keys(param).forEach((key: any) => {
-      if (param[key] === '' || param[key] === null || param[key] === undefined) return;
-      httpParams = httpParams.set(key, param[key]);
-    });
-    this.api.get_private('v1/local-services/admin/promotions?' + httpParams.toString()).subscribe({
+    const httpParams = new HttpParams()
+      .set('limit', this.pageSize)
+      .set('page', this.currentPage + 1);
+    this.api.get_private('v1/local-services/admin/featured?' + httpParams.toString()).subscribe({
       next: (response: any) => {
         if (response && response.results) {
           this.list = response.results;
@@ -88,17 +84,15 @@ export class Promotions implements OnInit {
       this.util.onSuccess('ts_no_records_found');
       return;
     }
-    // Build CSV data
-    const headers = ['Name', 'Type', 'Discount', 'Target', 'Status'];
+    const headers = ['Target', 'Placement', 'From', 'To', 'Price', 'Status'];
     const rows = this.list.map((element: any) => [
-      element.name || '',
-      element.type || '',
-      element.discount || 0,
-      element.target || '',
+      element.service?.name || element.provider?.businessName || '',
+      element.placement || '',
+      element.from || '',
+      element.to || '',
+      element.price || 0,
       element.status || '',
     ]);
-
-    // Create CSV content
     const csvContent = [
       headers.join(','),
       ...rows.map((row: any[]) => row.map((cell: any) => {
@@ -106,18 +100,15 @@ export class Promotions implements OnInit {
         return typeof c === 'number' ? c.toString() : `"${c}"`;
       }).join(','))
     ].join('\n');
-
-    // Download
-    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
     const link = document.createElement('a');
     link.setAttribute('href', 'data:text/csv;charset=utf-8,' + encodeURIComponent(csvContent));
-    link.setAttribute('download', 'local-services-promotions.csv');
+    link.setAttribute('download', 'local-services-featured.csv');
     link.click();
   }
 
   onCreate() {
     this.dialog
-      .open(DialogLsFacet, { disableClose: true, width: '480px' })
+      .open(DialogLsFeatured, { disableClose: true, width: '520px' })
       .afterClosed()
       .subscribe((result: any) => {
         if (result && result.event == 'update') {
@@ -129,7 +120,7 @@ export class Promotions implements OnInit {
 
   onStatus(row: any, status: string) {
     this.dialog
-      .open(DialogLsStatus, { data: { apiPath: 'v1/local-services/admin/promotions/', row, status, mode: 'patch-status' }, disableClose: true })
+      .open(DialogLsStatus, { data: { apiPath: 'v1/local-services/admin/featured/', row, status, mode: 'patch-status' }, disableClose: true })
       .afterClosed()
       .subscribe((result: any) => {
         if (result && result.event == 'update') {

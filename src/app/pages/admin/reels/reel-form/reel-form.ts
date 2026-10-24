@@ -385,17 +385,29 @@ private getValidCityId(): string {
     });
   }
 
+  /**
+   * Reports a client-side validation failure.
+   *
+   * `status: 400` is the part that matters. `handleError` routes on status first, and a
+   * bare `{ error: { message } }` has none, so it drops into the generic branch and shows
+   * the operator `JSON.stringify` of the object - literally
+   * `{"error":{"message":"Only MP4 video is allowed"}}` - instead of the sentence.
+   */
+  private fail(message: string): void {
+    this.util.handleError({ status: 400, error: { message } }, 'admin');
+  }
+
   onFileSelected(event: Event) {
     const input = event.target as HTMLInputElement;
     const file = input.files && input.files[0];
     this.processingError = '';
     if (!file) return;
     if (file.type !== 'video/mp4') {
-      this.util.handleError({ error: { message: 'Only MP4 video is allowed' } }, 'admin');
+      this.fail('Only MP4 video is allowed');
       return;
     }
     if (file.size > MAX_BYTES) {
-      this.util.handleError({ error: { message: 'Video must be under 200 MB' } }, 'admin');
+      this.fail('Video must be under 200 MB');
       return;
     }
     const url = URL.createObjectURL(file);
@@ -404,7 +416,7 @@ private getValidCityId(): string {
     probe.onloadedmetadata = () => {
       URL.revokeObjectURL(url);
       if (probe.duration > MAX_SECONDS) {
-        this.util.handleError({ error: { message: `Video must be ${MAX_SECONDS} seconds or less` } }, 'admin');
+        this.fail(`Video must be ${MAX_SECONDS} seconds or less`);
         return;
       }
       this.selectedFile = file;
@@ -413,7 +425,7 @@ private getValidCityId(): string {
     };
     probe.onerror = () => {
       URL.revokeObjectURL(url);
-      this.util.handleError({ error: { message: 'Could not read this video file' } }, 'admin');
+      this.fail('Could not read this video file');
     };
     probe.src = url;
   }
@@ -446,12 +458,9 @@ private getValidCityId(): string {
     if (this.form.invalid) {
       this.form.markAllAsTouched();
       if (this.targetsError) {
-        this.util.handleError({ error: { message: this.targetsError } }, 'admin');
+        this.fail(this.targetsError);
       } else {
-        this.util.handleError(
-          { error: { message: 'Select vertical, target type and the item to promote first' } },
-          'admin'
-        );
+        this.fail('Select vertical, target type and the item to promote first');
       }
       return;
     }
@@ -481,13 +490,12 @@ private getValidCityId(): string {
     if (this.form.invalid) {
       this.form.markAllAsTouched();
       if (this.targetsError) {
-        this.util.handleError({ error: { message: this.targetsError } }, 'admin');
+        this.fail(this.targetsError);
       } else {
-        this.util.handleError({ error: { message: 'Fill vertical, target and item to promote first' } }, 'admin');
+        this.fail('Fill vertical, target and item to promote first');
       }
       return;
     }
-    console.log('[reels] upload-and-process start', { name: this.selectedFile.name, size: this.selectedFile.size, type: this.selectedFile.type, isEdit: this.isEdit, reelId: this.reelId });
     const selectedFile = this.selectedFile;
     if (!selectedFile) return;
     const run = () => {
@@ -511,6 +519,11 @@ private getValidCityId(): string {
       const localityId = String(value.localityId || '').trim();
       if (cityId) formData.append('cityId', cityId);
       if (localityId) formData.append('localityId', localityId);
+      // The cover chosen in the form used to be dropped here: the field was only ever
+      // sent by `detailsPayload`, so uploading a video through this - the primary path -
+      // quietly lost it.
+      const thumbnailUrl = String(value.thumbnailUrl || '').trim();
+      if (thumbnailUrl) formData.append('thumbnailUrl', thumbnailUrl);
       this.http.post(this.api.baseUrl + 'v1/admin/reels/upload', formData, { withCredentials: true, reportProgress: true, observe: 'events' }).subscribe({
         next: (event: any) => {
           if (event.type === HttpEventType.UploadProgress && event.total) {
@@ -518,27 +531,26 @@ private getValidCityId(): string {
           } else if (event.type === HttpEventType.Response) {
             this.util.stop(spinnerRef);
             this.uploadProgress = 100;
-            console.log('[reels] upload proxy response', event.body);
             const key = event.body?.key;
             const reelId = event.body?.reelId || this.reelId;
             if (reelId) this.reelId = reelId;
             this.isEdit = true;
+            // Cleared so the button cannot be pressed again and re-upload the same
+            // 200 MB file; `processingStage` is what tells the operator it is done.
+            this.selectedFile = null;
             if (key && reelId) {
               this.status = 'PROCESSING';
               this.startPolling();
             } else {
-              this.util.handleError({ error: { message: 'Upload succeeded but response was incomplete' } }, 'admin');
+              this.fail('Upload succeeded but response was incomplete');
             }
           }
         }, error: (error: any) => {
           this.util.stop(spinnerRef);
           this.uploadProgress = -1;
-          console.error('[reels] upload proxy FAILED', error);
-          alert('Upload failed:\n' + JSON.stringify({
-            status: error?.status,
-            message: error?.error?.message || error?.message,
-            url: error?.url,
-          }, null, 2));
+          // `handleError` already routes 400/404/401 properly and shows the server's
+          // message, so the toast it raises is the whole report. The `alert` that used
+          // to sit here dumped a JSON blob over the page and hid that.
           this.util.handleError(error, 'admin');
         }
       });
@@ -562,7 +574,12 @@ private getValidCityId(): string {
           this.processingStage = response.processing?.stage || '';
           this.processingProgress = response.processing?.progress || 0;
           this.processingError = response.processing?.error || '';
-          if (response.status === 'READY' || response.status === 'FAILED' || attempts > 60) {
+          // A failed transcode does NOT move `status`: the reel stays PROCESSING and the
+          // failure is recorded on `processing.stage`. Testing `status === 'FAILED'` -
+          // not a member of the enum - meant every failure polled the full 60 x 5s and
+          // the operator waited five minutes to be told what `processingError` already
+          // said on the first tick.
+          if (response.status === 'READY' || this.processingStage === 'FAILED' || attempts > 60) {
             this.stopPolling();
           }
         }, error: () => {
@@ -588,7 +605,7 @@ private getValidCityId(): string {
   onPublish() {
     const mode = this.form.value.publishMode;
     if (mode === 'scheduled' && !this.form.value.publishAt) {
-      this.util.handleError({ error: { message: 'Pick a publish date and time' } }, 'admin');
+      this.fail('Pick a publish date and time');
       return;
     }
     const saveFirst = () => {
@@ -606,12 +623,10 @@ private getValidCityId(): string {
         }
       });
     };
-    // New reels have no row yet — save the draft first, then publish it.
-    if (this.isEdit) {
-      this.onSaveDraft(saveFirst);
-    } else {
-      this.onSaveDraft(saveFirst);
-    }
+    // Unconditional: a new reel has no row yet, so the draft has to be saved before it
+    // can be published. This used to be an if/else with two identical branches, which
+    // read as if one of them had been meant to skip the save.
+    this.onSaveDraft(saveFirst);
   }
 
 }

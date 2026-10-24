@@ -33,10 +33,11 @@
 
       <mat-tab [label]="util.appTranslate('media_storage_settings')"></mat-tab>
 
-      <!-- Appended last rather than grouped with the restaurant/driver tabs, so the
-           existing tabIndex values below stay valid. Adding it after `order_settings`
-           would renumber eight conditional blocks for no benefit. -->
+<!-- Appended last rather than grouped with the restaurant/driver tabs, so the
+             existing tabIndex values below stay valid. Adding it after `order_settings`
+             would renumber eight conditional blocks for no benefit. -->
       <mat-tab [label]="util.appTranslate('dairy_settings')"></mat-tab>
+      <mat-tab [label]="util.appTranslate('jhatka_settings')"></mat-tab>
 
     </mat-tab-group>
   </mat-card-content>
@@ -96,4 +97,8 @@
 
 @if(tabIndex == 13){
   <app-dairy-settings></app-dairy-settings>
+}
+
+@if(tabIndex == 14){
+  <app-jhatka-settings></app-jhatka-settings>
 }

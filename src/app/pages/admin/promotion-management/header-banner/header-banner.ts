@@ -245,6 +245,7 @@ export class HeaderBanner implements OnInit {
     ctaAnimation: this.choice<AdminHeaderBannerCtaAnimation>('none'),
     ctaAnimationDuration: this.num(1200),
     ctaAnimationLoop: this.flag(false),
+    showMediaInAppBar: this.flag(false),
 
     // 5 App bar background
     appBarBackgroundMode: this.str('auto'),
@@ -270,6 +271,10 @@ export class HeaderBanner implements OnInit {
     ctaOffsetX: this.num(0),
     ctaOffsetY: this.num(0),
     mediaScale: this.num(HEADER_BANNER_MEDIA_SCALE_DEFAULT),
+    // Parallax. Intensity is a fraction of the header's own height rather than a pixel
+    // distance, so the artwork lags by the same proportion on a phone and a tablet.
+    parallaxEnabled: this.flag(false),
+    parallaxIntensity: this.num(0.18),
 
     // 7 Schedule & targeting
     scheduleType: this.str('alwaysOn'),
@@ -852,6 +857,23 @@ export class HeaderBanner implements OnInit {
     return presets;
   }
 
+  /**
+   * Height of the single media canvas shared by the app bar and the banner.
+   *
+   * Both preview surfaces lay the media out at this height and then reveal their own
+   * slice of it, which is what makes the picture continuous across the seam. Mirrors
+   * `HeaderMediaLayout.canvasHeight` on the client.
+   */
+  get previewSharedCanvasHeight(): number {
+    const appBar = this.previewState === 'collapsed' ? this.previewCollapsedHeight : this.previewAppBarHeight;
+    return appBar + this.previewBannerHeight;
+  }
+
+  /** Whether the media is currently painted into the app bar as well as the banner. */
+  get previewSharesMedia(): boolean {
+    return this.f['showMediaInAppBar'].value === true;
+  }
+
   get previewCollapsedHeight(): number {
     return this.clampSize(
       Number(this.f['collapsedHeight'].value) || HEADER_BANNER_COLLAPSED_DEFAULT,
@@ -1146,6 +1168,16 @@ export class HeaderBanner implements OnInit {
     return { min: HEADER_BANNER_MEDIA_SCALE_MIN, max: HEADER_BANNER_MEDIA_SCALE_MAX };
   }
 
+  /**
+   * How strongly the configured background tints the shared media in the app bar.
+   *
+   * Mirrors `HomeAppBar.mediaTintOpacity`. The background has to sit ON TOP of the artwork
+   * to be visible at all, but the app bar's background is a light colour, so a heavy tint
+   * stops being a tint and becomes a white sheet - which is exactly what it looked like
+   * while this was 0.45.
+   */
+  readonly mediaTintOpacity = 0.16;
+
   /** Thumb position along the rail, as a percentage of the zoom range. */
   get zoomPercent(): number {
     const span = HEADER_BANNER_MEDIA_SCALE_MAX - HEADER_BANNER_MEDIA_SCALE_MIN;
@@ -1420,6 +1452,7 @@ export class HeaderBanner implements OnInit {
       ctaAnimation: banner.ctaAnimation ?? 'none',
       ctaAnimationDuration: banner.ctaAnimationDuration ?? 1200,
       ctaAnimationLoop: banner.ctaAnimationLoop === true,
+      showMediaInAppBar: banner.showMediaInAppBar === true,
       ctaAction: banner.ctaAction ?? '',
       ctaTarget: banner.ctaTarget ?? '',
       deepLink: banner.deepLink ?? '',
@@ -1531,6 +1564,7 @@ export class HeaderBanner implements OnInit {
       ctaAnimation: 'none',
       ctaAnimationDuration: 1200,
       ctaAnimationLoop: false,
+      showMediaInAppBar: false,
       ctaAction: '',
       ctaTarget: '',
       deepLink: '',

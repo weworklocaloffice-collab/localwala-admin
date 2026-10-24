@@ -1,0 +1,49 @@
+<h2 mat-dialog-title>Settlement policy</h2>
+
+<form [formGroup]="form" (ngSubmit)="onSubmit()">
+  <div mat-dialog-content class="dialog-form">
+    @if (data?.chain?.name) {
+      <p class="text-muted m-b-16">{{ data.chain.name }}</p>
+    }
+
+    @if (error) {
+      <p class="text-warn m-b-16">{{ error }}</p>
+    }
+
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Settlement cadence</mat-label>
+      <mat-select formControlName="cadence">
+        <mat-option value="daily">Daily</mat-option>
+        <mat-option value="weekly">Weekly (Monday to Sunday)</mat-option>
+        <mat-option value="monthly">Monthly (calendar month)</mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>T+ days</mat-label>
+      <input matInput type="number" formControlName="tPlusDays" min="0" max="60" />
+      <mat-hint> A completed period is generated only after this many days. Default 2. </mat-hint>
+      @if (f.tPlusDays.invalid) {
+        <mat-error>T+ days must be between 0 and 60.</mat-error>
+      }
+    </mat-form-field>
+
+    <p class="text-muted f-s-12">
+      The generator creates one settlement per outlet for the previous
+      {{ cadence === 'weekly' ? 'week' : cadence === 'monthly' ? 'month' : 'day' }}
+      once the T+ delay has passed.
+    </p>
+  </div>
+
+  <div mat-dialog-actions class="dialog-actions">
+    <button mat-button type="button" (click)="dialogRef.close()" [disabled]="saving">Cancel</button>
+    <button
+      mat-raised-button
+      color="primary"
+      type="submit"
+      [disabled]="loading || saving || form.invalid"
+    >
+      Save policy
+    </button>
+  </div>
+</form>

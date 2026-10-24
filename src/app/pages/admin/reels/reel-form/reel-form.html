@@ -132,6 +132,11 @@
       </div>
 
       <h3 class="m-t-24">{{util.appTranslate('publish')}}</h3>
+      <!-- The schedule controls and the Publish button drive `POST /:id/publish`,
+           which is gated on `reels_admin_publish` - not `reels_admin_manage` like the
+           draft save beside it. An operator who can edit but not publish used to fill
+           the whole form in and only discover it on the last click. -->
+      @if (util.hasRight('reels_admin_publish')) {
       <mat-radio-group formControlName="publishMode">
         <mat-radio-button value="now">{{util.appTranslate('publish_now')}}</mat-radio-button>
         <mat-radio-button value="scheduled" class="m-l-16">{{util.appTranslate('schedule')}}</mat-radio-button>
@@ -142,11 +147,14 @@
         <input matInput type="datetime-local" formControlName="publishAt" />
       </mat-form-field>
       }
+      }
 
       <div class="m-t-24 d-sm-flex" style="gap: 12px;">
-        <button mat-stroked-button type="button" (click)="onSaveDraft()" [disabled]="saving">{{util.appTranslate('save_draft')}}</button>
+        <button mat-stroked-button type="button" (click)="onSaveDraft()" [disabled]="saving || !util.hasRight('reels_admin_manage')">{{util.appTranslate('save_draft')}}</button>
         <button mat-stroked-button type="button" (click)="onPreview()" [disabled]="!isEdit">{{util.appTranslate('preview')}}</button>
+        @if (util.hasRight('reels_admin_publish')) {
         <button mat-flat-button color="primary" type="button" (click)="onPublish()" [disabled]="!isEdit">{{util.appTranslate('publish')}}</button>
+        }
       </div>
     </form>
   </mat-card-content>

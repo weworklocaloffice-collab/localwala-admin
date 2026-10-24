@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { MaterialModule } from 'src/app/material.module';
+import { RouterModule } from '@angular/router';
 import { ApiService } from 'src/app/services/api-service';
 import { UtilService } from 'src/app/services/util-service';
 import { MatDialog } from '@angular/material/dialog';
@@ -9,7 +10,7 @@ import { DialogOfferCreate } from '../dialog-offer-create/dialog-offer-create';
 
 @Component({
   selector: 'app-bank-offers',
-  imports: [CommonModule, FormsModule, MaterialModule],
+  imports: [CommonModule, FormsModule, MaterialModule, RouterModule],
   templateUrl: './offers.html',
 })
 export class Offers {
@@ -51,5 +52,16 @@ export class Offers {
           this.getList();
         }
       });
+  }
+
+  /**
+   * The application id behind an offer. The API populates
+   * `loanApplication`, so it may be an object or a bare id.
+   */
+  applicationId(offer: any): string {
+    const app = offer?.loanApplication;
+    if (!app) return '';
+    if (typeof app === 'string') return app;
+    return app._id || app.id || '';
   }
 }

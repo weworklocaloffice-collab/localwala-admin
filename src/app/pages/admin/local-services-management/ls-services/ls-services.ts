@@ -21,7 +21,7 @@ export class LsServices {
   currentPage: number = 0;
   pageSize: number = 10;
   selectedStatus: string = '';
-  displayedColumn: string[] = ['name', 'modes', 'status', 'action'];
+  displayedColumn: string[] = ['name', 'modes', 'deposit', 'status', 'action'];
 
   @ViewChild('paginator', { read: MatPaginator })
   paginator: MatPaginator;

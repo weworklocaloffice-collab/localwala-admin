@@ -677,6 +677,21 @@
               </mat-form-field>
             </div>
 
+            <div class="col-lg-12 col-sm-12 p-b-16">
+              <mat-form-field appearance="outline" class="w-100"
+                [matTooltip]="util.appTranslate('reels_guest_limit_hint')">
+                <mat-label>{{util.appTranslate('reels_guest_limit')}}</mat-label>
+                <input matInput formControlName="reelsGuestLimit" name="reelsGuestLimit" type="number" min="0"
+                  max="100" />
+                @if(haveSubmitClicked == true && f['reelsGuestLimit'].invalid){
+                <mat-hint class="m-b-16 error-msg">
+                  <div class="text-error">{{util.appTranslate('reels_guest_limit_error')}}</div>
+                </mat-hint>
+                }
+                <mat-hint>{{util.appTranslate('reels_guest_limit_hint')}}</mat-hint>
+              </mat-form-field>
+            </div>
+
           </div>
         </mat-card-content>
         <mat-card-actions class="b-t-1">

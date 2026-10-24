@@ -365,6 +365,11 @@ export const navItems: NavItem[] = [
         route: '/admin/local-services-management/revenue-entries'
       },
       {
+        displayName: 'ls_settlements',
+        iconName: 'tablerCornerDownRight',
+        route: '/admin/local-services-management/settlements'
+      },
+      {
         displayName: 'ls_categories',
         iconName: 'tablerCornerDownRight',
         route: '/admin/local-services-management/categories'
@@ -438,6 +443,36 @@ export const navItems: NavItem[] = [
         displayName: 'ls_plans',
         iconName: 'tablerTag',
         route: '/admin/local-services-management/plans'
+      },
+      {
+        displayName: 'ls_resources',
+        iconName: 'tablerBox',
+        route: '/admin/local-services-management/resources'
+      },
+      {
+        displayName: 'ls_assignments',
+        iconName: 'tablerUserCheck',
+        route: '/admin/local-services-management/assignments'
+      },
+      {
+        displayName: 'ls_policies',
+        iconName: 'tablerSettings',
+        route: '/admin/local-services-management/policies'
+      },
+      {
+        displayName: 'ls_invoices',
+        iconName: 'tablerFileInvoice',
+        route: '/admin/local-services-management/invoices'
+      },
+      {
+        displayName: 'ls_reviews',
+        iconName: 'tablerStar',
+        route: '/admin/local-services-management/reviews'
+      },
+      {
+        displayName: 'ls_availability_rules',
+        iconName: 'tablerCalendarTime',
+        route: '/admin/local-services-management/availability-rules'
       }
     ]
   },
@@ -1052,6 +1087,9 @@ export const navItems: NavItem[] = [
         route: '/admin/disbursement-reports/deliveryman-disbursement-report'
       },
     ]
+  },
+  {
+    navCap: 'jhatka_management',
   },
   {
     navCap: 'role_management',

@@ -5,6 +5,10 @@
   } @else if (booking) {
     <div class="f-s-14">Status: {{ booking.status }} · Mode: {{ booking.bookingMode }}</div>
     <div class="f-s-14">Labour ₹{{ booking.labourAmount }} · Parts ₹{{ booking.partsAmount }}</div>
+    <div class="f-s-14">Total ₹{{ booking.serviceValue }} · Payment: {{ booking.paymentStatus }} ({{ booking.paymentMode }})</div>
+    @if (booking.depositAmount > 0) {
+      <div class="f-s-14">Deposit ₹{{ booking.depositAmount }} · Paid ₹{{ booking.amountPaid || 0 }} · Balance ₹{{ booking.balanceAmount }}</div>
+    }
     @if (booking.cancelReason) {
       <div class="f-s-14">Cancel reason: {{ booking.cancelReason }}</div>
     }

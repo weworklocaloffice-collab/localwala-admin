@@ -2,6 +2,7 @@ import { Routes } from '@angular/router';
 import { RevenueDashboard } from './revenue-dashboard/revenue-dashboard';
 import { RevenueRules } from './revenue-rules/revenue-rules';
 import { RevenueEntries } from './revenue-entries/revenue-entries';
+import { Settlements } from './settlements/settlements';
 import { LsCategories } from './ls-categories/ls-categories';
 import { LsProviders } from './ls-providers/ls-providers';
 import { LsBookings } from './ls-bookings/ls-bookings';
@@ -18,6 +19,12 @@ import { Promotions } from './promotions/promotions';
 import { Reports } from './reports/reports';
 import { LocalServicesAuditLogs } from './audit-logs/audit-logs';
 import { FeaturedPlans } from './plans/plans';
+import { LsResources } from './ls-resources/ls-resources';
+import { LsAssignments } from './ls-assignments/ls-assignments';
+import { LsPolicies } from './ls-policies/ls-policies';
+import { LsInvoices } from './ls-invoices/ls-invoices';
+import { LsReviews } from './ls-reviews/ls-reviews';
+import { LsAvailabilityRules } from './ls-availability-rules/ls-availability-rules';
 
 export const LocalServicesManagementRoutes: Routes = [
   {
@@ -44,6 +51,13 @@ export const LocalServicesManagementRoutes: Routes = [
     component: RevenueEntries,
     data: {
       title: 'ls_revenue_entries',
+    },
+  },
+  {
+    path: 'settlements',
+    component: Settlements,
+    data: {
+      title: 'ls_settlements',
     },
   },
   {
@@ -156,6 +170,48 @@ export const LocalServicesManagementRoutes: Routes = [
     component: FeaturedPlans,
     data: {
       title: 'ls_plans',
+    },
+  },
+  {
+    path: 'resources',
+    component: LsResources,
+    data: {
+      title: 'ls_resources',
+    },
+  },
+  {
+    path: 'assignments',
+    component: LsAssignments,
+    data: {
+      title: 'ls_assignments',
+    },
+  },
+  {
+    path: 'policies',
+    component: LsPolicies,
+    data: {
+      title: 'ls_policies',
+    },
+  },
+  {
+    path: 'invoices',
+    component: LsInvoices,
+    data: {
+      title: 'ls_invoices',
+    },
+  },
+  {
+    path: 'reviews',
+    component: LsReviews,
+    data: {
+      title: 'ls_reviews',
+    },
+  },
+  {
+    path: 'availability-rules',
+    component: LsAvailabilityRules,
+    data: {
+      title: 'ls_availability_rules',
     },
   },
 ];

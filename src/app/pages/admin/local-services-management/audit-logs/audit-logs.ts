@@ -64,14 +64,15 @@ export class LocalServicesAuditLogs {
       return;
     }
     // Build CSV data
-    const headers = ['Event', 'Target Type', 'Target ID', 'Actor', 'Actor Role', 'Created'];
+    const headers = ['Event', 'Details', 'Target Type', 'Target ID', 'Actor', 'Actor Role', 'Created'];
     const rows = this.list.map((element: any) => [
       element.event || '',
-      element.target_type || '',
-      element.target_id || '',
-      element.actor || '',
-      element.actor_role || '',
-      element.created_at || '',
+      element.details || '',
+      element.targetType || '',
+      element.targetId || '',
+      element.actor?.name || element.actor?.email || element.actor || '',
+      element.actorRole || '',
+      element.createdAt || '',
     ]);
 
     // Create CSV content

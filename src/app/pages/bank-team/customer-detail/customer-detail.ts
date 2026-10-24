@@ -45,6 +45,9 @@ export class CustomerDetail implements OnInit, OnDestroy {
         const all = Array.isArray(response) ? response : [];
         const mine = all.filter((a: any) => String(a.customer?._id || a.customer) === String(this.id));
         this.apps = mine;
+        // The applications list populates `customer`, so the header can
+        // show the customer's name. Before the join it was an ObjectId
+        // and the header rendered blank.
         const first = mine[0];
         this.customer = (first && first.customer && typeof first.customer === 'object' && first.customer._id
           ? first.customer
@@ -56,5 +59,10 @@ export class CustomerDetail implements OnInit, OnDestroy {
         this.util.handleError(error, 'admin');
       },
     });
+  }
+
+  /** The row id. The API returns `_id` on the hydrated rows. */
+  rowId(row: any): string {
+    return row?._id || row?.id || '';
   }
 }

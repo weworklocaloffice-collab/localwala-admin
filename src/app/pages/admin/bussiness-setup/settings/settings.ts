@@ -19,10 +19,11 @@ import { UserAvatarList } from "../user-avatar-list/user-avatar-list";
 import { SocialSignin } from "../social-signin/social-signin";
 import { MediaStorageSettings } from "../media-storage-settings/media-storage-settings";
 import { DairySettings } from "../dairy-settings/dairy-settings";
+import { JhatkaSettings } from "../jhatka-settings/jhatka-settings";
 
 @Component({
   selector: 'app-settings',
-  imports: [MatNativeDateModule, CommonModule, FormsModule, ReactiveFormsModule, MaterialModule, BusinessSettings, OrderSettings, RestaurantSettings, DriverSettings, UserSettings, WaiterSettings, KitchenOwnerSettings, DiningSettings, Languages, DisbursementSettings, UserAvatarList, SocialSignin, MediaStorageSettings, DairySettings],
+  imports: [MatNativeDateModule, CommonModule, FormsModule, ReactiveFormsModule, MaterialModule, BusinessSettings, OrderSettings, RestaurantSettings, DriverSettings, UserSettings, WaiterSettings, KitchenOwnerSettings, DiningSettings, Languages, DisbursementSettings, UserAvatarList, SocialSignin, MediaStorageSettings, DairySettings, JhatkaSettings],
   templateUrl: './settings.html',
 })
 export class Settings {

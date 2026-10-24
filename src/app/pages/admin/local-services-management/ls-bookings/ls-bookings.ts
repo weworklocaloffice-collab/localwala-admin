@@ -21,7 +21,7 @@ export class LsBookings {
   currentPage: number = 0;
   pageSize: number = 10;
   selectedStatus: string = '';
-  displayedColumn: string[] = ['code', 'mode', 'status', 'action'];
+  displayedColumn: string[] = ['code', 'mode', 'total', 'payment', 'status', 'action'];
 
   @ViewChild('paginator', { read: MatPaginator })
   paginator: MatPaginator;

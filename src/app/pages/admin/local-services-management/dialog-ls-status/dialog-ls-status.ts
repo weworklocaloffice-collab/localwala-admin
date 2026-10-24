@@ -53,6 +53,7 @@ export class DialogLsStatus {
     if (note) {
       body.reason = note;
       body.approvalNote = note;
+      body.note = note;
     }
     this.api.post_private(this.apiPath + this.row._id + '/' + this.status, body).subscribe({
       next: (response: any) => {

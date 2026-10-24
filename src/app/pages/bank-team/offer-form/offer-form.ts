@@ -24,6 +24,7 @@ export class OfferForm implements OnInit, OnDestroy {
   tenureMonths: number | null = null;
   interestRate: number | null = null;
   processingFee: number | null = 0;
+  otherTerms: string = '';
   isSaving: boolean = false;
   sub: any = null;
 
@@ -48,12 +49,17 @@ export class OfferForm implements OnInit, OnDestroy {
         this.applications = Array.isArray(response) ? response : [];
         const pre = this.route.snapshot.queryParamMap.get('application');
         if (pre) {
-          this.selectedApplication = this.applications.find((a: any) => String(a._id) === String(pre)) || null;
+          this.selectedApplication = this.applications.find((a: any) => this.rowId(a) === String(pre)) || null;
           this.onAppChange();
         }
       },
       error: (error: any) => this.util.handleError(error, 'admin'),
     });
+  }
+
+  /** The row id. The API returns `_id` on the hydrated rows. */
+  rowId(row: any): string {
+    return row?._id || row?.id || '';
   }
 
   onAppChange() {
@@ -63,8 +69,12 @@ export class OfferForm implements OnInit, OnDestroy {
       this.interestRate = null;
       return;
     }
-    if (this.loanAmount === null && this.selectedApplication.loanAmount !== undefined) {
-      this.loanAmount = this.selectedApplication.loanAmount;
+    // The default offer amount is the amount the customer asked for -
+    // the loan application has no `loanAmount` field, so the old default
+    // was always undefined and the amount stayed null with the Create
+    // button disabled.
+    if (this.loanAmount === null && this.selectedApplication.requestedAmount !== undefined) {
+      this.loanAmount = this.selectedApplication.requestedAmount;
     }
   }
 
@@ -73,11 +83,12 @@ export class OfferForm implements OnInit, OnDestroy {
     this.isSaving = true;
     this.api
       .post_private('v1/realestate/bank/offers', {
-        loanApplication: this.selectedApplication._id,
+        loanApplication: this.rowId(this.selectedApplication),
         loanAmount: this.loanAmount,
         tenureMonths: this.tenureMonths,
         interestRate: this.interestRate,
         processingFee: this.processingFee,
+        otherTerms: this.otherTerms,
       })
       .subscribe({
         next: () => {

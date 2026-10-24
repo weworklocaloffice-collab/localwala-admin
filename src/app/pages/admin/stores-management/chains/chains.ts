@@ -22,16 +22,16 @@ import { MatDialog } from '@angular/material/dialog';
 import { ApiService } from 'src/app/services/api-service';
 import { UtilService } from 'src/app/services/util-service';
 import { StoresListBase } from '../stores-list-base';
+import { DialogSettlementSettings } from './dialog-settlement-settings/dialog-settlement-settings';
 
 /**
- * CHAIN MANAGEMENT — read-only registry (BR-35, BR-36).
+ * CHAIN MANAGEMENT — registry plus settlement policy (BR-35, BR-36).
  *
- * Backend exposes GET /chains (filter: business, status string, featured,
- * verified) and GET /chains/:chain only. There are no chain mutation routes:
- * chains are committed by the application-approval transaction, so there is
- * deliberately no create/edit/toggle/archive here. Chain `status` is a
- * lifecycle string (draft/active/suspended/…), not a boolean — hence no
- * boolean status dropdown either.
+ * Chains are still committed by the application-approval transaction: there is
+ * no create/edit/toggle/archive here. The one write is the settlement policy
+ * (`settings.settlementConfig`), because the generator cron reads it and it had
+ * no writer anywhere. Chain `status` is a lifecycle string
+ * (draft/active/suspended/…), not a boolean — hence no boolean status dropdown.
  */
 @Component({
   selector: 'app-stores-chains',
@@ -39,18 +39,21 @@ import { StoresListBase } from '../stores-list-base';
   templateUrl: './chains.html',
 })
 export class Chains extends StoresListBase {
-  constructor(
-    api: ApiService,
-    util: UtilService,
-    dialogRef: MatDialog,
-  ) {
+  constructor(api: ApiService, util: UtilService, dialogRef: MatDialog) {
     super(api, util, dialogRef);
     this.path = 'chains';
     this.listTitleKey = 'stores_chains_list';
-    this.displayedColumn = ['name', 'outletCount', 'status'];
+    this.displayedColumn = ['name', 'outletCount', 'status', 'settlement'];
   }
 
   override ngOnInit() {
     this.getList();
+  }
+
+  openSettlement(chain: any) {
+    this.dialog.open(DialogSettlementSettings, {
+      width: '480px',
+      data: { chain },
+    });
   }
 }

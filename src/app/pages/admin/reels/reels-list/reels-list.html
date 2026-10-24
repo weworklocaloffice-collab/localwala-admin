@@ -5,7 +5,11 @@
         <mat-card-title>{{util.appTranslate('reels')}}</mat-card-title>
       </div>
       <div class="m-l-auto more-btn-align">
+        <!-- Creating a reel is a `reels_admin_manage` route; without the check the
+             button 403s for anyone holding only the publish or analytics right. -->
+        @if (util.hasRight('reels_admin_manage')) {
         <a mat-button (click)="onAdd()" class="m-l-16" mat-flat-button color="primary">{{util.appTranslate('create_reel')}}</a>
+        }
       </div>
     </div>
   </mat-card-header>
@@ -75,14 +79,29 @@
               <mat-icon>more_vert</mat-icon>
             </button>
             <mat-menu #menu="matMenu">
+              <!-- Mirrors the three rights the API enforces on these exact routes
+                   (reels.admin.route.js). Without this an operator without
+                   `reels_admin_publish` was offered Publish and Pause and ate a 403;
+                   `reels_admin_analytics` did the same for the analytics dialog.
+                   `reels_admin_manage` covers the CRUD entries around them. -->
               <button mat-menu-item (click)="onPreview(element)">{{util.appTranslate('preview')}}</button>
+              @if (util.hasRight('reels_admin_manage')) {
               <button mat-menu-item (click)="onEdit(element)">{{util.appTranslate('edit')}}</button>
+              }
+              @if (util.hasRight('reels_admin_publish')) {
               <button mat-menu-item (click)="onPublish(element)">{{util.appTranslate('publish')}}</button>
               <button mat-menu-item (click)="onPause(element)">{{util.appTranslate('pause')}}</button>
+              }
+              @if (util.hasRight('reels_admin_manage')) {
               <button mat-menu-item (click)="onDuplicate(element)">{{util.appTranslate('duplicate')}}</button>
+              }
+              @if (util.hasRight('reels_admin_analytics')) {
               <button mat-menu-item (click)="onAnalytics(element)">{{util.appTranslate('analytics')}}</button>
+              }
+              @if (util.hasRight('reels_admin_manage')) {
               <button mat-menu-item (click)="onReports(element)">{{util.appTranslate('reports')}}</button>
               <button mat-menu-item (click)="onDelete(element)">{{util.appTranslate('delete')}}</button>
+              }
             </mat-menu>
           </td>
         </ng-container>

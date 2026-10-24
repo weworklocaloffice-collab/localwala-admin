@@ -11,8 +11,9 @@
         <mat-select [(ngModel)]="selectedStatus" (selectionChange)="onFilter()">
           <mat-option value="">{{ util.appTranslate('th_all') }}</mat-option>
           <mat-option value="PAID">{{ util.appTranslate('th_paid') }}</mat-option>
-          <mat-option value="PENDING">{{ util.appTranslate('th_pending') }}</mat-option>
+          <mat-option value="PENDING_PAYMENT">{{ util.appTranslate('th_pending') }}</mat-option>
           <mat-option value="FAILED">{{ util.appTranslate('th_failed') }}</mat-option>
+          <mat-option value="CANCELLED">Cancelled</mat-option>
           <mat-option value="REFUNDED">{{ util.appTranslate('th_refunded') }}</mat-option>
         </mat-select>
       </mat-form-field>
@@ -53,8 +54,8 @@
           </th>
           <td mat-cell *matCellDef="let element">
             <span [class.text-success]="element.status === 'PAID'"
-                  [class.text-warn]="element.status === 'PENDING'"
-                  [class.text-muted]="element.status === 'FAILED'">
+                  [class.text-warn]="element.status === 'PENDING_PAYMENT'"
+                  [class.text-muted]="element.status === 'FAILED' || element.status === 'CANCELLED'">
               {{ element.status }}
             </span>
           </td>
@@ -65,6 +66,19 @@
             {{ util.appTranslate('th_date') }}
           </th>
           <td mat-cell *matCellDef="let element">{{ formatDate(element.createdAt) }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="action">
+          <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1">
+            {{ util.appTranslate('th_action') }}
+          </th>
+          <td mat-cell *matCellDef="let element">
+            @if (canMarkPaid(element)) {
+              <button mat-button color="primary" (click)="onMarkPaid(element)">
+                Mark paid
+              </button>
+            }
+          </td>
         </ng-container>
 
         <tr mat-header-row *matHeaderRowDef="displayedColumn"></tr>

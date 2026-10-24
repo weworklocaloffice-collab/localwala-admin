@@ -11,14 +11,67 @@
       <div class="p-24 text-center text-error">{{ util.appTranslate('ts_not_found') }}</div>
     } @else {
       <h3>{{ app.property?.title || app.property || '—' }}</h3>
-      <p class="f-s-13 text-muted">{{ app.customer?.firstName || '' }} {{ app.customer?.lastName || ' ' }} · {{ app.requestedAmount?.currency || '₹' }}{{ app.requestedAmount }}</p>
+      <p class="f-s-13 text-muted">{{ app.customer?.firstName || '' }} {{ app.customer?.lastName || ' ' }} · ₹{{ app.requestedAmount }}</p>
       <p class="f-s-13 text-muted">Status: <strong>{{ app.status }}</strong></p>
+      @if (app.loanRequest?.employment || app.loanRequest?.monthlyIncome) {
+        <p class="f-s-13 text-muted">
+          {{ util.appTranslate('bank_employment') }}: {{ app.loanRequest?.employment || '—' }}
+          @if (app.loanRequest?.monthlyIncome) {
+            · {{ util.appTranslate('bank_monthly_income') }}: ₹{{ app.loanRequest?.monthlyIncome }}
+          }
+        </p>
+      }
       <ng-container *ngIf="app.sanctionedAmount || 0">
-        <p class="f-s-13 text-muted">Sanctioned: {{ app.sanctionedAmount?.currency || '₹' }}{{ app.sanctionedAmount }}</p>
+        <p class="f-s-13 text-muted">Sanctioned: ₹{{ app.sanctionedAmount }}</p>
       </ng-container>
       <ng-container *ngIf="app.disbursedAmount || 0">
-        <p class="f-s-13 text-muted">Disbursed: {{ app.disbursedAmount?.currency || '₹' }}{{ app.disbursedAmount }}</p>
+        <p class="f-s-13 text-muted">Disbursed: ₹{{ app.disbursedAmount }}</p>
       </ng-container>
+
+      <div class="d-flex gap-8 m-t-16 flex-wrap">
+        <button mat-stroked-button color="primary" (click)="openStatusDialog()">
+          {{ util.appTranslate('bank_application_status_title') }}
+        </button>
+        @if (app.status === 'DOCUMENTS_PENDING' || app.status === 'UNDER_BANK_REVIEW') {
+          <button mat-stroked-button color="primary" (click)="openDocumentRequestDialog()">
+            {{ util.appTranslate('bank_document_request_title') }}
+          </button>
+        }
+      </div>
+
+      @if (documentRequests.length) {
+        <h4 class="m-t-16">{{ util.appTranslate('bank_document_requests_title') }}</h4>
+        <table mat-table [dataSource]="documentRequests" class="w-100">
+          <ng-container matColumnDef="document">
+            <th mat-header-cell *matHeaderCellDef>{{ util.appTranslate('th_document') }}</th>
+            <td mat-cell *matCellDef="let element">
+              <strong>{{ element.title }}</strong>
+              <div class="f-s-12 text-muted">{{ util.appTranslate('bank_doc_cat_' + element.category) }}</div>
+            </td>
+          </ng-container>
+          <ng-container matColumnDef="status">
+            <th mat-header-cell *matHeaderCellDef>{{ util.appTranslate('th_status') }}</th>
+            <td mat-cell *matCellDef="let element">{{ element.status }}</td>
+          </ng-container>
+          <ng-container matColumnDef="review">
+            <th mat-header-cell *matHeaderCellDef>{{ util.appTranslate('th_action') }}</th>
+            <td mat-cell *matCellDef="let element">
+              @if (element.status === 'SUBMITTED') {
+                <button mat-button color="primary" (click)="reviewDocument(element, 'ACCEPTED')">
+                  {{ util.appTranslate('th_accept') }}
+                </button>
+                <button mat-button color="warn" (click)="reviewDocument(element, 'REJECTED')">
+                  {{ util.appTranslate('th_reject') }}
+                </button>
+              } @else {
+                <span class="f-s-12 text-muted">{{ element.reviewNote || '—' }}</span>
+              }
+            </td>
+          </ng-container>
+          <tr mat-header-row *matHeaderRowDef="['document','status','review']"></tr>
+          <tr mat-row *matRowDef="let row; columns: ['document','status','review']"></tr>
+        </table>
+      }
 
       @if (offerList.length) {
         <h4 class="m-t-16">{{ util.appTranslate('th_offers_label') }}</h4>
@@ -33,7 +86,7 @@
           </ng-container>
           <ng-container matColumnDef="amount">
             <th mat-header-cell *matHeaderCellDef>{{ util.appTranslate('th_amount') }}</th>
-            <td mat-cell *matCellDef="let element">{{ element.loanAmount }}</td>
+            <td mat-cell *matCellDef="let element">₹{{ element.loanAmount }}</td>
           </ng-container>
           <tr mat-header-row *matHeaderRowDef="['bank','rate','amount']"></tr>
           <tr mat-row *matRowDef="let row; columns: ['bank','rate','amount']"></tr>
@@ -42,7 +95,11 @@
         <p class="f-s-13 text-muted m-t-16">{{ util.appTranslate('th_no_offers') }}</p>
       }
 
-      @if (app.status === 'UNDER_BANK_REVIEW') {
+      @if (app.status === 'DOCUMENTS_PENDING') {
+        <div class="d-flex gap-8 m-t-16">
+          <button mat-flat-button color="primary" (click)="setStatus('UNDER_BANK_REVIEW')">{{ util.appTranslate('th_review') }}</button>
+        </div>
+      } @else if (app.status === 'UNDER_BANK_REVIEW') {
         <div class="d-flex gap-8 m-t-16">
           <button mat-flat-button color="primary" (click)="setStatus('SANCTIONED')">{{ util.appTranslate('th_sanction') }}</button>
           <button mat-stroked-button color="warn" (click)="setStatus('REJECTED')">{{ util.appTranslate('th_reject') }}</button>

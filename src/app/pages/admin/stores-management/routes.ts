@@ -16,6 +16,7 @@ import { Policies } from './policies/policies';
 import { Drivers } from './drivers/drivers';
 import { Returns } from './returns/returns';
 import { Refunds } from './refunds/refunds';
+import { Settlements } from './settlements/settlements';
 import { Subscriptions } from './subscriptions/subscriptions';
 import { Products } from './products/products';
 import { Inventory } from './inventory/inventory';
@@ -168,6 +169,13 @@ export const StoresManagementRoutes: Routes = [
     component: Refunds,
     data: {
       title: 'stores_refunds',
+    },
+  },
+  {
+    path: 'settlements',
+    component: Settlements,
+    data: {
+      title: 'stores_settlements',
     },
   },
   {

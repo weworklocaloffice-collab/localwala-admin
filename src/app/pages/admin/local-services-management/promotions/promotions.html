@@ -1,41 +1,53 @@
 <mat-card class="cardWithShadow">
   <mat-card-header class="m-b-16">
-    <mat-card-title>Promotions & Discounts</mat-card-title>
-    <mat-card-subtitle>Featured offers, sponsored flags, promotional pricing</mat-card-subtitle>
+    <mat-card-title>Featured Placements</mat-card-title>
+    <mat-card-subtitle>Sponsored listings for providers and services</mat-card-subtitle>
   </mat-card-header>
 
   <mat-card-content>
-<div class="d-flex flex-wrap align-center justify-content-between mb-24 gap-12">
-      <button mat-flat-button color="primary" (click)="onCreate()">{{ util.appTranslate('ls_new_promotion') }}</button>
-      <button mat-flat-button color="accent" (click)="exportCsv()" matTooltip="Export to CSV">
-        <mat-icon>download</mat-icon>
-      </button>
+    <div class="d-flex flex-wrap align-center justify-content-between mb-24 gap-12">
+      <span>Active placements receive priority placement in customer search results</span>
+      <div class="d-flex gap-12">
+        <button mat-flat-button color="primary" (click)="onCreate()">New placement</button>
+        <button mat-flat-button color="accent" (click)="exportCsv()" matTooltip="Export to CSV">
+          <mat-icon>download</mat-icon>
+        </button>
+      </div>
     </div>
 
     <div class="table-responsive">
       <table mat-table [dataSource]="list" class="w-100">
 
-        <ng-container matColumnDef="name">
-          <th mat-header-cell *matHeaderCellDef class="f-w-600">Name</th>
+        <ng-container matColumnDef="target">
+          <th mat-header-cell *matHeaderCellDef class="f-w-600">Target</th>
           <td mat-cell *matCellDef="let element">
-            <div class="f-w-600">{{ element.name }}</div>
-            <div class="f-s-12 text-muted">{{ element.description }}</div>
+            <div class="f-w-600">{{ element.service?.name || element.provider?.businessName || '—' }}</div>
+            <div class="f-s-12 text-muted">
+              @if (element.service) {
+                Service · {{ element.service.categoryKey || 'uncategorised' }}
+              } @else {
+                Provider · {{ element.provider?.providerType || 'business' }}
+              }
+            </div>
           </td>
         </ng-container>
 
-        <ng-container matColumnDef="type">
-          <th mat-header-cell *matHeaderCellDef class="f-w-600">Type</th>
-          <td mat-cell *matCellDef="let element">{{ element.type }}</td>
+        <ng-container matColumnDef="placement">
+          <th mat-header-cell *matHeaderCellDef class="f-w-600">Placement</th>
+          <td mat-cell *matCellDef="let element">{{ element.placement }}</td>
         </ng-container>
 
-        <ng-container matColumnDef="discount">
-          <th mat-header-cell *matHeaderCellDef class="f-w-600">Discount</th>
-          <td mat-cell *matCellDef="let element">{{ element.discount }}</td>
+        <ng-container matColumnDef="window">
+          <th mat-header-cell *matHeaderCellDef class="f-w-600">Window</th>
+          <td mat-cell *matCellDef="let element">
+            <div class="f-s-12">{{ element.from | date: 'mediumDate' }}</div>
+            <div class="f-s-12 text-muted">to {{ element.to | date: 'mediumDate' }}</div>
+          </td>
         </ng-container>
 
-        <ng-container matColumnDef="target">
-          <th mat-header-cell *matHeaderCellDef class="f-w-600">Target</th>
-          <td mat-cell *matCellDef="let element">{{ element.target }}</td>
+        <ng-container matColumnDef="price">
+          <th mat-header-cell *matHeaderCellDef class="f-w-600">Price</th>
+          <td mat-cell *matCellDef="let element">₹{{ element.price }}</td>
         </ng-container>
 
         <ng-container matColumnDef="status">
@@ -48,11 +60,14 @@
         <ng-container matColumnDef="action">
           <th mat-header-cell *matHeaderCellDef></th>
           <td mat-cell *matCellDef="let element">
-            @if (element.status !== 'active') {
+            @if (element.status === 'scheduled') {
               <a (click)="onStatus(element, 'active')" class="m-r-10 cursor-pointer text-success" matTooltip="Activate"><mat-icon>play_circle</mat-icon></a>
             }
             @if (element.status === 'active') {
-              <a (click)="onStatus(element, 'inactive')" class="m-r-10 cursor-pointer text-warning" matTooltip="Deactivate"><mat-icon>pause_circle</mat-icon></a>
+              <a (click)="onStatus(element, 'expired')" class="m-r-10 cursor-pointer text-warning" matTooltip="Expire"><mat-icon>event_busy</mat-icon></a>
+            }
+            @if (element.status !== 'cancelled' && element.status !== 'expired') {
+              <a (click)="onStatus(element, 'cancelled')" class="m-r-10 cursor-pointer text-warning" matTooltip="Cancel"><mat-icon>cancel</mat-icon></a>
             }
           </td>
         </ng-container>

@@ -19,7 +19,9 @@
             {{ util.appTranslate('th_application') }}
           </th>
           <td mat-cell *matCellDef="let element">
-            <div class="f-w-600 f-s-12">{{ element.loanApplication }}</div>
+            <a [routerLink]="['/bank-team/u/applications', applicationId(element)]" class="f-w-600 f-s-12 text-primary">
+              {{ element.loanApplication?.property?.title || applicationId(element) }}
+            </a>
           </td>
         </ng-container>
 

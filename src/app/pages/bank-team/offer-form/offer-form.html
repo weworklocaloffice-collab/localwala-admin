@@ -10,7 +10,7 @@
       <mat-select [(ngModel)]="selectedApplication" (ngModelChange)="onAppChange()">
         <mat-option [value]="null">{{ util.appTranslate('select_application') }}</mat-option>
         <mat-option *ngFor="let app of applications" [value]="app">
-          <span>{{ app._id }}</span>
+          <span>{{ app.property?.title || rowId(app) }}</span>
           <span class="text-muted small">(₹{{ app.requestedAmount }} – {{ app.status }})</span>
         </mat-option>
       </mat-select>
@@ -28,9 +28,13 @@
       <mat-label>{{ util.appTranslate('th_tenure') }} (months)</mat-label>
       <input matInput type="number" [(ngModel)]="tenureMonths" />
     </mat-form-field>
-    <mat-form-field appearance="outline" class="w-100">
+    <mat-form-field appearance="outline" class="w-100 m-b-16">
       <mat-label>{{ util.appTranslate('th_processing_fee') }} ₹</mat-label>
       <input matInput type="number" [(ngModel)]="processingFee" />
+    </mat-form-field>
+    <mat-form-field appearance="outline" class="w-100">
+      <mat-label>{{ util.appTranslate('th_other_terms') }}</mat-label>
+      <textarea matInput rows="3" [(ngModel)]="otherTerms"></textarea>
     </mat-form-field>
 
     <div class="d-flex gap-8 m-t-16">

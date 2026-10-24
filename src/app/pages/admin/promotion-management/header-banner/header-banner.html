@@ -1,4 +1,4 @@
-<div class="header-banner">
+﻿<div class="header-banner">
   <!-- Top bar -->
   <div class="header-banner__topbar">
     <div>
@@ -131,7 +131,7 @@
             <mat-form-field appearance="outline">
               <mat-label>{{ util.appTranslate('banner_height') }}</mat-label>
               <input matInput type="number" [formControl]="f['maxHeight']" />
-              <mat-hint>130 – 210 px</mat-hint>
+              <mat-hint>130 â€“ 210 px</mat-hint>
             </mat-form-field>
           </mat-card-content>
         </mat-card>
@@ -234,12 +234,58 @@
             <mat-form-field appearance="outline">
               <mat-label>{{ util.appTranslate('collapsed_height') }}</mat-label>
               <input matInput type="number" [formControl]="f['collapsedHeight']" />
-              <mat-hint>48 – 120 px · default 64</mat-hint>
+              <mat-hint>48 â€“ 120 px Â· default 64</mat-hint>
             </mat-form-field>
 
             <mat-slide-toggle [formControl]="f['showLocation']">{{ util.appTranslate('show_location') }}</mat-slide-toggle>
             <mat-slide-toggle [formControl]="f['showLanguageSelector']">{{ util.appTranslate('show_language_selector') }}</mat-slide-toggle>
-            <mat-slide-toggle [formControl]="f['showNotificationIcon']">{{ util.appTranslate('show_notification_icon') }}</mat-slide-toggle>
+<mat-slide-toggle [formControl]="f['showNotificationIcon']">{{ util.appTranslate('show_notification_icon') }}</mat-slide-toggle>
+            </mat-card-content>
+          </mat-card>
+
+        <!-- Third cell rather than a card outside the grid: sharing the media changes
+             what the app bar IS, not just what it shows, so it gets its own explanation. -->
+        <mat-card appearance="outlined">
+          <mat-card-header>
+            <mat-card-title>{{ util.appTranslate('appbar_media') }}</mat-card-title>
+          </mat-card-header>
+          <mat-card-content class="d-flex flex-column g-12 p-t-16">
+            <mat-slide-toggle [formControl]="f['showMediaInAppBar']">
+              {{ util.appTranslate('show_media_in_appbar') }}
+            </mat-slide-toggle>
+            <p class="text-secondary f-s-12 m-0">{{ util.appTranslate('show_media_in_appbar_hint') }}</p>
+            <p class="text-warning f-s-12 m-0">{{ util.appTranslate('show_media_in_appbar_cost') }}</p>
+          </mat-card-content>
+        </mat-card>
+
+        <mat-card appearance="outlined">
+          <mat-card-header>
+            <mat-card-title>{{ util.appTranslate('parallax') }}</mat-card-title>
+          </mat-card-header>
+          <mat-card-content class="d-flex flex-column g-12 p-t-16">
+            <mat-slide-toggle [formControl]="f['parallaxEnabled']">
+              {{ util.appTranslate('parallax_enabled') }}
+            </mat-slide-toggle>
+            <p class="text-secondary f-s-12 m-0">{{ util.appTranslate('parallax_hint') }}</p>
+
+            <!-- Intensity is expressed as a fraction of the header's height, so the
+                 artwork lags by the same proportion on every screen size. -->
+            <div class="d-flex flex-column g-6">
+              <div class="d-flex justify-content-between align-items-center">
+                <span class="f-s-12">{{ util.appTranslate('parallax_intensity') }}</span>
+                <span class="header-banner__offset-chip">
+                  {{ (f['parallaxIntensity'].value * 100).toFixed(0) }}%
+                </span>
+              </div>
+              <mat-slider
+                [min]="0"
+                [max]="0.5"
+                [step]="0.01"
+                [disabled]="!f['parallaxEnabled'].value"
+              >
+                <input matSliderThumb [formControl]="f['parallaxIntensity']" />
+              </mat-slider>
+            </div>
           </mat-card-content>
         </mat-card>
       </div>
@@ -259,7 +305,7 @@
             <mat-form-field appearance="outline">
               <mat-label>{{ util.appTranslate('playback_speed') }}</mat-label>
               <input matInput type="number" step="0.1" [formControl]="f['lottieSpeed']" />
-              <mat-hint>0.5× – 2.0×</mat-hint>
+              <mat-hint>0.5Ã— â€“ 2.0Ã—</mat-hint>
             </mat-form-field>
 
             <mat-form-field appearance="outline">
@@ -516,7 +562,7 @@
                 <mat-form-field appearance="outline" class="hb-cta-half">
                   <mat-label>{{ util.appTranslate('cta_animation_duration') }}</mat-label>
                   <input matInput type="number" min="200" max="5000" [formControl]="f['ctaAnimationDuration']" />
-                  <mat-hint>ms · 200 – 5000</mat-hint>
+                  <mat-hint>ms Â· 200 â€“ 5000</mat-hint>
                 </mat-form-field>
 
                 @if (ctaLoopAvailable) {
@@ -826,19 +872,58 @@
 
         <div class="d-flex flex-column align-items-center justify-content-center g-12">
           <div class="header-banner__phone" [style.width.px]="previewWidth">
-            <!-- App bar -->
+            <!-- App bar. When the media is shared it becomes the TOP WINDOW onto one canvas that
+                 spans app bar + banner, exactly as the client does: the media is laid out
+                 at the full combined height and this box simply reveals its top slice.
+                 Laid out against its own height instead would duplicate the image with a
+                 visible seam, which is the thing this feature exists to avoid. -->
             <div
               class="header-banner__preview-appbar"
               [class.header-banner__preview-appbar--resizing]="isResizingHeader"
               [style.background]="previewAppBarBackground"
               [style.height.px]="previewState === 'collapsed' ? previewCollapsedHeight : previewAppBarHeight"
             >
+              @if (f['showMediaInAppBar'].value && previewMediaUrl) {
+                <div class="header-banner__preview-shared-window">
+                  <div
+                    class="header-banner__preview-shared-canvas header-banner__preview-shared-canvas--top"
+                    [style.height.px]="previewSharedCanvasHeight"
+                    [style.transform]="previewMediaTransform"
+                  >
+                    @if (isLottie && f['mediaUrl'].value) {
+                      <app-lottie-preview
+                        [path]="f['mediaUrl'].value"
+                        [autoPlay]="f['lottieAutoPlay'].value"
+                        [loop]="f['lottieLoop'].value"
+                        [speed]="f['lottieSpeed'].value"
+                        [fit]="f['lottieFit'].value"
+                        [alignment]="f['lottieAlignment'].value"
+                        [height]="previewSharedCanvasHeight"
+                      ></app-lottie-preview>
+                    } @else {
+                      <img class="header-banner__preview-shared-img" [src]="previewMediaUrl" alt="" />
+                    }
+                  </div>
+                </div>
+              }
+@if (f['showMediaInAppBar'].value && previewMediaUrl) {
+                <!-- The shared media is absolutely positioned OVER the app bar's background,
+                     so binding the gradient to [style.background] meant it was hidden the
+                     moment app bar media was switched on. It is repainted above the artwork
+                     as a TINT - the same gradient the operator configured, part-opaque, so
+                     the media reads through it. Opaque on top hid the media; behind it hid
+                     the gradient. Mirrors the client's `Opacity(mediaTintOpacity)`. -->
+                <div
+                  class="header-banner__preview-shared-tint"
+                  [style.background]="previewAppBarBackground"
+                  [style.opacity]="mediaTintOpacity"
+                ></div>
+              }
               @if (f['showLocation'].value) {
                 <div class="header-banner__preview-loc">
                   <span class="header-banner__preview-pin"></span>
                   <span>Madhapur</span>
                 </div>
-                <div class="header-banner__preview-sub">777, Road Number 44, Madhapur, Hyderabad</div>
               }
               <div
                 class="header-banner__preview-handle header-banner__preview-handle--bottom"
@@ -887,25 +972,53 @@
                 (pointerup)="onLayerDragEnd($event)"
                 (pointercancel)="onLayerDragEnd($event)"
               >
-                <!-- The media sits in its own absolutely positioned layer so the zoom and the
-                     drag can transform it. A CSS `background-image` cannot be
-                     transformed, which is why the artwork is an <img> rather than a
-                     background. -->
-                <div class="header-banner__preview-media" [style.transform]="previewMediaTransform">
-                  @if (isLottie && f['mediaUrl'].value) {
-                    <app-lottie-preview
-                      [path]="f['mediaUrl'].value"
-                      [autoPlay]="f['lottieAutoPlay'].value"
-                      [loop]="f['lottieLoop'].value"
-                      [speed]="f['lottieSpeed'].value"
-                      [fit]="f['lottieFit'].value"
-                      [alignment]="f['lottieAlignment'].value"
-                      [height]="previewBannerHeight"
-                    ></app-lottie-preview>
-                  } @else if (previewMediaUrl) {
-                    <img class="header-banner__preview-media-img" [src]="previewMediaUrl" alt="banner media" />
-                  }
-                </div>
+                <!-- When the media is shared, this is the BOTTOM WINDOW onto the same canvas the app
+                     bar just showed the top of, so it has to reveal the bottom slice at
+                     the full combined height. Otherwise the image appears twice, cropped
+                     differently, with a seam across the header. -->
+                @if (f['showMediaInAppBar'].value && previewMediaUrl) {
+                  <div class="header-banner__preview-shared-window">
+                    <div
+                      class="header-banner__preview-shared-canvas header-banner__preview-shared-canvas--bottom"
+                      [style.height.px]="previewSharedCanvasHeight"
+                      [style.transform]="previewMediaTransform"
+                    >
+                      @if (isLottie && f['mediaUrl'].value) {
+                        <app-lottie-preview
+                          [path]="f['mediaUrl'].value"
+                          [autoPlay]="f['lottieAutoPlay'].value"
+                          [loop]="f['lottieLoop'].value"
+                          [speed]="f['lottieSpeed'].value"
+                          [fit]="f['lottieFit'].value"
+                          [alignment]="f['lottieAlignment'].value"
+                          [height]="previewSharedCanvasHeight"
+                        ></app-lottie-preview>
+                      } @else {
+                        <img class="header-banner__preview-shared-img" [src]="previewMediaUrl" alt="" />
+                      }
+                    </div>
+                  </div>
+                } @else {
+                  <!-- The media sits in its own absolutely positioned layer so the zoom and the
+                       drag can transform it. A CSS `background-image` cannot be
+                       transformed, which is why the artwork is an <img> rather than a
+                       background. -->
+                  <div class="header-banner__preview-media" [style.transform]="previewMediaTransform">
+                    @if (isLottie && f['mediaUrl'].value) {
+                      <app-lottie-preview
+                        [path]="f['mediaUrl'].value"
+                        [autoPlay]="f['lottieAutoPlay'].value"
+                        [loop]="f['lottieLoop'].value"
+                        [speed]="f['lottieSpeed'].value"
+                        [fit]="f['lottieFit'].value"
+                        [alignment]="f['lottieAlignment'].value"
+                        [height]="previewBannerHeight"
+                      ></app-lottie-preview>
+                    } @else if (previewMediaUrl) {
+                      <img class="header-banner__preview-media-img" [src]="previewMediaUrl" alt="banner media" />
+                    }
+                  </div>
+                }
                 @if (f['enableOverlayText'].value) {
                   <!-- Own positioned layer so it can be dragged independently of the media.
                        `stopPropagation` inside the handler keeps the frame's own media drag
@@ -949,7 +1062,7 @@
                       [ngStyle]="previewCtaStyles"
                       [style.animation]="previewCtaAnimation"
                     >
-                      {{ f['ctaText'].value }} →
+                      {{ f['ctaText'].value }} â†’
                     </div>
                   </div>
                 }
@@ -1062,7 +1175,7 @@
                       <tr class="header-banner__row">
                         <td>{{ entry.action }}</td>
                         <td>{{ entry.campaignName }}</td>
-                        <td>{{ entry.publishedBy?.name || '—' }}</td>
+                        <td>{{ entry.publishedBy?.name || 'â€”' }}</td>
                         <td>{{ entry.publishedAt | date: 'dd MMM yyyy, HH:mm' }}</td>
                       </tr>
                     }

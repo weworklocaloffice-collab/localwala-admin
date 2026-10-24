@@ -18,6 +18,7 @@ export class DialogOfferCreate {
   tenureMonths: number | null = null;
   interestRate: number | null = null;
   processingFee: number | null = 0;
+  otherTerms: string = '';
   isSaving: boolean = false;
 
   constructor(
@@ -28,6 +29,11 @@ export class DialogOfferCreate {
 
   onClose() {
     this.dialogRef.close();
+  }
+
+  /** The row id. The API returns `_id` on the hydrated rows. */
+  rowId(row: any): string {
+    return row?._id || row?.id || '';
   }
 
   /**
@@ -42,8 +48,11 @@ export class DialogOfferCreate {
       this.interestRate = null;
       return;
     }
-    if (this.loanAmount === null && this.selectedApplication.loanAmount !== undefined) {
-      this.loanAmount = this.selectedApplication.loanAmount;
+    // The requested amount lives on the loan application. The old default
+    // read `loanAmount`, a field no application has, so the amount stayed
+    // null and the Create button never enabled.
+    if (this.loanAmount === null && this.selectedApplication.requestedAmount !== undefined) {
+      this.loanAmount = this.selectedApplication.requestedAmount;
     }
   }
 
@@ -67,11 +76,12 @@ export class DialogOfferCreate {
     this.isSaving = true;
     this.api
       .post_private('v1/realestate/bank/offers', {
-        loanApplication: this.selectedApplication._id,
+        loanApplication: this.rowId(this.selectedApplication),
         loanAmount: this.loanAmount,
         tenureMonths: this.tenureMonths,
         interestRate: this.interestRate,
         processingFee: this.processingFee,
+        otherTerms: this.otherTerms,
       })
       .subscribe({
         next: () => {

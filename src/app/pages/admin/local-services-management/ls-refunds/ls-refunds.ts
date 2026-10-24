@@ -82,4 +82,19 @@ export class LsRefunds {
       },
     });
   }
+
+  retry(row: any) {
+    this.actingOn = row._id + 'retry';
+    this.api.post_private('v1/local-services/admin/refunds/' + row._id + '/retry', {}).subscribe({
+      next: () => {
+        this.actingOn = null;
+        this.util.onSuccess('ts_refund_approved');
+        this.getList();
+      },
+      error: (error: any) => {
+        this.actingOn = null;
+        this.util.handleError(error, 'admin');
+      },
+    });
+  }
 }

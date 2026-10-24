@@ -1,5 +1,5 @@
 export const environment = {
-  production: true,
+  production: false,
   appName: 'Localwala',
   apiUrl: 'https://localwala.tech/',
   defaultCountryCode: '+91',

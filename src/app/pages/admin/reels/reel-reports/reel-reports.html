@@ -57,8 +57,13 @@
               <mat-icon>more_vert</mat-icon>
             </button>
             <mat-menu #menu="matMenu">
+              <!-- Reading reports is `reels_admin_manage`, but issuing a verdict is
+                   `reels_admin_publish` - the same right that publishes a reel, because
+                   HIDE_REEL and REMOVE_REEL both take a public reel down. -->
+              @if (util.hasRight('reels_admin_publish')) {
               @for (decision of decisions; track decision) {
               <button mat-menu-item (click)="review(element, decision)" [disabled]="element.status !== 'OPEN' && element.status !== 'REVIEWING'">{{decision}}</button>
+              }
               }
             </mat-menu>
           </td>

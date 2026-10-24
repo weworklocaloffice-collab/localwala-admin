@@ -24,6 +24,7 @@ export class AppWebSettings {
     showTiffinSubscriptionPackages: new FormControl(true),
     showPopularDiningRestaurant: new FormControl(true),
     showNewDiningRestaurant: new FormControl(true),
+    reelsGuestLimit: new FormControl(5, [Validators.required, Validators.min(0), Validators.max(100)]),
     userAndroidForceUpdateVersion: new FormControl('', [Validators.required]),
     userAndroidUpdateUrl: new FormControl('', [Validators.required]),
     useriOSForceUpdateVersion: new FormControl('', [Validators.required]),
@@ -76,6 +77,12 @@ export class AppWebSettings {
 
           this.settingForm.controls['showPopularDiningRestaurant'].setValue(response.showPopularDiningRestaurant);
           this.settingForm.controls['showNewDiningRestaurant'].setValue(response.showNewDiningRestaurant);
+
+          // Absent on documents saved before the field existed, so fall back to
+          // the same default the API uses rather than leaving it blank.
+          this.settingForm.controls['reelsGuestLimit'].setValue(
+            response.reelsGuestLimit ?? 5
+          );
 
           this.settingForm.controls['userAndroidForceUpdateVersion'].setValue(response.userAndroidForceUpdateVersion);
           this.settingForm.controls['userAndroidUpdateUrl'].setValue(response.userAndroidUpdateUrl);
@@ -166,6 +173,7 @@ export class AppWebSettings {
       showTiffinSubscriptionPackages: true,
       showPopularDiningRestaurant: true,
       showNewDiningRestaurant: true,
+      reelsGuestLimit: 5,
       userAndroidForceUpdateVersion: '',
       userAndroidUpdateUrl: '',
       useriOSForceUpdateVersion: '',

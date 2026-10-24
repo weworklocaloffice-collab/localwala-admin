@@ -66,9 +66,28 @@ export class Commissions {
     this.getList();
   }
 
-  formatPrice(paise: number): string {
-    if (!paise) return '—';
-    return '₹' + (paise / 100).toLocaleString('en-IN');
+  /**
+   * The API serves commission money in RUPEES (the moneyField getter is
+   * applied on the hydrated rows), so this formatter must not divide by
+   * 100 again. It used to, which showed a ₹1,00,000 commission as
+   * ₹1,000 - a 100× error on the bank's earnings page.
+   */
+  formatPrice(rupees: number): string {
+    if (!rupees) return '—';
+    return '₹' + Number(rupees).toLocaleString('en-IN');
+  }
+
+  /**
+   * The frozen rule this commission was computed under (BR-15): the
+   * rate, the basis and the version in force at resolution time.
+   */
+  ruleSummary(row: any): string {
+    const snap = row?.ruleSnapshot;
+    if (!snap) return '—';
+    const rate = snap.rate !== undefined && snap.rate !== null ? `${snap.rate}%` : '—';
+    const basis = snap.basis || '—';
+    const version = snap.version !== undefined && snap.version !== null ? `v${snap.version}` : null;
+    return [rate, basis, version].filter(Boolean).join(' · ');
   }
 
   formatDate(dateString: string): string {

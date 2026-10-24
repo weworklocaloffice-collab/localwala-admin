@@ -16,57 +16,35 @@
  * strictly prohibited.
  */
 
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
 import { MaterialModule } from 'src/app/material.module';
-import { HttpParams } from '@angular/common/http';
-import { MatPaginator } from '@angular/material/paginator';
 import { ApiService } from 'src/app/services/api-service';
 import { UtilService } from 'src/app/services/util-service';
-import { MatDialog } from '@angular/material/dialog';
-import { DialogLsStatus } from '../dialog-ls-status/dialog-ls-status';
 
 @Component({
   selector: 'app-reports',
-  imports: [CommonModule, FormsModule, MaterialModule],
+  imports: [CommonModule, MaterialModule],
   templateUrl: './reports.html',
 })
 export class Reports implements OnInit {
   isLoaded: boolean = false;
-  list: any[] = [];
-  currentPage: number = 0;
-  pageSize: number = 10;
-  displayedColumn: string[] = ['booking', 'date', 'gross', 'commission', 'net', 'status', 'action'];
-
-  @ViewChild('paginator', { read: MatPaginator })
-  paginator: MatPaginator;
+  summary: any = null;
 
   constructor(
     public api: ApiService,
     public util: UtilService,
-    private dialog: MatDialog,
   ) {}
 
   ngOnInit() {
-    this.getList();
+    this.getSummary();
   }
 
-  getList() {
+  getSummary() {
     this.isLoaded = false;
-    const param: any = { limit: this.pageSize, page: this.currentPage };
-    let httpParams = new HttpParams();
-    Object.keys(param).forEach((key: any) => {
-      if (param[key] === '' || param[key] === null || param[key] === undefined) return;
-      httpParams = httpParams.set(key, param[key]);
-    });
-    this.api.get_private('v1/local-services/admin/reports?' + httpParams.toString()).subscribe({
+    this.api.get_private('v1/local-services/admin/reports').subscribe({
       next: (response: any) => {
-        if (response && response.results) {
-          this.list = response.results;
-          this.paginator.length = response.totalResults;
-          this.paginator.hidePageSize = response.totalResults <= 0 ? true : false;
-        }
+        this.summary = response;
         this.isLoaded = true;
       },
       error: (error: any) => {
@@ -76,58 +54,49 @@ export class Reports implements OnInit {
     });
   }
 
-  onPageChange(event: any) {
-    this.currentPage = event.pageIndex;
-    this.pageSize = event.pageSize;
-    this.getList();
-  }
-
   exportCsv() {
-    if (!this.list || this.list.length === 0) {
+    if (!this.summary) {
       this.util.onSuccess('ts_no_records_found');
       return;
     }
-    // Build CSV data
-    const headers = ['Booking', 'Date', 'Gross', 'Commission', 'Net', 'Status'];
-    const rows = this.list.map((element: any) => [
-      element.bookingCode || '',
-      element.date || '',
-      element.gross || 0,
-      element.commission || 0,
-      element.net || 0,
-      element.status || '',
-    ]);
-
-    // Create CSV content
-    const csvContent = [
-      headers.join(','),
-      ...rows.map((row: any[]) => row.map((cell: any) => {
-        const c = cell instanceof Date ? cell.toISOString() : cell;
-        return typeof c === 'number' ? c.toString() : `"${c}"`;
-      }).join(','))
-    ].join('\n');
-
-    // Download
-    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const rows: any[][] = [
+      ['Metric', 'Value'],
+      ['Active providers', this.summary.providers?.active || 0],
+      ['Pending verification', this.summary.providers?.pendingVerification || 0],
+      ['Published services', this.summary.services?.published || 0],
+      ['Bookings', this.summary.bookings?.total || 0],
+      ['Booking conversion %', this.summary.bookings?.conversionRate || 0],
+      ['Fulfilment rate %', this.summary.bookings?.fulfilmentRate || 0],
+      ['Gross booking value', this.summary.revenue?.grossBookingValue || 0],
+      ['Cash collected', this.summary.revenue?.cashCollected || 0],
+      ['Refunded', this.summary.revenue?.refunded || 0],
+      ['Platform revenue', this.summary.revenue?.platformRevenue || 0],
+      ['Provider payable', this.summary.revenue?.providerPayable || 0],
+      ['Settlement liability', this.summary.settlement?.liability || 0],
+      ['Refunds pending', this.summary.refunds?.pending || 0],
+      ['Refund approved amount', this.summary.refunds?.approvedAmount || 0],
+      ['Quote acceptance %', this.summary.quotes?.acceptanceRate || 0],
+      [],
+      ['Category', 'Bookings', 'Gross booking value'],
+      ...(this.summary.categories || []).map((row: any) => [
+        row.categoryKey,
+        row.bookings,
+        row.grossBookingValue,
+      ]),
+    ];
+    const csvContent = rows
+      .map((row) =>
+        row
+          .map((cell: any) => {
+            const value = cell instanceof Date ? cell.toISOString() : cell;
+            return typeof value === 'number' ? value.toString() : `"${value ?? ''}"`;
+          })
+          .join(','),
+      )
+      .join('\n');
     const link = document.createElement('a');
     link.setAttribute('href', 'data:text/csv;charset=utf-8,' + encodeURIComponent(csvContent));
     link.setAttribute('download', 'local-services-reports.csv');
     link.click();
-  }
-
-  onCreate() {
-    // No-op: reports are read-only summaries
-  }
-
-  onStatus(row: any, status: string) {
-    this.dialog
-      .open(DialogLsStatus, { data: { apiPath: 'v1/local-services/admin/reports/', row, status, mode: 'patch-status' }, disableClose: true })
-      .afterClosed()
-      .subscribe((result: any) => {
-        if (result && result.event == 'update') {
-          this.util.onSuccess('ts_status_updated');
-          this.getList();
-        }
-      });
   }
 }

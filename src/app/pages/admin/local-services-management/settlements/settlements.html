@@ -1,0 +1,111 @@
+<mat-card class="cardWithShadow">
+  <mat-card-header class="m-b-16">
+    <mat-card-title>Settlements</mat-card-title>
+    <mat-card-subtitle>Provider payable batches generated from the Local Services revenue ledger</mat-card-subtitle>
+  </mat-card-header>
+
+  <mat-card-content>
+    <div class="d-flex flex-wrap align-center justify-content-between mb-24 gap-12">
+      <span>Generate a settlement for unsettled revenue entries, then track its payout status</span>
+      <button mat-flat-button color="primary" (click)="onGenerate()">Generate settlement</button>
+    </div>
+
+    <div class="table-responsive">
+      <table mat-table [dataSource]="list" class="w-100">
+
+        <ng-container matColumnDef="settlement">
+          <th mat-header-cell *matHeaderCellDef class="f-w-600">Settlement</th>
+          <td mat-cell *matCellDef="let element">
+            <div class="f-w-600">#{{ element.settlementNo }}</div>
+            <div class="f-s-12 text-muted">{{ element.settlementType }}</div>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="counterparty">
+          <th mat-header-cell *matHeaderCellDef class="f-w-600">Counterparty</th>
+          <td mat-cell *matCellDef="let element">
+            <div class="f-w-600">{{ element.counterparty?.name || '—' }}</div>
+            <div class="f-s-12 text-muted">{{ element.counterpartyType }}</div>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="period">
+          <th mat-header-cell *matHeaderCellDef class="f-w-600">Period</th>
+          <td mat-cell *matCellDef="let element">
+            <div class="f-s-12">{{ element.from | date: 'mediumDate' }}</div>
+            <div class="f-s-12 text-muted">to {{ element.to | date: 'mediumDate' }}</div>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="orders">
+          <th mat-header-cell *matHeaderCellDef class="f-w-600">Orders</th>
+          <td mat-cell *matCellDef="let element">{{ element.totals?.orderCount || 0 }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="gross">
+          <th mat-header-cell *matHeaderCellDef class="f-w-600">Gross</th>
+          <td mat-cell *matCellDef="let element">₹{{ element.totals?.grossOrderValue || 0 }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="refunds">
+          <th mat-header-cell *matHeaderCellDef class="f-w-600">Refunds</th>
+          <td mat-cell *matCellDef="let element">₹{{ element.totals?.refunds || 0 }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="fees">
+          <th mat-header-cell *matHeaderCellDef class="f-w-600">Platform fees</th>
+          <td mat-cell *matCellDef="let element">₹{{ element.totals?.platformFees || 0 }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="net">
+          <th mat-header-cell *matHeaderCellDef class="f-w-600">Net payable</th>
+          <td mat-cell *matCellDef="let element">
+            <span class="f-w-600">₹{{ element.totals?.netAmount || 0 }}</span>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="status">
+          <th mat-header-cell *matHeaderCellDef class="f-w-600">Status</th>
+          <td mat-cell *matCellDef="let element">
+            <span class="f-s-14" [ngClass]="element.status === 'settled' ? 'text-success' : 'text-warning'">{{ element.status }}</span>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="action">
+          <th mat-header-cell *matHeaderCellDef></th>
+          <td mat-cell *matCellDef="let element">
+            @if (element.status === 'pending') {
+              <a (click)="onPay(element)" class="m-r-10 cursor-pointer text-success" matTooltip="Pay now"><mat-icon>payments</mat-icon></a>
+              <a (click)="onStatus(element, 'processing')" class="m-r-10 cursor-pointer text-primary" matTooltip="Start processing"><mat-icon>hourglass_top</mat-icon></a>
+              <a (click)="onStatus(element, 'failed')" class="m-r-10 cursor-pointer text-warning" matTooltip="Mark failed"><mat-icon>error</mat-icon></a>
+            }
+            @if (element.status === 'processing') {
+              <a (click)="onPay(element)" class="m-r-10 cursor-pointer text-success" matTooltip="Pay now"><mat-icon>payments</mat-icon></a>
+              <a (click)="onStatus(element, 'failed')" class="m-r-10 cursor-pointer text-warning" matTooltip="Mark failed"><mat-icon>error</mat-icon></a>
+              <a (click)="onStatus(element, 'disputed')" class="m-r-10 cursor-pointer text-warning" matTooltip="Mark disputed"><mat-icon>report</mat-icon></a>
+            }
+            @if (element.status === 'settled') {
+              <a (click)="onStatus(element, 'reversed')" class="m-r-10 cursor-pointer text-warning" matTooltip="Reverse"><mat-icon>undo</mat-icon></a>
+            }
+            @if (element.status === 'failed') {
+              <a (click)="onStatus(element, 'processing')" class="m-r-10 cursor-pointer text-primary" matTooltip="Retry"><mat-icon>replay</mat-icon></a>
+            }
+            @if (element.status === 'disputed') {
+              <a (click)="onStatus(element, 'settled')" class="m-r-10 cursor-pointer text-success" matTooltip="Mark settled"><mat-icon>check_circle</mat-icon></a>
+              <a (click)="onStatus(element, 'reversed')" class="m-r-10 cursor-pointer text-warning" matTooltip="Reverse"><mat-icon>undo</mat-icon></a>
+            }
+          </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="displayedColumn"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumn"></tr>
+      </table>
+
+      @if (isLoaded && !list.length) {
+        <div class="p-24 text-center text-muted">{{ util.appTranslate('ts_no_records_found') }}</div>
+      }
+    </div>
+
+    <mat-paginator [hidden]="!isLoaded" #paginator [pageSizeOptions]="[5, 10, 20]" [pageSize]="pageSize" (page)="onPageChange($event)" showFirstLastButtons></mat-paginator>
+  </mat-card-content>
+</mat-card>

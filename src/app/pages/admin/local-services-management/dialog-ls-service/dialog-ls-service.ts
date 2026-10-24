@@ -21,6 +21,7 @@ export class DialogLsService {
     category: new FormControl('', [Validators.required]),
     bookingMode: new FormControl('REQUEST', [Validators.required]),
     pricingMode: new FormControl('FIXED', [Validators.required]),
+    depositPercent: new FormControl(0, [Validators.min(0), Validators.max(100)]),
   });
 
   constructor(
