@@ -830,12 +830,36 @@ export class UtilService {
       "uploadLink": "v1/admin/support_chat_messages/import_collection/",
       "helper": "NA"
     },
-    // NOTE: no stores import entries. The four removed here pointed at
-    // v1/admin/<x>/import_collection/ routes that do not exist, with sample
-    // columns matching no model (flat taxId, scopeType=single, invented policy
-    // types). Stores bulk import is doc §9 step 8 + stores.import.templates
-    // work: schemaArray entries + templates whose columns match the models.
-    // Re-add per-collection entries only with a live upload route behind them.
+    {
+      "key": "store_category",
+      "name": "Store Categories",
+      "sampleExcel": "xlsx/store_category_sample.xlsx",
+      "emptyExcel": "xlsx/store_category_empty.xlsx",
+      "sampleCSV": "csv/store_category_sample.csv",
+      "emptyCSV": "csv/store_category_empty.csv",
+      "uploadLink": "v1/admin/stores/catalog/import/store_category",
+      "helper": "NA"
+    },
+    {
+      "key": "store_subcategory",
+      "name": "Store Subcategories",
+      "sampleExcel": "xlsx/store_subcategory_sample.xlsx",
+      "emptyExcel": "xlsx/store_subcategory_empty.xlsx",
+      "sampleCSV": "csv/store_subcategory_sample.csv",
+      "emptyCSV": "csv/store_subcategory_empty.csv",
+      "uploadLink": "v1/admin/stores/catalog/import/store_subcategory",
+      "helper": "NA"
+    },
+    {
+      "key": "store_brand",
+      "name": "Store Brands",
+      "sampleExcel": "xlsx/store_brand_sample.xlsx",
+      "emptyExcel": "xlsx/store_brand_empty.xlsx",
+      "sampleCSV": "csv/store_brand_sample.csv",
+      "emptyCSV": "csv/store_brand_empty.csv",
+      "uploadLink": "v1/admin/stores/catalog/import/store_brand",
+      "helper": "NA"
+    },
   ];
   constructor(
     // private snackBar: MatSnackBar,

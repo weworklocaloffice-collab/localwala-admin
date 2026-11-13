@@ -80,7 +80,10 @@ const dynamicPrefixes = [
   'dairy_supply_',
   'dairy_on_',
   'dairy_basis_',
+  'dairy_model_',
   'dairy_period_',
+  'dairy_order_status_',
+  'dairy_run_status_',
 ];
 
 const missingEn = [...referenced.keys()].filter(
@@ -132,10 +135,16 @@ check('dairy_on_* covers the commission bases', withFamily('dairy_on_',
   ['product_only', 'product_and_delivery']));
 check('dairy_basis_* covers the commission bases', withFamily('dairy_basis_',
   ['product_only', 'product_and_delivery']));
+check('dairy_model_* covers every business model', withFamily('dairy_model_',
+  ['direct', 'franchise', 'commission_partner']));
 check('dairy_period_* covers the settlement periods', withFamily('dairy_period_',
   ['daily', 'weekly', 'monthly']));
 check('dairy_do_* covers every transition the screens offer', withFamily('dairy_do_',
   ['submitted', 'approved', 'draft', 'disputed', 'void', 'active', 'suspended', 'terminated']));
+check('dairy_order_status_* covers every order status', withFamily('dairy_order_status_',
+  ['pending_payments', 'confirmed', 'preparing', 'out_for_delivery', 'delivered', 'cancelled', 'refunded']));
+check('dairy_run_status_* covers every run status', withFamily('dairy_run_status_',
+  ['planned', 'dispatched', 'in_progress', 'completed', 'cancelled']));
 
 console.log(`\n         dynamic families checked as families: ${dynamicPrefixes.join(', ')}`);
 

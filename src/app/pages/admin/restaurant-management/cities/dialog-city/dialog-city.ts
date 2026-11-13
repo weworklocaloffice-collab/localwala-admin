@@ -19,6 +19,7 @@ export class DialogCity {
     name: new FormControl('', [Validators.required]),
     latitude: new FormControl('', [Validators.required]),
     longitude: new FormControl('', [Validators.required]),
+    dairyDeliveryMaxRadiusKm: new FormControl(5, [Validators.required, Validators.min(1), Validators.max(50)]),
     type: new FormControl('Point', [Validators.required]),
     image: new FormControl('', [Validators.required]),
     translations: new FormArray([])
@@ -44,6 +45,9 @@ export class DialogCity {
       this.id = values.id;
       this.cityForm.controls['name'].setValue(values && values.name ? values.name : '');
       this.cityForm.controls['image'].setValue(values && values.image ? values.image : '');
+      this.cityForm.controls['dairyDeliveryMaxRadiusKm'].setValue(
+        values && values.dairyDeliveryMaxRadiusKm != null ? Number(values.dairyDeliveryMaxRadiusKm) : 5
+      );
       if (values && values.location && values.location.coordinates && values.location.coordinates.length) {
         this.cityForm.controls['latitude'].setValue(values && values.location && values.location.coordinates && values.location.coordinates.length ? values.location.coordinates[1] : '');
         this.cityForm.controls['longitude'].setValue(values && values.location && values.location.coordinates && values.location.coordinates.length ? values.location.coordinates[0] : '');

@@ -6,6 +6,8 @@ import { MatPaginator } from '@angular/material/paginator';
 import { HttpParams } from '@angular/common/http';
 import { ApiService } from 'src/app/services/api-service';
 import { UtilService } from 'src/app/services/util-service';
+import { MatDialog } from '@angular/material/dialog';
+import { ConfirmDialog } from 'src/app/ui-components/confirm-dialog/confirm-dialog';
 
 /**
  * Settlement register.
@@ -30,6 +32,7 @@ export class Settlements implements OnInit {
   currentPage = 0;
   pageSize = 10;
   statusFilter = '';
+  searchQuery = '';
 
   /** Column order for `mat-table`. Declared here because the template binds it. */
   displayedColumn = [
@@ -47,9 +50,10 @@ export class Settlements implements OnInit {
   @ViewChild('paginator', { read: MatPaginator })
   paginator: MatPaginator;
 
-  constructor(
+   constructor(
     private api: ApiService,
     public util: UtilService,
+    private dialogRef: MatDialog,
   ) {}
 
   ngOnInit() {
@@ -64,6 +68,7 @@ export class Settlements implements OnInit {
       .set('limit', String(this.pageSize))
       .set('vertical', 'stores');
     if (this.statusFilter) params = params.set('status', this.statusFilter);
+    if (this.searchQuery) params = params.set('search', this.searchQuery);
 
     this.api.get_private('v1/admin/stores/settlements?' + params.toString()).subscribe({
       next: (response: any) => {
@@ -85,6 +90,11 @@ export class Settlements implements OnInit {
   onPageChange(event: any) {
     this.currentPage = event.pageIndex;
     this.pageSize = event.pageSize;
+    this.getList();
+  }
+
+  onSearch() {
+    this.currentPage = 0;
     this.getList();
   }
 
@@ -132,61 +142,64 @@ export class Settlements implements OnInit {
   }
 
   settle(row: any) {
+    const ref = this.dialogRef.open(ConfirmDialog, {
+      data: { title: 'Settle this settlement?', subTitle: 'This marks the payout as paid.', okTitle: 'settle', closeTitle: 'ts_cancel' },
+    });
+    ref.afterClosed().subscribe((result: any) => {
+      if (result && result.action === 'confirm') this.doSettle(row);
+    });
+  }
+
+  private doSettle(row: any) {
     this.api
-      .post_private('v1/admin/stores/settlements/' + row._id + '/settle', {
-        payoutMethod: 'bank',
-      })
+      .post_private('v1/admin/stores/settlements/' + row._id + '/settle', { payoutMethod: 'bank' })
       .subscribe({
-        next: () => {
-          this.util.onSuccess('ts_stores_settlement_settled');
-          this.getList();
-        },
+        next: () => { this.util.onSuccess('ts_stores_settlement_settled'); this.getList(); },
         error: (error: any) => {
           const msg = error && error.error && error.error.message ? error.error.message : '';
-          if (msg) {
-            this.util.onError(msg, '');
-          } else {
-            this.util.handleError(error, 'admin');
-          }
+          if (msg) this.util.onError(msg, '');
+          else this.util.handleError(error, 'admin');
           this.getList();
         },
       });
   }
 
   markFailed(row: any) {
+    const ref = this.dialogRef.open(ConfirmDialog, {
+      data: { title: 'Mark settlement failed?', subTitle: 'This cannot be undone.', okTitle: 'fail', closeTitle: 'ts_cancel' },
+    });
+    ref.afterClosed().subscribe((result: any) => {
+      if (result && result.action === 'confirm') this.doMarkFailed(row);
+    });
+  }
+
+  private doMarkFailed(row: any) {
     this.api
-      .post_private('v1/admin/stores/settlements/' + row._id + '/fail', {
-        failureReason: 'Marked failed by admin',
-      })
+      .post_private('v1/admin/stores/settlements/' + row._id + '/fail', { failureReason: 'Marked failed by admin' })
       .subscribe({
-        next: () => {
-          this.util.onSuccess('ts_stores_settlement_failed');
-          this.getList();
-        },
-        error: (error: any) => {
-          this.util.handleError(error, 'admin');
-          this.getList();
-        },
+        next: () => { this.util.onSuccess('ts_stores_settlement_failed'); this.getList(); },
+        error: (error: any) => { this.util.handleError(error, 'admin'); this.getList(); },
       });
   }
 
   reverse(row: any) {
+    const ref = this.dialogRef.open(ConfirmDialog, {
+      data: { title: 'Reverse settlement?', subTitle: 'This creates a reversal entry.', okTitle: 'reverse', closeTitle: 'ts_cancel' },
+    });
+    ref.afterClosed().subscribe((result: any) => {
+      if (result && result.action === 'confirm') this.doReverse(row);
+    });
+  }
+
+  private doReverse(row: any) {
     this.api
-      .post_private('v1/admin/stores/settlements/' + row._id + '/reverse', {
-        reason: 'Reversed by admin',
-      })
+      .post_private('v1/admin/stores/settlements/' + row._id + '/reverse', { reason: 'Reversed by admin' })
       .subscribe({
-        next: () => {
-          this.util.onSuccess('ts_stores_settlement_reversed');
-          this.getList();
-        },
+        next: () => { this.util.onSuccess('ts_stores_settlement_reversed'); this.getList(); },
         error: (error: any) => {
           const msg = error && error.error && error.error.message ? error.error.message : '';
-          if (msg) {
-            this.util.onError(msg, '');
-          } else {
-            this.util.handleError(error, 'admin');
-          }
+          if (msg) this.util.onError(msg, '');
+          else this.util.handleError(error, 'admin');
           this.getList();
         },
       });

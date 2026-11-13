@@ -36,6 +36,12 @@
       </mat-card-header>
 
       <mat-card-content>
+    @if (!util.hasRight("stores_admin_console")) {
+      <div class="p-24 text-center text-muted">Not authorized.</div>
+    } @else {
+    @if (!util.hasRight("stores_admin_console")) {
+      <div class="p-24 text-center text-muted">Not authorized.</div>
+    } @else {
         <div class="f-s-12 text-muted m-b-16">
           {{ util.appTranslate('stores_console_readonly_note') }}
         </div>
@@ -76,7 +82,9 @@
             </div>
           }
         </div>
-      </mat-card-content>
+          }
+      }
+  </mat-card-content>
     </mat-card>
   }
 </div>

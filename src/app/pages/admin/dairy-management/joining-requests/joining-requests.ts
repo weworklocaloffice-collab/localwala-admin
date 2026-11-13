@@ -23,7 +23,7 @@ export class JoiningRequests {
   pageSize: number = 10;
   searchQuery: string = '';
   selectedStatus: string = 'pending';
-  displayedColumn: string[] = ['name', 'location', 'applicant', 'status', 'action'];
+  displayedColumn: string[] = ['name', 'location', 'applicant', 'requestedModel', 'status', 'action'];
 
   @ViewChild('paginator', { read: MatPaginator })
   paginator: MatPaginator;
@@ -95,9 +95,9 @@ export class JoiningRequests {
   /**
    * Approve or reject.
    *
-   * Approval flips `Business.verified`, which is what lets the outlet trade — so it
-   * goes through a dialog that states that consequence and, for a rejection, collects
-   * the reason that gets stored against the request.
+   * Approval verifies the outlet and unlocks profile setup. The Admin agreement
+   * workflow controls the final model and trading readiness. Rejections collect a
+   * stored reason.
    */
   onReview(row: any, approve: boolean) {
     if (!approve) {

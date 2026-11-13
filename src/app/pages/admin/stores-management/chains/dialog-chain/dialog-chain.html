@@ -27,6 +27,23 @@
         </mat-option>
       </mat-select>
     </mat-form-field>
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Proration mode</mat-label>
+      <mat-select formControlName="prorationMode">
+        <mat-option value="none">None</mat-option>
+        <mat-option value="daily">Daily</mat-option>
+        <mat-option value="weekly">Weekly</mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>On cancellation</mat-label>
+      <mat-select formControlName="prorationOnCancellation">
+        <mat-option value="credit_remaining">Credit remaining</mat-option>
+        <mat-option value="refund_remaining">Refund remaining</mat-option>
+        <mat-option value="none">None</mat-option>
+      </mat-select>
+    </mat-form-field>
   </form>
 </div>
 

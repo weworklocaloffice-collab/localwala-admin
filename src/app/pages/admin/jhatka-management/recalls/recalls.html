@@ -1,18 +1,18 @@
 <mat-card class="cardWithShadow">
   <mat-card-header class="m-b-16">
-    <mat-card-title>Recalls</mat-card-title>
-    <mat-card-subtitle>A recall closed while customers are unacknowledged stopped asking. Force-close needs a resolution note.</mat-card-subtitle>
+    <mat-card-title>{{ util.appTranslate('jhatka_recalls') }}</mat-card-title>
+    <mat-card-subtitle>{{ util.appTranslate('jhatka_recall_close_note') }}</mat-card-subtitle>
   </mat-card-header>
 
   <mat-card-content>
     <div class="d-flex flex-wrap align-center justify-content-between mb-24 gap-12">
       <mat-form-field appearance="outline" class="w-100">
-        <mat-label>Status</mat-label>
+        <mat-label>{{ util.appTranslate('jhatka_status') }}</mat-label>
         <mat-select [(ngModel)]="selectedStatus" (selectionChange)="onStatusFilter()">
-          <mat-option value="open">Open</mat-option>
-          <mat-option value="notifying">Notifying</mat-option>
-          <mat-option value="closed">Closed</mat-option>
-          <mat-option value="">All</mat-option>
+          <mat-option value="open">{{ util.appTranslate('jhatka_open') }}</mat-option>
+          <mat-option value="notifying">{{ util.appTranslate('jhatka_notifying') }}</mat-option>
+          <mat-option value="closed">{{ util.appTranslate('jhatka_closed') }}</mat-option>
+          <mat-option value="">{{ util.appTranslate('jhatka_all') }}</mat-option>
         </mat-select>
       </mat-form-field>
     </div>
@@ -20,7 +20,7 @@
     <div class="table-responsive">
       <table mat-table [dataSource]="list" class="w-100">
         <ng-container matColumnDef="recall">
-          <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1">Recall</th>
+          <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1">{{ util.appTranslate('jhatka_recall') }}</th>
           <td mat-cell *matCellDef="let element">
             <div class="f-w-600">{{ element.recallNo }}</div>
             <div class="m-t-4 f-s-12 text-muted">{{ element.reason }}</div>
@@ -28,27 +28,27 @@
         </ng-container>
 
         <ng-container matColumnDef="severity">
-          <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1">Severity</th>
+          <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1">{{ util.appTranslate('jhatka_severity') }}</th>
           <td mat-cell *matCellDef="let element">{{ element.severity }}</td>
         </ng-container>
 
         <ng-container matColumnDef="customers">
-          <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1">Customers</th>
+          <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1">{{ util.appTranslate('jhatka_customers') }}</th>
           <td mat-cell *matCellDef="let element">{{ element.notifiedCount }} notified / {{ element.unacknowledged }} unacknowledged</td>
         </ng-container>
 
         <ng-container matColumnDef="status">
-          <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1">Status</th>
+          <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1">{{ util.appTranslate('jhatka_status') }}</th>
           <td mat-cell *matCellDef="let element">{{ element.status }}</td>
         </ng-container>
 
         <ng-container matColumnDef="action">
-          <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1">Action</th>
+          <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1">{{ util.appTranslate('jhatka_action') }}</th>
           <td mat-cell *matCellDef="let element">
-            <button mat-button color="primary" [matMenuTriggerFor]="menu" [disabled]="element.status === 'closed'">Close</button>
+            <button mat-button color="primary" [matMenuTriggerFor]="menu" [disabled]="element.status === 'closed'">{{ util.appTranslate('jhatka_close') }}</button>
             <mat-menu #menu="matMenu">
-              <button mat-menu-item (click)="closeRecall(element, false)">Close</button>
-              <button mat-menu-item (click)="closeRecall(element, true)">Force close</button>
+              <button mat-menu-item (click)="closeRecall(element, false)">{{ util.appTranslate('jhatka_close') }}</button>
+              <button mat-menu-item (click)="closeRecall(element, true)">{{ util.appTranslate('jhatka_force_close') }}</button>
             </mat-menu>
           </td>
         </ng-container>

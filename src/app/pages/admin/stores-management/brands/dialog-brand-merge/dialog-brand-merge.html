@@ -1,0 +1,52 @@
+<h2 mat-dialog-title>{{ util.appTranslate('stores_brand_merge_title') }}</h2>
+
+<mat-dialog-content class="dialog-form">
+  <p class="f-w-600">{{ source.name }}</p>
+
+  <mat-form-field appearance="outline" class="full-width">
+    <mat-label>{{ util.appTranslate('stores_brand_merge_target') }}</mat-label>
+    <input
+      matInput
+      [(ngModel)]="targetQuery"
+      (ngModelChange)="onTargetInput()"
+      [matAutocomplete]="auto"
+      [placeholder]="util.appTranslate('stores_brand_merge_target_hint')"
+    />
+    <mat-autocomplete #auto="matAutocomplete" (optionSelected)="onTargetSelected($event)">
+      @for (brand of targets; track brand._id) {
+        <mat-option [value]="brand">
+          <span class="f-w-600">{{ brand.name }}</span>
+          @if ((brand.aliases || []).length) {
+            <span class="f-s-12 text-muted m-l-8">{{ (brand.aliases || []).join(', ') }}</span>
+          }
+        </mat-option>
+      }
+    </mat-autocomplete>
+  </mat-form-field>
+
+  @if (searched && !targets.length) {
+    <p class="f-s-12 text-muted">{{ util.appTranslate('stores_brand_merge_no_targets') }}</p>
+  }
+
+  <mat-form-field appearance="outline" class="full-width">
+    <mat-label>{{ util.appTranslate('stores_brand_merge_note') }}</mat-label>
+    <textarea matInput [(ngModel)]="note" rows="2"></textarea>
+  </mat-form-field>
+
+  <p class="f-s-12 text-error">{{ util.appTranslate('stores_brand_merge_warning') }}</p>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button type="button" (click)="dialogRef.close()">
+    {{ util.appTranslate('ts_cancel') }}
+  </button>
+  <button
+    mat-flat-button
+    color="warn"
+    type="button"
+    [disabled]="!selectedTarget || loading"
+    (click)="onSubmit()"
+  >
+    {{ util.appTranslate('stores_brand_merge_confirm') }}
+  </button>
+</mat-dialog-actions>

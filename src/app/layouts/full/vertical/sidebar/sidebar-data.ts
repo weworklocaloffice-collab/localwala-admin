@@ -280,6 +280,16 @@ export const navItems: NavItem[] = [
         route: '/admin/stores-management/subscriptions'
       },
       {
+        displayName: 'stores_customer_subscriptions',
+        iconName: 'tablerCornerDownRight',
+        route: '/admin/stores-management/customer-subscriptions'
+      },
+      {
+        displayName: 'stores_subscription_anomalies',
+        iconName: 'tablerCornerDownRight',
+        route: '/admin/stores-management/subscription-anomalies'
+      },
+      {
         displayName: 'stores_products',
         iconName: 'tablerCornerDownRight',
         route: '/admin/stores-management/products'
@@ -288,6 +298,11 @@ export const navItems: NavItem[] = [
         displayName: 'stores_inventory',
         iconName: 'tablerCornerDownRight',
         route: '/admin/stores-management/inventory'
+      },
+      {
+        displayName: 'stores_import_export',
+        iconName: 'tablerCornerDownRight',
+        route: '/admin/stores-management/import-export/stores'
       },
       {
         displayName: 'stores_promotions',
@@ -325,6 +340,11 @@ export const navItems: NavItem[] = [
         route: '/admin/stores-management/brands'
       },
       {
+        displayName: 'stores_brand_requests',
+        iconName: 'tablerCornerDownRight',
+        route: '/admin/stores-management/brand-requests'
+      },
+      {
         displayName: 'stores_attribute_templates',
         iconName: 'tablerCornerDownRight',
         route: '/admin/stores-management/attribute-templates'
@@ -342,7 +362,7 @@ export const navItems: NavItem[] = [
     ]
   },
   {
-    navCap: 'dairy_management',
+    navCap: 'local_services_management',
   },
   {
     displayName: 'ls_revenue',
@@ -375,9 +395,29 @@ export const navItems: NavItem[] = [
         route: '/admin/local-services-management/categories'
       },
       {
+        displayName: 'ls_subcategories',
+        iconName: 'tablerCornerDownRight',
+        route: '/admin/local-services-management/subcategories'
+      },
+      {
         displayName: 'ls_providers',
         iconName: 'tablerCornerDownRight',
         route: '/admin/local-services-management/providers'
+      },
+      {
+        displayName: 'ls_applications',
+        iconName: 'tablerCornerDownRight',
+        route: '/admin/local-services-management/applications'
+      },
+      {
+        displayName: 'ls_moderation',
+        iconName: 'tablerCornerDownRight',
+        route: '/admin/local-services-management/moderation'
+      },
+      {
+        displayName: 'ls_recurring',
+        iconName: 'tablerCornerDownRight',
+        route: '/admin/local-services-management/recurring'
       },
       {
         displayName: 'ls_bookings',
@@ -430,6 +470,16 @@ export const navItems: NavItem[] = [
         route: '/admin/local-services-management/promotions'
       },
       {
+        displayName: 'ls_marketing_packages',
+        iconName: 'tablerSpeakerphone',
+        route: '/admin/local-services-management/marketing-packages'
+      },
+      {
+        displayName: 'ls_marketing_campaigns',
+        iconName: 'tablerTarget',
+        route: '/admin/local-services-management/marketing-campaigns'
+      },
+      {
         displayName: 'ls_reports',
         iconName: 'tablerBarChart',
         route: '/admin/local-services-management/reports'
@@ -473,8 +523,36 @@ export const navItems: NavItem[] = [
         displayName: 'ls_availability_rules',
         iconName: 'tablerCalendarTime',
         route: '/admin/local-services-management/availability-rules'
+      },
+      {
+        displayName: 'ls_payments',
+        iconName: 'tablerCreditCard',
+        route: '/admin/local-services-management/payments'
+      },
+      {
+        displayName: 'ls_booking_config',
+        iconName: 'tablerSettings',
+        route: '/admin/local-services-management/booking-config'
+      },
+      {
+        displayName: 'ls_tax_config',
+        iconName: 'tablerReceiptTax',
+        route: '/admin/local-services-management/tax-config'
+      },
+      {
+        displayName: 'ls_permissions',
+        iconName: 'tablerLock',
+        route: '/admin/local-services-management/permissions'
+      },
+      {
+        displayName: 'ls_settings',
+        iconName: 'tablerAdjustments',
+        route: '/admin/local-services-management/settings'
       }
     ]
+  },
+  {
+    navCap: 'dairy_management',
   },
   {
     displayName: 'dairy_outlets',
@@ -490,7 +568,37 @@ export const navItems: NavItem[] = [
         displayName: 'dairy_outlets',
         iconName: 'tablerCornerDownRight',
         route: '/admin/dairy-management/outlets'
-      }
+      },
+      {
+        displayName: 'dairy_orders',
+        iconName: 'tablerCornerDownRight',
+        route: '/admin/dairy-management/orders'
+      },
+      {
+        displayName: 'dairy_runs',
+        iconName: 'tablerCornerDownRight',
+        route: '/admin/dairy-management/runs'
+      },
+      {
+        displayName: 'dairy_drivers',
+        iconName: 'tablerCornerDownRight',
+        route: '/admin/dairy-management/drivers'
+      },
+      {
+        displayName: 'dairy_coverage_requests',
+        iconName: 'tablerCornerDownRight',
+        route: '/admin/dairy-management/coverage-requests'
+      },
+      {
+        displayName: 'dairy_marketing',
+        iconName: 'tablerCornerDownRight',
+        route: '/admin/dairy-management/marketing'
+      },
+      {
+        displayName: 'dairy_reports',
+        iconName: 'tablerCornerDownRight',
+        route: '/admin/dairy-management/reports'
+      },
     ]
   },
   {
@@ -507,6 +615,11 @@ export const navItems: NavItem[] = [
         displayName: 'dairy_franchises',
         iconName: 'tablerCornerDownRight',
         route: '/admin/dairy-management/franchises'
+      },
+      {
+        displayName: 'dairy_commission_partners',
+        iconName: 'tablerCornerDownRight',
+        route: '/admin/dairy-management/commission-partners'
       },
       {
         displayName: 'dairy_compliance',
@@ -1090,6 +1203,99 @@ export const navItems: NavItem[] = [
   },
   {
     navCap: 'jhatka_management',
+  },
+  {
+    displayName: 'jhatka_overview',
+    iconName: 'tablerChartPie',
+    route: '/admin/jhatka-management/analytics'
+  },
+  {
+    displayName: 'jhatka_network_catalogue',
+    iconName: 'tablerBuildingStore',
+    route: 'admin/jhatka-management',
+    children: [
+      {
+        displayName: 'jhatka_outlets',
+        iconName: 'tablerCornerDownRight',
+        route: '/admin/jhatka-management/outlets'
+      },
+      {
+        displayName: 'jhatka_catalogue',
+        iconName: 'tablerCornerDownRight',
+        route: '/admin/jhatka-management/catalogue'
+      }
+    ]
+  },
+  {
+    displayName: 'jhatka_orders_support',
+    iconName: 'tablerShoppingCartBolt',
+    route: 'admin/jhatka-management',
+    children: [
+      {
+        displayName: 'jhatka_orders',
+        iconName: 'tablerCornerDownRight',
+        route: '/admin/jhatka-management/orders'
+      },
+      {
+        displayName: 'jhatka_order_support',
+        iconName: 'tablerCornerDownRight',
+        route: '/admin/jhatka-management/order-support'
+      },
+      {
+        displayName: 'jhatka_operations',
+        iconName: 'tablerCornerDownRight',
+        route: '/admin/jhatka-management/operations'
+      }
+    ]
+  },
+  {
+    displayName: 'jhatka_supply_compliance',
+    iconName: 'tablerPackages',
+    route: 'admin/jhatka-management',
+    children: [
+      {
+        displayName: 'jhatka_suppliers',
+        iconName: 'tablerCornerDownRight',
+        route: '/admin/jhatka-management/suppliers'
+      },
+      {
+        displayName: 'jhatka_supply',
+        iconName: 'tablerCornerDownRight',
+        route: '/admin/jhatka-management/supply'
+      },
+      {
+        displayName: 'jhatka_inventory',
+        iconName: 'tablerCornerDownRight',
+        route: '/admin/jhatka-management/inventory'
+      },
+      {
+        displayName: 'jhatka_recalls',
+        iconName: 'tablerCornerDownRight',
+        route: '/admin/jhatka-management/recalls'
+      },
+      {
+        displayName: 'jhatka_compliance',
+        iconName: 'tablerCornerDownRight',
+        route: '/admin/jhatka-management/compliance'
+      },
+      {
+        displayName: 'jhatka_variance',
+        iconName: 'tablerCornerDownRight',
+        route: '/admin/jhatka-management/variance'
+      }
+    ]
+  },
+  {
+    displayName: 'jhatka_finance',
+    iconName: 'tablerReceipt',
+    route: 'admin/jhatka-management',
+    children: [
+      {
+        displayName: 'jhatka_settlements',
+        iconName: 'tablerCornerDownRight',
+        route: '/admin/jhatka-management/settlements'
+      }
+    ]
   },
   {
     navCap: 'role_management',

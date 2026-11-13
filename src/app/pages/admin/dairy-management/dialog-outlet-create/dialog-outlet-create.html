@@ -1,0 +1,173 @@
+<h2 mat-dialog-title class="dialog-title">
+  <span class="title-text">{{ util.appTranslate('add_outlet') }}</span>
+  <button mat-icon-button mat-dialog-close class="close-btn">
+    <mat-icon>close</mat-icon>
+  </button>
+</h2>
+
+<mat-dialog-content>
+  <form [formGroup]="outletForm" class="pt-8">
+    <h3 class="f-s-14 f-w-600 m-b-8">{{ util.appTranslate('dairy_owner') }}</h3>
+    <div class="d-flex gap-16">
+      <mat-form-field appearance="outline" class="w-100">
+        <mat-label>{{ util.appTranslate('first_name_lbl') }}</mat-label>
+        <input matInput formControlName="firstName" />
+      </mat-form-field>
+      <mat-form-field appearance="outline" class="w-100">
+        <mat-label>{{ util.appTranslate('last_name_lbl') }}</mat-label>
+        <input matInput formControlName="lastName" />
+      </mat-form-field>
+    </div>
+    <div class="d-flex gap-16">
+      <mat-form-field appearance="outline" class="w-100">
+        <mat-label>{{ util.appTranslate('country_code') }}</mat-label>
+        <input matInput formControlName="countryCode" />
+      </mat-form-field>
+      <mat-form-field appearance="outline" class="w-100">
+        <mat-label>{{ util.appTranslate('mobile_number') }}</mat-label>
+        <input matInput formControlName="mobile" type="number" />
+      </mat-form-field>
+    </div>
+    <div class="d-flex gap-16">
+      <mat-form-field appearance="outline" class="w-100">
+        <mat-label>{{ util.appTranslate('email_lbl') }}</mat-label>
+        <input matInput formControlName="email" type="email" />
+      </mat-form-field>
+      <mat-form-field appearance="outline" class="w-100">
+        <mat-label>{{ util.appTranslate('password') }}</mat-label>
+        <input matInput [type]="showPassword ? 'password' : 'text'" formControlName="password" />
+      </mat-form-field>
+    </div>
+
+    <h3 class="f-s-14 f-w-600 m-t-8 m-b-8">{{ util.appTranslate('th_outlet') }}</h3>
+    <mat-form-field appearance="outline" class="w-100">
+      <mat-label>{{ util.appTranslate('th_business') }}</mat-label>
+      <input matInput formControlName="businessName" />
+    </mat-form-field>
+    <mat-form-field appearance="outline" class="w-100">
+      <mat-label>{{ util.appTranslate('th_model') }}</mat-label>
+      <mat-select formControlName="businessModel">
+        <mat-option value="direct">{{ util.appTranslate('dairy_model_direct') }}</mat-option>
+        <mat-option value="commission_partner">{{ util.appTranslate('dairy_model_commission_partner') }}</mat-option>
+        <mat-option value="franchise">{{ util.appTranslate('dairy_model_franchise') }}</mat-option>
+      </mat-select>
+    </mat-form-field>
+    <mat-form-field appearance="outline" class="w-100">
+      <mat-label>{{ util.appTranslate('short_description') }}</mat-label>
+      <input matInput formControlName="shortDescription" />
+    </mat-form-field>
+    <div class="d-flex gap-16">
+      <mat-form-field appearance="outline" class="w-100">
+        <mat-label>{{ util.appTranslate('th_city') }}</mat-label>
+        <mat-select formControlName="city" (selectionChange)="onCityChange()">
+          @for (city of listOfCities; track city._id) {
+            <mat-option [value]="city._id">{{ city.name }}</mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+      <mat-form-field appearance="outline" class="w-100">
+        <mat-label>{{ util.appTranslate('locality') }}</mat-label>
+        <mat-select formControlName="locality">
+          @for (loc of listOfLocalities; track loc._id) {
+            <mat-option [value]="loc._id">{{ loc.name }}</mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+    </div>
+
+    @if (model() === 'commission_partner') {
+      <h3 class="f-s-14 f-w-600 m-t-8 m-b-8">{{ util.appTranslate('dairy_commission_terms') }}</h3>
+      <div class="d-flex gap-16">
+        <mat-form-field appearance="outline" class="w-100">
+          <mat-label>{{ util.appTranslate('dairy_partner_code') }}</mat-label>
+          <input matInput formControlName="partnerCode" />
+          <mat-hint>{{ util.appTranslate('dairy_partner_code_hint') }}</mat-hint>
+        </mat-form-field>
+        <mat-form-field appearance="outline" class="w-100">
+          <mat-label>{{ util.appTranslate('dairy_partner_name') }}</mat-label>
+          <input matInput formControlName="partnerName" />
+        </mat-form-field>
+      </div>
+      <div class="d-flex gap-16">
+        <mat-form-field appearance="outline" class="w-100">
+          <mat-label>{{ util.appTranslate('th_commission') }}</mat-label>
+          <input matInput type="number" formControlName="commissionPercentage" />
+        </mat-form-field>
+        <mat-form-field appearance="outline" class="w-100">
+          <mat-label>{{ util.appTranslate('th_commission_basis') }}</mat-label>
+          <mat-select formControlName="commissionBasis">
+            <mat-option value="product_only">{{ util.appTranslate('dairy_basis_product_only') }}</mat-option>
+            <mat-option value="product_and_delivery">{{ util.appTranslate('dairy_basis_product_and_delivery') }}</mat-option>
+          </mat-select>
+        </mat-form-field>
+        <mat-form-field appearance="outline" class="w-100">
+          <mat-label>{{ util.appTranslate('th_payout_method') }}</mat-label>
+          <mat-select formControlName="payoutMethod">
+            <mat-option value="wallet">{{ util.appTranslate('dairy_method_wallet') }}</mat-option>
+            <mat-option value="bank">{{ util.appTranslate('dairy_method_bank') }}</mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
+      <mat-form-field appearance="outline" class="w-100">
+        <mat-label>{{ util.appTranslate('th_start_date') }}</mat-label>
+        <input matInput type="datetime-local" formControlName="partnerStartDate" />
+      </mat-form-field>
+    }
+
+    @if (model() === 'franchise') {
+      <h3 class="f-s-14 f-w-600 m-t-8 m-b-8">{{ util.appTranslate('dairy_add_franchise_title') }}</h3>
+      <div class="d-flex gap-16">
+        <mat-form-field appearance="outline" class="w-100">
+          <mat-label>{{ util.appTranslate('th_franchise_code') }}</mat-label>
+          <input matInput formControlName="franchiseCode" />
+        </mat-form-field>
+        <mat-form-field appearance="outline" class="w-100">
+          <mat-label>{{ util.appTranslate('th_franchise_name') }}</mat-label>
+          <input matInput formControlName="franchiseName" />
+        </mat-form-field>
+      </div>
+      <div class="d-flex gap-16">
+        <mat-form-field appearance="outline" class="w-100">
+          <mat-label>{{ util.appTranslate('th_revenue_share') }}</mat-label>
+          <input matInput type="number" formControlName="revenueSharePercentage" />
+        </mat-form-field>
+        <mat-form-field appearance="outline" class="w-100">
+          <mat-label>{{ util.appTranslate('th_revenue_share') }}</mat-label>
+          <mat-select formControlName="revenueShareBasis">
+            <mat-option value="product_only">{{ util.appTranslate('dairy_basis_product_only') }}</mat-option>
+            <mat-option value="product_and_delivery">{{ util.appTranslate('dairy_basis_product_and_delivery') }}</mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
+      <div class="d-flex gap-16">
+        <mat-form-field appearance="outline" class="w-100">
+          <mat-label>{{ util.appTranslate('th_joining_fee') }}</mat-label>
+          <input matInput type="number" formControlName="joiningFee" />
+        </mat-form-field>
+        <mat-form-field appearance="outline" class="w-100">
+          <mat-label>{{ util.appTranslate('th_royalty') }}</mat-label>
+          <input matInput type="number" formControlName="royalty" />
+        </mat-form-field>
+        <mat-form-field appearance="outline" class="w-100">
+          <mat-label>{{ util.appTranslate('th_supply_model') }}</mat-label>
+          <mat-select formControlName="supplyModel">
+            <mat-option value="platform_supplied">{{ util.appTranslate('dairy_supply_platform_supplied') }}</mat-option>
+            <mat-option value="local_procurement">{{ util.appTranslate('dairy_supply_local') }}</mat-option>
+            <mat-option value="mixed">{{ util.appTranslate('dairy_supply_mixed') }}</mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
+      <mat-form-field appearance="outline" class="w-100">
+        <mat-label>{{ util.appTranslate('th_start_date') }}</mat-label>
+        <input matInput type="datetime-local" formControlName="franchiseStartDate" />
+      </mat-form-field>
+    }
+  </form>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-stroked-button (click)="onCancel()">{{ util.appTranslate('ts_cancel') }}</button>
+  <button mat-flat-button color="primary" [disabled]="isSubmit" (click)="onSubmit()">
+    {{ util.appTranslate('ts_submit') }}
+  </button>
+</mat-dialog-actions>

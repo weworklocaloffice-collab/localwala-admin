@@ -22,6 +22,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { ApiService } from 'src/app/services/api-service';
 import { UtilService } from 'src/app/services/util-service';
 import { StoresListBase } from '../stores-list-base';
+import { ConfirmDialog } from 'src/app/ui-components/confirm-dialog/confirm-dialog';
 import { DialogDriverSuspend } from './dialog-driver-suspend/dialog-driver-suspend';
 
 /**
@@ -93,6 +94,15 @@ export class Drivers extends StoresListBase {
   }
 
   onReactivate(row: any) {
+    const ref = this.dialogRef.open(ConfirmDialog, {
+      data: { title: 'Reactivate driver?', subTitle: 'This restores dispatch eligibility.', okTitle: 'reactivate', closeTitle: 'ts_cancel' },
+    });
+    ref.afterClosed().subscribe((result: any) => {
+      if (result && result.action === 'confirm') this.doReactivate(row);
+    });
+  }
+
+  private doReactivate(row: any) {
     this.api.post_private('v1/admin/stores/drivers/' + row._id + '/reactivate', {}).subscribe({
       next: () => {
         this.util.onSuccess(this.util.appTranslate('stores_driver_reactivated'));

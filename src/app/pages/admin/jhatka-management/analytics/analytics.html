@@ -1,212 +1,475 @@
-<mat-card class="cardWithShadow">
-  <mat-card-header class="m-b-16">
-    <mat-card-title>Jhatka analytics</mat-card-title>
-    <mat-card-subtitle>
-      Money is rupees (the service converts once). "Contribution" excludes COGS and operator payouts — those are settled separately, so this is not profit.
-    </mat-card-subtitle>
-  </mat-card-header>
-
-  <mat-card-content>
-    <div class="row g-3 align-items-end">
-      <div class="col-12 col-md-3">
-        <mat-form-field appearance="outline" class="w-100">
-          <mat-label>From</mat-label>
-          <input matInput type="date" [(ngModel)]="from" />
-        </mat-form-field>
-      </div>
-      <div class="col-12 col-md-3">
-        <mat-form-field appearance="outline" class="w-100">
-          <mat-label>To</mat-label>
-          <input matInput type="date" [(ngModel)]="to" />
-        </mat-form-field>
-      </div>
-      <div class="col-12 col-md-6 d-flex gap-2">
-        <button mat-flat-button color="primary" (click)="getAnalytics()">Apply</button>
-        <button mat-stroked-button (click)="reset()">Last 30 days</button>
-      </div>
-    </div>
-
-    <p class="f-s-12 text-muted">
-      Window is capped server-side at 90 days.
-      <ng-container *ngIf="data">
-        Showing {{ data.period.from | date: 'dd MMM yyyy' }} — {{ data.period.to | date: 'dd MMM yyyy' }}.
-      </ng-container>
+<div class="page-head">
+  <div>
+    <div class="eyebrow">Jhatka operations</div>
+    <h1 class="page-title">Network performance</h1>
+    <p class="page-copy">
+      Orders, money and operational risk across the Jhatka network. Contribution is shown after refunds and wastage, but
+      before COGS and operator payouts, so it is not profit.
     </p>
+  </div>
+  <div class="head-actions">
+    <a mat-stroked-button routerLink="/admin/jhatka-management/outlets">
+      <mat-icon>storefront</mat-icon>
+      Outlets
+    </a>
+    <a mat-stroked-button routerLink="/admin/jhatka-management/catalogue">
+      <mat-icon>category</mat-icon>
+      Catalogue
+    </a>
+  </div>
+</div>
 
-    <div *ngIf="!isLoaded" class="p-y-24 text-center">
-      <mat-spinner diameter="32"></mat-spinner>
+<mat-card class="range-card">
+  <mat-card-content>
+    <div class="range-top">
+      <div class="preset-group">
+        <span class="range-label">Range</span>
+        <button
+          mat-stroked-button
+          type="button"
+          class="preset-button"
+          [class.preset-active]="activePreset === 7"
+          (click)="applyPreset(7)"
+        >
+          7 days
+        </button>
+        <button
+          mat-stroked-button
+          type="button"
+          class="preset-button"
+          [class.preset-active]="activePreset === 30"
+          (click)="applyPreset(30)"
+        >
+          30 days
+        </button>
+        <button
+          mat-stroked-button
+          type="button"
+          class="preset-button"
+          [class.preset-active]="activePreset === 90"
+          (click)="applyPreset(90)"
+        >
+          90 days
+        </button>
+      </div>
+
+      <div class="range-controls">
+        <mat-form-field appearance="outline" subscriptSizing="dynamic">
+          <mat-label>From</mat-label>
+          <input
+            matInput
+            type="date"
+            [(ngModel)]="from"
+            (ngModelChange)="onRangeChange()"
+            [max]="todayInput"
+          />
+        </mat-form-field>
+        <mat-form-field appearance="outline" subscriptSizing="dynamic">
+          <mat-label>To</mat-label>
+          <input
+            matInput
+            type="date"
+            [(ngModel)]="to"
+            (ngModelChange)="onRangeChange()"
+            [max]="todayInput"
+          />
+        </mat-form-field>
+        <button
+          mat-flat-button
+          color="primary"
+          type="button"
+          [disabled]="isLoading || rangeError.length > 0"
+          (click)="applyRange()"
+        >
+          Run report
+        </button>
+        <button mat-icon-button type="button" matTooltip="Refresh report" [disabled]="isLoading" (click)="refresh()">
+          <mat-icon>refresh</mat-icon>
+        </button>
+      </div>
     </div>
 
-    <ng-container *ngIf="isLoaded && data">
-      <div *ngIf="needsAttention" class="mb-3">
-        <div class="alert alert-warning mb-0" role="alert">
-          <strong>Needs attention.</strong>
-          {{ data.compliance.openRecalls }} open recall(s) and
-          {{ data.compliance.byStatus['expired'] || 0 }} expired compliance record(s) in this period.
-          An expiry blocks NEW orders at that outlet only — existing orders still deliver.
-        </div>
-      </div>
-
-      <!-- ORDER + MONEY -------------------------------------------------- -->
-      <div class="row g-3 mb-3">
-        <div class="col-12 col-md-3">
-          <div class="border rounded p-3 h-100">
-            <div class="f-s-12 text-muted">Orders</div>
-            <div class="f-s-24 f-w-600">{{ data.orders.count }}</div>
-          </div>
-        </div>
-        <div class="col-12 col-md-3">
-          <div class="border rounded p-3 h-100">
-            <div class="f-s-12 text-muted">Gross collected</div>
-            <div class="f-s-24 f-w-600">₹{{ data.contribution.grossCollected | number: '1.2-2' }}</div>
-            <div class="f-s-12 text-muted">Estimated minus refunds</div>
-          </div>
-        </div>
-        <div class="col-12 col-md-3">
-          <div class="border rounded p-3 h-100">
-            <div class="f-s-12 text-muted">Contribution after wastage</div>
-            <div class="f-s-24 f-w-600">₹{{ data.contribution.contributionAfterWastage | number: '1.2-2' }}</div>
-            <div class="f-s-12 text-muted">Not profit — COGS excluded</div>
-          </div>
-        </div>
-        <div class="col-12 col-md-3">
-          <div class="border rounded p-3 h-100">
-            <div class="f-s-12 text-muted">Refund rate</div>
-            <div class="f-s-24 f-w-600">{{ data.contribution.refundRate }}%</div>
-            <div class="f-s-12 text-muted">Above ~2% a variant refunds every week</div>
-          </div>
-        </div>
-      </div>
-
-      <!-- BR-06 / §3.3 --------------------------------------------------- -->
-      <div class="alert alert-info">
-        <strong>Absorbed overcharge: ₹{{ data.contribution.absorbedOvercharge | number: '1.2-2' }}</strong>
-        — weight above the estimate that LocalWala paid for and charged nobody (BR-06).
-        A rising figure means the COD ceiling is under-priced, or an outlet is
-        over-reporting preparation volume. Watch it against wastage, not on its own.
-      </div>
-
-      <!-- WASTAGE -------------------------------------------------------- -->
-      <div class="row g-3 mb-3">
-        <div class="col-12 col-md-6">
-          <mat-card class="cardWithShadow h-100">
-            <mat-card-header>
-              <mat-card-title>Wastage — ₹{{ data.wastage.value | number: '1.2-2' }}</mat-card-title>
-              <mat-card-subtitle>
-                {{ data.wastage.count }} record(s), {{ data.wastage.orderLinked }} order-linked.
-                Order-linked waste is the cost of doing business; the rest is a decision somebody made.
-              </mat-card-subtitle>
-            </mat-card-header>
-            <mat-card-content>
-              <table class="w-100 f-s-14">
-                <tr *ngFor="let row of toRows(data.wastage.byCause)">
-                  <td>{{ row[0] }}</td>
-                  <td class="text-end f-w-600">{{ row[1] }}</td>
-                </tr>
-              </table>
-            </mat-card-content>
-          </mat-card>
-        </div>
-
-        <div class="col-12 col-md-6">
-          <mat-card class="cardWithShadow h-100">
-            <mat-card-header>
-              <mat-card-title>Refunds — ₹{{ data.refunds.value | number: '1.2-2' }}</mat-card-title>
-              <mat-card-subtitle>{{ data.refunds.count }} refund document(s). Every refund is a document — order amounts are never mutated in place.</mat-card-subtitle>
-            </mat-card-header>
-            <mat-card-content>
-              <div class="f-s-12 text-muted f-w-600 text-uppercase mt-2">By reason</div>
-              <table class="w-100 f-s-14">
-                <tr *ngFor="let row of toRows(data.refunds.byReason)">
-                  <td>{{ row[0] }}</td>
-                  <td class="text-end f-w-600">{{ row[1] }}</td>
-                </tr>
-              </table>
-
-              <div class="f-s-12 text-muted f-w-600 text-uppercase mt-3">By status</div>
-              <table class="w-100 f-s-14">
-                <tr *ngFor="let row of toRows(data.refunds.byStatus)">
-                  <td>{{ row[0] }}</td>
-                  <td class="text-end f-w-600">{{ row[1] }}</td>
-                </tr>
-              </table>
-            </mat-card-content>
-          </mat-card>
-        </div>
-      </div>
-
-      <!-- MIX + COMPLIANCE ----------------------------------------------- -->
-      <div class="row g-3">
-        <div class="col-12 col-md-4">
-          <mat-card class="cardWithShadow h-100">
-            <mat-card-header>
-              <mat-card-title>Orders by business model</mat-card-title>
-              <mat-card-subtitle>LocalWala is Merchant of Record in all three.</mat-card-subtitle>
-            </mat-card-header>
-            <mat-card-content>
-              <table class="w-100 f-s-14">
-                <tr *ngFor="let m of businessModels">
-                  <td>{{ m }}</td>
-                  <td class="text-end f-w-600">{{ data.orders.byBusinessModel[m] || 0 }}</td>
-                </tr>
-              </table>
-            </mat-card-content>
-          </mat-card>
-        </div>
-
-        <div class="col-12 col-md-4">
-          <mat-card class="cardWithShadow h-100">
-            <mat-card-header>
-              <mat-card-title>Subscriptions</mat-card-title>
-              <mat-card-subtitle>
-                {{ data.subscriptions.count }} active subscription(s). Skipped occurrences are notified to the customer — never silent.
-              </mat-card-subtitle>
-            </mat-card-header>
-            <mat-card-content>
-              <div class="d-flex justify-content-between f-s-14">
-                <span>Occurrences generated</span><span class="f-w-600">{{ data.subscriptions.occurrencesGenerated }}</span>
-              </div>
-              <div class="d-flex justify-content-between f-s-14">
-                <span>Occurrences skipped</span><span class="f-w-600">{{ data.subscriptions.occurrencesSkipped }}</span>
-              </div>
-            </mat-card-content>
-          </mat-card>
-        </div>
-
-        <div class="col-12 col-md-4">
-          <mat-card class="cardWithShadow h-100">
-            <mat-card-header>
-              <mat-card-title>Compliance — {{ data.outlets.count }} outlet(s)</mat-card-title>
-              <mat-card-subtitle>Derived from expiry dates, never asserted by hand.</mat-card-subtitle>
-            </mat-card-header>
-            <mat-card-content>
-              <table class="w-100 f-s-14">
-                <tr *ngFor="let row of toRows(data.compliance.byStatus)">
-                  <td>{{ row[0] }}</td>
-                  <td class="text-end f-w-600">{{ row[1] }}</td>
-                </tr>
-              </table>
-            </mat-card-content>
-          </mat-card>
-        </div>
-      </div>
-
-      <!-- ORDER LIFECYCLE ----------------------------------------------- -->
-      <div class="mt-3">
-        <mat-card class="cardWithShadow">
-          <mat-card-header>
-            <mat-card-title>Orders by lifecycle</mat-card-title>
-          </mat-card-header>
-          <mat-card-content>
-            <div class="d-flex flex-wrap gap-3">
-              <div class="border rounded px-3 py-2" *ngFor="let row of toRows(data.orders.byLifecycle)">
-                <div class="f-s-12 text-muted">{{ row[0] }}</div>
-                <div class="f-s-18 f-w-600">{{ row[1] }}</div>
-              </div>
-            </div>
-          </mat-card-content>
-        </mat-card>
-      </div>
-    </ng-container>
+    <div class="range-meta">
+      <span>{{ periodLabel }}</span>
+      <span *ngIf="periodDays">{{ periodDays }} days</span>
+      <span *ngIf="rangeError" class="range-error">{{ rangeError }}</span>
+      <span *ngIf="!rangeError">Inclusive local dates. Maximum 90 days.</span>
+      <span *ngIf="timeStamp">Updated {{ timeStamp }}</span>
+    </div>
   </mat-card-content>
 </mat-card>
+
+<mat-progress-bar *ngIf="isLoading" class="load-bar" mode="indeterminate"></mat-progress-bar>
+
+<div *ngIf="isLoading && !data" class="state-panel">
+  <div class="state-icon"><mat-spinner diameter="30"></mat-spinner></div>
+  <div class="state-title">Loading network performance</div>
+  <div class="state-copy">Reading orders, refunds, wastage and compliance for the selected window.</div>
+</div>
+
+<div *ngIf="isLoaded && loadError && !data" class="state-panel">
+  <div class="state-icon"><mat-icon>cloud_off</mat-icon></div>
+  <div class="state-title">The report could not be loaded</div>
+  <div class="state-copy">{{ loadError }}</div>
+  <button mat-flat-button color="primary" type="button" (click)="refresh()">Try again</button>
+</div>
+
+<div *ngIf="data && loadError" class="inline-error">
+  <mat-icon>error_outline</mat-icon>
+  <span>{{ loadError }}</span>
+  <button mat-button type="button" (click)="refresh()">Retry</button>
+</div>
+
+<ng-container *ngIf="data">
+  <div *ngIf="needsAttention" class="attention">
+    <mat-icon>warning_amber</mat-icon>
+    <div>
+      <div class="attention-title">Needs attention</div>
+      <ul class="attention-list">
+        <li *ngFor="let item of attentionItems">
+          <strong>{{ item.label }}</strong> - {{ item.detail }}
+        </li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="kpi-grid">
+    <div class="kpi-card">
+      <div class="kpi-top">
+        <span class="kpi-label">Orders placed</span>
+        <span class="kpi-icon"><mat-icon>receipt_long</mat-icon></span>
+      </div>
+      <div class="kpi-value">{{ data.orders.count | number: '1.0-0' }}</div>
+      <div class="kpi-hint">
+        {{ completedOrders | number: '1.0-0' }} completed, {{ cancelledOrders | number: '1.0-0' }} cancelled or failed
+      </div>
+    </div>
+
+    <div class="kpi-card">
+      <div class="kpi-top">
+        <span class="kpi-label">Net order value</span>
+        <span class="kpi-icon"><mat-icon>payments</mat-icon></span>
+      </div>
+      <div class="kpi-value">{{ data.contribution.grossCollected | currency: 'INR' : 'symbol' : '1.0-0' }}</div>
+      <div class="kpi-hint">
+        Estimated order value less refunds. Final billed was
+        {{ data.orders.finalTotal | currency: 'INR' : 'symbol' : '1.0-0' }}.
+      </div>
+    </div>
+
+    <div class="kpi-card">
+      <div class="kpi-top">
+        <span class="kpi-label">Contribution after wastage</span>
+        <span class="kpi-icon"><mat-icon>account_balance_wallet</mat-icon></span>
+      </div>
+      <div class="kpi-value">
+        {{ data.contribution.contributionAfterWastage | currency: 'INR' : 'symbol' : '1.0-0' }}
+      </div>
+      <div class="kpi-hint">After refunds and wastage. Excludes COGS and operator payouts.</div>
+    </div>
+
+    <div class="kpi-card">
+      <div class="kpi-top">
+        <span class="kpi-label">Refund rate</span>
+        <span class="kpi-icon"><mat-icon>currency_exchange</mat-icon></span>
+      </div>
+      <div class="kpi-value">{{ data.contribution.refundRate | number: '1.2-2' }}%</div>
+      <div class="kpi-hint">
+        {{ data.refunds.count | number: '1.0-0' }} refund documents worth
+        {{ data.refunds.value | currency: 'INR' : 'symbol' : '1.0-0' }}.
+      </div>
+    </div>
+  </div>
+
+  <div class="analytics-grid">
+    <mat-card class="panel">
+      <mat-card-content>
+        <div class="panel-head">
+          <div>
+            <div class="panel-title">Money bridge</div>
+            <div class="panel-sub">From estimated order value to contribution, with refunds and wastage removed once.</div>
+          </div>
+          <span class="panel-badge">INR</span>
+        </div>
+
+        <div class="money-list">
+          <div class="money-row">
+            <span>Estimated order value</span>
+            <strong>{{ data.orders.estimatedTotal | currency: 'INR' : 'symbol' : '1.0-0' }}</strong>
+          </div>
+          <div class="money-row">
+            <span>Final billed after weighing</span>
+            <strong>{{ data.orders.finalTotal | currency: 'INR' : 'symbol' : '1.0-0' }}</strong>
+          </div>
+          <div class="money-row subtract">
+            <span>Less refunds against orders</span>
+            <strong>{{ data.orders.refundedTotal | currency: 'INR' : 'symbol' : '1.0-0' }}</strong>
+          </div>
+          <div class="money-row">
+            <span>Net order value</span>
+            <strong>{{ data.contribution.grossCollected | currency: 'INR' : 'symbol' : '1.0-0' }}</strong>
+          </div>
+          <div class="money-row subtract">
+            <span>Less wastage at estimated value</span>
+            <strong>{{ data.contribution.wastageValue | currency: 'INR' : 'symbol' : '1.0-0' }}</strong>
+          </div>
+          <div class="money-row emphasis">
+            <span>Contribution after wastage</span>
+            <strong>
+              {{ data.contribution.contributionAfterWastage | currency: 'INR' : 'symbol' : '1.0-0' }}
+            </strong>
+          </div>
+        </div>
+
+        <div class="composition">
+          <div class="composition-head">
+            <span>Where the estimated order value went</span>
+            <span>Share of estimated value</span>
+          </div>
+          <div class="stacked-bar">
+            <span class="seg-contribution" [style.width.%]="contributionShare"></span>
+            <span class="seg-wastage" [style.width.%]="wastageShare"></span>
+            <span class="seg-refunds" [style.width.%]="refundShare"></span>
+          </div>
+          <div class="legend">
+            <span class="legend-item">
+              <span class="legend-dot" style="background: #2f8f5b"></span>
+              Contribution {{ contributionShare | number: '1.0-0' }}%
+            </span>
+            <span class="legend-item">
+              <span class="legend-dot" style="background: #e6a23c"></span>
+              Wastage {{ wastageShare | number: '1.0-0' }}%
+            </span>
+            <span class="legend-item">
+              <span class="legend-dot" style="background: #d9534f"></span>
+              Refunds {{ refundShare | number: '1.0-0' }}%
+            </span>
+          </div>
+        </div>
+
+        <div class="money-note">
+          Contribution uses estimated order value as its base, not final billed, so refunds and wastage reconcile to one
+          figure. Tax collected inside estimated order value:
+          <strong>{{ data.orders.taxCollected | currency: 'INR' : 'symbol' : '1.0-0' }}</strong
+          >. This is not profit: COGS and operator payouts sit in settlement and are not part of this report.
+        </div>
+
+        <div *ngIf="data.contribution.absorbedOvercharge > 0" class="absorbed">
+          <mat-icon>scale</mat-icon>
+          <div>
+            <strong>{{ data.contribution.absorbedOvercharge | currency: 'INR' : 'symbol' : '1.0-0' }}</strong>
+            of weight above the estimate was absorbed by LocalWala. A rising figure can mean the COD ceiling is
+            under-priced or an outlet is over-reporting preparation volume.
+          </div>
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+    <mat-card class="panel">
+      <mat-card-content>
+        <div class="panel-head">
+          <div>
+            <div class="panel-title">Order lifecycle</div>
+            <div class="panel-sub">Current stage of every order created in this window.</div>
+          </div>
+          <span class="panel-badge" [class.good]="completionRate >= 80" [class.warn]="completionRate < 80">
+            {{ completionRate }}% completed
+          </span>
+        </div>
+
+        <div class="panel-scroll" *ngIf="lifecycleRows().length; else noOrders">
+          <div class="bar-list">
+            <div *ngFor="let row of lifecycleRows()">
+              <div class="bar-row-head">
+                <span>{{ row.label }}</span>
+                <strong>{{ row.count | number: '1.0-0' }}</strong>
+              </div>
+              <div class="track">
+                <span [style.width.%]="row.pct"></span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <ng-template #noOrders>
+          <div class="empty-line">No orders were placed in this window.</div>
+        </ng-template>
+
+        <div class="divider"></div>
+        <div class="mini-title">Business model mix</div>
+        <div class="bar-list">
+          <div *ngFor="let row of orderModelRows()">
+            <div class="bar-row-head">
+              <span>{{ row.label }}</span>
+              <strong>{{ row.count | number: '1.0-0' }} ({{ row.pct | number: '1.0-0' }}%)</strong>
+            </div>
+            <div class="track">
+              <span [style.width.%]="row.pct"></span>
+            </div>
+          </div>
+        </div>
+      </mat-card-content>
+    </mat-card>
+  </div>
+
+  <div class="analytics-grid three">
+    <mat-card class="panel">
+      <mat-card-content>
+        <div class="panel-head">
+          <div>
+            <div class="panel-title">Wastage</div>
+            <div class="panel-sub">Estimated value, linked to the cause recorded at the outlet.</div>
+          </div>
+          <span class="panel-badge warn">{{ data.wastage.count | number: '1.0-0' }} records</span>
+        </div>
+
+        <div class="summary-number">{{ data.wastage.value | currency: 'INR' : 'symbol' : '1.0-0' }}</div>
+        <div class="summary-line">
+          <span>Order-linked waste</span>
+          <strong
+            >{{ data.wastage.orderLinked | number: '1.0-0' }} ({{ wastageLinkedPct | number: '1.0-0' }}%)</strong
+          >
+        </div>
+        <div class="summary-line">
+          <span>Not order-linked</span>
+          <strong>{{ data.wastage.count - data.wastage.orderLinked | number: '1.0-0' }}</strong>
+        </div>
+
+        <div class="divider"></div>
+        <div class="mini-title">By cause</div>
+        <div class="bar-list" *ngIf="wastageCauseRows().length; else noWastage">
+          <div *ngFor="let row of wastageCauseRows()">
+            <div class="bar-row-head">
+              <span>{{ row.label }}</span>
+              <strong>{{ row.count | number: '1.0-0' }}</strong>
+            </div>
+            <div class="track">
+              <span class="fill-warm" [style.width.%]="row.pct"></span>
+            </div>
+          </div>
+        </div>
+        <ng-template #noWastage>
+          <div class="empty-line">No wastage was recorded in this window.</div>
+        </ng-template>
+
+        <div class="money-note">
+          Order-linked waste is the cost of a live order. Unlinked waste is a purchasing, storage or preparation
+          decision that should have an owner.
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+    <mat-card class="panel">
+      <mat-card-content>
+        <div class="panel-head">
+          <div>
+            <div class="panel-title">Refunds</div>
+            <div class="panel-sub">Every refund is a separate document; order totals are never rewritten.</div>
+          </div>
+          <span class="panel-badge" [class.danger]="refundActionCount > 0" [class.good]="refundActionCount === 0">
+            {{ refundActionCount }} need action
+          </span>
+        </div>
+
+        <div class="summary-number">{{ data.refunds.value | currency: 'INR' : 'symbol' : '1.0-0' }}</div>
+        <div class="summary-line">
+          <span>Refund documents</span>
+          <strong>{{ data.refunds.count | number: '1.0-0' }}</strong>
+        </div>
+        <div class="summary-line">
+          <span>Refund value vs estimated orders</span>
+          <strong>{{ data.contribution.refundRate | number: '1.2-2' }}%</strong>
+        </div>
+
+        <div class="divider"></div>
+        <div class="mini-title">By reason</div>
+        <div class="bar-list" *ngIf="refundReasonRows().length; else noRefunds">
+          <div *ngFor="let row of refundReasonRows()">
+            <div class="bar-row-head">
+              <span>{{ row.label }}</span>
+              <strong>{{ row.count | number: '1.0-0' }}</strong>
+            </div>
+            <div class="track">
+              <span class="fill-danger" [style.width.%]="row.pct"></span>
+            </div>
+          </div>
+        </div>
+        <ng-template #noRefunds>
+          <div class="empty-line">No refunds were raised in this window.</div>
+        </ng-template>
+
+        <div class="divider"></div>
+        <div class="mini-title">By status</div>
+        <div class="chip-row">
+          <span class="chip" *ngFor="let row of refundStatusRows()">
+            {{ row.label }} <strong>{{ row.count | number: '1.0-0' }}</strong>
+          </span>
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+    <mat-card class="panel">
+      <mat-card-content>
+        <div class="panel-head">
+          <div>
+            <div class="panel-title">Network and compliance</div>
+            <div class="panel-sub">Outlet and compliance figures are a current snapshot, not window-scoped.</div>
+          </div>
+          <span
+            class="panel-badge"
+            [class.danger]="expiredCompliance > 0 || data.compliance.openRecalls > 0"
+            [class.good]="expiredCompliance === 0 && data.compliance.openRecalls === 0"
+          >
+            {{ data.outlets.count | number: '1.0-0' }} outlets
+          </span>
+        </div>
+
+        <div class="mini-title">Outlet mix</div>
+        <div class="bar-list">
+          <div *ngFor="let row of outletModelRows()">
+            <div class="bar-row-head">
+              <span>{{ row.label }}</span>
+              <strong>{{ row.count | number: '1.0-0' }} ({{ row.pct | number: '1.0-0' }}%)</strong>
+            </div>
+            <div class="track">
+              <span class="fill-green" [style.width.%]="row.pct"></span>
+            </div>
+          </div>
+        </div>
+
+        <div class="divider"></div>
+        <div class="mini-title">Compliance snapshot</div>
+        <div class="chip-row" *ngIf="complianceRows().length; else noCompliance">
+          <span class="chip" *ngFor="let row of complianceRows()">
+            {{ row.label }} <strong>{{ row.count | number: '1.0-0' }}</strong>
+          </span>
+        </div>
+        <ng-template #noCompliance>
+          <div class="empty-line">No compliance records exist yet.</div>
+        </ng-template>
+
+        <div class="summary-line">
+          <span>Open recalls</span>
+          <strong>{{ data.compliance.openRecalls | number: '1.0-0' }}</strong>
+        </div>
+        <div class="summary-line">
+          <span>Subscriptions on record</span>
+          <strong>{{ data.subscriptions.count | number: '1.0-0' }}</strong>
+        </div>
+        <div class="summary-line">
+          <span>Occurrences generated in window</span>
+          <strong>{{ data.subscriptions.occurrencesGenerated | number: '1.0-0' }}</strong>
+        </div>
+        <div class="summary-line">
+          <span>Skipped for stock ({{ subscriptionSkipPct | number: '1.0-0' }}%)</span>
+          <strong>{{ data.subscriptions.occurrencesSkipped | number: '1.0-0' }}</strong>
+        </div>
+      </mat-card-content>
+    </mat-card>
+  </div>
+
+  <div class="footnote">
+    Money is in INR. Refund rate is refund document value divided by estimated order value. Order, refund, wastage and
+    subscription occurrence figures are scoped to the selected window. The service computes revenue once; this page does
+    not re-sum it in the browser.
+  </div>
+</ng-container>

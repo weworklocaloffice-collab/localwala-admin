@@ -41,13 +41,18 @@
     </div>
   }
 
-  <p class="m-b-16 f-s-14 text-muted">
-    {{
-      approve
-        ? util.appTranslate('ts_approve_outlet_body')
-        : util.appTranslate('ts_reject_outlet_body')
-    }}
-  </p>
+  @if (approve) {
+    <div class="mb-16 p-16 f-s-14" style="border-left: 4px solid #1976d2; background: #f2f7fc">
+      <div class="f-w-600">Requested model: {{ row.requestedBusinessModel === 'commission_partner' ? 'Commission partner' : row.requestedBusinessModel === 'franchise' ? 'Franchise' : 'Not recorded' }}</div>
+      <div class="m-t-4">Approval verifies the application and unlocks outlet setup. It does not assign the final business model or enable trading. Create the agreement from Dairy management; a franchise with an upfront fee can trade after payment.</div>
+    </div>
+  }
+
+  @if (!approve) {
+    <p class="m-b-16 f-s-14 text-muted">
+      {{ util.appTranslate('ts_reject_outlet_body') }}
+    </p>
+  }
 
   <form [formGroup]="reviewForm">
     <mat-form-field appearance="outline" class="w-100">

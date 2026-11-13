@@ -8,6 +8,14 @@
     @if (!isLoaded) {
       <div class="p-24 text-center text-muted">{{ util.appTranslate('ts_loading') }}</div>
     } @else {
+      <h4>Gateway payout (RazorpayX)</h4>
+      <mat-form-field appearance="outline" class="w-100">
+        <mat-label>Fund account ID</mat-label>
+        <input matInput [(ngModel)]="fundAccountId" placeholder="fa_xxxxx" />
+      </mat-form-field>
+      <button mat-raised-button color="primary" (click)="saveFundAccount()" [disabled]="savingFund">
+        {{ savingFund ? 'Saving...' : 'Save fund account' }}
+      </button>
       <h4>Documents ({{ documents.length }})</h4>
       @for (d of documents; track d._id) {
         <div class="f-s-14">{{ d.kind }} — {{ d.status }}</div>

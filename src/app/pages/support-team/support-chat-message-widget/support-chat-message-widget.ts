@@ -54,6 +54,8 @@ export class SupportChatMessageWidget implements OnDestroy {
   pinBusy: boolean = false;
   assignedAgentName: string = '';
   orderSnapshot: any = null;
+  dairyOrderInfo: any = null;
+  dairyBusinessName: string = '';
   // Every state change on the ticket appends here server-side. Agents and
   // supervisors previously had no way to see who touched a ticket, when it
   // was transferred, or whether the SLA breached.
@@ -171,7 +173,12 @@ export class SupportChatMessageWidget implements OnDestroy {
               this.supportForId = info.reportIssue;
             } else if (this.supportFor == 'restaurant_complaints') {
               this.supportForId = info.restaurantComplaints;
+            } else if (this.supportFor == 'dairy_orders') {
+              this.supportForId = info.dairyOrders;
+            } else if (this.supportFor == 'dairy_partner') {
+              this.supportForId = info.business?._id || '';
             }
+            this.dairyBusinessName = info.business?.name || '';
           }
 
           const orderInfo = response.orderInfo;
@@ -181,6 +188,8 @@ export class SupportChatMessageWidget implements OnDestroy {
             this.orderStatus = orderInfo.status;
             this.orderType = orderInfo.orderTo == 'homedelivery' ? this.util.appTranslate('home_delivery') : this.util.appTranslate('takeaway');
           }
+
+          this.dairyOrderInfo = response.dairyOrderInfo || null;
 
           const bookingInfo = response.bookingInfo;
           if (bookingInfo && bookingInfo != null && bookingInfo.id && bookingInfo.id != null && bookingInfo.id != '') {

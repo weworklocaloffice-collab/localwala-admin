@@ -1,41 +1,635 @@
-<mat-card class="cardWithShadow">
-  <mat-card-header class="m-b-16">
-    <mat-card-title>Outlet {{ outlet?.name }}</mat-card-title>
-    <mat-card-subtitle>{{ outlet?.outletCode }} · {{ outlet?.businessModel }} · {{ outlet?.status }}</mat-card-subtitle>
-  </mat-card-header>
+<div *ngIf="!isLoaded" class="d-flex align-center justify-center p-y-40">
+  <mat-progress-spinner diameter="34" mode="indeterminate"></mat-progress-spinner>
+</div>
 
-  <mat-card-content>
-    <div *ngIf="!isLoaded" class="m-b-16">Loading…</div>
-    <div *ngIf="isLoaded && !outlet">Outlet not found.</div>
+<div *ngIf="isLoaded && !outlet" class="cardWithShadow p-24 text-center">
+  <mat-icon class="f-s-36 text-muted">storefront</mat-icon>
+  <div class="f-w-600 m-t-8">Outlet not found</div>
+  <div class="f-s-13 text-muted m-t-4">It may have been removed, or the link is wrong.</div>
+  <a mat-stroked-button routerLink="/admin/jhatka-management/outlets" class="m-t-16">
+    Back to outlets
+  </a>
+</div>
 
-    <div *ngIf="outlet">
-      <p class="f-s-14">
-        {{ outlet.address?.line1 }} · {{ outlet.city?.name }} ·
-        business {{ outlet.business }}
+<ng-container *ngIf="isLoaded && outlet">
+  <div class="detail-head">
+    <div>
+      <a mat-button routerLink="/admin/jhatka-management/outlets" class="p-l-0">
+        <mat-icon>arrow_back</mat-icon>
+        Outlet network
+      </a>
+      <div class="eyebrow m-t-8">Outlet profile</div>
+      <h1 class="page-title">{{ outlet.name }}</h1>
+      <p class="page-copy">
+        {{ outlet.outletCode }} &middot; {{ businessName }} &middot; {{ cityName || 'City not set' }}
       </p>
+    </div>
+    <div class="d-flex align-center gap-8 flex-wrap">
+      <mat-progress-spinner *ngIf="isPatching" diameter="22" mode="indeterminate"></mat-progress-spinner>
+      <a mat-stroked-button [routerLink]="['/admin/jhatka-management/outlets', outletId, 'edit']">
+        <mat-icon>edit</mat-icon>
+        Edit
+      </a>
+      <button
+        mat-flat-button
+        color="primary"
+        type="button"
+        [matMenuTriggerFor]="statusMenu"
+        [disabled]="!allowedTransitions.length || isPatching"
+      >
+        <mat-icon>swap_horiz</mat-icon>
+        Change status
+      </button>
+      <mat-menu #statusMenu="matMenu">
+        <button
+          mat-menu-item
+          *ngFor="let next of allowedTransitions"
+          type="button"
+          (click)="openStatusDialog(next)"
+        >
+          <mat-icon>{{ next === 'active' ? 'check_circle' : next === 'closed' ? 'lock' : 'swap_horiz' }}</mat-icon>
+          <span>{{ statusLabelFor(next) }}</span>
+        </button>
+      </mat-menu>
+    </div>
+  </div>
 
-      <div class="d-flex flex-wrap gap-12 m-b-24">
-        <button mat-raised-button color="primary" (click)="setStatus('active')">Activate</button>
-        <button mat-button color="warn" (click)="setStatus('suspended')">Suspend</button>
-        <button mat-button color="warn" (click)="setStatus('closed')">Close</button>
+  <mat-card class="cardWithShadow hero-card m-b-20">
+    <div
+      class="hero-cover"
+      [style.background-image]="
+        outlet.cover
+          ? 'url(' + mediaHref(outlet.cover) + ')'
+          : 'linear-gradient(135deg, #1f4d3a, #2f7d5a)'
+      "
+    ></div>
+    <div class="hero-body">
+      <img
+        *ngIf="outlet.logo; else heroInitials"
+        class="hero-logo"
+        [src]="mediaHref(outlet.logo)"
+        alt=""
+      />
+      <ng-template #heroInitials>
+        <div class="hero-logo">{{ outlet.name.charAt(0) }}</div>
+      </ng-template>
+      <div>
+        <div class="d-flex align-center gap-8 flex-wrap">
+          <div class="hero-name">{{ outlet.name }}</div>
+          <span class="status-chip" [ngClass]="'status-' + outlet.status">
+            <span class="status-dot"></span>
+            {{ statusLabel }}
+          </span>
+        </div>
+        <div class="hero-meta">
+          {{ modelLabel(outlet.businessModel) }}
+          <span *ngIf="businessCode"> &middot; {{ businessCode }}</span>
+          <span *ngIf="localityName"> &middot; {{ localityName }}</span>
+        </div>
       </div>
-
-      <h3 class="f-s-16 f-w-600">Compliance alongside ({{ compliance.length }})</h3>
-      <p class="f-s-14">"Is this shop legal to sell meat" is the first question — asked here, answered from the other collection.</p>
-      <div class="table-responsive">
-        <table mat-table [dataSource]="compliance" class="w-100">
-          <ng-container matColumnDef="record">
-            <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1">Record</th>
-            <td mat-cell *matCellDef="let element">
-              <div class="f-w-600">FSSAI {{ element.fssai?.licenceNumber }}</div>
-              <div class="m-t-4 f-s-12 text-muted">expires {{ element.fssai?.expiresAt }} · {{ element.status }}</div>
-            </td>
-          </ng-container>
-
-          <tr mat-header-row *matHeaderRowDef="['record']"></tr>
-          <tr mat-row *matRowDef="let row; columns: ['record'];"></tr>
-        </table>
+      <div class="hero-actions">
+        <span class="chip" *ngIf="outlet.verified">Verified</span>
+        <span class="chip">{{ orderConfig.pickupEnabled ? 'Pickup on' : 'Delivery only' }}</span>
+        <span class="chip">{{ orderConfig.codEnabled ? 'COD on' : 'Prepaid' }}</span>
       </div>
     </div>
-  </mat-card-content>
-</mat-card>
+    <div class="p-x-24 p-b-16 audit-line">
+      Created {{ outlet.createdAt | date: 'mediumDate' }}
+      <span *ngIf="outlet.updatedAt"> &middot; last updated {{ outlet.updatedAt | date: 'medium' }}</span>
+      <span *ngIf="outlet.activatedAt"> &middot; activated {{ outlet.activatedAt | date: 'mediumDate' }}</span>
+    </div>
+  </mat-card>
+
+  <div class="kpi-grid">
+    <div class="kpi-card">
+      <div class="kpi-label">Compliance</div>
+      <div class="kpi-value">{{ complianceLabel }}</div>
+      <div class="kpi-hint">
+        <ng-container *ngIf="fssai?.expiresAt; else noExpiry">
+          Licence expires {{ fssai.expiresAt | date: 'mediumDate' }}
+          <span *ngIf="daysToExpiry !== null">({{ daysToExpiry }} d)</span>
+        </ng-container>
+        <ng-template #noExpiry>No FSSAI expiry on file</ng-template>
+      </div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-label">Coverage</div>
+      <div class="kpi-value">{{ serviceArea.radiusKm || 0 }} km</div>
+      <div class="kpi-hint">
+        <span *ngIf="serviceArea.extendedRadiusKm">
+          +{{ serviceArea.extendedRadiusKm }} km outer ring
+        </span>
+        <span *ngIf="!serviceArea.extendedRadiusKm">Core radius only</span>
+      </div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-label">Delivery promise</div>
+      <div class="kpi-value">{{ orderConfig.minDeliveryMinutes || 25 }} min</div>
+      <div class="kpi-hint">{{ orderConfig.orderPrepMinutes || 15 }} min prep time</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-label">Capacity</div>
+      <div class="kpi-value">{{ serviceArea.maxActiveDeliveries || 0 }}</div>
+      <div class="kpi-hint">
+        active deliveries
+        <span *ngIf="serviceArea.dailyOrderCapacity"> &middot; {{ serviceArea.dailyOrderCapacity }}/day</span>
+      </div>
+    </div>
+  </div>
+
+  <mat-card class="cardWithShadow">
+    <mat-card-content>
+      <mat-tab-group animationDuration="180ms">
+        <mat-tab label="Overview">
+          <div class="p-t-20">
+            <div class="section-grid">
+              <div class="info-section">
+                <div class="info-title">Business and ownership</div>
+                <div class="info-row">
+                  <div class="info-label">Business</div>
+                  <div class="info-value">{{ businessName }}</div>
+                </div>
+                <div class="info-row">
+                  <div class="info-label">Business code</div>
+                  <div class="info-value">{{ businessCode || 'Not set' }}</div>
+                </div>
+                <div class="info-row">
+                  <div class="info-label">Business model</div>
+                  <div class="info-value">{{ modelLabel(outlet.businessModel) }}</div>
+                </div>
+                <div class="info-row">
+                  <div class="info-label">Outlet code</div>
+                  <div class="info-value">{{ outlet.outletCode }}</div>
+                </div>
+                <div class="info-row">
+                  <div class="info-label">Status</div>
+                  <div class="info-value">{{ statusLabel }}</div>
+                </div>
+                <div class="info-row" *ngIf="outlet.statusReason">
+                  <div class="info-label">Status reason</div>
+                  <div class="info-value">{{ outlet.statusReason }}</div>
+                </div>
+              </div>
+
+              <div class="info-section">
+                <div class="info-title">Counter contact</div>
+                <div class="info-row">
+                  <div class="info-label">Contact name</div>
+                  <div class="info-value">{{ outlet.contact?.name || 'Not set' }}</div>
+                </div>
+                <div class="info-row">
+                  <div class="info-label">Mobile</div>
+                  <div class="info-value">{{ contactMobile || 'Not set' }}</div>
+                </div>
+                <div class="info-row">
+                  <div class="info-label">Email</div>
+                  <div class="info-value">{{ outlet.contact?.email || 'Not set' }}</div>
+                </div>
+                <div class="info-row">
+                  <div class="info-label">Own delivery fleet</div>
+                  <div class="info-value">{{ outlet.ownDeliveryPartner ? 'Yes' : 'No' }}</div>
+                </div>
+                <div class="info-row">
+                  <div class="info-label">Driver payout</div>
+                  <div class="info-value">{{ (outlet.driverPayoutMode || 'platform_pays').replace('_', ' ') }}</div>
+                </div>
+              </div>
+
+              <div class="info-section">
+                <div class="info-title">Address</div>
+                <div class="address-block">
+                  <div *ngFor="let line of addressLines">{{ line }}</div>
+                  <div>{{ localityName }}</div>
+                  <div>{{ cityName }}</div>
+                  <div *ngIf="!addressLines.length" class="text-muted">No address recorded.</div>
+                </div>
+              </div>
+
+              <div class="info-section">
+                <div class="info-title">Location</div>
+                <div class="info-row">
+                  <div class="info-label">Coordinates</div>
+                  <div class="info-value" *ngIf="outlet.location?.coordinates; else noCoordinates">
+                    {{ outlet.location?.coordinates?.[1] }}, {{ outlet.location?.coordinates?.[0] }}
+                  </div>
+                  <ng-template #noCoordinates>
+                    <div class="info-value">Not pinned</div>
+                  </ng-template>
+                </div>
+                <div class="info-row">
+                  <div class="info-label">Locality</div>
+                  <div class="info-value">{{ localityName || 'Not set' }}</div>
+                </div>
+                <div class="info-row">
+                  <div class="info-label">City</div>
+                  <div class="info-value">{{ cityName || 'Not set' }}</div>
+                </div>
+                <div class="m-t-12">
+                  <a
+                    *ngIf="mapLink"
+                    mat-stroked-button
+                    [href]="mapLink"
+                    target="_blank"
+                    rel="noopener"
+                  >
+                    <mat-icon>map</mat-icon>
+                    Open in maps
+                  </a>
+                </div>
+              </div>
+            </div>
+
+            <div class="info-section m-t-16" *ngIf="outlet.description">
+              <div class="info-title">About this outlet</div>
+              <div class="about-copy">{{ outlet.description }}</div>
+            </div>
+          </div>
+        </mat-tab>
+
+        <mat-tab label="Operations">
+          <div class="p-t-20">
+            <div class="section-grid">
+              <div class="info-section">
+                <div class="info-title">Service area</div>
+                <div class="info-row">
+                  <div class="info-label">Core radius</div>
+                  <div class="info-value">{{ serviceArea.radiusKm || 0 }} km</div>
+                </div>
+                <div class="info-row">
+                  <div class="info-label">Extended radius</div>
+                  <div class="info-value">
+                    {{ serviceArea.extendedRadiusKm || 0 }} km
+                    <span *ngIf="serviceArea.extendedRadiusKm">
+                      at {{ serviceArea.extendedDeliveryFee | paise }}
+                    </span>
+                  </div>
+                </div>
+                <div class="info-row">
+                  <div class="info-label">Max active deliveries</div>
+                  <div class="info-value">{{ serviceArea.maxActiveDeliveries || 0 }}</div>
+                </div>
+                <div class="info-row">
+                  <div class="info-label">Daily capacity</div>
+                  <div class="info-value">
+                    {{ serviceArea.dailyOrderCapacity ? serviceArea.dailyOrderCapacity + ' orders' : 'No cap' }}
+                  </div>
+                </div>
+                <div class="info-row">
+                  <div class="info-label">Locality coverage</div>
+                  <div class="info-value">
+                    {{ serviceArea.localities?.length || 0 }} localities
+                  </div>
+                </div>
+              </div>
+
+              <div class="info-section">
+                <div class="info-title">Order promise</div>
+                <div class="info-row">
+                  <div class="info-label">Preparation time</div>
+                  <div class="info-value">{{ orderConfig.orderPrepMinutes || 15 }} min</div>
+                </div>
+                <div class="info-row">
+                  <div class="info-label">Minimum delivery</div>
+                  <div class="info-value">{{ orderConfig.minDeliveryMinutes || 25 }} min</div>
+                </div>
+                <div class="info-row">
+                  <div class="info-label">Weight tolerance</div>
+                  <div class="info-value">{{ orderConfig.weightTolerancePct ?? 5 }}%</div>
+                </div>
+                <div class="info-row">
+                  <div class="info-label">Inner-ring delivery fee</div>
+                  <div class="info-value">{{ orderConfig.deliveryFeeType || 'free' }}</div>
+                </div>
+                <div class="info-row">
+                  <div class="info-label">COD range</div>
+                  <div class="info-value">
+                    {{ orderConfig.minCodValue | paise }} - {{ orderConfig.maxCodValue | paise }}
+                  </div>
+                </div>
+              </div>
+
+              <div class="info-section span-2">
+                <div class="info-title">Operating hours</div>
+                <table class="hours-table">
+                  <tr *ngFor="let row of operatingHours">
+                    <td>{{ row.label }}</td>
+                    <td [class.closed-text]="row.isClosed">
+                      {{
+                        row.isClosed
+                          ? 'Closed'
+                          : row.configured
+                            ? (row.from || 'Not set') + ' - ' + (row.to || 'Not set')
+                            : 'Not configured'
+                      }}
+                    </td>
+                  </tr>
+                </table>
+              </div>
+
+              <div class="info-section">
+                <div class="info-title">Customer options</div>
+                <div class="chip-row m-b-12">
+                  <span class="chip">{{ orderConfig.pickupEnabled ? 'Pickup enabled' : 'Pickup off' }}</span>
+                  <span class="chip">{{ orderConfig.codEnabled ? 'Cash on delivery' : 'No COD' }}</span>
+                  <span class="chip">{{ orderConfig.onlinePaymentEnabled ? 'Online payments' : 'No online payments' }}</span>
+                  <span class="chip">{{ orderConfig.acceptOrdersManually ? 'Manual acceptance' : 'Auto acceptance' }}</span>
+                  <span class="chip">{{ orderConfig.absorbOvercharge ? 'Absorbs overcharge' : 'Overcharge escalated' }}</span>
+                </div>
+                <div class="toggle-row">
+                  <div>
+                    <div class="toggle-title">Counter pickup</div>
+                    <div class="toggle-copy">
+                      Let customers collect completed orders from this outlet. Saves immediately.
+                    </div>
+                  </div>
+                  <mat-slide-toggle
+                    color="primary"
+                    [checked]="pickupEnabled"
+                    [disabled]="isPatching"
+                    (change)="togglePickup($event.checked)"
+                  ></mat-slide-toggle>
+                </div>
+              </div>
+
+              <div class="info-section">
+                <div class="info-title">Quality guardrails</div>
+                <div class="info-row">
+                  <div class="info-label">Intake temperature</div>
+                  <div class="info-value">{{ outlet.qualityPolicy?.maxIntakeTemperatureC ?? 8 }} C max</div>
+                </div>
+                <div class="info-row">
+                  <div class="info-label">Storage band</div>
+                  <div class="info-value">
+                    {{ outlet.qualityPolicy?.minStorageTemperatureC ?? 0 }} - {{ outlet.qualityPolicy?.maxStorageTemperatureC ?? 4 }} C
+                  </div>
+                </div>
+                <div class="info-row">
+                  <div class="info-label">Max transit</div>
+                  <div class="info-value">{{ outlet.qualityPolicy?.maxTransitMinutes ?? 45 }} min</div>
+                </div>
+                <div class="info-row">
+                  <div class="info-label">Raw shelf life</div>
+                  <div class="info-value">{{ outlet.qualityPolicy?.shelfLifeHoursRaw ?? 48 }} h</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </mat-tab>
+
+        <mat-tab label="Compliance">
+          <div class="p-t-20">
+            <div class="notice-box m-b-16" *ngIf="!complianceRecord">
+              <mat-icon>warning</mat-icon>
+              <div>
+                <div class="f-w-600">No compliance record</div>
+                <div class="f-s-13">
+                  This outlet cannot be activated until an unexpired FSSAI record exists. Create one from the Compliance module.
+                </div>
+                <a mat-stroked-button routerLink="/admin/jhatka-management/compliance" class="m-t-12">
+                  Open compliance
+                </a>
+              </div>
+            </div>
+
+            <div class="notice-box m-b-16" [class.ok]="complianceStatus === 'valid'" *ngIf="complianceRecord">
+              <mat-icon>{{ complianceStatus === 'valid' ? 'verified' : 'warning' }}</mat-icon>
+              <div>
+                <div class="f-w-600">{{ complianceLabel }}</div>
+                <div class="f-s-13">
+                  <ng-container *ngIf="fssai?.expiresAt">
+                    FSSAI expires {{ fssai.expiresAt | date: 'mediumDate' }}.
+                  </ng-container>
+                  <span *ngIf="complianceStatus !== 'valid'">
+                    Activation requires an unexpired FSSAI licence. Resolve this record before moving the outlet to Active.
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            <div class="section-grid">
+              <div class="info-section">
+                <div class="info-title">FSSAI licence</div>
+                <div class="info-row">
+                  <div class="info-label">Licence number</div>
+                  <div class="info-value">{{ fssai?.licenceNumber || 'Not set' }}</div>
+                </div>
+                <div class="info-row">
+                  <div class="info-label">Category</div>
+                  <div class="info-value">{{ (fssai?.category || 'not set').replace('_', ' ') }}</div>
+                </div>
+                <div class="info-row">
+                  <div class="info-label">Issued</div>
+                  <div class="info-value">{{ fssai?.issuedAt ? (fssai.issuedAt | date: 'mediumDate') : 'Not set' }}</div>
+                </div>
+                <div class="info-row">
+                  <div class="info-label">Expires</div>
+                  <div class="info-value">{{ fssai?.expiresAt ? (fssai.expiresAt | date: 'mediumDate') : 'Not set' }}</div>
+                </div>
+                <div class="info-row">
+                  <div class="info-label">Days remaining</div>
+                  <div class="info-value">{{ daysToExpiry !== null ? daysToExpiry : 'Unknown' }}</div>
+                </div>
+                <div class="m-t-12" *ngIf="fssai?.documentUrl">
+                  <a mat-stroked-button [href]="mediaHref(fssai.documentUrl)" target="_blank" rel="noopener">
+                    <mat-icon>open_in_new</mat-icon>
+                    View FSSAI document
+                  </a>
+                </div>
+              </div>
+
+              <div class="info-section">
+                <div class="info-title">Tax and legal</div>
+                <div class="info-row">
+                  <div class="info-label">GSTIN</div>
+                  <div class="info-value">
+                    {{ complianceRecord?.gstin || outlet.taxIdentity?.gstin || 'Not set' }}
+                  </div>
+                </div>
+                <div class="info-row">
+                  <div class="info-label">Trade licence</div>
+                  <div class="info-value">
+                    {{ complianceRecord?.tradeLicence?.number || 'Not set' }}
+                  </div>
+                </div>
+                <div class="info-row">
+                  <div class="info-label">Trade licence expiry</div>
+                  <div class="info-value">
+                    {{
+                      complianceRecord?.tradeLicence?.expiresAt
+                        ? (complianceRecord.tradeLicence.expiresAt | date: 'mediumDate')
+                        : 'Not set'
+                    }}
+                  </div>
+                </div>
+                <div class="info-row">
+                  <div class="info-label">Compliance evaluated</div>
+                  <div class="info-value">
+                    {{
+                      complianceRecord?.statusEvaluatedAt
+                        ? (complianceRecord.statusEvaluatedAt | date: 'medium')
+                        : 'Not evaluated'
+                    }}
+                  </div>
+                </div>
+                <div class="info-row">
+                  <div class="info-label">Documents</div>
+                  <div class="info-value">{{ complianceRecord?.documents?.length || 0 }}</div>
+                </div>
+              </div>
+
+              <div class="info-section">
+                <div class="info-title">Hygiene checks</div>
+                <div class="info-row">
+                  <div class="info-label">Checks recorded</div>
+                  <div class="info-value">{{ complianceRecord?.hygieneChecks?.length || 0 }}</div>
+                </div>
+                <div class="info-row">
+                  <div class="info-label">Last check</div>
+                  <div class="info-value">
+                    {{
+                      complianceRecord?.hygieneChecks?.length
+                        ? (complianceRecord.hygieneChecks[complianceRecord.hygieneChecks.length - 1].checkedAt | date: 'mediumDate')
+                        : 'No checks'
+                    }}
+                  </div>
+                </div>
+              </div>
+
+              <div class="info-section">
+                <div class="info-title">Supplier compliance</div>
+                <div class="info-row">
+                  <div class="info-label">Verified suppliers</div>
+                  <div class="info-value">{{ complianceRecord?.supplierCompliance?.verifiedCount || 0 }}</div>
+                </div>
+                <div class="info-row">
+                  <div class="info-label">Non-compliant</div>
+                  <div class="info-value">{{ complianceRecord?.supplierCompliance?.nonCompliantCount || 0 }}</div>
+                </div>
+                <div class="info-row">
+                  <div class="info-label">Last evaluated</div>
+                  <div class="info-value">
+                    {{
+                      complianceRecord?.supplierCompliance?.lastEvaluatedAt
+                        ? (complianceRecord.supplierCompliance.lastEvaluatedAt | date: 'medium')
+                        : 'Not evaluated'
+                    }}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </mat-tab>
+
+        <mat-tab label="Money">
+          <div class="p-t-20">
+            <div class="section-grid">
+              <div class="info-section">
+                <div class="info-title">Settlement</div>
+                <div class="info-row">
+                  <div class="info-label">Cycle</div>
+                  <div class="info-value">{{ paymentConfig.settlementCycle || 'weekly' }}</div>
+                </div>
+                <div class="info-row">
+                  <div class="info-label">Payout method</div>
+                  <div class="info-value">{{ paymentConfig.payoutMethod || 'bank' }}</div>
+                </div>
+                <div class="info-row">
+                  <div class="info-label">TDS applicable</div>
+                  <div class="info-value">{{ paymentConfig.tdsApplicable ? 'Yes' : 'No' }}</div>
+                </div>
+                <div class="info-row">
+                  <div class="info-label">Account name</div>
+                  <div class="info-value">{{ bank.accountName || 'Not set' }}</div>
+                </div>
+                <div class="info-row">
+                  <div class="info-label">Account number</div>
+                  <div class="info-value">{{ maskedAccount || 'Not set' }}</div>
+                </div>
+                <div class="info-row">
+                  <div class="info-label">IFSC</div>
+                  <div class="info-value">{{ bank.ifsc || 'Not set' }}</div>
+                </div>
+                <div class="info-row">
+                  <div class="info-label">UPI ID</div>
+                  <div class="info-value">{{ bank.upiId || 'Not set' }}</div>
+                </div>
+              </div>
+
+              <div class="info-section">
+                <div class="info-title">Charges and packaging</div>
+                <div class="info-row">
+                  <div class="info-label">Extended delivery fee</div>
+                  <div class="info-value">{{ serviceArea.extendedDeliveryFee | paise }}</div>
+                </div>
+                <div class="info-row">
+                  <div class="info-label">Minimum packaging fee</div>
+                  <div class="info-value">{{ outlet.packaging?.minPackagingFee | paise }}</div>
+                </div>
+                <div class="info-row">
+                  <div class="info-label">Packaging types</div>
+                  <div class="info-value">{{ outlet.packaging?.types?.length || 0 }}</div>
+                </div>
+                <div class="info-row">
+                  <div class="info-label">Default packaging</div>
+                  <div class="info-value">{{ outlet.packaging?.defaultType || 'Not set' }}</div>
+                </div>
+              </div>
+
+              <div class="info-section">
+                <div class="info-title">Customer policies</div>
+                <div class="info-row">
+                  <div class="info-label">Cancel allowed until</div>
+                  <div class="info-value">{{ outlet.cancellationConfig?.allowedUntil || 'ACCEPTED' }}</div>
+                </div>
+                <div class="info-row">
+                  <div class="info-label">Weight dispute window</div>
+                  <div class="info-value">{{ outlet.cancellationConfig?.disputeWindowHours ?? 2 }} h</div>
+                </div>
+                <div class="info-row">
+                  <div class="info-label">Shortfall window</div>
+                  <div class="info-value">{{ outlet.cancellationConfig?.shortfallWindowHours ?? 24 }} h</div>
+                </div>
+                <div class="info-row">
+                  <div class="info-label">Subscriptions</div>
+                  <div class="info-value">{{ outlet.subscriptionConfig?.enabled ? 'Enabled' : 'Disabled' }}</div>
+                </div>
+                <div class="info-row">
+                  <div class="info-label">Hold timeout</div>
+                  <div class="info-value">{{ outlet.holdPolicy?.holdTimeoutMinutes ?? 30 }} min</div>
+                </div>
+                <div class="info-row">
+                  <div class="info-label">Escalate after</div>
+                  <div class="info-value">{{ outlet.holdPolicy?.escalateAfterMinutes ?? 15 }} min</div>
+                </div>
+              </div>
+
+              <div class="info-section">
+                <div class="info-title">Operational thresholds</div>
+                <div class="info-row">
+                  <div class="info-label">Weight hard overcharge</div>
+                  <div class="info-value">{{ orderConfig.weightHardOverchargePct ?? 10 }}%</div>
+                </div>
+                <div class="info-row">
+                  <div class="info-label">Weight hard shortfall</div>
+                  <div class="info-value">{{ orderConfig.weightHardShortfallPct ?? 2 }}%</div>
+                </div>
+                <div class="info-row">
+                  <div class="info-label">COD tolerance</div>
+                  <div class="info-value">{{ orderConfig.codTolerancePct ?? 10 }}%</div>
+                </div>
+                <div class="info-row">
+                  <div class="info-label">Payment timeout</div>
+                  <div class="info-value">{{ orderConfig.paymentTimeoutMinutes || 20 }} min</div>
+                </div>
+                <div class="info-row">
+                  <div class="info-label">Max consecutive stock failures</div>
+                  <div class="info-value">{{ outlet.subscriptionConfig?.maxConsecutiveStockFailures ?? 2 }}</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </mat-tab>
+      </mat-tab-group>
+    </mat-card-content>
+  </mat-card>
+</ng-container>

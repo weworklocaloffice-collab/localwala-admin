@@ -3,6 +3,12 @@
   <form [formGroup]="form" class="d-flex flex-column gap-12">
     <mat-form-field appearance="outline"><mat-label>Key</mat-label><input matInput formControlName="key" /></mat-form-field>
     <mat-form-field appearance="outline"><mat-label>Name</mat-label><input matInput formControlName="name" /></mat-form-field>
+    <mat-form-field appearance="outline"><mat-label>Description</mat-label><textarea matInput rows="3" formControlName="description"></textarea></mat-form-field>
+    <div class="d-flex flex-column gap-8">
+      <input type="file" accept="image/*" (change)="onImageFileSelected($event)" />
+      <mat-form-field appearance="outline"><mat-label>Image URL / uploaded path</mat-label><input matInput formControlName="image" placeholder="https://... or uploads/..." /></mat-form-field>
+      <img *ngIf="form.get('image')?.value" [src]="form.get('image')?.value" alt="preview" style="max-width:160px;max-height:120px;" />
+    </div>
     <mat-form-field appearance="outline"><mat-label>Category id</mat-label><input matInput formControlName="category" /></mat-form-field>
     <mat-form-field appearance="outline">
       <mat-label>Booking mode</mat-label>

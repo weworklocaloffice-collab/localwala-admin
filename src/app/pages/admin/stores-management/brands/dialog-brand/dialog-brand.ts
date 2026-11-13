@@ -83,6 +83,8 @@ export class DialogBrand implements OnInit {
         logo: values.logo || '',
         status: values.status || 'pending',
       });
+    } else if (this.data && Array.isArray(this.data.categories) && this.data.categories.length) {
+      this.brandForm.patchValue({ categories: this.data.categories });
     }
   }
 
@@ -99,6 +101,19 @@ export class DialogBrand implements OnInit {
 
   get f() {
     return this.brandForm.controls;
+  }
+
+  onLogoFileSelected(event: any) {
+    const file: File | null = event && event.target && event.target.files ? event.target.files[0] : null;
+    if (!file) return;
+    this.api.uploadFile(file).subscribe({
+      next: (response: any) => {
+        const url = response && (response.url || response.fileUrl || response.path) ? (response.url || response.fileUrl || response.path) : '';
+        if (url) this.brandForm.patchValue({ logo: url });
+        else this.util.handleError({ error: { message: 'Upload failed' } }, 'admin');
+      },
+      error: (error: any) => this.util.handleError(error, 'admin'),
+    });
   }
 
   body() {

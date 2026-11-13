@@ -4,6 +4,9 @@
   </mat-card-header>
 
   <mat-card-content>
+    @if (!isLoaded) {
+      <div class="p-24 text-center"><mat-progress-spinner diameter="32" mode="indeterminate"></mat-progress-spinner></div>
+    }
     <div class="d-flex flex-wrap align-center justify-content-between mb-24 gap-12">
       <div class="search-box">
         <mat-form-field appearance="outline" class="w-100">
@@ -18,6 +21,16 @@
       </div>
 
       <div class="d-flex gap-12 align-center">
+        <mat-form-field appearance="outline" class="w-200">
+          <mat-label>{{ util.appTranslate('stores_categories') }}</mat-label>
+          <mat-select [(ngModel)]="selectedCategory">
+            <mat-option value="">{{ util.appTranslate('common_all') }}</mat-option>
+            @for (c of categories; track c._id) {
+              <mat-option [value]="c._id">{{ c.name }}</mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
+
         <mat-form-field appearance="outline" class="w-150">
           <mat-label>{{ util.appTranslate('th_status') }}</mat-label>
           <mat-select [(ngModel)]="statusFilter" (selectionChange)="onStatusFilter($event.value)">
@@ -28,6 +41,17 @@
             <mat-option value="archived">{{ util.appTranslate('stores_brand_archived') }}</mat-option>
           </mat-select>
         </mat-form-field>
+
+        @if (util.hasRight('stores_taxonomy_read')) {
+          <a
+            mat-stroked-button
+            color="primary"
+            [routerLink]="['/admin/stores-management/import-export', 'store_brand']"
+          >
+            <mat-icon>swap_vert</mat-icon>
+            {{ util.appTranslate('ts_import_export') }}
+          </a>
+        }
 
         @if (util.hasRight('stores_taxonomy_write')) {
           <button mat-flat-button color="primary" (click)="onCreate()">
@@ -102,10 +126,10 @@
             {{ util.appTranslate('stores_verified') }}
           </th>
           <td mat-cell *matCellDef="let element">
-            @if (element.isVerified) {
+            @if (hasChainCertification(element)) {
               <mat-icon class="text-success">verified</mat-icon>
             } @else {
-              <span class="f-s-14 text-muted">—</span>
+              <span class="f-s-14 text-muted">�?"</span>
             }
           </td>
         </ng-container>
@@ -121,6 +145,22 @@
               >
                 <mat-icon>edit</mat-icon>
               </a>
+              @if (element.status !== 'archived') {
+                <a
+                  (click)="onCertifications(element)"
+                  class="m-r-10 cursor-pointer text-primary"
+                  [matTooltip]="util.appTranslate('stores_brand_certifications')"
+                >
+                  <mat-icon>verified_user</mat-icon>
+                </a>
+                <a
+                  (click)="onMerge(element)"
+                  class="m-r-10 cursor-pointer text-primary"
+                  [matTooltip]="util.appTranslate('stores_brand_merge')"
+                >
+                  <mat-icon>call_merge</mat-icon>
+                </a>
+              }
               <a
                 (click)="onArchive(element)"
                 class="m-r-10 cursor-pointer text-error"

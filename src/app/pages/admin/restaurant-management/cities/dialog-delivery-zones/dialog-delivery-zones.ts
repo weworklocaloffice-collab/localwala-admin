@@ -91,7 +91,10 @@ export class DialogDeliveryZones implements OnInit {
   load(): void {
     this.loading = true;
     this.error = '';
-    this.api.get_private(this.zonesBase() + '/by_city/' + this.cityId).subscribe({
+    // Admin and city-master routes use different path conventions. Keep the
+    // Cityzen route's underscore; the admin route is registered with a hyphen.
+    const byCityPath = this.isCityzen ? '/by_city/' : '/by-city/';
+    this.api.get_private(this.zonesBase() + byCityPath + this.cityId).subscribe({
       next: (res: any) => {
         this.zones = (res && res.zones) || [];
         this.allLocalities = [];

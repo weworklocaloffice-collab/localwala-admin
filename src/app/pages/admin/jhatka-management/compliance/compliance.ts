@@ -33,8 +33,8 @@ export class JhatkaCompliance {
     this.api.get_private('v1/jhatka/admin/compliance/overview').subscribe({
       next: (response: any) => {
         this.isLoaded = true;
-        this.records = response?.records || [];
-        this.openRecalls = response?.openRecalls || [];
+        this.records = response?.outlets || response?.records || [];
+        this.openRecalls = response?.openRecalls?.recalls || [];
       },
       error: (error: any) => {
         this.isLoaded = true;
@@ -97,7 +97,7 @@ export class JhatkaCompliance {
     const id = element._id || element.id;
     const licenceNumber = window.prompt(
       `New FSSAI licence number for ${element.outlet?.name || ''}:`,
-      element.fssai?.licenceNumber || ''
+      element.fssai?.licenceNumber || element.licenceNumber || ''
     );
     if (licenceNumber === null || !licenceNumber.trim()) {
       return;

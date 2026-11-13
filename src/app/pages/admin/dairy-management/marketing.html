@@ -1,0 +1,119 @@
+<mat-card class="cardWithShadow">
+  <mat-card-header class="m-b-16">
+    <mat-card-title>Dairy marketing</mat-card-title>
+    <mat-card-subtitle>Configure Dairy-only sponsored placement packages and review partner campaign requests.</mat-card-subtitle>
+  </mat-card-header>
+  <mat-card-content>
+    <div class="row">
+      <div class="col-lg-5">
+        <mat-card class="cardWithShadow">
+          <mat-card-header><mat-card-title>Create placement package</mat-card-title></mat-card-header>
+          <mat-card-content>
+            <form (ngSubmit)="createPackage()" class="d-flex flex-column gap-12">
+              <mat-form-field appearance="outline"><mat-label>Package name</mat-label><input matInput name="name" [(ngModel)]="packageForm.name" maxlength="80" required></mat-form-field>
+              <mat-form-field appearance="outline"><mat-label>Unique code</mat-label><input matInput name="code" [(ngModel)]="packageForm.code" maxlength="40" required></mat-form-field>
+              <mat-form-field appearance="outline"><mat-label>Placement</mat-label>
+                <mat-select name="placement" [(ngModel)]="packageForm.placement">
+                  @for (option of placements; track option.value) { <mat-option [value]="option.value">{{ option.label }}</mat-option> }
+                </mat-select>
+              </mat-form-field>
+              <mat-form-field appearance="outline"><mat-label>Targeting level</mat-label>
+                <mat-select name="targeting" [(ngModel)]="packageForm.targetingLevel">
+                  <mat-option value="locality">Locality</mat-option><mat-option value="zone">Published zone</mat-option><mat-option value="city">City</mat-option>
+                </mat-select>
+              </mat-form-field>
+              <div class="row">
+                <div class="col-6"><mat-form-field appearance="outline" class="w-100"><mat-label>Duration</mat-label>
+                  <mat-select name="duration" [(ngModel)]="packageForm.durationHours">
+                    @for (hours of durations; track hours) { <mat-option [value]="hours">{{ hours >= 168 ? (hours / 168) + ' week(s)' : hours >= 24 ? (hours / 24) + ' day(s)' : hours + ' hour(s)' }}</mat-option> }
+                  </mat-select>
+                </mat-form-field></div>
+                <div class="col-6"><mat-form-field appearance="outline" class="w-100"><mat-label>Price (₹)</mat-label><input matInput type="number" name="price" [(ngModel)]="packageForm.price" min="0.01" step="0.01" required></mat-form-field></div>
+              </div>
+              <mat-form-field appearance="outline"><mat-label>Concurrent slots per target</mat-label><input matInput type="number" name="slots" [(ngModel)]="packageForm.maxConcurrent" min="1" max="20"></mat-form-field>
+              <button mat-flat-button color="primary" type="submit" [disabled]="savingPackage || !util.hasRight('dairy_marketing_manage')">{{ savingPackage ? 'Saving…' : 'Create package' }}</button>
+            </form>
+          </mat-card-content>
+        </mat-card>
+        <mat-card class="cardWithShadow m-t-16">
+          <mat-card-header><mat-card-title>Packages</mat-card-title></mat-card-header>
+          <mat-card-content>
+            @if (loadingPackages) { <div class="p-16 text-center"><mat-spinner diameter="32"></mat-spinner></div> }
+            @else if (!packages.length) { <p class="text-muted">No Dairy placement packages configured.</p> }
+            @else {
+              @for (item of packages; track item._id) {
+                <div class="d-flex align-center justify-content-between gap-12 p-y-8 border-bottom">
+                  <div><div class="f-w-600">{{ item.name }}</div><div class="text-muted f-s-13">{{ item.placement }} · {{ item.targetingLevel }} · {{ item.durationHours }}h · ₹{{ item.price }}</div></div>
+                  <button mat-stroked-button (click)="togglePackage(item)" [disabled]="!util.hasRight('dairy_marketing_manage')">{{ item.status ? 'Disable' : 'Enable' }}</button>
+                </div>
+              }
+            }
+          </mat-card-content>
+        </mat-card>
+      </div>
+      <div class="col-lg-7">
+        <mat-card class="cardWithShadow">
+          <mat-card-header><mat-card-title>Campaign review</mat-card-title><mat-card-subtitle>Partners pay only after approval. Published cards are limited to covered localities.</mat-card-subtitle></mat-card-header>
+          <mat-card-content>
+            <div class="d-flex flex-wrap align-center justify-content-between gap-12 m-b-16">
+              <mat-form-field appearance="outline"><mat-label>Status</mat-label><mat-select [value]="status" (selectionChange)="setStatus($event.value)">
+                <mat-option value="pending_review">Pending review</mat-option><mat-option value="approved_unpaid">Approved, awaiting payment</mat-option><mat-option value="scheduled">Scheduled</mat-option><mat-option value="live">Live</mat-option><mat-option value="rejected">Rejected</mat-option><mat-option value="completed">Completed</mat-option>
+              </mat-select></mat-form-field>
+              <span class="text-muted">{{ totalResults }} campaigns</span>
+            </div>
+            @if (loadingCampaigns) { <div class="p-24 text-center"><mat-spinner diameter="36"></mat-spinner></div> }
+            @else if (!campaigns.length) { <div class="p-24 text-center text-muted">No campaigns in this status.</div> }
+            @else {
+              @for (campaign of campaigns; track campaign._id) {
+                <mat-card class="m-b-12 cardWithShadow">
+                  <mat-card-content>
+                    <div class="d-flex align-center justify-content-between gap-12">
+                      <div><div class="f-w-600">{{ campaign.caption }}</div><div class="text-muted f-s-13">{{ campaign.business?.name || 'Dairy outlet' }} · {{ campaign.packageSnapshot?.name }} · ₹{{ campaign.amount }}</div></div>
+                      <span class="text-capitalize">{{ campaign.status?.replace('_', ' ') }}</span>
+                    </div>
+                    <p class="m-t-8"><strong>Localities:</strong> {{ localityNames(campaign) || 'Unavailable' }}</p>
+                    <p class="text-muted f-s-13">{{ campaign.startsAt | date:'dd MMM yyyy, h:mm a' }} – {{ campaign.endsAt | date:'dd MMM yyyy, h:mm a' }} · {{ campaign.paymentStatus }} · {{ campaign.metrics?.impressions || 0 }} views · {{ campaign.metrics?.clicks || 0 }} clicks</p>
+                    @if (campaign.status === 'pending_review' && util.hasRight('dairy_marketing_review')) {
+                      <mat-form-field appearance="outline" class="w-100"><mat-label>Review note (required to reject)</mat-label><textarea matInput [(ngModel)]="reviewNotes[campaign._id]" maxlength="500" rows="2"></textarea></mat-form-field>
+                      <div class="d-flex gap-12"><button mat-flat-button color="primary" (click)="review(campaign, 'approve')" [disabled]="reviewingId === campaign._id">Approve</button><button mat-stroked-button color="warn" (click)="review(campaign, 'reject')" [disabled]="reviewingId === campaign._id || !(reviewNotes[campaign._id] || '').trim()">Reject</button></div>
+                    }
+                  </mat-card-content>
+                </mat-card>
+              }
+              <div class="d-flex align-center justify-content-between m-t-16"><button mat-stroked-button (click)="previous()" [disabled]="page <= 1">Previous</button><span>Page {{ page }}</span><button mat-stroked-button (click)="next()" [disabled]="page * limit >= totalResults">Next</button></div>
+            }
+          </mat-card-content>
+        </mat-card>
+      </div>
+    </div>
+    <mat-card class="cardWithShadow m-t-16">
+      <mat-card-header><mat-card-title>Dairy coupon review</mat-card-title><mat-card-subtitle>Only approved Dairy outlet offers can be redeemed in Dairy checkout.</mat-card-subtitle></mat-card-header>
+      <mat-card-content>
+        <div class="d-flex flex-wrap align-center justify-content-between gap-12 m-b-16">
+          <mat-form-field appearance="outline"><mat-label>Status</mat-label><mat-select [value]="couponStatus" (selectionChange)="setCouponStatus($event.value)">
+            <mat-option value="pending_review">Pending review</mat-option><mat-option value="active">Active</mat-option><mat-option value="rejected">Rejected</mat-option><mat-option value="disabled">Disabled</mat-option><mat-option value="expired">Expired</mat-option>
+          </mat-select></mat-form-field>
+          <span class="text-muted">{{ coupons.length }} coupons</span>
+        </div>
+        @if (loadingCoupons) { <div class="p-24 text-center"><mat-spinner diameter="36"></mat-spinner></div> }
+        @else if (!coupons.length) { <div class="p-24 text-center text-muted">No coupons in this status.</div> }
+        @else {
+          @for (coupon of coupons; track coupon._id) {
+            <mat-card class="m-b-12 cardWithShadow"><mat-card-content>
+              <div class="d-flex align-center justify-content-between gap-12">
+                <div><div class="f-w-600">{{ coupon.code }} · {{ coupon.title }}</div><div class="text-muted f-s-13">{{ coupon.business?.name || 'Dairy outlet' }} · {{ coupon.discountType === 'percentage' ? coupon.discountValue + '% off' : '₹' + coupon.discountValue + ' off' }}</div></div>
+                <span class="text-capitalize">{{ coupon.status?.replace('_', ' ') }}</span>
+              </div>
+              @if (coupon.description) { <p class="m-t-8">{{ coupon.description }}</p> }
+              <p class="text-muted f-s-13">Minimum order ₹{{ coupon.minOrderAmount || 0 }} · {{ coupon.maxRedemptions ? coupon.redeemedCount + '/' + coupon.maxRedemptions + ' redeemed' : coupon.redeemedCount + ' redeemed' }} · {{ coupon.startsAt | date:'dd MMM yyyy' }} – {{ coupon.endsAt | date:'dd MMM yyyy' }}</p>
+              @if (coupon.status === 'pending_review' && util.hasRight('dairy_marketing_review')) {
+                <mat-form-field appearance="outline" class="w-100"><mat-label>Review note (required to reject)</mat-label><textarea matInput [(ngModel)]="couponReviewNotes[coupon._id]" maxlength="500" rows="2"></textarea></mat-form-field>
+                <div class="d-flex gap-12"><button mat-flat-button color="primary" (click)="reviewCoupon(coupon, 'approve')" [disabled]="reviewingId === coupon._id">Approve</button><button mat-stroked-button color="warn" (click)="reviewCoupon(coupon, 'reject')" [disabled]="reviewingId === coupon._id || !(couponReviewNotes[coupon._id] || '').trim()">Reject</button></div>
+              }
+            </mat-card-content></mat-card>
+          }
+        }
+      </mat-card-content>
+    </mat-card>
+  </mat-card-content>
+</mat-card>

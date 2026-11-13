@@ -7,7 +7,14 @@ import { JoiningRequests } from './joining-requests/joining-requests';
 import { Outlets } from './outlets/outlets';
 import { Settlements } from './settlements/settlements';
 import { Franchises } from './franchises/franchises';
+import { CommissionPartners } from './partners/partners';
 import { Compliance } from './compliance/compliance';
+import { Orders } from './orders/orders';
+import { Runs } from './runs/runs';
+import { Drivers } from './drivers/drivers';
+import { CoverageRequests } from './coverage-requests';
+import { DairyMarketing } from './marketing';
+import { DairyReports } from './reports';
 
 export const DairyManagementRoutes: Routes = [
   {
@@ -30,6 +37,38 @@ export const DairyManagementRoutes: Routes = [
     },
   },
   {
+    path: 'orders',
+    component: Orders,
+    data: {
+      title: 'dairy_orders',
+    },
+  },
+  {
+    path: 'runs',
+    component: Runs,
+    data: {
+      title: 'dairy_runs',
+    },
+  },
+  {
+    path: 'drivers',
+    component: Drivers,
+    data: {
+      title: 'dairy_drivers',
+    },
+  },
+  {
+    path: 'coverage-requests',
+    component: CoverageRequests,
+    data: { title: 'dairy_coverage_requests' },
+  },
+  {
+    path: 'marketing',
+    component: DairyMarketing,
+    data: { title: 'dairy_marketing' },
+  },
+  { path: 'reports', component: DairyReports, data: { title: 'dairy_reports' } },
+  {
     path: 'verticals',
     component: Verticals,
     data: {
@@ -48,6 +87,13 @@ export const DairyManagementRoutes: Routes = [
     component: Franchises,
     data: {
       title: 'dairy_franchises',
+    },
+  },
+  {
+    path: 'commission-partners',
+    component: CommissionPartners,
+    data: {
+      title: 'dairy_commission_partners',
     },
   },
   {

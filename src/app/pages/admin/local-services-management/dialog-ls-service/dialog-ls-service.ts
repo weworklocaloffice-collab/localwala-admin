@@ -18,6 +18,8 @@ export class DialogLsService {
   form = new FormGroup({
     key: new FormControl('', [Validators.required]),
     name: new FormControl('', [Validators.required]),
+    description: new FormControl(''),
+    image: new FormControl(''),
     category: new FormControl('', [Validators.required]),
     bookingMode: new FormControl('REQUEST', [Validators.required]),
     pricingMode: new FormControl('FIXED', [Validators.required]),
@@ -29,6 +31,19 @@ export class DialogLsService {
     public util: UtilService,
     public api: ApiService,
   ) {}
+
+  onImageFileSelected(event: any) {
+    const file: File | null = event && event.target && event.target.files ? event.target.files[0] : null;
+    if (!file) return;
+    this.api.uploadFile(file).subscribe({
+      next: (response: any) => {
+        const url = response && (response.url || response.fileUrl || response.path) ? (response.url || response.fileUrl || response.path) : '';
+        if (url) this.form.patchValue({ image: url });
+        else this.util.handleError({ error: { message: 'Upload failed' } }, 'admin');
+      },
+      error: (error: any) => this.util.handleError(error, 'admin'),
+    });
+  }
 
   onConfirm() {
     this.haveSubmitClicked = true;

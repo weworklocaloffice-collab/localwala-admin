@@ -4,6 +4,15 @@
   </mat-card-header>
 
   <mat-card-content>
+    @if (!util.hasRight("stores_policy_read")) {
+      <div class="p-24 text-center text-muted">Not authorized.</div>
+    } @else {
+    @if (!util.hasRight("stores_policy_read")) {
+      <div class="p-24 text-center text-muted">Not authorized.</div>
+    } @else {
+    @if (!isLoaded) {
+      <div class="p-24 text-center"><mat-progress-spinner diameter="32" mode="indeterminate"></mat-progress-spinner></div>
+    }
     <div class="d-flex flex-wrap align-center justify-content-between mb-24 gap-12">
       <div class="search-box">
         <mat-form-field appearance="outline" class="w-100">
@@ -108,5 +117,7 @@
         showFirstLastButtons>
       </mat-paginator>
     </div>
+      }
+      }
   </mat-card-content>
 </mat-card>

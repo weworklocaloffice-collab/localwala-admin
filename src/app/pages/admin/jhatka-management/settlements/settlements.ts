@@ -17,6 +17,7 @@ import { PaisePipe } from '../paise.pipe';
 export class JhatkaSettlements {
   isLoaded: boolean = false;
   list: any[] = [];
+  total: number = 0;
   currentPage: number = 0;
   pageSize: number = 10;
   displayedColumn: string[] = ['settlement', 'period', 'net', 'status', 'action'];
@@ -68,8 +69,98 @@ export class JhatkaSettlements {
     });
   }
 
+  documentId(element: any): string {
+    return String(element?.id || element?._id || '');
+  }
+
   approvePayout(element: any) {
-    this.api.post_private(`v1/jhatka/admin/settlements/payouts/${element.id}/approve`, {}).subscribe({
+    const id = this.documentId(element);
+    if (!id) {
+      this.util.onInfo('Payout id is missing');
+      return;
+    }
+    this.api.post_private(`v1/jhatka/admin/settlements/payouts/${id}/approve`, {}).subscribe({
+      next: () => this.getMoney(),
+      error: (error: any) => this.util.handleError(error, 'admin'),
+    });
+  }
+
+  payPayout(element: any) {
+    const id = this.documentId(element);
+    if (!id) {
+      this.util.onInfo('Payout id is missing');
+      return;
+    }
+    const paymentReference = window.prompt(
+      `Bank/UPI transfer reference for ${element.payoutNo || 'this payout'} (required):`,
+    )?.trim();
+    if (!paymentReference || paymentReference.length < 3) {
+      this.util.onInfo('A payment reference of at least 3 characters is required');
+      return;
+    }
+    this.api.post_private(`v1/jhatka/admin/settlements/payouts/${id}/pay`, { paymentReference }).subscribe({
+      next: () => this.getMoney(),
+      error: (error: any) => this.util.handleError(error, 'admin'),
+    });
+  }
+
+  /**
+   * Commission rules govern what partners are actually paid: the weekly payout
+   * sweep resolves the ACTIVE rule for each outlet's business model and uses its
+   * ratePercent (falling back to 10% only when no rule is in force). Creating a
+   * rule lands it as DRAFT — activation is the separate deliberate act, because
+   * activating changes real money. An ACTIVE rule is immutable: change the rate
+   * by retiring it and creating a superseding one, so history never restates.
+   */
+  createRule() {
+    const code = window.prompt('Rule code (unique, e.g. CP-15):')?.trim();
+    if (!code) return;
+    const name = window.prompt('Rule name:')?.trim();
+    if (!name) return;
+    const businessModel = window.prompt('Business model (commission_partner | franchise):', 'commission_partner')?.trim();
+    if (businessModel !== 'commission_partner' && businessModel !== 'franchise') {
+      this.util.onInfo('Business model must be commission_partner or franchise');
+      return;
+    }
+    const basis = window.prompt('Basis (gross_order_value | final_weighted_value | net_of_refunds | fixed_monthly):', 'gross_order_value')?.trim();
+    if (!basis) return;
+    // TWO different rates (netting them hides both in a statement):
+    //   platformFeePercent — LocalWala's cut, DEDUCTED from the payout
+    //   ratePercent        — the partner's earning, RECORDED on the statement
+    const feeStr = window.prompt('Platform charge percent (0–100, kept by LocalWala, deducted from payouts):', '10')?.trim();
+    const platformFeePercent = Number(feeStr);
+    if (feeStr === '' || Number.isNaN(platformFeePercent) || platformFeePercent < 0 || platformFeePercent > 100) {
+      this.util.onInfo('A platform charge between 0 and 100 is required');
+      return;
+    }
+    const rateStr = window.prompt('Partner commission percent (0–100, the partner\'s earning, recorded on statements):', '0')?.trim();
+    const ratePercent = Number(rateStr);
+    if (rateStr === '' || Number.isNaN(ratePercent) || ratePercent < 0 || ratePercent > 100) {
+      this.util.onInfo('A partner rate between 0 and 100 is required');
+      return;
+    }
+    const effectiveFrom = window.prompt('Effective from (yyyy-mm-dd):', new Date().toISOString().slice(0, 10))?.trim();
+    if (!effectiveFrom) return;
+
+    this.api.post_private('v1/jhatka/admin/settlements/commission-rules', {
+      code, name, businessModel, basis, platformFeePercent, ratePercent, effectiveFrom,
+    }).subscribe({
+      next: () => this.getMoney(),
+      error: (error: any) => this.util.handleError(error, 'admin'),
+    });
+  }
+
+  activateRule(element: any) {
+    const id = this.documentId(element);
+    this.api.patch_private(`v1/jhatka/admin/settlements/commission-rules/${id}`, { status: 'active' }).subscribe({
+      next: () => this.getMoney(),
+      error: (error: any) => this.util.handleError(error, 'admin'),
+    });
+  }
+
+  retireRule(element: any) {
+    const id = this.documentId(element);
+    this.api.patch_private(`v1/jhatka/admin/settlements/commission-rules/${id}`, { status: 'retired' }).subscribe({
       next: () => this.getMoney(),
       error: (error: any) => this.util.handleError(error, 'admin'),
     });
@@ -93,8 +184,9 @@ export class JhatkaSettlements {
         this.isLoaded = true;
         if (response && response.settlements) {
           this.list = response.settlements;
+          this.total = response.total ?? this.list.length;
           if (this.paginator) {
-            this.paginator.length = response.count ?? this.list.length;
+            this.paginator.length = this.total;
           }
         }
       },
@@ -112,18 +204,28 @@ export class JhatkaSettlements {
   }
 
   finalise(element: any) {
-    this.api.post_private(`v1/jhatka/admin/settlements/${element.id}/finalise`, {}).subscribe({
+    const id = this.documentId(element);
+    if (!id) {
+      this.util.onInfo('Settlement id is missing');
+      return;
+    }
+    this.api.post_private(`v1/jhatka/admin/settlements/${id}/finalise`, {}).subscribe({
       next: () => this.getList(),
       error: (error: any) => this.util.handleError(error, 'admin'),
     });
   }
 
   dispute(element: any) {
+    const id = this.documentId(element);
+    if (!id) {
+      this.util.onInfo('Settlement id is missing');
+      return;
+    }
     const reason = window.prompt('Dispute reason (at least 10 characters):');
     if (!reason) {
       return;
     }
-    this.api.post_private(`v1/jhatka/admin/settlements/${element.id}/dispute`, { disputeReason: reason }).subscribe({
+    this.api.post_private(`v1/jhatka/admin/settlements/${id}/dispute`, { disputeReason: reason }).subscribe({
       next: () => this.getList(),
       error: (error: any) => this.util.handleError(error, 'admin'),
     });

@@ -21,7 +21,7 @@ export class DialogFranchiseCreate {
   isSubmit: boolean = false;
   haveSubmitClicked: boolean = false;
   listOfCities: any[] = [];
-  listOfPartners: any[] = [];
+  listOfOutlets: any[] = [];
   listOfOperators: any[] = [];
   operatorSearch: string = '';
 
@@ -50,7 +50,7 @@ export class DialogFranchiseCreate {
     @Inject(MAT_DIALOG_DATA) public data: any,
   ) {
     this.listOfCities = data.cities || [];
-    this.getPartners();
+    this.getOutlets();
     this.getOperators();
   }
 
@@ -58,17 +58,33 @@ export class DialogFranchiseCreate {
     return this.franchiseForm.controls;
   }
 
-  getPartners() {
-    this.api.get_private('v1/dairy/admin/partners?limit=100').subscribe({
-      next: (response: any) => {
-        if (response && response.partners) {
-          this.listOfPartners = response.partners;
-        }
-      },
-      error: (error: any) => {
-        console.error('Could not load outlets:', error);
-      },
-    });
+  /**
+   * Only verified, trading, direct outlets with no agreement of either kind.
+   *
+   * The old picker listed `DairyPartner` agreements, so a franchise could only be
+   * created for an outlet that was already a commission partner - the opposite of
+   * what the two models mean. It also hid every direct outlet.
+   */
+  getOutlets() {
+    this.api
+      .get_private('v1/dairy/admin/outlets?availableFor=franchise&limit=100')
+      .subscribe({
+        next: (response: any) => {
+          this.listOfOutlets = (response && response.outlets) || [];
+          if (this.data && this.data.outlet) {
+            const alreadyListed = this.listOfOutlets.some(
+              (outlet: any) => String(outlet._id) === String(this.data.outlet._id)
+            );
+            if (!alreadyListed) {
+              this.listOfOutlets = [this.data.outlet, ...this.listOfOutlets];
+            }
+            this.franchiseForm.patchValue({ business: this.data.outlet._id });
+          }
+        },
+        error: (error: any) => {
+          console.error('Could not load outlets:', error);
+        },
+      });
   }
 
   /**

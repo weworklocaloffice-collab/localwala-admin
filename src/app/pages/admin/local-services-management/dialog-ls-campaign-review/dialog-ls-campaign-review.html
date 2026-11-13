@@ -1,0 +1,16 @@
+<h2 mat-dialog-title>{{ data.decision === 'approve' ? 'Approve campaign' : 'Reject campaign' }}</h2>
+<mat-dialog-content>
+  <form [formGroup]="form" class="d-flex flex-column gap-12">
+    <p class="text-muted m-0">{{ data.row?.caption }}</p>
+    <mat-form-field appearance="outline">
+      <mat-label>Review note (optional)</mat-label>
+      <textarea matInput rows="3" formControlName="note"></textarea>
+    </mat-form-field>
+  </form>
+</mat-dialog-content>
+<mat-dialog-actions align="end">
+  <button mat-button (click)="onCancel()">Cancel</button>
+  <button mat-flat-button [color]="data.decision === 'approve' ? 'primary' : 'warn'" (click)="onConfirm()" [disabled]="isSubmit">
+    {{ data.decision === 'approve' ? 'Approve' : 'Reject' }}
+  </button>
+</mat-dialog-actions>

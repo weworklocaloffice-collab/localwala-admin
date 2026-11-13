@@ -45,9 +45,20 @@
             {{util.appTranslate('support_for_restaurant_complaints')}}
           </h6>
           }
+          @if (supportFor == 'dairy') {
+          <h6 class="mat-subtitle-1 f-s-16 f-w-600">Dairy customer support</h6>
+          }
+          @if (supportFor == 'dairy_orders') {
+          <h6 class="mat-subtitle-1 f-s-16 f-w-600">Dairy order support</h6>
+          }
+          @if (supportFor == 'dairy_partner') {
+          <h6 class="mat-subtitle-1 f-s-16 f-w-600">Dairy partner support</h6>
+          }
+          @if (supportForId) {
           <p class="mat-body-1 f-s-12">
             #{{supportForId | uppercase}}
           </p>
+          }
           <p class="mat-body-1 f-s-12">
             {{util.appTranslate('th_date')}}: {{supportStarted}}
           </p>
@@ -73,6 +84,23 @@
               {{ util.appTranslate(orderStatus) }}
             </span>
           </p>
+        </div>
+        }
+
+        @if (supportFor == 'dairy_orders' && dairyOrderInfo) {
+        <div class="mat-subtitle-1 f-s-16 f-w-600 m-x-24 m-t-10 m-b-10">
+          <h6 class="mat-subtitle-1 f-s-16 f-w-600">Dairy order #{{dairyOrderInfo.orderNo}}</h6>
+          <p class="mat-body-1 f-s-12">Outlet: {{dairyOrderInfo.business?.name || dairyBusinessName || 'Dairy outlet'}}</p>
+          <p class="mat-body-1 f-s-12">Status: {{dairyOrderInfo.status}}</p>
+          <p class="mat-body-1 f-s-12">Payment: {{dairyOrderInfo.paymentStatus || dairyOrderInfo.paymentMode || 'Not available'}}</p>
+          <p class="mat-body-1 f-s-12">Total: {{util.priceFormat(dairyOrderInfo.grandTotal)}}</p>
+        </div>
+        }
+
+        @if (supportFor == 'dairy_partner') {
+        <div class="mat-subtitle-1 f-s-16 f-w-600 m-x-24 m-t-10 m-b-10">
+          <h6 class="mat-subtitle-1 f-s-16 f-w-600">Outlet</h6>
+          <p class="mat-body-1 f-s-12">{{dairyBusinessName || 'Dairy outlet'}}</p>
         </div>
         }
 

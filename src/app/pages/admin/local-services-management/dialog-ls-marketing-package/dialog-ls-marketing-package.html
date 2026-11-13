@@ -1,0 +1,42 @@
+<h2 mat-dialog-title>{{ isEdit ? 'Edit marketing package' : 'New marketing package' }}</h2>
+<mat-dialog-content>
+  <form [formGroup]="form" class="d-flex flex-column gap-12">
+    <mat-form-field appearance="outline"><mat-label>Code</mat-label><input matInput formControlName="code" /></mat-form-field>
+    <mat-form-field appearance="outline"><mat-label>Name</mat-label><input matInput formControlName="name" /></mat-form-field>
+    <mat-form-field appearance="outline">
+      <mat-label>Placement</mat-label>
+      <mat-select formControlName="placement">
+        <mat-option value="home">Home</mat-option>
+        <mat-option value="search">Search</mat-option>
+        <mat-option value="category">Category</mat-option>
+      </mat-select>
+    </mat-form-field>
+    <mat-form-field appearance="outline">
+      <mat-label>Targeting level</mat-label>
+      <mat-select formControlName="targetingLevel">
+        <mat-option value="locality">Locality</mat-option>
+        <mat-option value="pincode">Pincode</mat-option>
+        <mat-option value="city">City</mat-option>
+      </mat-select>
+    </mat-form-field>
+    <mat-form-field appearance="outline">
+      <mat-label>Duration</mat-label>
+      <mat-select formControlName="durationHours">
+        <mat-option [value]="1">1 hour</mat-option>
+        <mat-option [value]="3">3 hours</mat-option>
+        <mat-option [value]="6">6 hours</mat-option>
+        <mat-option [value]="12">12 hours</mat-option>
+        <mat-option [value]="24">24 hours</mat-option>
+        <mat-option [value]="168">7 days</mat-option>
+        <mat-option [value]="720">30 days</mat-option>
+      </mat-select>
+    </mat-form-field>
+    <mat-form-field appearance="outline"><mat-label>Price (₹)</mat-label><input matInput type="number" formControlName="price" /></mat-form-field>
+    <mat-form-field appearance="outline"><mat-label>Max concurrent campaigns</mat-label><input matInput type="number" formControlName="maxConcurrent" /></mat-form-field>
+    <mat-slide-toggle formControlName="status">Active</mat-slide-toggle>
+  </form>
+</mat-dialog-content>
+<mat-dialog-actions align="end">
+  <button mat-button (click)="onCancel()">Cancel</button>
+  <button mat-flat-button color="primary" (click)="onConfirm()" [disabled]="isSubmit">{{ isEdit ? 'Save' : 'Create' }}</button>
+</mat-dialog-actions>

@@ -134,6 +134,8 @@ showMediaInAppBar?: boolean;
 
   /** Null or absent means the banner is global and applies to every city. */
   city?: string | AdminHeaderBannerCityInterface | null;
+  /** Null or absent means the banner applies to every vertical. */
+  vertical?: string | null;
   priority?: number;
 
   status?: boolean;

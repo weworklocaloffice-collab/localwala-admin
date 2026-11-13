@@ -1,0 +1,459 @@
+<div class="page-head">
+  <div>
+    <div class="eyebrow">Jhatka catalogue</div>
+    <h1 class="page-title">What customers can buy</h1>
+    <p class="page-copy">
+      Categories decide how an item is measured, products carry the tax identity, and variants carry the sellable pack and
+      price. Changes apply to future orders only: every placed order keeps its frozen snapshot.
+    </p>
+  </div>
+  <div class="d-flex align-center gap-8 flex-wrap">
+    <button mat-stroked-button type="button" (click)="openCategory()">
+      <mat-icon>create_new_folder</mat-icon>
+      Add category
+    </button>
+    <button mat-stroked-button type="button" (click)="openVariant()">
+      <mat-icon>sell</mat-icon>
+      Add variant
+    </button>
+    <button mat-flat-button color="primary" type="button" (click)="openProduct()">
+      <mat-icon>add_box</mat-icon>
+      Add product
+    </button>
+  </div>
+</div>
+
+<div class="kpi-grid">
+  <div class="kpi-card">
+    <div class="kpi-label">Categories</div>
+    <div class="kpi-value">{{ stats['categories'] ?? '—' }}</div>
+    <div class="kpi-hint">
+      {{ stats['rootCategories'] ?? 0 }} roots, {{ stats['subCategories'] ?? 0 }} subcategories
+    </div>
+  </div>
+  <div class="kpi-card">
+    <div class="kpi-label">Products</div>
+    <div class="kpi-value">{{ stats['products'] ?? '—' }}</div>
+    <div class="kpi-hint">
+      {{ stats['activeProducts'] ?? 0 }} active, {{ stats['inactiveProducts'] ?? 0 }} inactive
+    </div>
+  </div>
+  <div class="kpi-card">
+    <div class="kpi-label">Variants</div>
+    <div class="kpi-value">{{ stats['variants'] ?? '—' }}</div>
+    <div class="kpi-hint">
+      {{ stats['activeVariants'] ?? 0 }} active, {{ stats['inactiveVariants'] ?? 0 }} inactive
+    </div>
+  </div>
+  <div class="kpi-card">
+    <div class="kpi-label">Needs attention</div>
+    <div class="kpi-value">{{ inactiveTotal }}</div>
+    <div class="kpi-hint">Inactive products and variants</div>
+  </div>
+</div>
+
+<mat-card class="cardWithShadow">
+  <mat-card-content>
+    <mat-tab-group animationDuration="180ms" (selectedIndexChange)="activeTab = $event">
+      <mat-tab label="Categories">
+        <div class="p-t-20">
+          <div class="filter-bar">
+            <mat-form-field appearance="outline" subscriptSizing="dynamic" class="search-field">
+              <mat-label>Search categories</mat-label>
+              <mat-icon matPrefix>search</mat-icon>
+              <input matInput [(ngModel)]="categorySearch" placeholder="Name, key or parent" />
+            </mat-form-field>
+            <div class="d-flex align-center gap-8 flex-wrap">
+              <span class="f-s-12 text-muted">Launch roots</span>
+              <div class="launch-roots">
+                <span class="chip" *ngFor="let root of launchRoots">{{ root }}</span>
+              </div>
+            </div>
+            <button mat-stroked-button type="button" class="m-l-auto" (click)="openCategory()">
+              <mat-icon>add</mat-icon>
+              Add category
+            </button>
+          </div>
+
+          <mat-progress-bar *ngIf="isLoadingCategories" mode="indeterminate"></mat-progress-bar>
+          <div class="table-responsive">
+            <table mat-table [dataSource]="filteredCategories" class="w-100">
+              <ng-container matColumnDef="name">
+                <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-14">Category</th>
+                <td mat-cell *matCellDef="let category">
+                  <div class="entity-cell">
+                    <img
+                      *ngIf="category.image; else categoryInitials"
+                      class="entity-image"
+                      [src]="mediaHref(category.image)"
+                      alt=""
+                    />
+                    <ng-template #categoryInitials>
+                      <div class="entity-image">{{ initials(category.name) }}</div>
+                    </ng-template>
+                    <div>
+                      <div class="entity-name">{{ category.name }}</div>
+                      <div class="entity-meta">{{ category.key }}</div>
+                    </div>
+                  </div>
+                </td>
+              </ng-container>
+
+              <ng-container matColumnDef="level">
+                <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-14">Level</th>
+                <td mat-cell *matCellDef="let category">
+                  <span class="chip">{{ category.parent ? 'Subcategory' : 'Root' }}</span>
+                  <div class="cell-muted" *ngIf="category.parent">
+                    under {{ categoryName(category.parent) }}
+                  </div>
+                </td>
+              </ng-container>
+
+              <ng-container matColumnDef="mode">
+                <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-14">Default mode</th>
+                <td mat-cell *matCellDef="let category">
+                  <span class="chip">{{ categoryMode(category) }}</span>
+                </td>
+              </ng-container>
+
+              <ng-container matColumnDef="status">
+                <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-14">Status</th>
+                <td mat-cell *matCellDef="let category">
+                  <div class="status-cell">
+                    <mat-slide-toggle
+                      color="primary"
+                      [checked]="isActive(category)"
+                      [disabled]="busyId === admin.idOf(category)"
+                      (change)="toggleCategory(category, $event.checked)"
+                    ></mat-slide-toggle>
+                    <span
+                      class="status-text"
+                      [class.status-on]="isActive(category)"
+                      [class.status-off]="!isActive(category)"
+                    >
+                      {{ isActive(category) ? 'Active' : 'Inactive' }}
+                    </span>
+                  </div>
+                </td>
+              </ng-container>
+
+              <ng-container matColumnDef="actions">
+                <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-14 text-right">Actions</th>
+                <td mat-cell *matCellDef="let category" class="text-right">
+                  <button mat-icon-button type="button" matTooltip="Edit category" (click)="openCategory(category)">
+                    <mat-icon>edit</mat-icon>
+                  </button>
+                </td>
+              </ng-container>
+
+              <tr mat-header-row *matHeaderRowDef="['name', 'level', 'mode', 'status', 'actions']"></tr>
+              <tr
+                mat-row
+                *matRowDef="let row; columns: ['name', 'level', 'mode', 'status', 'actions']; trackBy: trackById"
+              ></tr>
+            </table>
+          </div>
+
+          <div *ngIf="!isLoadingCategories && !filteredCategories.length" class="empty-state">
+            <div class="empty-icon"><mat-icon>category</mat-icon></div>
+            <div class="f-w-600">No categories match this search</div>
+            <div class="f-s-13 m-t-4">Clear the search or create a category.</div>
+          </div>
+        </div>
+      </mat-tab>
+
+      <mat-tab label="Products">
+        <div class="p-t-20">
+          <div class="filter-bar">
+            <mat-form-field appearance="outline" subscriptSizing="dynamic" class="search-field">
+              <mat-label>Search products</mat-label>
+              <mat-icon matPrefix>search</mat-icon>
+              <input
+                matInput
+                [(ngModel)]="productSearch"
+                (keyup.enter)="onProductFilters()"
+                placeholder="Product name"
+              />
+            </mat-form-field>
+
+            <mat-form-field appearance="outline" subscriptSizing="dynamic">
+              <mat-label>Category</mat-label>
+              <mat-select [(ngModel)]="productCategory" (selectionChange)="onProductFilters()">
+                <mat-option value="">All categories</mat-option>
+                <mat-option *ngFor="let category of categories" [value]="admin.idOf(category)">
+                  {{ category.name }}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+
+            <mat-form-field appearance="outline" subscriptSizing="dynamic">
+              <mat-label>Status</mat-label>
+              <mat-select [(ngModel)]="productStatus" (selectionChange)="onProductFilters()">
+                <mat-option value="">All statuses</mat-option>
+                <mat-option value="true">Active</mat-option>
+                <mat-option value="false">Inactive</mat-option>
+              </mat-select>
+            </mat-form-field>
+
+            <button mat-stroked-button type="button" (click)="onProductFilters()">Search</button>
+            <button mat-flat-button color="primary" type="button" class="m-l-auto" (click)="openProduct()">
+              <mat-icon>add</mat-icon>
+              Add product
+            </button>
+          </div>
+
+          <div class="table-head">
+            <div>
+              <div class="table-title">Products</div>
+              <div class="table-sub">{{ productCountLabel }}</div>
+            </div>
+          </div>
+
+          <mat-progress-bar *ngIf="isLoadingProducts" mode="indeterminate"></mat-progress-bar>
+          <div class="table-responsive">
+            <table mat-table [dataSource]="products" class="w-100">
+              <ng-container matColumnDef="product">
+                <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-14">Product</th>
+                <td mat-cell *matCellDef="let product">
+                  <div class="entity-cell">
+                    <img
+                      *ngIf="product.image; else productInitials"
+                      class="entity-image"
+                      [src]="mediaHref(product.image)"
+                      alt=""
+                    />
+                    <ng-template #productInitials>
+                      <div class="entity-image">{{ initials(product.name) }}</div>
+                    </ng-template>
+                    <div>
+                      <div class="entity-name">{{ product.name }}</div>
+                      <div class="entity-meta">{{ product.code }}</div>
+                    </div>
+                  </div>
+                </td>
+              </ng-container>
+
+              <ng-container matColumnDef="category">
+                <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-14">Category</th>
+                <td mat-cell *matCellDef="let product">
+                  <div class="f-s-13">{{ categoryName(product.category) || 'Not set' }}</div>
+                </td>
+              </ng-container>
+
+              <ng-container matColumnDef="tax">
+                <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-14">Tax</th>
+                <td mat-cell *matCellDef="let product">
+                  <div class="f-s-13">HSN {{ product.hsnCode || '—' }}</div>
+                  <div class="cell-muted">{{ product.taxRatePct ?? 0 }}% GST</div>
+                </td>
+              </ng-container>
+
+              <ng-container matColumnDef="storage">
+                <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-14">Storage</th>
+                <td mat-cell *matCellDef="let product">
+                  <span class="chip">{{ (product.storageMode || 'chilled') | titlecase }}</span>
+                  <div class="cell-muted" *ngIf="product.shelfLifeDaysAmbient">
+                    {{ product.shelfLifeDaysAmbient }} days ambient
+                  </div>
+                </td>
+              </ng-container>
+
+              <ng-container matColumnDef="status">
+                <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-14">Status</th>
+                <td mat-cell *matCellDef="let product">
+                  <div class="status-cell">
+                    <mat-slide-toggle
+                      color="primary"
+                      [checked]="isActive(product)"
+                      [disabled]="busyId === admin.idOf(product)"
+                      (change)="toggleProduct(product, $event.checked)"
+                    ></mat-slide-toggle>
+                    <span
+                      class="status-text"
+                      [class.status-on]="isActive(product)"
+                      [class.status-off]="!isActive(product)"
+                    >
+                      {{ isActive(product) ? 'Active' : 'Inactive' }}
+                    </span>
+                  </div>
+                </td>
+              </ng-container>
+
+              <ng-container matColumnDef="actions">
+                <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-14 text-right">Actions</th>
+                <td mat-cell *matCellDef="let product" class="text-right">
+                  <button mat-icon-button type="button" matTooltip="Edit product" (click)="openProduct(product)">
+                    <mat-icon>edit</mat-icon>
+                  </button>
+                  <button mat-icon-button type="button" matTooltip="Add variant" (click)="openVariant()">
+                    <mat-icon>add_circle</mat-icon>
+                  </button>
+                </td>
+              </ng-container>
+
+              <tr mat-header-row *matHeaderRowDef="['product', 'category', 'tax', 'storage', 'status', 'actions']"></tr>
+              <tr
+                mat-row
+                *matRowDef="let row; columns: ['product', 'category', 'tax', 'storage', 'status', 'actions']; trackBy: trackById"
+              ></tr>
+            </table>
+          </div>
+
+          <div *ngIf="!isLoadingProducts && !products.length" class="empty-state">
+            <div class="empty-icon"><mat-icon>inventory_2</mat-icon></div>
+            <div class="f-w-600">No products match these filters</div>
+            <div class="f-s-13 m-t-4">Try another category or create a product.</div>
+          </div>
+
+          <div class="page-nav" *ngIf="productCount || productPage > 1">
+            <button mat-icon-button type="button" [disabled]="productPage === 1" (click)="productPageChange(-1)">
+              <mat-icon>chevron_left</mat-icon>
+            </button>
+            <span>Page {{ productPage }}</span>
+            <button mat-icon-button type="button" [disabled]="!hasNextProducts" (click)="productPageChange(1)">
+              <mat-icon>chevron_right</mat-icon>
+            </button>
+          </div>
+        </div>
+      </mat-tab>
+
+      <mat-tab label="Variants">
+        <div class="p-t-20">
+          <div class="filter-bar">
+            <mat-form-field appearance="outline" subscriptSizing="dynamic" class="search-field">
+              <mat-label>Product</mat-label>
+              <mat-select [(ngModel)]="variantProduct" (selectionChange)="onVariantFilters()">
+                <mat-option value="">All products</mat-option>
+                <mat-option *ngFor="let product of allProducts" [value]="admin.idOf(product)">
+                  {{ product.name }} ({{ product.code }})
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+
+            <mat-form-field appearance="outline" subscriptSizing="dynamic">
+              <mat-label>Status</mat-label>
+              <mat-select [(ngModel)]="variantStatus" (selectionChange)="onVariantFilters()">
+                <mat-option value="">All statuses</mat-option>
+                <mat-option value="true">Active</mat-option>
+                <mat-option value="false">Inactive</mat-option>
+              </mat-select>
+            </mat-form-field>
+
+            <button mat-flat-button color="primary" type="button" class="m-l-auto" (click)="openVariant()">
+              <mat-icon>add</mat-icon>
+              Add variant
+            </button>
+          </div>
+
+          <div class="table-head">
+            <div>
+              <div class="table-title">Variants</div>
+              <div class="table-sub">{{ variantCountLabel }}</div>
+            </div>
+          </div>
+
+          <mat-progress-bar *ngIf="isLoadingVariants" mode="indeterminate"></mat-progress-bar>
+          <div class="table-responsive">
+            <table mat-table [dataSource]="variants" class="w-100">
+              <ng-container matColumnDef="variant">
+                <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-14">Variant</th>
+                <td mat-cell *matCellDef="let variant">
+                  <div class="entity-cell">
+                    <img
+                      *ngIf="variant.image; else variantInitials"
+                      class="entity-image"
+                      [src]="mediaHref(variant.image)"
+                      alt=""
+                    />
+                    <ng-template #variantInitials>
+                      <div class="entity-image">{{ initials(variant.name) }}</div>
+                    </ng-template>
+                    <div>
+                      <div class="entity-name">{{ variant.name }}</div>
+                      <div class="entity-meta">{{ variant.sku }}</div>
+                    </div>
+                  </div>
+                </td>
+              </ng-container>
+
+              <ng-container matColumnDef="product">
+                <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-14">Product</th>
+                <td mat-cell *matCellDef="let variant">
+                  <div class="f-s-13">{{ productName(variant.product) }}</div>
+                </td>
+              </ng-container>
+
+              <ng-container matColumnDef="price">
+                <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-14">Price</th>
+                <td mat-cell *matCellDef="let variant">
+                  <div class="f-s-13 f-w-600">{{ variant.pricePerUnit | paise }}</div>
+                  <div class="cell-muted">{{ basisLabel(variant.priceBasis) }} / {{ variant.unitLabel }}</div>
+                </td>
+              </ng-container>
+
+              <ng-container matColumnDef="pack">
+                <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-14">Pack and mode</th>
+                <td mat-cell *matCellDef="let variant">
+                  <span class="chip">{{ packLabel(variant) }}</span>
+                  <div class="cell-muted">{{ variant.measurementMode | titlecase }}</div>
+                </td>
+              </ng-container>
+
+              <ng-container matColumnDef="status">
+                <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-14">Status</th>
+                <td mat-cell *matCellDef="let variant">
+                  <div class="status-cell">
+                    <mat-slide-toggle
+                      color="primary"
+                      [checked]="isActive(variant)"
+                      [disabled]="busyId === admin.idOf(variant)"
+                      (change)="toggleVariant(variant, $event.checked)"
+                    ></mat-slide-toggle>
+                    <span
+                      class="status-text"
+                      [class.status-on]="isActive(variant)"
+                      [class.status-off]="!isActive(variant)"
+                    >
+                      {{ isActive(variant) ? 'Active' : 'Inactive' }}
+                    </span>
+                  </div>
+                </td>
+              </ng-container>
+
+              <ng-container matColumnDef="actions">
+                <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-14 text-right">Actions</th>
+                <td mat-cell *matCellDef="let variant" class="text-right">
+                  <button mat-icon-button type="button" matTooltip="Edit variant" (click)="openVariant(variant)">
+                    <mat-icon>edit</mat-icon>
+                  </button>
+                </td>
+              </ng-container>
+
+              <tr mat-header-row *matHeaderRowDef="['variant', 'product', 'price', 'pack', 'status', 'actions']"></tr>
+              <tr
+                mat-row
+                *matRowDef="let row; columns: ['variant', 'product', 'price', 'pack', 'status', 'actions']; trackBy: trackById"
+              ></tr>
+            </table>
+          </div>
+
+          <div *ngIf="!isLoadingVariants && !variants.length" class="empty-state">
+            <div class="empty-icon"><mat-icon>sell</mat-icon></div>
+            <div class="f-w-600">No variants match these filters</div>
+            <div class="f-s-13 m-t-4">Pick another product or create a variant.</div>
+          </div>
+
+          <div class="page-nav" *ngIf="variantCount || variantPage > 1">
+            <button mat-icon-button type="button" [disabled]="variantPage === 1" (click)="variantPageChange(-1)">
+              <mat-icon>chevron_left</mat-icon>
+            </button>
+            <span>Page {{ variantPage }}</span>
+            <button mat-icon-button type="button" [disabled]="!hasNextVariants" (click)="variantPageChange(1)">
+              <mat-icon>chevron_right</mat-icon>
+            </button>
+          </div>
+        </div>
+      </mat-tab>
+    </mat-tab-group>
+  </mat-card-content>
+</mat-card>

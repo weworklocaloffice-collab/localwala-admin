@@ -1,0 +1,232 @@
+<div class="d-flex align-center justify-content-between p-r-16">
+  <h2 mat-dialog-title class="m-b-0">
+    {{ util.appTranslate('stores_brand_certifications_title') }}
+  </h2>
+  <button mat-icon-button type="button" (click)="onClose()">
+    <mat-icon>close</mat-icon>
+  </button>
+</div>
+
+<mat-dialog-content class="dialog-form">
+  <div class="d-flex align-center gap-8 m-b-8">
+    <span class="f-w-600 f-s-16">{{ brand.name }}</span>
+    @if (brand.isVerified) {
+      <mat-icon class="text-success" [matTooltip]="util.appTranslate('stores_verified')">
+        verified
+      </mat-icon>
+    }
+  </div>
+  <p class="f-s-12 text-muted">{{ util.appTranslate('stores_brand_certification_note') }}</p>
+
+  @if (!adding) {
+    <button mat-stroked-button color="primary" type="button" (click)="startAdd()">
+      <mat-icon>add</mat-icon>
+      {{ util.appTranslate('stores_brand_certification_add') }}
+    </button>
+  } @else {
+    <div class="row">
+      <div class="col-12 col-sm-6">
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>{{ util.appTranslate('stores_brand_certification_type') }}</mat-label>
+          <mat-select [(ngModel)]="form.type" required>
+            @for (type of types; track type) {
+              <mat-option [value]="type">{{ util.appTranslate(typeKey(type)) }}</mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
+      </div>
+
+      <div class="col-12 col-sm-6">
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>{{ util.appTranslate('stores_brand_certification_number') }}</mat-label>
+          <input matInput [(ngModel)]="form.number" maxlength="64" />
+        </mat-form-field>
+      </div>
+
+      <div class="col-12 col-sm-6">
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>{{ util.appTranslate('stores_brand_certification_valid_from') }}</mat-label>
+          <input matInput [matDatepicker]="fromPicker" [(ngModel)]="form.validFrom" />
+          <mat-datepicker-toggle matIconSuffix [for]="fromPicker"></mat-datepicker-toggle>
+          <mat-datepicker #fromPicker></mat-datepicker>
+        </mat-form-field>
+      </div>
+
+      <div class="col-12 col-sm-6">
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>{{ util.appTranslate('stores_brand_certification_valid_to') }}</mat-label>
+          <input matInput [matDatepicker]="toPicker" [(ngModel)]="form.validTo" />
+          <mat-datepicker-toggle matIconSuffix [for]="toPicker"></mat-datepicker-toggle>
+          <mat-datepicker #toPicker></mat-datepicker>
+        </mat-form-field>
+      </div>
+
+      <div class="col-12">
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>{{ util.appTranslate('stores_brand_certification_document') }}</mat-label>
+          <input
+            matInput
+            [(ngModel)]="form.document"
+            [placeholder]="util.appTranslate('stores_brand_certification_document_hint')"
+          />
+        </mat-form-field>
+      </div>
+    </div>
+
+    <div class="d-flex justify-content-end gap-8 m-b-16">
+      <button mat-button type="button" (click)="cancelAdd()">
+        {{ util.appTranslate('ts_cancel') }}
+      </button>
+      <button
+        mat-flat-button
+        color="primary"
+        type="button"
+        [disabled]="!form.type || loading"
+        (click)="addCertification()"
+      >
+        {{ util.appTranslate('stores_brand_certification_add') }}
+      </button>
+    </div>
+  }
+
+  @if (certifications.length) {
+    <div class="table-responsive">
+      <table mat-table [dataSource]="certifications" class="w-100">
+        <ng-container matColumnDef="type">
+          <th mat-header-cell *matHeaderCellDef class="f-w-600">
+            {{ util.appTranslate('stores_brand_certification_type') }}
+          </th>
+          <td mat-cell *matCellDef="let element">
+            <div class="f-w-600">{{ util.appTranslate(typeKey(element.type)) }}</div>
+            @if (element.number) {
+              <div class="f-s-12 text-muted">{{ element.number }}</div>
+            }
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="validity">
+          <th mat-header-cell *matHeaderCellDef class="f-w-600">
+            {{ util.appTranslate('stores_brand_certification_validity') }}
+          </th>
+          <td mat-cell *matCellDef="let element">
+            <span class="f-s-14">{{ validity(element) }}</span>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="status">
+          <th mat-header-cell *matHeaderCellDef class="f-w-600">
+            {{ util.appTranslate('stores_brand_certification_status') }}
+          </th>
+          <td mat-cell *matCellDef="let element">
+            <span class="status-chip" [ngClass]="element.status">
+              {{ util.appTranslate(statusKey(element.status)) }}
+            </span>
+            @if (element.status === 'rejected' && element.rejectionReason) {
+              <div class="f-s-12 text-error m-t-4">{{ element.rejectionReason }}</div>
+            }
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="document">
+          <th mat-header-cell *matHeaderCellDef class="f-w-600">
+            {{ util.appTranslate('stores_brand_certification_document') }}
+          </th>
+          <td mat-cell *matCellDef="let element">
+            @if (element.document) {
+              <a
+                [href]="element.document"
+                target="_blank"
+                rel="noopener"
+                class="text-primary"
+                [matTooltip]="util.appTranslate('stores_brand_certification_open_document')"
+              >
+                <mat-icon>description</mat-icon>
+              </a>
+            } @else {
+              <span class="f-s-14 text-muted">—</span>
+            }
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="action">
+          <th mat-header-cell *matHeaderCellDef class="f-w-600">
+            {{ util.appTranslate('stores_brand_certification_actions') }}
+          </th>
+          <td mat-cell *matCellDef="let element; let i = $index">
+            @if (
+              util.hasRight('stores_taxonomy_write') &&
+              element.status !== 'approved' &&
+              element.status !== 'expired'
+            ) {
+              @if (rejectingIndex === i) {
+                <div class="d-flex align-center gap-8">
+                  <mat-form-field appearance="outline" style="width: 180px">
+                    <mat-label>
+                      {{ util.appTranslate('stores_brand_certification_reject_reason') }}
+                    </mat-label>
+                    <input matInput [(ngModel)]="rejectionReason" maxlength="500" />
+                  </mat-form-field>
+                  <button
+                    mat-icon-button
+                    color="warn"
+                    type="button"
+                    [disabled]="loading"
+                    [matTooltip]="util.appTranslate('stores_brand_certification_confirm_reject')"
+                    (click)="confirmReject(i)"
+                  >
+                    <mat-icon>check</mat-icon>
+                  </button>
+                  <button
+                    mat-icon-button
+                    type="button"
+                    (click)="cancelReject()"
+                    [matTooltip]="util.appTranslate('ts_cancel')"
+                  >
+                    <mat-icon>close</mat-icon>
+                  </button>
+                </div>
+              } @else {
+                <button
+                  mat-icon-button
+                  color="primary"
+                  type="button"
+                  [disabled]="loading"
+                  [matTooltip]="util.appTranslate('stores_brand_certification_approve')"
+                  (click)="approve(i)"
+                >
+                  <mat-icon>check_circle</mat-icon>
+                </button>
+                <button
+                  mat-icon-button
+                  color="warn"
+                  type="button"
+                  [disabled]="loading"
+                  [matTooltip]="util.appTranslate('stores_brand_certification_reject')"
+                  (click)="startReject(i)"
+                >
+                  <mat-icon>cancel</mat-icon>
+                </button>
+              }
+            }
+          </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="['type', 'validity', 'status', 'document', 'action']"></tr>
+        <tr
+          mat-row
+          *matRowDef="let row; columns: ['type', 'validity', 'status', 'document', 'action']"
+        ></tr>
+      </table>
+    </div>
+  } @else {
+    <div class="p-24 text-center text-muted">
+      {{ util.appTranslate('stores_brand_certification_empty') }}
+    </div>
+  }
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button type="button" (click)="onClose()">
+    {{ util.appTranslate('ts_close') }}
+  </button>
+</mat-dialog-actions>

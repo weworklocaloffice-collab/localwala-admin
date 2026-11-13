@@ -1,7 +1,7 @@
 <mat-card class="cardWithShadow">
   <mat-card-header class="m-b-16">
-    <mat-card-title>Taxonomy</mat-card-title>
-    <mat-card-subtitle>Four frozen categories (BR-02). Products and variants hang off them; price basis is explicit per variant.</mat-card-subtitle>
+    <mat-card-title>{{ util.appTranslate('jhatka_taxonomy') }}</mat-card-title>
+    <mat-card-subtitle>{{ util.appTranslate('jhatka_taxonomy_note') }}</mat-card-subtitle>
   </mat-card-header>
 
   <mat-card-content>
@@ -9,17 +9,17 @@
     <div class="table-responsive">
       <table mat-table [dataSource]="categories" class="w-100">
         <ng-container matColumnDef="key">
-          <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1">Key</th>
+          <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1">{{ util.appTranslate('jhatka_key') }}</th>
           <td mat-cell *matCellDef="let element">{{ element.key }}</td>
         </ng-container>
 
         <ng-container matColumnDef="name">
-          <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1">Name</th>
+          <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1">{{ util.appTranslate('jhatka_name') }}</th>
           <td mat-cell *matCellDef="let element">{{ element.name }}</td>
         </ng-container>
 
         <ng-container matColumnDef="status">
-          <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1">Status</th>
+          <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1">{{ util.appTranslate('jhatka_status') }}</th>
           <td mat-cell *matCellDef="let element">{{ element.status }}</td>
         </ng-container>
 
@@ -30,30 +30,30 @@
 
     <div class="d-flex flex-wrap gap-12 m-t-16 m-b-24">
       <mat-form-field appearance="outline">
-        <mat-label>Key</mat-label>
+        <mat-label>{{ util.appTranslate('jhatka_key') }}</mat-label>
         <mat-select [(ngModel)]="newCategory.key">
           <mat-option *ngFor="let k of categoryKeys" [value]="k">{{ k }}</mat-option>
         </mat-select>
       </mat-form-field>
       <mat-form-field appearance="outline">
-        <mat-label>Name</mat-label>
+        <mat-label>{{ util.appTranslate('jhatka_name') }}</mat-label>
         <input matInput [(ngModel)]="newCategory.name" />
       </mat-form-field>
-      <button mat-raised-button color="primary" (click)="createCategory()">Add category</button>
+      <button mat-raised-button color="primary" (click)="createCategory()">{{ util.appTranslate('jhatka_add_category') }}</button>
     </div>
 
     <h3 class="f-s-16 f-w-600">Products ({{ products.length }})</h3>
     <div class="d-flex flex-wrap gap-12 m-b-16">
       <mat-form-field appearance="outline">
-        <mat-label>Search</mat-label>
+        <mat-label>{{ util.appTranslate('jhatka_search') }}</mat-label>
         <input matInput [(ngModel)]="search" (keyup.enter)="onSearch()" />
       </mat-form-field>
-      <button mat-button color="primary" (click)="onSearch()">Search</button>
+      <button mat-button color="primary" (click)="onSearch()">{{ util.appTranslate('jhatka_search') }}</button>
     </div>
     <div class="table-responsive">
       <table mat-table [dataSource]="products" class="w-100">
         <ng-container matColumnDef="name">
-          <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1">Product</th>
+          <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1">{{ util.appTranslate('jhatka_product') }}</th>
           <td mat-cell *matCellDef="let element">
             <div class="f-w-600">{{ element.name }}</div>
             <div class="m-t-4 f-s-12 text-muted">{{ element.category?.name || element.category }}</div>
@@ -61,14 +61,14 @@
         </ng-container>
 
         <ng-container matColumnDef="status">
-          <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1">Status</th>
+          <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1">{{ util.appTranslate('jhatka_status') }}</th>
           <td mat-cell *matCellDef="let element">{{ element.status }}</td>
         </ng-container>
 
         <ng-container matColumnDef="edit">
-          <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1">Edit</th>
+          <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1">{{ util.appTranslate('jhatka_edit') }}</th>
           <td mat-cell *matCellDef="let element">
-            <button mat-button color="primary" (click)="toggleProductStatus(element)">Toggle</button>
+            <button mat-button color="primary" (click)="toggleProductStatus(element)">{{ util.appTranslate('jhatka_toggle') }}</button>
           </td>
         </ng-container>
 
@@ -79,36 +79,36 @@
 
     <div class="d-flex flex-wrap gap-12 m-t-16 m-b-24">
       <mat-form-field appearance="outline">
-        <mat-label>Category</mat-label>
+        <mat-label>{{ util.appTranslate('jhatka_category') }}</mat-label>
         <mat-select [(ngModel)]="newProduct.category">
           <mat-option *ngFor="let c of categories" [value]="c._id || c.id">{{ c.name }}</mat-option>
         </mat-select>
       </mat-form-field>
       <mat-form-field appearance="outline">
-        <mat-label>Code</mat-label>
+        <mat-label>{{ util.appTranslate('jhatka_code') }}</mat-label>
         <input matInput [(ngModel)]="newProduct.code" />
       </mat-form-field>
       <mat-form-field appearance="outline">
-        <mat-label>Name</mat-label>
+        <mat-label>{{ util.appTranslate('jhatka_name') }}</mat-label>
         <input matInput [(ngModel)]="newProduct.name" />
       </mat-form-field>
       <mat-form-field appearance="outline">
         <mat-label>HSN</mat-label>
         <input matInput [(ngModel)]="newProduct.hsnCode" />
       </mat-form-field>
-      <button mat-raised-button color="primary" (click)="createProduct()">Add product</button>
+      <button mat-raised-button color="primary" (click)="createProduct()">{{ util.appTranslate('jhatka_add_product') }}</button>
     </div>
 
-    <h3 class="f-s-16 f-w-600">Variants</h3>
+    <h3 class="f-s-16 f-w-600">{{ util.appTranslate('jhatka_variants') }}</h3>
     <div class="d-flex flex-wrap gap-12 m-b-16">
       <mat-form-field appearance="outline">
-        <mat-label>Product filter</mat-label>
+        <mat-label>{{ util.appTranslate('jhatka_product_filter') }}</mat-label>
         <mat-select [(ngModel)]="selectedProduct" (selectionChange)="onProductFilter()">
-          <mat-option value="">All products</mat-option>
+          <mat-option value="">{{ util.appTranslate('jhatka_all_products') }}</mat-option>
           <mat-option *ngFor="let p of products" [value]="p._id || p.id">{{ p.name }}</mat-option>
         </mat-select>
       </mat-form-field>
-      <button mat-button color="primary" (click)="getVariants()">Load variants</button>
+      <button mat-button color="primary" (click)="getVariants()">{{ util.appTranslate('jhatka_load_variants') }}</button>
     </div>
     <div class="table-responsive">
       <table mat-table [dataSource]="variants" class="w-100">
@@ -121,20 +121,20 @@
         </ng-container>
 
         <ng-container matColumnDef="price">
-          <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1">Price</th>
+          <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1">{{ util.appTranslate('jhatka_price') }}</th>
           <td mat-cell *matCellDef="let element">Rs {{ element.pricePerUnit }} {{ element.priceBasis }}</td>
         </ng-container>
 
         <ng-container matColumnDef="status">
-          <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1">Status</th>
+          <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1">{{ util.appTranslate('jhatka_status') }}</th>
           <td mat-cell *matCellDef="let element">{{ element.status }}</td>
         </ng-container>
 
         <ng-container matColumnDef="edit">
-          <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1">Edit</th>
+          <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1">{{ util.appTranslate('jhatka_edit') }}</th>
           <td mat-cell *matCellDef="let element">
-            <button mat-button color="primary" (click)="editVariantPrice(element)">Price</button>
-            <button mat-button color="primary" (click)="toggleVariantStatus(element)">Toggle</button>
+            <button mat-button color="primary" (click)="editVariantPrice(element)">{{ util.appTranslate('jhatka_price') }}</button>
+            <button mat-button color="primary" (click)="toggleVariantStatus(element)">{{ util.appTranslate('jhatka_toggle') }}</button>
           </td>
         </ng-container>
 
@@ -143,10 +143,10 @@
       </table>
     </div>
 
-    <h3 class="f-s-16 f-w-600">New variant</h3>
+    <h3 class="f-s-16 f-w-600">{{ util.appTranslate('jhatka_new_variant') }}</h3>
     <div class="d-flex flex-wrap gap-12 m-t-16">
       <mat-form-field appearance="outline">
-        <mat-label>Product</mat-label>
+        <mat-label>{{ util.appTranslate('jhatka_product') }}</mat-label>
         <mat-select [(ngModel)]="newVariant.product">
           <mat-option *ngFor="let p of products" [value]="p._id || p.id">{{ p.name }}</mat-option>
         </mat-select>
@@ -156,22 +156,22 @@
         <input matInput [(ngModel)]="newVariant.sku" />
       </mat-form-field>
       <mat-form-field appearance="outline">
-        <mat-label>Name</mat-label>
+        <mat-label>{{ util.appTranslate('jhatka_name') }}</mat-label>
         <input matInput [(ngModel)]="newVariant.name" />
       </mat-form-field>
       <mat-form-field appearance="outline">
-        <mat-label>Mode</mat-label>
+        <mat-label>{{ util.appTranslate('jhatka_mode') }}</mat-label>
         <mat-select [(ngModel)]="newVariant.measurementMode">
           <mat-option value="WEIGHT">WEIGHT</mat-option>
           <mat-option value="COUNT">COUNT</mat-option>
         </mat-select>
       </mat-form-field>
       <mat-form-field appearance="outline">
-        <mat-label>Price (Rs)</mat-label>
+        <mat-label>{{ util.appTranslate('jhatka_price_rs') }}</mat-label>
         <input matInput type="number" [(ngModel)]="newVariant.pricePerUnit" />
       </mat-form-field>
       <mat-form-field appearance="outline">
-        <mat-label>Basis</mat-label>
+        <mat-label>{{ util.appTranslate('jhatka_basis') }}</mat-label>
         <mat-select [(ngModel)]="newVariant.priceBasis">
           <mat-option value="per_kg">per_kg</mat-option>
           <mat-option value="per_piece">per_piece</mat-option>
@@ -179,8 +179,8 @@
           <mat-option value="per_pack">per_pack</mat-option>
         </mat-select>
       </mat-form-field>
-      <button mat-raised-button color="primary" (click)="createVariant()">Add variant</button>
+      <button mat-raised-button color="primary" (click)="createVariant()">{{ util.appTranslate('jhatka_add_variant') }}</button>
     </div>
-    <div *ngIf="!isLoaded" class="m-t-16">Loading…</div>
+    <div *ngIf="!isLoaded" class="m-t-16">{{ util.appTranslate('jhatka_loading') }}</div>
   </mat-card-content>
 </mat-card>

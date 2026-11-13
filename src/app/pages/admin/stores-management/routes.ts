@@ -6,6 +6,8 @@ import { TaxConfigurations } from './tax-configurations/tax-configurations';
 import { Categories } from './categories/categories';
 import { SubCategories } from './subcategories/subcategories';
 import { Brands } from './brands/brands';
+import { BrandRequests } from './brand-requests/brand-requests';
+import { ImportExport } from './import-export/import-export';
 import { Operations } from './operations/operations';
 import { Orders } from './orders/orders';
 import { Moderation } from './moderation/moderation';
@@ -18,6 +20,8 @@ import { Returns } from './returns/returns';
 import { Refunds } from './refunds/refunds';
 import { Settlements } from './settlements/settlements';
 import { Subscriptions } from './subscriptions/subscriptions';
+import { CustomerSubscriptions } from './customer-subscriptions/customer-subscriptions';
+import { SubscriptionAnomalies } from './subscription-anomalies/subscription-anomalies';
 import { Products } from './products/products';
 import { Inventory } from './inventory/inventory';
 import { Promotions } from './promotions/promotions';
@@ -92,6 +96,20 @@ export const StoresManagementRoutes: Routes = [
     component: Brands,
     data: {
       title: 'stores_brands',
+    },
+  },
+  {
+    path: 'brand-requests',
+    component: BrandRequests,
+    data: {
+      title: 'stores_brand_requests',
+    },
+  },
+  {
+    path: 'import-export/:collection',
+    component: ImportExport,
+    data: {
+      title: 'stores_import_export',
     },
   },
   {
@@ -183,6 +201,20 @@ export const StoresManagementRoutes: Routes = [
     component: Subscriptions,
     data: {
       title: 'stores_subscriptions',
+    },
+  },
+  {
+    path: 'customer-subscriptions',
+    component: CustomerSubscriptions,
+    data: {
+      title: 'stores_customer_subscriptions',
+    },
+  },
+  {
+    path: 'subscription-anomalies',
+    component: SubscriptionAnomalies,
+    data: {
+      title: 'stores_subscription_anomalies',
     },
   },
   {

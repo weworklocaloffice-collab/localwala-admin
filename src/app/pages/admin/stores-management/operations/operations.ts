@@ -214,8 +214,10 @@ export class Operations implements OnInit {
       // compliance / organic
       case 'subject':
         return row.subjectName || row.outletName || row.chainName || '—';
-      case 'kind':
-        return row.docType ? 'document' : 'subscription';
+      case 'kind': {
+        const kind = row.kind || (row.docType ? 'document' : 'subscription');
+        return this.util.appTranslate('stores_kind_' + kind);
+      }
       case 'certificate':
         return row.certificateType || '—';
       case 'issuingAuthority':

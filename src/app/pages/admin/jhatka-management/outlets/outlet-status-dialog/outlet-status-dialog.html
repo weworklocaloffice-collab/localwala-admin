@@ -1,0 +1,62 @@
+<div class="d-flex align-items-start gap-16 p-b-8">
+  <div
+    class="status-icon"
+    [ngClass]="isDestructive ? 'bg-light-error text-error' : 'bg-light-primary text-primary'"
+  >
+    <mat-icon>{{ isDestructive ? 'pause_circle' : 'check_circle' }}</mat-icon>
+  </div>
+  <div class="status-copy">
+    <h2 mat-dialog-title class="m-0 p-0">{{ title }}</h2>
+    <p class="f-s-14 text-muted m-0">{{ data.outletName }}</p>
+  </div>
+</div>
+
+<mat-dialog-content class="p-t-16">
+  <p class="f-s-14 m-b-12">{{ description }}</p>
+
+  <div *ngIf="data.nextStatus === 'closed'" class="warning-box m-b-12">
+    <div class="d-flex align-center gap-8 f-w-600 f-s-13">
+      <mat-icon class="f-s-18 text-warning">warning</mat-icon>
+      This cannot be undone
+    </div>
+    <div class="f-s-12 text-muted m-t-4">
+      A closed outlet has no outgoing transitions. Create a new outlet if trade resumes.
+    </div>
+  </div>
+
+  <div *ngIf="needsFssaiWarning" class="warning-box m-b-12">
+    <div class="d-flex align-center gap-8 f-w-600 f-s-13">
+      <mat-icon class="f-s-18 text-warning">verified_user</mat-icon>
+      Valid FSSAI compliance is required
+    </div>
+    <div class="f-s-12 text-muted m-t-4">
+      No unexpired compliance record was found for this outlet. Activation will be rejected by the API until one is added.
+    </div>
+  </div>
+
+  <mat-form-field appearance="outline" class="reason-field" *ngIf="requiresReason">
+    <mat-label>Reason (recorded on the outlet)</mat-label>
+    <textarea
+      matInput
+      rows="3"
+      [(ngModel)]="reason"
+      placeholder="Explain why this outlet is being {{ data.nextStatus }}"
+    ></textarea>
+    <mat-hint>Required. This is shown in the outlet audit history.</mat-hint>
+  </mat-form-field>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end" class="p-b-16">
+  <button mat-stroked-button type="button" (click)="dialogRef.close()">
+    {{ util.appTranslate('ts_cancel') }}
+  </button>
+  <button
+    mat-flat-button
+    type="button"
+    [color]="isDestructive ? 'warn' : 'primary'"
+    [disabled]="requiresReason && !reason.trim()"
+    (click)="confirm()"
+  >
+    {{ title }}
+  </button>
+</mat-dialog-actions>

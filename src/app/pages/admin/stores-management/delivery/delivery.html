@@ -4,7 +4,23 @@
   </mat-card-header>
 
   <mat-card-content>
+    @if (!util.hasRight("stores_delivery_read")) {
+      <div class="p-24 text-center text-muted">Not authorized.</div>
+    } @else {
+    @if (!util.hasRight("stores_delivery_read")) {
+      <div class="p-24 text-center text-muted">Not authorized.</div>
+    } @else {
+    @if (!isLoaded) {
+      <div class="p-24 text-center"><mat-progress-spinner diameter="32" mode="indeterminate"></mat-progress-spinner></div>
+    }
     <div class="d-flex flex-wrap align-center justify-content-end mb-24 gap-12">
+      <div class="search-box">
+        <mat-form-field appearance="outline" class="w-100">
+          <mat-label>{{ util.appTranslate('th_search') }}</mat-label>
+          <input matInput [(ngModel)]="searchQuery" (keyup.enter)="onSearch()" [placeholder]="util.appTranslate('th_search')" />
+        </mat-form-field>
+      </div>
+
       <mat-form-field appearance="outline" class="w-200">
         <mat-label>{{ util.appTranslate('th_status') }}</mat-label>
         <mat-select [(ngModel)]="statusFilter" (selectionChange)="onStatusFilter($event.value)">
@@ -124,5 +140,7 @@
       showFirstLastButtons
     >
     </mat-paginator>
+      }
+      }
   </mat-card-content>
 </mat-card>

@@ -4,6 +4,9 @@
   </mat-card-header>
 
   <mat-card-content>
+    @if (!isLoaded) {
+      <div class="p-24 text-center"><mat-progress-spinner diameter="32" mode="indeterminate"></mat-progress-spinner></div>
+    }
     <div class="d-flex flex-wrap align-center justify-content-between mb-24 gap-12">
       <div class="search-box">
         <mat-form-field appearance="outline" class="w-100">
@@ -27,13 +30,18 @@
             <mat-option value="scheduled">Scheduled</mat-option>
             <mat-option value="draft">Draft</mat-option>
             <mat-option value="paused">Paused</mat-option>
-            <mat-option value="expired">{{ util.appTranslate('stores_promotion_expired') }}</mat-option>
+            <mat-option value="expired">{{
+              util.appTranslate('stores_promotion_expired')
+            }}</mat-option>
           </mat-select>
         </mat-form-field>
 
         <mat-form-field appearance="outline" class="w-180">
           <mat-label>{{ util.appTranslate('stores_approval') }}</mat-label>
-          <mat-select [(ngModel)]="approvalFilter" (selectionChange)="onApprovalFilter($event.value)">
+          <mat-select
+            [(ngModel)]="approvalFilter"
+            (selectionChange)="onApprovalFilter($event.value)"
+          >
             <mat-option value="">{{ util.appTranslate('common_all') }}</mat-option>
             @for (a of APPROVALS; track a) {
               <mat-option [value]="a">{{ a }}</mat-option>
@@ -69,7 +77,9 @@
             {{ util.appTranslate('stores_promotion_type') }}
           </th>
           <td mat-cell *matCellDef="let element">
-            <span class="status-chip" [ngClass]="'type-' + (element.type || 'unknown')">{{ element.type || '—' }}</span>
+            <span class="status-chip" [ngClass]="'type-' + (element.type || 'unknown')">{{
+              element.type || '—'
+            }}</span>
           </td>
         </ng-container>
 
@@ -78,9 +88,13 @@
             {{ util.appTranslate('stores_promotion_value') }}
           </th>
           <td mat-cell *matCellDef="let element">
-            <div class="f-s-14 f-w-600">{{ element.value || 0 }}{{ element.type === 'percent_off' ? '%' : '' }}</div>
+            <div class="f-s-14 f-w-600">
+              {{ element.value || 0 }}{{ element.type === 'percent_off' ? '%' : '' }}
+            </div>
             @if (element.maxDiscount) {
-              <div class="f-s-12 text-muted">{{ util.appTranslate('stores_promotion_cap') }} {{ element.maxDiscount }}</div>
+              <div class="f-s-12 text-muted">
+                {{ util.appTranslate('stores_promotion_cap') }} {{ element.maxDiscount }}
+              </div>
             }
           </td>
         </ng-container>
@@ -102,7 +116,23 @@
             {{ util.appTranslate('stores_promotion_usage') }}
           </th>
           <td mat-cell *matCellDef="let element">
-            <div class="f-s-14">{{ element.usageCount || 0 }} / {{ element.usageLimit || '∞' }}</div>
+            <div class="f-s-14">
+              {{ element.usageCount || 0 }} / {{ element.usageLimit || '∞' }}
+            </div>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="state">
+          <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1">
+            {{ util.appTranslate('th_status') }}
+          </th>
+          <td mat-cell *matCellDef="let element">
+            <span class="status-chip" [ngClass]="'state-' + (element.status || 'draft')">
+              {{ element.status || 'draft' }}
+            </span>
+            @if (element.isActive === false && element.status !== 'draft') {
+              <div class="f-s-12 text-muted">Inactive flag off</div>
+            }
           </td>
         </ng-container>
 
@@ -111,7 +141,10 @@
             {{ util.appTranslate('stores_approval') }}
           </th>
           <td mat-cell *matCellDef="let element">
-            <span class="status-chip" [ngClass]="'approval-' + (element.approval?.status || 'not_required')">
+            <span
+              class="status-chip"
+              [ngClass]="'approval-' + (element.approval?.status || 'not_required')"
+            >
               {{ element.approval?.status || 'not_required' }}
             </span>
             @if (element.approval?.note) {

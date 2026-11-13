@@ -4,6 +4,12 @@
   </mat-card-header>
 
   <mat-card-content>
+    @if (!util.hasRight("stores_chain_read")) {
+      <div class="p-24 text-center text-muted">Not authorized.</div>
+    } @else {
+    @if (!isLoaded) {
+      <div class="p-24 text-center"><mat-progress-spinner diameter="32" mode="indeterminate"></mat-progress-spinner></div>
+    }
     <div class="d-flex flex-wrap align-center justify-content-between mb-24 gap-12">
       <div class="search-box">
         <mat-form-field appearance="outline" class="w-100">
@@ -53,7 +59,11 @@
             Settlement
           </th>
           <td mat-cell *matCellDef="let element">
-            <button mat-stroked-button type="button" (click)="openSettlement(element)">
+                        <button
+              mat-stroked-button
+              type="button"
+              *ngIf="util.hasRight('stores_chain_write')"
+              (click)="openSettlement(element)">
               Cadence / T+days
             </button>
           </td>
@@ -79,5 +89,6 @@
       showFirstLastButtons
     >
     </mat-paginator>
+      }
   </mat-card-content>
 </mat-card>

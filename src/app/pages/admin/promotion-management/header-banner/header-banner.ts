@@ -143,6 +143,7 @@ export class HeaderBanner implements OnInit {
    * An empty value means the banner is global, which the API models as a null city.
    */
   listOfCities: AdminCitiesListLimitedInterface[] = [];
+  listOfVerticals: { key: string; name: string }[] = [];
   cityCtrl = new FormControl<string | null>('');
   cities!: Observable<AdminCitiesListLimitedInterface[]>;
 
@@ -285,6 +286,7 @@ export class HeaderBanner implements OnInit {
     timezone: this.str('Asia/Kolkata'),
     repeat: this.str('No Repeat'),
     city: this.str(),
+    vertical: this.str(),
     priority: this.num(1),
 
     translations: this.list<any>([]),
@@ -303,6 +305,7 @@ export class HeaderBanner implements OnInit {
 
   ngOnInit(): void {
     this.getCities();
+    this.getVerticals();
     const id = this.route.snapshot.paramMap.get('id');
     // `header-banner/manage/:id` is a separate route entry, so Angular rebuilds this
     // component when a row is opened. The tab therefore has to be derived from the
@@ -322,12 +325,28 @@ export class HeaderBanner implements OnInit {
         this.listOfCities = Array.isArray(response) ? response : [];
         this.cities = this.cityCtrl.valueChanges.pipe(
           startWith(''),
-          map((value) => (value ? this.filterCities(value) : this.listOfCities.slice()))
+          map((value) => (value ? this.filterCities(value) : this.listOfCities.slice())),
         );
       },
-      error: () => {
+      error: (error: any) => {
         this.listOfCities = [];
         this.cities = this.cityCtrl.valueChanges.pipe(startWith(''), map(() => []));
+        this.util.handleError(error, 'admin');
+      },
+    });
+  }
+
+  getVerticals(): void {
+    this.api.get_private('v1/admin/verticals').subscribe({
+      next: (response: any) => {
+        const list = Array.isArray(response?.verticals) ? response.verticals : (Array.isArray(response) ? response : []);
+        this.listOfVerticals = list.map((v: any) => ({ key: v.key, name: v.name }));
+      },
+      error: () => {
+        this.listOfVerticals = [
+          { key: 'food', name: 'Food' },
+          { key: 'dairy', name: 'Dairy' },
+        ];
       },
     });
   }
@@ -1487,6 +1506,7 @@ export class HeaderBanner implements OnInit {
       timezone: banner.timezone ?? 'Asia/Kolkata',
       repeat: banner.repeat ?? 'No Repeat',
       city: typeof city === 'string' ? city : city?.id ?? '',
+      vertical: banner.vertical ?? '',
       priority: banner.priority ?? 1,
       translations: banner.translations ?? [],
       subtitleTranslations: banner.subtitleTranslations ?? [],
@@ -1599,6 +1619,7 @@ export class HeaderBanner implements OnInit {
       timezone: 'Asia/Kolkata',
       repeat: 'No Repeat',
       city: '',
+      vertical: '',
       priority: 1,
       translations: [],
       subtitleTranslations: [],
@@ -1666,6 +1687,7 @@ export class HeaderBanner implements OnInit {
       startDate: value.startDate ? new Date(value.startDate).toISOString() : null,
       endDate: value.endDate ? new Date(value.endDate).toISOString() : null,
       city: nullify(value.city),
+      vertical: nullify(value.vertical),
       maxHeight: Number(value.maxHeight),
       collapsedHeight: Number(value.collapsedHeight),
       mediaScale: Number(value.mediaScale),

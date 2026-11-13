@@ -1,184 +1,233 @@
-<mat-card class="cardWithShadow">
-  <mat-card-header class="m-b-16">
-    <mat-card-title>Jhatka outlets</mat-card-title>
-    <mat-card-subtitle>One row per counter. Activation is admin-controlled.</mat-card-subtitle>
-  </mat-card-header>
+<div class="page-head">
+  <div>
+    <div class="eyebrow">Jhatka operations</div>
+    <h1 class="page-title">Outlet network</h1>
+    <p class="page-copy">
+      Every counter, its operating model, coverage and readiness in one place. Drafts stay private until an operator activates them.
+    </p>
+  </div>
+  <div class="d-flex align-center gap-8 flex-wrap">
+    <button mat-stroked-button type="button" (click)="getList(); getStats()">
+      <mat-icon>refresh</mat-icon>
+      Refresh
+    </button>
+    <a mat-flat-button color="primary" routerLink="new">
+      <mat-icon>add_business</mat-icon>
+      Add outlet
+    </a>
+  </div>
+</div>
 
+<div class="kpi-grid">
+  <div class="kpi-card">
+    <div class="kpi-label">Total outlets</div>
+    <div class="kpi-value">{{ stats.total }}</div>
+    <div class="kpi-hint">Across every partner and city</div>
+  </div>
+  <div class="kpi-card">
+    <div class="kpi-label">Live now</div>
+    <div class="kpi-value">{{ stats.byStatus['active'] || 0 }}</div>
+    <div class="kpi-hint">Accepting new orders</div>
+  </div>
+  <div class="kpi-card">
+    <div class="kpi-label">Needs approval</div>
+    <div class="kpi-value">{{ stats.byStatus['pending_approval'] || 0 }}</div>
+    <div class="kpi-hint">Waiting for a compliance and readiness check</div>
+  </div>
+  <div class="kpi-card">
+    <div class="kpi-label">Not trading</div>
+    <div class="kpi-value">
+      {{ (stats.byStatus['suspended'] || 0) + (stats.byStatus['closed'] || 0) }}
+    </div>
+    <div class="kpi-hint">{{ stats.byStatus['suspended'] || 0 }} suspended, {{ stats.byStatus['closed'] || 0 }} closed</div>
+  </div>
+</div>
+
+<mat-card class="cardWithShadow m-b-20">
   <mat-card-content>
-    <div class="d-flex flex-wrap align-center justify-content-between mb-24 gap-12">
-      <mat-form-field appearance="outline" class="w-100">
+    <div class="filter-bar">
+      <mat-form-field appearance="outline" subscriptSizing="dynamic">
+        <mat-label>Search outlets</mat-label>
+        <mat-icon matPrefix>search</mat-icon>
+        <input
+          matInput
+          [(ngModel)]="search"
+          (keyup.enter)="applyFilters()"
+          placeholder="Name or outlet code"
+        />
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" subscriptSizing="dynamic">
         <mat-label>Status</mat-label>
-        <mat-select [(ngModel)]="selectedStatus" (selectionChange)="onStatusFilter()">
-          <mat-option value="draft">Draft</mat-option>
-          <mat-option value="pending_approval">Pending approval</mat-option>
-          <mat-option value="active">Active</mat-option>
-          <mat-option value="suspended">Suspended</mat-option>
-          <mat-option value="closed">Closed</mat-option>
-          <mat-option value="">All</mat-option>
+        <mat-select [(ngModel)]="selectedStatus" (selectionChange)="applyFilters()">
+          <mat-option value="">All statuses</mat-option>
+          <mat-option *ngFor="let status of statuses" [value]="status">{{ statusLabel(status) }}</mat-option>
         </mat-select>
       </mat-form-field>
+
+      <mat-form-field appearance="outline" subscriptSizing="dynamic">
+        <mat-label>Business model</mat-label>
+        <mat-select [(ngModel)]="selectedModel" (selectionChange)="applyFilters()">
+          <mat-option value="">All models</mat-option>
+          <mat-option *ngFor="let model of businessModels" [value]="model">{{ modelLabel(model) }}</mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" subscriptSizing="dynamic">
+        <mat-label>City</mat-label>
+        <mat-select [(ngModel)]="selectedCity" (selectionChange)="applyFilters()">
+          <mat-option value="">All cities</mat-option>
+          <mat-option *ngFor="let city of cities" [value]="idOf(city)">{{ city.name }}</mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <button mat-button type="button" (click)="clearFilters()">Clear</button>
+    </div>
+  </mat-card-content>
+</mat-card>
+
+<mat-card class="cardWithShadow">
+  <mat-progress-bar *ngIf="!isLoaded" mode="indeterminate"></mat-progress-bar>
+  <mat-card-content>
+    <div class="table-head">
+      <div>
+        <div class="f-w-600 f-s-16">Outlets</div>
+        <div class="f-s-12 text-muted">{{ total }} matching outlet{{ total === 1 ? '' : 's' }}</div>
+      </div>
+      <div class="d-flex align-center gap-8 f-s-12 text-muted">
+        <mat-icon class="f-s-18">info</mat-icon>
+        Activation requires an unexpired FSSAI compliance record
+      </div>
     </div>
 
     <div class="table-responsive">
       <table mat-table [dataSource]="list" class="w-100">
-        <ng-container matColumnDef="name">
-          <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1">Outlet</th>
-          <td mat-cell *matCellDef="let element">
-            <div class="f-w-600">{{ element.name }}</div>
-            <div class="m-t-4 f-s-12 text-muted">{{ element.outletCode }}</div>
+        <ng-container matColumnDef="outlet">
+          <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-14">Outlet</th>
+          <td mat-cell *matCellDef="let outlet">
+            <div class="outlet-cell">
+              <img
+                *ngIf="outlet.logo; else initialsTpl"
+                class="outlet-avatar"
+                [src]="outlet.logo"
+                alt=""
+                onerror="this.style.display='none'"
+              />
+              <ng-template #initialsTpl>
+                <div class="outlet-avatar">{{ initials(outlet.name) }}</div>
+              </ng-template>
+              <div>
+                <div class="outlet-name">{{ outlet.name }}</div>
+                <div class="outlet-meta">{{ outlet.outletCode }} &middot; {{ businessName(outlet) }}</div>
+              </div>
+            </div>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="location">
+          <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-14">Location</th>
+          <td mat-cell *matCellDef="let outlet">
+            <div class="f-s-13">{{ cityName(outlet.city) }}</div>
+            <div class="cell-muted">{{ addressLine(outlet) }}</div>
           </td>
         </ng-container>
 
         <ng-container matColumnDef="model">
-          <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1">Model</th>
-          <td mat-cell *matCellDef="let element">{{ element.businessModel }}</td>
+          <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-14">Model</th>
+          <td mat-cell *matCellDef="let outlet">
+            <span class="chip">{{ modelLabel(outlet.businessModel) }}</span>
+            <div class="cell-muted">
+              {{ outlet.ownDeliveryPartner ? 'Own delivery fleet' : 'Platform delivery' }}
+            </div>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="operations">
+          <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-14">Operations</th>
+          <td mat-cell *matCellDef="let outlet">
+            <div class="d-flex flex-wrap gap-6">
+              <span class="chip">{{ outlet.serviceArea?.radiusKm || 0 }} km</span>
+              <span class="chip" *ngIf="outlet.orderConfig?.pickupEnabled">Pickup</span>
+              <span class="chip" *ngIf="outlet.orderConfig?.codEnabled">COD</span>
+            </div>
+            <div class="cell-muted">
+              {{ outlet.orderConfig?.minDeliveryMinutes || 25 }} min minimum
+            </div>
+          </td>
         </ng-container>
 
         <ng-container matColumnDef="status">
-          <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1">Status</th>
-          <td mat-cell *matCellDef="let element">{{ element.status }}</td>
+          <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-14">Status</th>
+          <td mat-cell *matCellDef="let outlet">
+            <span class="status-chip" [ngClass]="statusClass(outlet.status)">
+              <span class="status-dot"></span>
+              {{ statusLabel(outlet.status) }}
+            </span>
+            <div class="cell-muted" *ngIf="outlet.statusReason">{{ outlet.statusReason }}</div>
+          </td>
         </ng-container>
 
-        <ng-container matColumnDef="action">
-          <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1">Action</th>
-          <td mat-cell *matCellDef="let element">
-            <button mat-button color="primary" [routerLink]="['../outlet-detail', element.id]">Open</button>
-            <button mat-button color="primary" [matMenuTriggerFor]="menu">Manage</button>
-            <mat-menu #menu="matMenu">
-              <button mat-menu-item (click)="setStatus(element, 'active')">Activate</button>
-              <button mat-menu-item (click)="setStatus(element, 'suspended')">Suspend</button>
-              <button mat-menu-item (click)="setStatus(element, 'closed')">Close</button>
+        <ng-container matColumnDef="actions">
+          <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-14 text-right">Actions</th>
+          <td mat-cell *matCellDef="let outlet" class="text-right">
+            <a
+              mat-icon-button
+              color="primary"
+              [routerLink]="['/admin/jhatka-management/outlet-detail', outletId(outlet)]"
+              matTooltip="Open outlet"
+            >
+              <mat-icon>visibility</mat-icon>
+            </a>
+            <a
+              mat-icon-button
+              [routerLink]="['/admin/jhatka-management/outlets', outletId(outlet), 'edit']"
+              matTooltip="Edit outlet"
+            >
+              <mat-icon>edit</mat-icon>
+            </a>
+            <button
+              mat-icon-button
+              type="button"
+              [matMenuTriggerFor]="statusMenu"
+              [disabled]="!allowedTransitions(outlet).length"
+              matTooltip="Change status"
+            >
+              <mat-icon>more_vert</mat-icon>
+            </button>
+            <mat-menu #statusMenu="matMenu">
+              <button
+                mat-menu-item
+                *ngFor="let next of allowedTransitions(outlet)"
+                type="button"
+                (click)="openStatusDialog(outlet, next)"
+              >
+                <mat-icon>{{ next === 'active' ? 'check_circle' : next === 'closed' ? 'lock' : 'swap_horiz' }}</mat-icon>
+                <span>{{ statusLabel(next) }}</span>
+              </button>
             </mat-menu>
           </td>
         </ng-container>
 
-        <tr mat-header-row *matHeaderRowDef="displayedColumn"></tr>
-        <tr mat-row *matRowDef="let row; columns: displayedColumn;"></tr>
-      </table>
-      <mat-paginator
-        #paginator
-        [length]="list.length"
-        [pageSize]="pageSize"
-        [pageSizeOptions]="[5, 10, 25]"
-        (page)="onPageChange($event)">
-      </mat-paginator>
-    </div>
-
-    <h3 class="f-s-16 f-w-600 m-t-24">New outlet (starts as draft)</h3>
-    <div class="d-flex flex-wrap gap-12 m-b-24">
-      <mat-form-field appearance="outline">
-        <mat-label>Outlet code</mat-label>
-        <input matInput [(ngModel)]="newOutlet.outletCode" />
-      </mat-form-field>
-      <mat-form-field appearance="outline">
-        <mat-label>Business id</mat-label>
-        <input matInput [(ngModel)]="newOutlet.business" />
-      </mat-form-field>
-      <mat-form-field appearance="outline">
-        <mat-label>Model</mat-label>
-        <mat-select [(ngModel)]="newOutlet.businessModel">
-          <mat-option *ngFor="let m of businessModels" [value]="m">{{ m }}</mat-option>
-        </mat-select>
-      </mat-form-field>
-      <mat-form-field appearance="outline">
-        <mat-label>Name</mat-label>
-        <input matInput [(ngModel)]="newOutlet.name" />
-      </mat-form-field>
-      <mat-form-field appearance="outline">
-        <mat-label>Address line 1</mat-label>
-        <input matInput [(ngModel)]="newOutlet.addressLine1" />
-      </mat-form-field>
-      <mat-form-field appearance="outline">
-        <mat-label>City id</mat-label>
-        <input matInput [(ngModel)]="newOutlet.city" />
-      </mat-form-field>
-      <button mat-raised-button color="primary" (click)="createOutlet()">Create outlet</button>
-    </div>
-
-    <h3 class="f-s-16 f-w-600 m-t-24">Partners ({{ partners.length }})</h3>
-    <div class="table-responsive">
-      <table mat-table [dataSource]="partners" class="w-100">
-        <ng-container matColumnDef="partner">
-          <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1">Partner</th>
-          <td mat-cell *matCellDef="let element">
-            <div class="f-w-600">{{ element.name }}</div>
-            <div class="m-t-4 f-s-12 text-muted">{{ element.partnerCode }} · {{ element.status }}</div>
-          </td>
-        </ng-container>
-
-        <ng-container matColumnDef="payout">
-          <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1">Payout</th>
-          <td mat-cell *matCellDef="let element">{{ element.settlementCycle }} · {{ element.payoutMethod }}</td>
-        </ng-container>
-
-        <ng-container matColumnDef="action">
-          <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1">Action</th>
-          <td mat-cell *matCellDef="let element">
-            <button mat-button color="primary" [matMenuTriggerFor]="menu">Manage</button>
-            <mat-menu #menu="matMenu">
-              <button mat-menu-item (click)="setPartnerStatus(element, 'active')">Activate</button>
-              <button mat-menu-item (click)="setPartnerStatus(element, 'suspended')">Suspend</button>
-              <button mat-menu-item (click)="setPartnerStatus(element, 'terminated')">Terminate</button>
-            </mat-menu>
-          </td>
-        </ng-container>
-
-        <tr mat-header-row *matHeaderRowDef="['partner', 'payout', 'action']"></tr>
-        <tr mat-row *matRowDef="let row; columns: ['partner', 'payout', 'action'];"></tr>
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns; trackBy: trackById"></tr>
       </table>
     </div>
 
-    <div class="d-flex flex-wrap gap-12 m-t-16 m-b-24">
-      <mat-form-field appearance="outline">
-        <mat-label>Partner code</mat-label>
-        <input matInput [(ngModel)]="newPartner.partnerCode" />
-      </mat-form-field>
-      <mat-form-field appearance="outline">
-        <mat-label>Business id</mat-label>
-        <input matInput [(ngModel)]="newPartner.business" />
-      </mat-form-field>
-      <mat-form-field appearance="outline">
-        <mat-label>Owner (user id)</mat-label>
-        <input matInput [(ngModel)]="newPartner.owner" />
-      </mat-form-field>
-      <mat-form-field appearance="outline">
-        <mat-label>Name</mat-label>
-        <input matInput [(ngModel)]="newPartner.name" />
-      </mat-form-field>
-      <button mat-raised-button color="primary" (click)="createPartner()">Add partner (pending)</button>
+    <div *ngIf="isLoaded && !list.length" class="empty-state">
+      <div class="empty-icon"><mat-icon>storefront</mat-icon></div>
+      <div class="f-w-600">No outlets match these filters</div>
+      <div class="f-s-13 text-muted m-t-4">Try a different city or status, or create the first outlet.</div>
+      <button mat-stroked-button type="button" class="m-t-16" (click)="clearFilters()">Clear filters</button>
     </div>
 
-    <h3 class="f-s-16 f-w-600">Franchises ({{ franchises.length }})</h3>
-    <div class="table-responsive">
-      <table mat-table [dataSource]="franchises" class="w-100">
-        <ng-container matColumnDef="franchise">
-          <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1">Franchise</th>
-          <td mat-cell *matCellDef="let element">
-            <div class="f-w-600">{{ element.name }}</div>
-            <div class="m-t-4 f-s-12 text-muted">{{ element.franchiseCode }} · {{ element.status }}</div>
-          </td>
-        </ng-container>
-
-        <ng-container matColumnDef="supply">
-          <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1">Supply</th>
-          <td mat-cell *matCellDef="let element">{{ element.supplyModel }}</td>
-        </ng-container>
-
-        <ng-container matColumnDef="action">
-          <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1">Action</th>
-          <td mat-cell *matCellDef="let element">
-            <button mat-button color="primary" [matMenuTriggerFor]="menu">Manage</button>
-            <mat-menu #menu="matMenu">
-              <button mat-menu-item (click)="setFranchiseStatus(element, 'active')">Activate</button>
-              <button mat-menu-item (click)="setFranchiseStatus(element, 'suspended')">Suspend</button>
-              <button mat-menu-item (click)="setFranchiseStatus(element, 'terminated')">Terminate</button>
-            </mat-menu>
-          </td>
-        </ng-container>
-
-        <tr mat-header-row *matHeaderRowDef="['franchise', 'supply', 'action']"></tr>
-        <tr mat-row *matRowDef="let row; columns: ['franchise', 'supply', 'action'];"></tr>
-      </table>
-    </div>
+    <mat-paginator
+      *ngIf="total > 0"
+      [length]="total"
+      [pageIndex]="currentPage"
+      [pageSize]="pageSize"
+      [pageSizeOptions]="[10, 25, 50]"
+      showFirstLastButtons
+      (page)="onPageChange($event)"
+    ></mat-paginator>
   </mat-card-content>
 </mat-card>

@@ -73,7 +73,7 @@ export class PropertyVerification {
   onTransition(row: any, target: string) {
     if (this.util.hasRight('realestate.admin_property_verify')) {
       this.api
-        .post_private(`v1/realestate/admin/properties/${row._id}/status/${target}`, {})
+        .post_private(`v1/realestate/admin/properties/${row._id}/verify`, { target, reason: '' })
         .subscribe({
           next: () => {
             this.util.onSuccess('ts_status_updated');

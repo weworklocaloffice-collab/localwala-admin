@@ -4,7 +4,17 @@
   </mat-card-header>
 
   <mat-card-content>
+    @if (!isLoaded) {
+      <div class="p-24 text-center"><mat-progress-spinner diameter="32" mode="indeterminate"></mat-progress-spinner></div>
+    }
     <div class="d-flex flex-wrap align-center justify-content-between mb-24 gap-12">
+      <div class="search-box">
+        <mat-form-field appearance="outline" class="w-100">
+          <mat-label>{{ util.appTranslate('th_search') }}</mat-label>
+          <input matInput [(ngModel)]="searchQuery" (keyup.enter)="onSearch()" [placeholder]="util.appTranslate('th_search')" />
+        </mat-form-field>
+      </div>
+
       <div class="f-s-12 text-muted">
         {{ util.appTranslate('stores_settlement_sign_note') }}
       </div>

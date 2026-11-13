@@ -1,0 +1,162 @@
+<mat-card class="cardWithShadow">
+  <mat-card-header class="m-b-16">
+    <mat-card-title>{{ util.appTranslate('stores_brand_requests') }}</mat-card-title>
+  </mat-card-header>
+
+  <mat-card-content>
+    <div class="d-flex flex-wrap align-center justify-content-between mb-24 gap-12">
+      <div class="search-box">
+        <mat-form-field appearance="outline" class="w-100">
+          <mat-label>{{ util.appTranslate('th_search') }}</mat-label>
+          <input
+            matInput
+            [(ngModel)]="searchQuery"
+            (keyup.enter)="onSearch()"
+            [placeholder]="util.appTranslate('th_search')"
+          />
+        </mat-form-field>
+      </div>
+
+      <div class="d-flex gap-12 align-center">
+        <mat-form-field appearance="outline" class="w-150">
+          <mat-label>{{ util.appTranslate('th_status') }}</mat-label>
+          <mat-select [(ngModel)]="statusFilter" (selectionChange)="onStatusFilter()">
+            <mat-option value="pending">{{ util.appTranslate('stores_brand_pending') }}</mat-option>
+            <mat-option value="approved">{{ util.appTranslate('stores_brand_approved') }}</mat-option>
+            <mat-option value="rejected">{{ util.appTranslate('stores_brand_rejected') }}</mat-option>
+            <mat-option value="all">{{ util.appTranslate('common_all') }}</mat-option>
+          </mat-select>
+        </mat-form-field>
+
+        <button mat-stroked-button color="primary" (click)="onSearch()">
+          <mat-icon>refresh</mat-icon>
+          {{ util.appTranslate('ts_refresh') }}
+        </button>
+      </div>
+    </div>
+
+    <div class="table-responsive">
+      <table mat-table [dataSource]="requests" class="w-100">
+        <ng-container matColumnDef="name">
+          <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1">
+            {{ util.appTranslate('th_name') }}
+          </th>
+          <td mat-cell *matCellDef="let element">
+            <div class="f-w-600">{{ element.name }}</div>
+            @if (element.note) {
+              <div class="m-t-4 f-s-12 text-muted">{{ element.note }}</div>
+            }
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="chain">
+          <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1">
+            {{ util.appTranslate('stores_chains') }}
+          </th>
+          <td mat-cell *matCellDef="let element">
+            <div class="f-s-14">{{ element.requestedByChain?.name || '-' }}</div>
+            @if (element.requestedBy?.name) {
+              <div class="m-t-4 f-s-12 text-muted">{{ element.requestedBy.name }}</div>
+            }
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="taxonomy">
+          <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1">
+            {{ util.appTranslate('stores_categories') }}
+          </th>
+          <td mat-cell *matCellDef="let element">
+            <div class="f-s-14">{{ element.category?.name || '-' }}</div>
+            @if (element.subcategory?.name) {
+              <div class="m-t-4 f-s-12 text-muted">{{ element.subcategory.name }}</div>
+            }
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="requested">
+          <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1">
+            {{ util.appTranslate('th_requested_date') }}
+          </th>
+          <td mat-cell *matCellDef="let element">
+            <span class="f-s-14">{{ element.createdAt | date: 'mediumDate' }}</span>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="status">
+          <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1">
+            {{ util.appTranslate('th_status') }}
+          </th>
+          <td mat-cell *matCellDef="let element">
+            <span
+              class="badge"
+              [class.bg-light-primary]="element.status === 'pending'"
+              [class.text-primary]="element.status === 'pending'"
+              [class.bg-light-success]="element.status === 'approved'"
+              [class.text-success]="element.status === 'approved'"
+              [class.bg-light-error]="element.status === 'rejected'"
+              [class.text-error]="element.status === 'rejected'"
+            >
+              {{ util.appTranslate('stores_brand_' + element.status) }}
+            </span>
+            @if (element.decision?.note) {
+              <div class="m-t-4 f-s-12 text-muted">{{ element.decision.note }}</div>
+            }
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="action">
+          <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1">
+            {{ util.appTranslate('th_action') }}
+          </th>
+          <td mat-cell *matCellDef="let element">
+            @if (element.status === 'pending' && util.hasRight('stores_brand_approve')) {
+              <div class="d-flex gap-8">
+                <button
+                  mat-flat-button
+                  color="primary"
+                  [disabled]="reviewing === element._id"
+                  (click)="confirmReview(element, 'approved')"
+                >
+                  {{ util.appTranslate('approve') }}
+                </button>
+                <button
+                  mat-stroked-button
+                  color="warn"
+                  [disabled]="reviewing === element._id"
+                  (click)="confirmReview(element, 'rejected')"
+                >
+                  {{ util.appTranslate('reject') }}
+                </button>
+              </div>
+            } @else {
+              <span class="f-s-12 text-muted">{{ util.appTranslate('no_action_required') }}</span>
+            }
+          </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="displayedColumn"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumn"></tr>
+      </table>
+    </div>
+
+    @if (!isLoaded) {
+      <div class="p-24 text-center">
+        <mat-progress-spinner diameter="32" mode="indeterminate"></mat-progress-spinner>
+      </div>
+    } @else if (!requests.length) {
+      <div class="p-24 text-center text-muted">{{ util.appTranslate('ts_no_data') }}</div>
+    }
+
+    @if (totalPages > 1) {
+      <mat-paginator
+        #paginator
+        [hidden]="!isLoaded"
+        [pageSizeOptions]="[10, 20, 50]"
+        [pageSize]="pageSize"
+        [length]="total"
+        (page)="onPageChange($event)"
+        showFirstLastButtons
+      ></mat-paginator>
+    }
+  </mat-card-content>
+</mat-card>

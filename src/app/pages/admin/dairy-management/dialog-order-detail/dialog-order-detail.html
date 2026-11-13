@@ -1,0 +1,76 @@
+<h2 mat-dialog-title>
+  {{ util.appTranslate('dairy_order_detail') }}
+  @if (order) {
+    — {{ order.orderNo }}
+  }
+</h2>
+
+<mat-dialog-content>
+  @if (!isLoaded) {
+    <div class="p-24 text-center">
+      <mat-spinner [diameter]="36"></mat-spinner>
+    </div>
+  } @else if (!order) {
+    <div class="p-24 text-center text-muted">{{ util.appTranslate('ts_no_records_found') }}</div>
+  } @else {
+    <div class="d-flex flex-wrap gap-12 mb-16">
+      <span class="f-s-12 badge"
+        [ngClass]="order.status === 'delivered' ? 'text-success' : 'text-warning'">
+        {{ util.appTranslate('dairy_order_status_' + order.status) }}
+      </span>
+      @if (order.business) {
+        <span class="f-s-12 badge">{{ order.business.name }}</span>
+      }
+      @if (order.user) {
+        <span class="f-s-12 badge"
+          >{{ order.user.firstName }} {{ order.user.lastName }} · {{ order.user.mobile }}</span
+        >
+      }
+    </div>
+
+    <h3 class="mat-subtitle-2">{{ util.appTranslate('dairy_th_items') }}</h3>
+    <div class="table-responsive">
+      <table mat-table [dataSource]="order.items || []" class="w-100">
+        <ng-container matColumnDef="name">
+          <th mat-header-cell *matHeaderCellDef class="f-w-600">{{ util.appTranslate('th_name') }}</th>
+          <td mat-cell *matCellDef="let element">
+            {{ element.sku ? element.sku.name : element.name }}
+          </td>
+        </ng-container>
+        <ng-container matColumnDef="qty">
+          <th mat-header-cell *matHeaderCellDef class="f-w-600">{{ util.appTranslate('th_quantity') }}</th>
+          <td mat-cell *matCellDef="let element">{{ element.quantity }}</td>
+        </ng-container>
+        <tr mat-header-row *matHeaderRowDef="['name', 'qty']"></tr>
+        <tr mat-row *matRowDef="let row; columns: ['name', 'qty']"></tr>
+      </table>
+    </div>
+
+    @if (order.grandTotal !== undefined && order.grandTotal !== null) {
+      <p class="m-t-16 f-w-600">
+        {{ util.appTranslate('dairy_th_total') }}: ₹{{ order.grandTotal }}
+      </p>
+    }
+
+    <h3 class="mat-subtitle-2 m-t-16">{{ util.appTranslate('dairy_th_history') }}</h3>
+    @if (!history.length) {
+      <div class="text-muted f-s-14">{{ util.appTranslate('dairy_no_history') }}</div>
+    } @else {
+      <div class="d-flex flex-column gap-8">
+        @for (row of history; track row._id) {
+          <div class="f-s-14">
+            <span class="f-w-600">{{ util.appTranslate('dairy_order_status_' + (row.toStatus || row.status)) }}</span>
+            <span class="text-muted"> · {{ row.createdAt | date: 'dd MMM yyyy, HH:mm' }}</span>
+            @if (row.note || row.reason) {
+              <div class="f-s-12 text-muted">{{ row.note || row.reason }}</div>
+            }
+          </div>
+        }
+      </div>
+    }
+  }
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button (click)="close()">{{ util.appTranslate('th_close') }}</button>
+</mat-dialog-actions>

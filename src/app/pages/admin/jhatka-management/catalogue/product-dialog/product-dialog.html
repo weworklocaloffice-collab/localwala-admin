@@ -1,0 +1,106 @@
+<h2 mat-dialog-title class="m-0">
+  {{ util.appTranslate(isEdit ? 'jhatka_edit_product' : 'jhatka_add_product') }}
+</h2>
+
+<mat-dialog-content>
+  <div class="edit-note" *ngIf="isEdit">
+    The product code and category are permanent. Their tax identity is frozen onto every order line at purchase, so
+    corrections apply to future orders only.
+  </div>
+
+  <form [formGroup]="form" (ngSubmit)="save()">
+    <div class="dialog-grid">
+      <mat-form-field appearance="outline">
+        <mat-label>Product name</mat-label>
+        <input matInput formControlName="name" placeholder="e.g. Chicken Curry Cut" />
+        <mat-error *ngIf="form.get('name')?.hasError('required')">Name is required.</mat-error>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Category</mat-label>
+        <mat-select formControlName="category">
+          <mat-option *ngFor="let category of data.categories" [value]="admin.idOf(category)">
+            {{ category.name }} ({{ category.key }})
+          </mat-option>
+        </mat-select>
+        <mat-hint *ngIf="isEdit">Category cannot be changed after creation.</mat-hint>
+        <mat-error *ngIf="form.get('category')?.hasError('required')">Choose a category.</mat-error>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Product code</mat-label>
+        <input matInput formControlName="code" placeholder="e.g. CHK-CURRY-CUT" />
+        <mat-hint>Printed on the pack and used by imports.</mat-hint>
+        <mat-error *ngIf="form.get('code')?.hasError('required')">Code is required.</mat-error>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>HSN code</mat-label>
+        <input matInput formControlName="hsnCode" placeholder="e.g. 0207" />
+        <mat-hint>Frozen onto order lines with the tax rate.</mat-hint>
+        <mat-error *ngIf="form.get('hsnCode')?.hasError('required')">HSN code is required.</mat-error>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Tax rate (%)</mat-label>
+        <input matInput type="number" formControlName="taxRatePct" min="0" max="100" step="0.01" />
+        <mat-error *ngIf="form.get('taxRatePct')?.invalid">Enter a rate between 0 and 100.</mat-error>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Storage mode</mat-label>
+        <mat-select formControlName="storageMode">
+          <mat-option *ngFor="let mode of storageModes" [value]="mode">
+            {{ mode | titlecase }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Shelf life at ambient (days)</mat-label>
+        <input matInput type="number" formControlName="shelfLifeDaysAmbient" min="1" />
+        <mat-hint>Optional. Usually set for eggs only.</mat-hint>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Preparation time (minutes)</mat-label>
+        <input matInput type="number" formControlName="prepTimeMinutes" min="0" />
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="span-2">
+        <mat-label>Description</mat-label>
+        <textarea matInput rows="3" formControlName="description"></textarea>
+      </mat-form-field>
+
+      <div class="media-card span-2" (click)="pickImage()" (keydown.enter)="pickImage()" tabindex="0" role="button">
+        <div class="media-label">
+          <span>Product image</span>
+          <mat-icon class="f-s-18">upload</mat-icon>
+        </div>
+        <img
+          *ngIf="form.get('image')?.value; else imagePlaceholder"
+          class="media-preview"
+          [src]="appApi.mediaUrl + form.get('image')?.value"
+          alt="Product"
+        />
+        <ng-template #imagePlaceholder>
+          <div class="media-preview media-empty">
+            <mat-icon>add_photo_alternate</mat-icon>
+            <span>Choose a product image</span>
+          </div>
+        </ng-template>
+      </div>
+    </div>
+  </form>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end" class="p-b-16">
+  <button mat-stroked-button type="button" (click)="dialogRef.close()">
+    {{ util.appTranslate('ts_cancel') }}
+  </button>
+  <button mat-flat-button color="primary" type="button" [disabled]="isSaving" (click)="save()">
+    <mat-progress-spinner *ngIf="isSaving" diameter="18" mode="indeterminate"></mat-progress-spinner>
+    <span *ngIf="!isSaving">{{ isEdit ? 'Save product' : 'Create product' }}</span>
+    <span *ngIf="isSaving">Saving</span>
+  </button>
+</mat-dialog-actions>

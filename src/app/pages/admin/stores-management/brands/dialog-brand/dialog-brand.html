@@ -41,6 +41,9 @@
       <mat-label>{{ util.appTranslate('stores_brand_logo') }}</mat-label>
       <input matInput formControlName="logo" placeholder="Image URL">
     </mat-form-field>
+    <div class="m-b-12">
+      <input type="file" accept="image/*" (change)="onLogoFileSelected($event)" />
+    </div>
 
     <mat-form-field appearance="outline" class="full-width">
       <mat-label>{{ util.appTranslate('th_status') }}</mat-label>

@@ -1,0 +1,84 @@
+<h2 mat-dialog-title class="m-0">
+  {{ util.appTranslate(isEdit ? 'jhatka_edit_category' : 'jhatka_add_category') }}
+</h2>
+
+<mat-dialog-content>
+  <form [formGroup]="form" (ngSubmit)="save()">
+    <div class="root-hint" *ngIf="!isEdit">
+      A top-level category must use one of the frozen launch roots:
+      <span class="root-chip" *ngFor="let root of data.launchRoots">{{ root }}</span>
+      Pick a parent to create a subcategory with any lowercase key.
+    </div>
+
+    <div class="dialog-grid">
+      <mat-form-field appearance="outline" *ngIf="!isEdit">
+        <mat-label>Key</mat-label>
+        <input matInput formControlName="key" placeholder="e.g. chicken" />
+        <mat-hint>Lowercase letters, numbers, dashes or underscores.</mat-hint>
+        <mat-error *ngIf="form.get('key')?.hasError('required')">Key is required.</mat-error>
+        <mat-error *ngIf="form.get('key')?.hasError('pattern')">
+          Use lowercase letters, numbers, dashes or underscores only.
+        </mat-error>
+        <mat-error *ngIf="rootKeyInvalid">A new root must use a launch root key.</mat-error>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" *ngIf="!isEdit">
+        <mat-label>Parent category</mat-label>
+        <mat-select formControlName="parent">
+          <mat-option value="">None (top-level root)</mat-option>
+          <mat-option *ngFor="let category of data.categories" [value]="admin.idOf(category)">
+            {{ category.name }} ({{ category.key }})
+          </mat-option>
+        </mat-select>
+        <mat-hint>Subcategories inherit the parent's weight policy.</mat-hint>
+      </mat-form-field>
+
+      <div class="span-2 readonly-row" *ngIf="isEdit">
+        <span class="text-muted">Stable key</span>
+        <span class="f-w-600">{{ data.category?.key }}</span>
+      </div>
+      <div class="span-2 readonly-row" *ngIf="isEdit">
+        <span class="text-muted">Parent</span>
+        <span class="f-w-600">{{ parentName }}</span>
+      </div>
+
+      <mat-form-field appearance="outline" class="span-2">
+        <mat-label>Name</mat-label>
+        <input matInput formControlName="name" placeholder="e.g. Chicken" />
+        <mat-error *ngIf="form.get('name')?.hasError('required')">Name is required.</mat-error>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="span-2">
+        <mat-label>Default measurement mode</mat-label>
+        <mat-select formControlName="defaultMeasurementMode">
+          <mat-option value="">Not set</mat-option>
+          <mat-option value="WEIGHT">Weight</mat-option>
+          <mat-option value="COUNT">Count</mat-option>
+        </mat-select>
+        <mat-hint>
+          Products inherit this when created. Weighted categories sell by kg; count categories sell by piece or dozen.
+        </mat-hint>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="span-2">
+        <mat-label>Description</mat-label>
+        <textarea matInput rows="3" formControlName="description"></textarea>
+      </mat-form-field>
+    </div>
+
+    <p class="f-s-12 text-muted m-0" *ngIf="isEdit">
+      The parent cannot be changed here. Moving a subtree would change the weight policy every descendant inherits.
+    </p>
+  </form>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end" class="p-b-16">
+  <button mat-stroked-button type="button" (click)="dialogRef.close()">
+    {{ util.appTranslate('ts_cancel') }}
+  </button>
+  <button mat-flat-button color="primary" type="button" [disabled]="isSaving" (click)="save()">
+    <mat-progress-spinner *ngIf="isSaving" diameter="18" mode="indeterminate"></mat-progress-spinner>
+    <span *ngIf="!isSaving">{{ isEdit ? 'Save category' : 'Create category' }}</span>
+    <span *ngIf="isSaving">Saving</span>
+  </button>
+</mat-dialog-actions>

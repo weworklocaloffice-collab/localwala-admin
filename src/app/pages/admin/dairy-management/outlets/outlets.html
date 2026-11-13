@@ -1,38 +1,108 @@
 <mat-card class="cardWithShadow">
   <mat-card-header class="m-b-16">
     <mat-card-title>{{ util.appTranslate('dairy_outlets') }}</mat-card-title>
-    <mat-card-subtitle>{{ util.appTranslate('dairy_outlets_subtitle') }}</mat-card-subtitle>
+    <mat-card-subtitle>{{ util.appTranslate('dairy_outlets_directory_subtitle') }}</mat-card-subtitle>
   </mat-card-header>
 
   <mat-card-content>
-    <div class="d-flex flex-wrap align-center justify-content-between mb-24 gap-12">
-      <mat-form-field appearance="outline" class="w-100">
+    <div class="kpi-grid">
+      <div class="kpi-card">
+        <div class="kpi-label">{{ util.appTranslate('dairy_outlet_kpi_total') }}</div>
+        <div class="kpi-value">{{ summary.total }}</div>
+        <div class="kpi-hint">{{ util.appTranslate('dairy_outlet_kpi_total_hint') }}</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">{{ util.appTranslate('dairy_outlet_kpi_trading') }}</div>
+        <div class="kpi-value">{{ summary.active }}</div>
+        <div class="kpi-hint">{{ util.appTranslate('dairy_outlet_kpi_trading_hint') }}</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">{{ util.appTranslate('dairy_outlet_kpi_pending') }}</div>
+        <div class="kpi-value">{{ summary.pending }}</div>
+        <div class="kpi-hint">{{ util.appTranslate('dairy_outlet_kpi_pending_hint') }}</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">{{ util.appTranslate('dairy_outlet_kpi_partners') }}</div>
+        <div class="kpi-value">{{ summary.commissionPartner }}</div>
+        <div class="kpi-hint">
+          {{ summary.franchise }} {{ util.appTranslate('dairy_franchises') }}
+        </div>
+      </div>
+    </div>
+
+    <div class="filter-bar">
+      <mat-form-field appearance="outline" subscriptSizing="dynamic">
+        <mat-label>{{ util.appTranslate('th_search') }}</mat-label>
+        <mat-icon matPrefix>search</mat-icon>
+        <input matInput [(ngModel)]="search" (keyup.enter)="onFilter()" />
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" subscriptSizing="dynamic">
         <mat-label>{{ util.appTranslate('th_status') }}</mat-label>
-        <mat-select [(ngModel)]="selectedStatus" (selectionChange)="onStatusFilter()">
-          <mat-option value="pending">{{ util.appTranslate('dairy_status_pending') }}</mat-option>
-          <mat-option value="active">{{ util.appTranslate('dairy_status_active') }}</mat-option>
-          <mat-option value="suspended">{{
-            util.appTranslate('dairy_status_suspended')
-          }}</mat-option>
-          <mat-option value="terminated">{{
-            util.appTranslate('dairy_status_terminated')
-          }}</mat-option>
+        <mat-select [(ngModel)]="selectedStatus" (selectionChange)="onFilter()">
           <mat-option value="">{{ util.appTranslate('th_all') }}</mat-option>
+          <mat-option value="pending">{{ util.appTranslate('dairy_outlet_status_pending') }}</mat-option>
+          <mat-option value="active">{{ util.appTranslate('dairy_outlet_status_active') }}</mat-option>
+          <mat-option value="suspended">{{
+            util.appTranslate('dairy_outlet_status_suspended')
+          }}</mat-option>
         </mat-select>
       </mat-form-field>
+
+      <mat-form-field appearance="outline" subscriptSizing="dynamic">
+        <mat-label>{{ util.appTranslate('th_model') }}</mat-label>
+        <mat-select [(ngModel)]="selectedModel" (selectionChange)="onFilter()">
+          <mat-option value="">{{ util.appTranslate('th_all') }}</mat-option>
+          <mat-option value="direct">{{ util.appTranslate('dairy_model_direct') }}</mat-option>
+          <mat-option value="franchise">{{
+            util.appTranslate('dairy_model_franchise')
+          }}</mat-option>
+          <mat-option value="commission_partner">{{
+            util.appTranslate('dairy_model_commission_partner')
+          }}</mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" subscriptSizing="dynamic">
+        <mat-label>{{ util.appTranslate('th_city') }}</mat-label>
+        <mat-select [(ngModel)]="selectedCity" (selectionChange)="onFilter()">
+          <mat-option value="">{{ util.appTranslate('th_all') }}</mat-option>
+          @for (city of listOfCities; track city._id) {
+            <mat-option [value]="city._id">{{ city.name }}</mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+
+      <button mat-button type="button" (click)="clearFilters()">
+        {{ util.appTranslate('th_clear') }}
+      </button>
+
+@if (util.hasRight('review_dairy_joining_request') || util.hasRight('dairy_partner_manage') || util.hasRight('dairy_franchise_manage')) {
+        <button mat-flat-button color="primary" type="button" (click)="onCreateOutlet()">
+          <mat-icon>add</mat-icon>
+          {{ util.appTranslate('add_outlet') }}
+        </button>
+      }
+
+      @if (util.hasRight('dairy_partner_manage')) {
+        <button mat-flat-button color="primary" type="button" (click)="onCreatePartner()">
+          <mat-icon>handshake</mat-icon>
+          {{ util.appTranslate('dairy_add_commission_partner') }}
+        </button>
+      }
     </div>
 
     <div class="table-responsive">
       <table mat-table [dataSource]="list" class="w-100">
-        <ng-container matColumnDef="name">
+        <ng-container matColumnDef="outlet">
           <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1">
-            {{ util.appTranslate('th_business') }}
+            {{ util.appTranslate('th_outlet') }}
           </th>
           <td mat-cell *matCellDef="let element">
             <div class="f-w-600">{{ element.name }}</div>
-            <div class="m-t-4 f-s-12 text-muted">
-              {{ element.businessModel || (element.business && element.business.businessModel) }}
-            </div>
+            @if (element.code) {
+              <div class="m-t-4 f-s-12 text-muted">{{ element.code }}</div>
+            }
           </td>
         </ng-container>
 
@@ -41,11 +111,10 @@
             {{ util.appTranslate('th_location') }}
           </th>
           <td mat-cell *matCellDef="let element">
-            @if (element.business && element.business.city && element.business.locality) {
-              <span class="f-s-14">
-                {{ element.business.locality.name }},
-                {{ element.business.city.name }}
-              </span>
+            @if (element.city && element.locality) {
+              <span class="f-s-14">{{ element.locality.name }}, {{ element.city.name }}</span>
+            } @else if (element.city) {
+              <span class="f-s-14">{{ element.city.name }}</span>
             } @else {
               <span class="f-s-14 text-error">{{
                 util.appTranslate('dairy_no_location_on_record')
@@ -54,22 +123,62 @@
           </td>
         </ng-container>
 
-        <ng-container matColumnDef="commission">
+        <ng-container matColumnDef="owner">
+          <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1">
+            {{ util.appTranslate('dairy_owner') }}
+          </th>
+          <td mat-cell *matCellDef="let element">
+            @if (element.owner) {
+              <div class="f-s-14">{{ ownerName(element) }}</div>
+              @if (element.owner.mobile) {
+                <div class="m-t-4 f-s-12 text-muted">
+                  {{ element.owner.countryCode }}{{ element.owner.mobile }}
+                </div>
+              }
+            } @else {
+              <span class="f-s-14 text-muted">{{ util.appTranslate('dairy_not_set') }}</span>
+            }
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="model">
+          <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1">
+            {{ util.appTranslate('th_model') }}
+          </th>
+          <td mat-cell *matCellDef="let element">
+            <span class="f-s-14">{{ util.appTranslate(modelKey(element)) }}</span>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="terms">
           <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1">
             {{ util.appTranslate('th_commission') }}
           </th>
           <td mat-cell *matCellDef="let element">
-            @if (
-              element.commissionPercentage === null || element.commissionPercentage === undefined
-            ) {
-              <span class="text-muted">{{ util.appTranslate('dairy_not_set') }}</span>
-            } @else {
-              <div class="f-s-14">{{ element.commissionPercentage }}%</div>
+            @if (element.partner) {
+              <div class="f-w-600 f-s-14">{{ element.partner.commissionPercentage }}%</div>
               <div class="m-t-4 f-s-12 text-muted">
                 {{
-                  util.appTranslate('dairy_payout_' + (element.driverPayoutMode || 'platform_pays'))
+                  util.appTranslate('dairy_on_' + (element.partner.commissionBasis || 'product_only'))
                 }}
               </div>
+              <div class="m-t-4 f-s-12 text-muted">
+                {{ util.appTranslate(partnerStatusKey(element)) }}
+              </div>
+            } @else if (element.franchise) {
+              <div class="f-w-600 f-s-14">{{ element.franchise.revenueSharePercentage }}%</div>
+              <div class="m-t-4 f-s-12 text-muted">
+                {{
+                  util.appTranslate(
+                    'dairy_on_' + (element.franchise.revenueShareBasis || 'product_only')
+                  )
+                }}
+              </div>
+              <div class="m-t-4 f-s-12 text-muted">
+                {{ util.appTranslate(franchiseStatusKey(element)) }}
+              </div>
+            } @else {
+              <span class="f-s-14 text-muted">{{ util.appTranslate('dairy_no_agreement') }}</span>
             }
           </td>
         </ng-container>
@@ -82,14 +191,14 @@
             <span
               class="f-s-14"
               [ngClass]="
-                element.status === 'active'
+                outletState(element) === 'active'
                   ? 'text-success'
-                  : element.status === 'terminated'
-                    ? 'text-error'
-                    : 'text-warning'
+                  : outletState(element) === 'pending'
+                    ? 'text-warning'
+                    : 'text-error'
               "
             >
-              {{ util.appTranslate('dairy_outlet_status_' + element.status) }}
+              {{ util.appTranslate('dairy_outlet_status_' + outletState(element)) }}
             </span>
           </td>
         </ng-container>
@@ -97,7 +206,7 @@
         <ng-container matColumnDef="action">
           <th mat-header-cell *matHeaderCellDef></th>
           <td mat-cell *matCellDef="let element">
-            @if (util.hasRight('dairy_partner_manage')) {
+            @if (element.partner && util.hasRight('dairy_partner_manage')) {
               <a
                 (click)="onEditTerms(element)"
                 class="m-r-10 cursor-pointer text-primary"
@@ -106,7 +215,7 @@
                 <mat-icon>edit</mat-icon>
               </a>
 
-              @if (element.status === 'active') {
+              @if (element.partner.status === 'active') {
                 <a
                   (click)="onChangeStatus(element, 'suspended')"
                   class="m-r-10 cursor-pointer text-warning"
@@ -114,7 +223,7 @@
                 >
                   <mat-icon>pause_circle</mat-icon>
                 </a>
-              } @else if (element.status !== 'terminated') {
+              } @else if (element.partner.status !== 'terminated') {
                 <a
                   (click)="onChangeStatus(element, 'active')"
                   class="m-r-10 cursor-pointer text-success"
@@ -124,7 +233,7 @@
                 </a>
               }
 
-              @if (element.status !== 'terminated') {
+              @if (element.partner.status !== 'terminated') {
                 <a
                   (click)="onChangeStatus(element, 'terminated')"
                   class="m-r-10 cursor-pointer text-error"
@@ -133,6 +242,14 @@
                   <mat-icon>cancel</mat-icon>
                 </a>
               }
+            } @else if (canCreatePartner(element)) {
+              <a
+                (click)="onCreatePartner(element)"
+                class="cursor-pointer text-primary"
+                [matTooltip]="util.appTranslate('dairy_add_commission_partner')"
+              >
+                <mat-icon>handshake</mat-icon>
+              </a>
             }
           </td>
         </ng-container>

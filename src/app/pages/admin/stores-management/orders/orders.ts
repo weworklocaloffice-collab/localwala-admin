@@ -7,6 +7,8 @@ import { ViewChild } from '@angular/core';
 import { HttpParams } from '@angular/common/http';
 import { ApiService } from 'src/app/services/api-service';
 import { UtilService } from 'src/app/services/util-service';
+import { MatDialog } from '@angular/material/dialog';
+import { ConfirmDialog } from 'src/app/ui-components/confirm-dialog/confirm-dialog';
 
 /**
  * Platform-wide order list for admins.
@@ -63,9 +65,10 @@ export class Orders implements OnInit {
   @ViewChild('paginator', { read: MatPaginator })
   paginator: MatPaginator;
 
-  constructor(
+   constructor(
     private api: ApiService,
     public util: UtilService,
+    private dialogRef: MatDialog,
   ) {}
 
   ngOnInit() {
@@ -153,6 +156,24 @@ export class Orders implements OnInit {
   }
 
   transition(row: any, status: string) {
+    if (status === 'cancelled' || status === 'rejected') {
+      const ref = this.dialogRef.open(ConfirmDialog, {
+        data: {
+          title: status === 'cancelled' ? 'Cancel order?' : 'Reject order?',
+          subTitle: 'This action cannot be undone.',
+          okTitle: status,
+          closeTitle: 'ts_cancel',
+        },
+      });
+      ref.afterClosed().subscribe((result: any) => {
+        if (result && result.action === 'confirm') this.doTransition(row, status);
+      });
+      return;
+    }
+    this.doTransition(row, status);
+  }
+
+  private doTransition(row: any, status: string) {
     this.api
       .patch_private('v1/admin/stores/orders/' + row._id + '/' + status, {})
       .subscribe({
@@ -163,8 +184,6 @@ export class Orders implements OnInit {
         error: (error: any) => {
           const apiMessage =
             error && error.error && error.error.message ? error.error.message : '';
-          // The transition table's refusal explains what IS allowed, which is more useful
-          // than the generic handler text.
           if (apiMessage) {
             this.util.onError(apiMessage, '');
           } else {

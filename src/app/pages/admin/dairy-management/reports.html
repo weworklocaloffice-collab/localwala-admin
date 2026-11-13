@@ -1,0 +1,39 @@
+<mat-card class="cardWithShadow">
+  <mat-card-header class="m-b-16">
+    <mat-card-title>Dairy analytics and reports</mat-card-title>
+    <mat-card-subtitle>Period-based order, revenue, settlement, and compliance oversight.</mat-card-subtitle>
+  </mat-card-header>
+  <mat-card-content>
+    <div class="d-flex flex-wrap align-center gap-12 m-b-16">
+      <mat-form-field appearance="outline"><mat-label>From</mat-label><input matInput type="date" [(ngModel)]="from"></mat-form-field>
+      <mat-form-field appearance="outline"><mat-label>To</mat-label><input matInput type="date" [(ngModel)]="to"></mat-form-field>
+      <button mat-flat-button color="primary" (click)="load()" [disabled]="loading || from > to">Apply period</button>
+      <button mat-stroked-button (click)="exportSales()" [disabled]="exporting || loading || from > to">{{ exporting ? 'Preparing CSV…' : 'Export sales CSV' }}</button>
+    </div>
+    @if (loading) { <div class="p-24 text-center"><mat-spinner diameter="36"></mat-spinner></div> }
+    @else {
+      <div class="row">
+        <div class="col-md-3 col-6"><mat-card class="bg-light-primary"><mat-card-content><div class="text-muted">Orders</div><h2>{{ sales?.totals?.orders || 0 }}</h2></mat-card-content></mat-card></div>
+        <div class="col-md-3 col-6"><mat-card class="bg-light-primary"><mat-card-content><div class="text-muted">Delivered</div><h2>{{ sales?.totals?.delivered || 0 }}</h2></mat-card-content></mat-card></div>
+        <div class="col-md-3 col-6"><mat-card class="bg-light-primary"><mat-card-content><div class="text-muted">Gross order value</div><h2>₹{{ sales?.totals?.grandTotal || 0 | number:'1.2-2' }}</h2></mat-card-content></mat-card></div>
+        <div class="col-md-3 col-6"><mat-card class="bg-light-warn"><mat-card-content><div class="text-muted">Cancelled</div><h2>{{ sales?.totals?.cancelled || 0 }}</h2></mat-card-content></mat-card></div>
+      </div>
+      <div class="row m-t-16">
+        <div class="col-lg-6"><mat-card><mat-card-header><mat-card-title>Top outlets</mat-card-title></mat-card-header><mat-card-content>
+          @for (outlet of sales?.topOutlets || []; track outlet.business?._id) {
+            <div class="d-flex justify-content-between p-y-8"><span>{{ outlet.business?.name || 'Outlet' }} · {{ outlet.orders }} orders</span><strong>₹{{ outlet.grandTotal | number:'1.2-2' }}</strong></div>
+          } @empty { <p class="text-muted">No sales for this period.</p> }
+        </mat-card-content></mat-card></div>
+        <div class="col-lg-6"><mat-card><mat-card-header><mat-card-title>Settlement status</mat-card-title></mat-card-header><mat-card-content>
+          @for (row of settlements?.byStatus || []; track row._id) { <div class="d-flex justify-content-between p-y-8"><span class="text-capitalize">{{ row._id }}</span><span>{{ row.count }} · ₹{{ row.netAmount / 100 | number:'1.2-2' }}</span></div> }
+          @empty { <p class="text-muted">No settlement data for this period.</p> }
+        </mat-card-content></mat-card></div>
+      </div>
+      <mat-card class="m-t-16"><mat-card-header><mat-card-title>Compliance attention</mat-card-title><mat-card-subtitle>Current status, with the next 30 days of expiring licences.</mat-card-subtitle></mat-card-header><mat-card-content class="d-flex flex-wrap gap-24">
+        <div><span class="text-muted">Expiring soon</span><h2>{{ compliance?.expiringCount || 0 }}</h2></div>
+        <div><span class="text-muted">Expired</span><h2>{{ compliance?.expiredCount || 0 }}</h2></div>
+        <div><span class="text-muted">Missing licence</span><h2>{{ compliance?.missingLicenceCount || 0 }}</h2></div>
+      </mat-card-content></mat-card>
+    }
+  </mat-card-content>
+</mat-card>

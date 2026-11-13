@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 import { MaterialModule } from 'src/app/material.module';
 import { ActivatedRoute } from '@angular/router';
 import { HttpParams } from '@angular/common/http';
@@ -8,7 +9,7 @@ import { UtilService } from 'src/app/services/util-service';
 
 @Component({
   selector: 'app-ls-provider-detail',
-  imports: [CommonModule, MaterialModule],
+  imports: [CommonModule, FormsModule, MaterialModule],
   templateUrl: './ls-provider-detail.html',
 })
 export class LsProviderDetail {
@@ -17,6 +18,8 @@ export class LsProviderDetail {
   documents: any[] = [];
   offerings: any[] = [];
   bookings: any[] = [];
+  fundAccountId: string = '';
+  savingFund: boolean = false;
 
   constructor(
     public api: ApiService,
@@ -34,10 +37,26 @@ export class LsProviderDetail {
     this.api.get_private('v1/local-services/admin/providers/' + id).subscribe({
       next: (response: any) => {
         this.provider = response.provider;
+        this.fundAccountId = response.provider?.fundAccountId || '';
         this.getRelated(id);
       },
       error: (error: any) => {
         this.isLoaded = true;
+        this.util.handleError(error, 'admin');
+      },
+    });
+  }
+
+  saveFundAccount() {
+    if (!this.provider?._id) return;
+    this.savingFund = true;
+    this.api.patch_private('v1/local-services/admin/providers/' + this.provider._id, { fundAccountId: this.fundAccountId }).subscribe({
+      next: () => {
+        this.savingFund = false;
+        this.util.onSuccess('Fund account saved');
+      },
+      error: (error: any) => {
+        this.savingFund = false;
         this.util.handleError(error, 'admin');
       },
     });

@@ -29,6 +29,8 @@ export class DialogChain {
       Validators.pattern(/^[a-z0-9-]+$/),
     ]),
     status: new FormControl(true),
+    prorationMode: new FormControl('none'),
+    prorationOnCancellation: new FormControl('credit_remaining'),
   });
 
   constructor(
@@ -45,6 +47,8 @@ export class DialogChain {
         name: values.name,
         key: values.key,
         status: values.status === true,
+        prorationMode: values.settings?.prorationPolicy?.mode || 'none',
+        prorationOnCancellation: values.settings?.prorationPolicy?.onCancellation || 'credit_remaining',
       });
     }
   }
@@ -77,6 +81,12 @@ export class DialogChain {
       name: value.name,
       key: value.key,
       status: value.status,
+      settings: {
+        prorationPolicy: {
+          mode: value.prorationMode,
+          onCancellation: value.prorationOnCancellation,
+        },
+      },
     };
 
     this.api.patch_private('v1/admin/stores/chains/' + this.id, body).subscribe({

@@ -14,12 +14,15 @@
         the same outlet, so each appears here at most once.
       -->
       <mat-select formControlName="business">
-        @for (option of listOfPartners; track option.business._id) {
-          <mat-option [value]="option.business._id">
-            {{ option.business.name }} ({{ option.name }})
+        @for (option of listOfOutlets; track option._id) {
+          <mat-option [value]="option._id">
+            {{ option.city ? option.name + ' · ' + option.city.name : option.name }}
           </mat-option>
         }
       </mat-select>
+      @if (!listOfOutlets.length) {
+        <mat-hint>{{ util.appTranslate('dairy_no_eligible_outlets') }}</mat-hint>
+      }
       @if (haveSubmitClicked && f['business'].invalid) {
         <mat-hint class="m-b-16 error-msg">
           <div class="text-error">{{ util.appTranslate('form_required') }}</div>

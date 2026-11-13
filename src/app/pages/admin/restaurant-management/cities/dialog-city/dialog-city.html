@@ -65,6 +65,19 @@
         </mat-form-field>
       </div>
 
+      <div class="col-12 p-b-16">
+        <mat-form-field appearance="outline" class="w-100" color="primary">
+          <mat-label>Dairy locality suggestion limit (km)</mat-label>
+          <input matInput formControlName="dairyDeliveryMaxRadiusKm" type="number" min="1" max="50" />
+          <mat-hint>
+            Maximum distance used to show nearby localities to Dairy partners. Approved localities still control delivery.
+          </mat-hint>
+          @if (isFormSubmit && f['dairyDeliveryMaxRadiusKm'].invalid) {
+            <mat-error>Enter a value from 1 to 50 km.</mat-error>
+          }
+        </mat-form-field>
+      </div>
+
       <div class="col-12 m-b-16 p-b-16">
         <mat-tab-group mat-stretch-tabs="false" mat-align-tabs="start">
           @for (item of languages; track $index) {
