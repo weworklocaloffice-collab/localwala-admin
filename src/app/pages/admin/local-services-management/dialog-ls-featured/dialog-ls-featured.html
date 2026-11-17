@@ -5,8 +5,8 @@
       <mat-label>Provider (optional)</mat-label>
       <mat-select formControlName="provider">
         <mat-option value="">None</mat-option>
-        @for (provider of providers; track provider._id) {
-          <mat-option [value]="provider._id">{{ provider.businessName }}</mat-option>
+        @for (provider of providers; track provider.id || provider._id) {
+          <mat-option [value]="provider.id || provider._id">{{ provider.businessName }}</mat-option>
         }
       </mat-select>
     </mat-form-field>
@@ -14,8 +14,8 @@
       <mat-label>Service (optional)</mat-label>
       <mat-select formControlName="service">
         <mat-option value="">None</mat-option>
-        @for (service of services; track service._id) {
-          <mat-option [value]="service._id">{{ service.name }}</mat-option>
+        @for (service of services; track service.id || service._id) {
+          <mat-option [value]="service.id || service._id">{{ service.name }}</mat-option>
         }
       </mat-select>
     </mat-form-field>

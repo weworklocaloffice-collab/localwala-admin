@@ -13,7 +13,7 @@
       <div class="f-s-14">Cancel reason: {{ booking.cancelReason }}</div>
     }
     <h4 class="m-t-16">History ({{ history.length }})</h4>
-    @for (h of history; track h._id) {
+    @for (h of history; track h.id || h._id) {
       <div class="f-s-14">{{ h.from || '—' }} → {{ h.to }}@if (h.reason) {
         <span class="text-muted"> ({{ h.reason }})</span>
       }</div>

@@ -1,4 +1,4 @@
-import { Routes } from '@angular/router';
+﻿import { Routes } from '@angular/router';
 import { JhatkaOperations } from './operations/operations';
 import { JhatkaOutletDetail } from './outlet-detail/outlet-detail';
 import { JhatkaSupplierDetail } from './supplier-detail/supplier-detail';
@@ -18,6 +18,7 @@ import { JhatkaVariance } from './variance/variance';
 import { JhatkaSupply } from './supply/supply';
 import { JhatkaSettlements } from './settlements/settlements';
 import { JhatkaAnalytics } from './analytics/analytics';
+import { JhatkaQualityReasons } from './quality-reasons/quality-reasons';
 
 export const JhatkaManagementRoutes: Routes = [
   {
@@ -84,6 +85,13 @@ export const JhatkaManagementRoutes: Routes = [
     component: JhatkaOperations,
     data: {
       title: 'jhatka_operations',
+    },
+  },
+  {
+    path: 'quality-reasons',
+    component: JhatkaQualityReasons,
+    data: {
+      title: 'jhatka_quality_reasons',
     },
   },
   {
@@ -171,3 +179,4 @@ export const JhatkaManagementRoutes: Routes = [
     },
   },
 ];
+

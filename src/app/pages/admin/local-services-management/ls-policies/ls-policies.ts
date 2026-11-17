@@ -76,7 +76,8 @@ export class LsPolicies {
   }
 
   activate(row: any) {
-    this.api.post_private('v1/local-services/admin/policies/' + row._id + '/activate', {}).subscribe({
+    const rowId = row.id || row._id;
+    this.api.post_private('v1/local-services/admin/policies/' + rowId + '/activate', {}).subscribe({
       next: () => {
         this.util.onSuccess('ts_status_updated');
         this.getList();
@@ -88,7 +89,8 @@ export class LsPolicies {
   }
 
   deactivate(row: any) {
-    this.api.post_private('v1/local-services/admin/policies/' + row._id + '/inactive', { note: 'deactivated' }).subscribe({
+    const rowId = row.id || row._id;
+    this.api.post_private('v1/local-services/admin/policies/' + rowId + '/inactive', { note: 'deactivated' }).subscribe({
       next: () => {
         this.util.onSuccess('ts_status_updated');
         this.getList();

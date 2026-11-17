@@ -12,8 +12,16 @@
         <mat-option value="LEAD_FEE">LEAD_FEE</mat-option>
       </mat-select>
     </mat-form-field>
-    <mat-form-field appearance="outline"><mat-label>Category (empty = platform)</mat-label><input matInput formControlName="categoryKey" /></mat-form-field>
-    <mat-form-field appearance="outline"><mat-label>Service (empty = all)</mat-label><input matInput formControlName="serviceKey" /></mat-form-field>
+    <mat-form-field appearance="outline">
+      <mat-label>Category (empty = platform)</mat-label>
+      <mat-select formControlName="categoryKey">
+        <mat-option value="">Platform</mat-option>
+        @for (category of parentCategories; track category.key) {
+          <mat-option [value]="category.key">{{ category.name }}</mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+    <mat-form-field appearance="outline"><mat-label>Service (empty = all)</mat-label><mat-select formControlName="serviceKey"><mat-option value="">All services</mat-option>@for (service of services; track service.key) {<mat-option [value]="service.key">{{ service.name }}</mat-option>}</mat-select></mat-form-field>
     <div class="d-flex gap-12">
       <mat-slide-toggle formControlName="bookingFeeEnabled">Fee ON/OFF</mat-slide-toggle>
       <mat-slide-toggle formControlName="commissionEnabled">Commission ON/OFF</mat-slide-toggle>
@@ -28,7 +36,7 @@
         <mat-option value="BOOKING_VALUE">BOOKING_VALUE</mat-option>
       </mat-select>
     </mat-form-field>
-    <mat-form-field appearance="outline"><mat-label>Effective from</mat-label><input matInput type="date" formControlName="effectiveFrom" /></mat-form-field>
+    <mat-form-field appearance="outline"><mat-label>Effective from</mat-label><input matInput [matDatepicker]="effectiveFromPicker" formControlName="effectiveFrom" /><mat-datepicker-toggle matIconSuffix [for]="effectiveFromPicker"></mat-datepicker-toggle><mat-datepicker #effectiveFromPicker></mat-datepicker></mat-form-field>
   </form>
 </mat-dialog-content>
 <mat-dialog-actions align="end">

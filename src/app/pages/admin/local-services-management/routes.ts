@@ -1,4 +1,5 @@
 import { Routes } from '@angular/router';
+import { LsOverview } from './ls-overview/ls-overview';
 import { RevenueDashboard } from './revenue-dashboard/revenue-dashboard';
 import { RevenueRules } from './revenue-rules/revenue-rules';
 import { RevenueEntries } from './revenue-entries/revenue-entries';
@@ -6,10 +7,12 @@ import { Settlements } from './settlements/settlements';
 import { LsCategories } from './ls-categories/ls-categories';
 import { LsSubcategories } from './ls-subcategories/ls-subcategories';
 import { LsProviders } from './ls-providers/ls-providers';
+import { LsProviderTypes } from './ls-provider-types/ls-provider-types';
 import { LsApplications } from './ls-applications/ls-applications';
 import { LsModeration } from './ls-moderation/ls-moderation';
 import { LsRecurring } from './ls-recurring/ls-recurring';
 import { LsBookings } from './ls-bookings/ls-bookings';
+import { LsBookingDetail } from './ls-booking-detail/ls-booking-detail';
 import { LsServices } from './ls-services/ls-services';
 import { LsFacets } from './ls-facets/ls-facets';
 import { LsTemplates } from './ls-templates/ls-templates';
@@ -40,8 +43,15 @@ import { MarketingCampaigns } from './marketing-campaigns/marketing-campaigns';
 export const LocalServicesManagementRoutes: Routes = [
   {
     path: '',
-    redirectTo: 'revenue-dashboard',
+    redirectTo: 'overview',
     pathMatch: 'full',
+  },
+  {
+    path: 'overview',
+    component: LsOverview,
+    data: {
+      title: 'ls_overview',
+    },
   },
   {
     path: 'revenue-dashboard',
@@ -93,6 +103,13 @@ export const LocalServicesManagementRoutes: Routes = [
     },
   },
   {
+    path: 'provider-types',
+    component: LsProviderTypes,
+    data: {
+      title: 'ls_providers',
+    },
+  },
+  {
     path: 'applications',
     component: LsApplications,
     data: {
@@ -118,6 +135,13 @@ export const LocalServicesManagementRoutes: Routes = [
     component: LsBookings,
     data: {
       title: 'ls_bookings',
+    },
+  },
+  {
+    path: 'bookings/:id',
+    component: LsBookingDetail,
+    data: {
+      title: 'ls_booking_detail',
     },
   },
   {

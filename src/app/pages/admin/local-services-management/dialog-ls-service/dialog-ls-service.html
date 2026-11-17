@@ -4,12 +4,28 @@
     <mat-form-field appearance="outline"><mat-label>Key</mat-label><input matInput formControlName="key" /></mat-form-field>
     <mat-form-field appearance="outline"><mat-label>Name</mat-label><input matInput formControlName="name" /></mat-form-field>
     <mat-form-field appearance="outline"><mat-label>Description</mat-label><textarea matInput rows="3" formControlName="description"></textarea></mat-form-field>
-    <div class="d-flex flex-column gap-8">
-      <input type="file" accept="image/*" (change)="onImageFileSelected($event)" />
-      <mat-form-field appearance="outline"><mat-label>Image URL / uploaded path</mat-label><input matInput formControlName="image" placeholder="https://... or uploads/..." /></mat-form-field>
-      <img *ngIf="form.get('image')?.value" [src]="form.get('image')?.value" alt="preview" style="max-width:160px;max-height:120px;" />
-    </div>
-    <mat-form-field appearance="outline"><mat-label>Category id</mat-label><input matInput formControlName="category" /></mat-form-field>
+    <app-ls-image-upload
+      formControlName="image"
+      label="Service image"
+      [showUrlInput]="true"
+      (uploadingChange)="isUploading = $event"
+    ></app-ls-image-upload>
+    <mat-form-field appearance="outline">
+      <mat-label>Category</mat-label>
+      <mat-select formControlName="parentCategory" (selectionChange)="onParentCategoryChange()">
+        @for (category of parentCategories; track category.id || category._id) {
+          <mat-option [value]="category.id || category._id">{{ category.name }}</mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+    <mat-form-field appearance="outline">
+      <mat-label>Subcategory (optional)</mat-label>
+      <mat-select formControlName="category" [disabled]="!form.get('parentCategory')?.value">
+        @for (category of childCategories; track category.id || category._id) {
+          <mat-option [value]="category.id || category._id">{{ category.name }}</mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
     <mat-form-field appearance="outline">
       <mat-label>Booking mode</mat-label>
       <mat-select formControlName="bookingMode">
@@ -40,5 +56,5 @@
 </mat-dialog-content>
 <mat-dialog-actions align="end">
   <button mat-button (click)="onCancel()">Cancel</button>
-  <button mat-flat-button color="primary" (click)="onConfirm()" [disabled]="isSubmit">Create draft</button>
+  <button mat-flat-button color="primary" (click)="onConfirm()" [disabled]="isSubmit || isUploading">Create draft</button>
 </mat-dialog-actions>

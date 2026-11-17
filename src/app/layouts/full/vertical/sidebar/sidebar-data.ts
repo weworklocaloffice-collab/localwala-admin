@@ -1,4 +1,4 @@
-import { NavItem } from './nav-item/nav-item';
+﻿import { NavItem } from './nav-item/nav-item';
 
 export const navItems: NavItem[] = [
   {
@@ -370,9 +370,144 @@ export const navItems: NavItem[] = [
     route: 'admin/local-services-management',
     children: [
       {
+        navCap: 'ls_group_operations',
+      },
+      {
+        displayName: 'ls_overview',
+        iconName: 'tablerCornerDownRight',
+        route: '/admin/local-services-management/overview'
+      },
+      {
         displayName: 'ls_revenue_dashboard',
         iconName: 'tablerCornerDownRight',
         route: '/admin/local-services-management/revenue-dashboard'
+      },
+      {
+        displayName: 'ls_reports',
+        iconName: 'tablerBarChart',
+        route: '/admin/local-services-management/reports'
+      },
+      {
+        navCap: 'ls_group_providers',
+      },
+      {
+        displayName: 'ls_applications',
+        iconName: 'tablerCornerDownRight',
+        route: '/admin/local-services-management/applications'
+      },
+      {
+        displayName: 'ls_providers',
+        iconName: 'tablerCornerDownRight',
+        route: '/admin/local-services-management/providers'
+      },
+      {
+        displayName: 'ls_documents',
+        iconName: 'tablerCornerDownRight',
+        route: '/admin/local-services-management/documents'
+      },
+      {
+        displayName: 'ls_moderation',
+        iconName: 'tablerCornerDownRight',
+        route: '/admin/local-services-management/moderation'
+      },
+      {
+        displayName: 'ls_reviews',
+        iconName: 'tablerStar',
+        route: '/admin/local-services-management/reviews'
+      },
+      {
+        navCap: 'ls_group_catalog',
+      },
+      {
+        displayName: 'ls_categories',
+        iconName: 'tablerCornerDownRight',
+        route: '/admin/local-services-management/categories'
+      },
+      {
+        displayName: 'ls_subcategories',
+        iconName: 'tablerCornerDownRight',
+        route: '/admin/local-services-management/subcategories'
+      },
+      {
+        displayName: 'ls_services',
+        iconName: 'tablerCornerDownRight',
+        route: '/admin/local-services-management/services'
+      },
+      {
+        displayName: 'ls_variants',
+        iconName: 'tablerCornerDownRight',
+        route: '/admin/local-services-management/variants'
+      },
+      {
+        displayName: 'ls_addons',
+        iconName: 'tablerCornerDownRight',
+        route: '/admin/local-services-management/addons'
+      },
+      {
+        displayName: 'ls_facets',
+        iconName: 'tablerCornerDownRight',
+        route: '/admin/local-services-management/facets'
+      },
+      {
+        displayName: 'ls_templates',
+        iconName: 'tablerCornerDownRight',
+        route: '/admin/local-services-management/templates'
+      },
+      {
+        displayName: 'ls_mapping',
+        iconName: 'tablerCornerDownRight',
+        route: '/admin/local-services-management/mapping'
+      },
+      {
+        displayName: 'ls_plans',
+        iconName: 'tablerTag',
+        route: '/admin/local-services-management/plans'
+      },
+      {
+        displayName: 'ls_resources',
+        iconName: 'tablerBox',
+        route: '/admin/local-services-management/resources'
+      },
+      {
+        navCap: 'ls_group_bookings',
+      },
+      {
+        displayName: 'ls_bookings',
+        iconName: 'tablerCornerDownRight',
+        route: '/admin/local-services-management/bookings'
+      },
+      {
+        displayName: 'ls_recurring',
+        iconName: 'tablerCornerDownRight',
+        route: '/admin/local-services-management/recurring'
+      },
+      {
+        displayName: 'ls_assignments',
+        iconName: 'tablerUserCheck',
+        route: '/admin/local-services-management/assignments'
+      },
+      {
+        displayName: 'ls_availability_rules',
+        iconName: 'tablerCalendarTime',
+        route: '/admin/local-services-management/availability-rules'
+      },
+      {
+        displayName: 'ls_invoices',
+        iconName: 'tablerFileInvoice',
+        route: '/admin/local-services-management/invoices'
+      },
+      {
+        displayName: 'ls_payments',
+        iconName: 'tablerCreditCard',
+        route: '/admin/local-services-management/payments'
+      },
+      {
+        displayName: 'ls_refunds',
+        iconName: 'tablerCornerDownRight',
+        route: '/admin/local-services-management/refunds'
+      },
+      {
+        navCap: 'ls_group_revenue',
       },
       {
         displayName: 'ls_revenue_rules',
@@ -390,79 +525,7 @@ export const navItems: NavItem[] = [
         route: '/admin/local-services-management/settlements'
       },
       {
-        displayName: 'ls_categories',
-        iconName: 'tablerCornerDownRight',
-        route: '/admin/local-services-management/categories'
-      },
-      {
-        displayName: 'ls_subcategories',
-        iconName: 'tablerCornerDownRight',
-        route: '/admin/local-services-management/subcategories'
-      },
-      {
-        displayName: 'ls_providers',
-        iconName: 'tablerCornerDownRight',
-        route: '/admin/local-services-management/providers'
-      },
-      {
-        displayName: 'ls_applications',
-        iconName: 'tablerCornerDownRight',
-        route: '/admin/local-services-management/applications'
-      },
-      {
-        displayName: 'ls_moderation',
-        iconName: 'tablerCornerDownRight',
-        route: '/admin/local-services-management/moderation'
-      },
-      {
-        displayName: 'ls_recurring',
-        iconName: 'tablerCornerDownRight',
-        route: '/admin/local-services-management/recurring'
-      },
-      {
-        displayName: 'ls_bookings',
-        iconName: 'tablerCornerDownRight',
-        route: '/admin/local-services-management/bookings'
-      },
-      {
-        displayName: 'ls_services',
-        iconName: 'tablerCornerDownRight',
-        route: '/admin/local-services-management/services'
-      },
-      {
-        displayName: 'ls_facets',
-        iconName: 'tablerCornerDownRight',
-        route: '/admin/local-services-management/facets'
-      },
-      {
-        displayName: 'ls_templates',
-        iconName: 'tablerCornerDownRight',
-        route: '/admin/local-services-management/templates'
-      },
-      {
-        displayName: 'ls_refunds',
-        iconName: 'tablerCornerDownRight',
-        route: '/admin/local-services-management/refunds'
-      },
-      {
-        displayName: 'ls_documents',
-        iconName: 'tablerCornerDownRight',
-        route: '/admin/local-services-management/documents'
-      },
-      {
-        displayName: 'ls_variants',
-        iconName: 'tablerCornerDownRight',
-        route: '/admin/local-services-management/variants'
-      },
-      {
-        displayName: 'ls_addons',
-        iconName: 'tablerCornerDownRight',
-        route: '/admin/local-services-management/addons'
-      },
-      {
-        displayName: 'ls_mapping',
-        iconName: 'tablerCornerDownRight',
-        route: '/admin/local-services-management/mapping'
+        navCap: 'ls_group_marketing',
       },
       {
         displayName: 'ls_promotions',
@@ -480,54 +543,12 @@ export const navItems: NavItem[] = [
         route: '/admin/local-services-management/marketing-campaigns'
       },
       {
-        displayName: 'ls_reports',
-        iconName: 'tablerBarChart',
-        route: '/admin/local-services-management/reports'
-      },
-      {
-        displayName: 'ls_audit_logs',
-        iconName: 'tablerId',
-        route: '/admin/local-services-management/audit-logs'
-      },
-      {
-        displayName: 'ls_plans',
-        iconName: 'tablerTag',
-        route: '/admin/local-services-management/plans'
-      },
-      {
-        displayName: 'ls_resources',
-        iconName: 'tablerBox',
-        route: '/admin/local-services-management/resources'
-      },
-      {
-        displayName: 'ls_assignments',
-        iconName: 'tablerUserCheck',
-        route: '/admin/local-services-management/assignments'
+        navCap: 'ls_group_governance',
       },
       {
         displayName: 'ls_policies',
         iconName: 'tablerSettings',
         route: '/admin/local-services-management/policies'
-      },
-      {
-        displayName: 'ls_invoices',
-        iconName: 'tablerFileInvoice',
-        route: '/admin/local-services-management/invoices'
-      },
-      {
-        displayName: 'ls_reviews',
-        iconName: 'tablerStar',
-        route: '/admin/local-services-management/reviews'
-      },
-      {
-        displayName: 'ls_availability_rules',
-        iconName: 'tablerCalendarTime',
-        route: '/admin/local-services-management/availability-rules'
-      },
-      {
-        displayName: 'ls_payments',
-        iconName: 'tablerCreditCard',
-        route: '/admin/local-services-management/payments'
       },
       {
         displayName: 'ls_booking_config',
@@ -548,6 +569,11 @@ export const navItems: NavItem[] = [
         displayName: 'ls_settings',
         iconName: 'tablerAdjustments',
         route: '/admin/local-services-management/settings'
+      },
+      {
+        displayName: 'ls_audit_logs',
+        iconName: 'tablerId',
+        route: '/admin/local-services-management/audit-logs'
       }
     ]
   },
@@ -1223,6 +1249,11 @@ export const navItems: NavItem[] = [
         displayName: 'jhatka_catalogue',
         iconName: 'tablerCornerDownRight',
         route: '/admin/jhatka-management/catalogue'
+      },
+      {
+        displayName: 'jhatka_quality_reasons',
+        iconName: 'tablerCornerDownRight',
+        route: '/admin/jhatka-management/quality-reasons'
       }
     ]
   },

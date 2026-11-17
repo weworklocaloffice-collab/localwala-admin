@@ -24,4 +24,13 @@
     <span class="f-s-12 f-s-16">{{ item.route }}</span>
   </a>
   }
+  @if (lsResults.length) {
+    <h4 class="f-s-18 f-w-600 m-t-16 m-b-16">Local Services matches</h4>
+    @for(item of lsResults; track item.displayName + item.route) {
+      <a [routerLink]="[item.route]" mat-dialog-close class="p-y-12 text-decoration-none d-block">
+        <h5 class="f-s-14 f-w-500 d-block m-0">{{ item.displayName }}</h5>
+        <span class="f-s-12 text-muted">{{ item.subtitle }}</span>
+      </a>
+    }
+  }
 </mat-dialog-content>

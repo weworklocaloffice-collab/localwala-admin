@@ -41,7 +41,8 @@ export class DialogRuleStatus {
       body.approvalNote = note;
       body.reason = note;
     }
-    this.api.post_private('v1/local-services/admin/revenue/rules/' + this.row._id + '/' + this.status, body).subscribe({
+    const rowId = this.row.id || this.row._id;
+    this.api.post_private('v1/local-services/admin/revenue/rules/' + rowId + '/' + this.status, body).subscribe({
       next: (response: any) => {
         this.isSubmit = false;
         this.dialogRef.close({ event: 'update', data: response });

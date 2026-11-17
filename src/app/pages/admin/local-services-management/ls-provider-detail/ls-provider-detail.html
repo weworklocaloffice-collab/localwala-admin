@@ -1,44 +1,197 @@
 <mat-card class="cardWithShadow">
   <mat-card-header class="m-b-16">
     <mat-card-title>{{ provider?.businessName || 'Provider' }}</mat-card-title>
-    <mat-card-subtitle>{{ provider?.status }}{{ provider?.bookable ? ' · bookable' : ' · not bookable' }}</mat-card-subtitle>
+    <mat-card-subtitle>
+      <app-ls-status-badge [status]="provider?.status"></app-ls-status-badge>
+      · {{ provider?.providerType || '—' }} · {{ provider?.bookable ? 'bookable' : 'not bookable' }}
+    </mat-card-subtitle>
   </mat-card-header>
 
   <mat-card-content>
     @if (!isLoaded) {
-      <div class="p-24 text-center text-muted">{{ util.appTranslate('ts_loading') }}</div>
+      <div class="p-24 text-center"><mat-spinner diameter="32" class="d-inline-block"></mat-spinner></div>
     } @else {
-      <h4>Gateway payout (RazorpayX)</h4>
-      <mat-form-field appearance="outline" class="w-100">
-        <mat-label>Fund account ID</mat-label>
-        <input matInput [(ngModel)]="fundAccountId" placeholder="fa_xxxxx" />
-      </mat-form-field>
-      <button mat-raised-button color="primary" (click)="saveFundAccount()" [disabled]="savingFund">
-        {{ savingFund ? 'Saving...' : 'Save fund account' }}
-      </button>
-      <h4>Documents ({{ documents.length }})</h4>
-      @for (d of documents; track d._id) {
-        <div class="f-s-14">{{ d.kind }} — {{ d.status }}</div>
-      }
-      @if (!documents.length) {
-        <div class="f-s-14 text-muted">None submitted</div>
+      @if (provider?.rejectReason) {
+        <div class="f-s-14 text-error m-b-16">Rejection reason: {{ provider.rejectReason }}</div>
       }
 
-      <h4 class="m-t-16">Offerings ({{ offerings.length }})</h4>
-      @for (o of offerings; track o._id) {
-        <div class="f-s-14">₹{{ o.price }} — {{ o.status }}</div>
-      }
-      @if (!offerings.length) {
-        <div class="f-s-14 text-muted">None published</div>
+      @if (nextStatuses().length) {
+        <div class="d-flex flex-wrap align-center gap-12 m-b-24">
+          @for (s of nextStatuses(); track s) {
+            <button
+              mat-flat-button
+              [color]="s === 'REJECTED' || s === 'SUSPENDED' || s === 'INACTIVE' ? 'warn' : 'primary'"
+              (click)="openStatusDialog(s)"
+            >{{ s }}</button>
+          }
+        </div>
       }
 
-      <h4 class="m-t-16">Recent bookings ({{ bookings.length }})</h4>
-      @for (b of bookings; track b._id) {
-        <div class="f-s-14">{{ b.bookingCode }} — {{ b.status }}</div>
-      }
-      @if (!bookings.length) {
-        <div class="f-s-14 text-muted">None yet</div>
-      }
+      <mat-tab-group>
+        <mat-tab label="Overview">
+          <div class="p-t-16">
+            <div class="row">
+              <div class="col-lg-4 col-sm-6 m-b-12">
+                <div class="f-s-12 text-muted">Contact name</div>
+                <div class="f-s-14">{{ provider?.contactName || '—' }}</div>
+              </div>
+              <div class="col-lg-4 col-sm-6 m-b-12">
+                <div class="f-s-12 text-muted">Contact phone</div>
+                <div class="f-s-14">{{ provider?.contactPhone || '—' }}</div>
+              </div>
+              <div class="col-lg-4 col-sm-6 m-b-12">
+                <div class="f-s-12 text-muted">Provider type</div>
+                <div class="f-s-14">{{ provider?.providerType || '—' }}</div>
+              </div>
+              <div class="col-lg-4 col-sm-6 m-b-12">
+                <div class="f-s-12 text-muted">Owner</div>
+                <div class="f-s-14">{{ ownerName || '—' }}</div>
+                <div class="f-s-12 text-muted">{{ ownerEmail }}</div>
+                <div class="f-s-12 text-muted">{{ ownerPhone }}</div>
+              </div>
+              <div class="col-lg-4 col-sm-6 m-b-12">
+                <div class="f-s-12 text-muted">GSTIN</div>
+                <div class="f-s-14">{{ provider?.gstin || '—' }}</div>
+              </div>
+              <div class="col-lg-4 col-sm-6 m-b-12">
+                <div class="f-s-12 text-muted">GST state code</div>
+                <div class="f-s-14">{{ provider?.stateCode || '—' }}</div>
+              </div>
+              <div class="col-lg-8 col-sm-12 m-b-12">
+                <div class="f-s-12 text-muted">Business address</div>
+                <div class="f-s-14">{{ provider?.businessAddress || '—' }}</div>
+              </div>
+              <div class="col-lg-4 col-sm-6 m-b-12">
+                <div class="f-s-12 text-muted">Onboarded</div>
+                <div class="f-s-14">{{ provider?.createdAt | date: 'mediumDate' }}</div>
+              </div>
+              <div class="col-12 m-b-12">
+                <div class="f-s-12 text-muted">Services</div>
+                <div class="f-s-14">{{ provider?.serviceKeys?.length ? provider.serviceKeys.join(', ') : '—' }}</div>
+              </div>
+            </div>
+
+            <mat-divider class="m-t-16 m-b-16"></mat-divider>
+
+            <h4 class="f-w-600 m-b-12">Gateway payout (RazorpayX)</h4>
+            <mat-form-field appearance="outline" class="w-100">
+              <mat-label>Fund account ID</mat-label>
+              <input matInput [(ngModel)]="fundAccountId" placeholder="fa_xxxxx" />
+            </mat-form-field>
+            <button mat-raised-button color="primary" (click)="saveFundAccount()" [disabled]="savingFund">
+              {{ savingFund ? 'Saving...' : 'Save fund account' }}
+            </button>
+          </div>
+        </mat-tab>
+
+        <mat-tab [label]="'Documents (' + documents.length + ')'">
+          <div class="p-t-16">
+            @if (documents.length) {
+              <div class="table-responsive">
+                <table class="w-100">
+                  <thead>
+                    <tr>
+                      <th class="f-w-600 f-s-13 text-muted p-y-8 text-left">Kind</th>
+                      <th class="f-w-600 f-s-13 text-muted p-y-8 text-left">Uploaded</th>
+                      <th class="f-w-600 f-s-13 text-muted p-y-8 text-left">Status</th>
+                      <th class="f-w-600 f-s-13 text-muted p-y-8 text-left">File</th>
+                      <th class="f-w-600 f-s-13 text-muted p-y-8 text-left">Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    @for (d of documents; track d.id || d._id) {
+                      <tr>
+                        <td class="p-y-8 f-s-14 f-w-600">{{ d.kind }}</td>
+                        <td class="p-y-8 f-s-14">{{ d.createdAt | date: 'mediumDate' }}</td>
+                        <td class="p-y-8 f-s-14"><app-ls-status-badge [status]="d.status"></app-ls-status-badge></td>
+                        <td class="p-y-8 f-s-14">
+                          @if (d.fileUrl) {
+                            <a [href]="docUrl(d)" target="_blank" class="text-primary">View</a>
+                          } @else {
+                            —
+                          }
+                        </td>
+                        <td class="p-y-8 f-s-14">
+                          @if (d.status === 'pending') {
+                            <a (click)="verifyDocument(d, 'verified')" class="m-r-10 cursor-pointer text-success" matTooltip="Verify"><mat-icon>check_circle</mat-icon></a>
+                            <a (click)="verifyDocument(d, 'rejected')" class="cursor-pointer text-error" matTooltip="Reject"><mat-icon>cancel</mat-icon></a>
+                          } @else if (d.rejectReason) {
+                            <span class="f-s-12 text-muted">{{ d.rejectReason }}</span>
+                          }
+                        </td>
+                      </tr>
+                    }
+                  </tbody>
+                </table>
+              </div>
+            } @else {
+              <div class="f-s-14 text-muted p-t-16">None submitted</div>
+            }
+          </div>
+        </mat-tab>
+
+        <mat-tab [label]="'Offerings (' + offerings.length + ')'">
+          <div class="p-t-16">
+            @if (offerings.length) {
+              <div class="table-responsive">
+                <table class="w-100">
+                  <thead>
+                    <tr>
+                      <th class="f-w-600 f-s-13 text-muted p-y-8 text-left">Service</th>
+                      <th class="f-w-600 f-s-13 text-muted p-y-8 text-left">Price</th>
+                      <th class="f-w-600 f-s-13 text-muted p-y-8 text-left">Duration</th>
+                      <th class="f-w-600 f-s-13 text-muted p-y-8 text-left">Status</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    @for (o of offerings; track o.id || o._id) {
+                      <tr>
+                        <td class="p-y-8 f-s-14 f-w-600">{{ o.service?.name || '—' }}</td>
+                        <td class="p-y-8 f-s-14">₹{{ o.price }}</td>
+                        <td class="p-y-8 f-s-14">{{ o.durationMinutes }} min</td>
+                        <td class="p-y-8 f-s-14"><app-ls-status-badge [status]="o.status"></app-ls-status-badge></td>
+                      </tr>
+                    }
+                  </tbody>
+                </table>
+              </div>
+            } @else {
+              <div class="f-s-14 text-muted">None published</div>
+            }
+          </div>
+        </mat-tab>
+
+        <mat-tab [label]="'Bookings (' + bookings.length + ')'">
+          <div class="p-t-16">
+            @if (bookings.length) {
+              <div class="table-responsive">
+                <table class="w-100">
+                  <thead>
+                    <tr>
+                      <th class="f-w-600 f-s-13 text-muted p-y-8 text-left">Code</th>
+                      <th class="f-w-600 f-s-13 text-muted p-y-8 text-left">Scheduled</th>
+                      <th class="f-w-600 f-s-13 text-muted p-y-8 text-left">Status</th>
+                      <th class="f-w-600 f-s-13 text-muted p-y-8 text-left">Amount</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    @for (b of bookings; track b.id || b._id) {
+                      <tr>
+                        <td class="p-y-8 f-s-14 f-w-600">{{ b.bookingCode }}</td>
+                        <td class="p-y-8 f-s-14">{{ (b.scheduledAt || b.startAt) | date: 'medium' }}</td>
+                        <td class="p-y-8 f-s-14"><app-ls-status-badge [status]="b.status"></app-ls-status-badge></td>
+                        <td class="p-y-8 f-s-14">₹{{ b.serviceValue }}</td>
+                      </tr>
+                    }
+                  </tbody>
+                </table>
+              </div>
+            } @else {
+              <div class="f-s-14 text-muted">None yet</div>
+            }
+          </div>
+        </mat-tab>
+      </mat-tab-group>
     }
   </mat-card-content>
 </mat-card>

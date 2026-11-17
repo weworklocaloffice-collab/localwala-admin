@@ -225,3 +225,19 @@ export interface JhatkaListResponse<T> {
   total?: number;
   results?: T[];
 }
+export interface JhatkaQualityRejectionReason {
+  _id?: string;
+  id?: string;
+  code: string;
+  label: string;
+  description?: string;
+  category: string;
+  severity: 'hard' | 'soft';
+  autoReject?: boolean;
+  fault?: string;
+  wastageCause?: string;
+  affectsSupplierRating?: boolean;
+  sortOrder?: number;
+  status?: boolean;
+  translations?: Array<{ locale?: string; label?: string; description?: string }>;
+}

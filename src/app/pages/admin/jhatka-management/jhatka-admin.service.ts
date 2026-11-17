@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+﻿import { Injectable } from '@angular/core';
 import { HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { ApiService } from 'src/app/services/api-service';
@@ -11,6 +11,7 @@ import {
   JhatkaOutletStats,
   JhatkaProduct,
   JhatkaVariant,
+  JhatkaQualityRejectionReason,
 } from './jhatka.models';
 
 @Injectable({ providedIn: 'root' })
@@ -29,6 +30,18 @@ export class JhatkaAdminService {
       }
     });
     return params;
+  }
+
+  getRejectionReasons(query: Record<string, any> = {}): Observable<{ reasons: JhatkaQualityRejectionReason[]; count: number; meta: any }> {
+    return this.api.get_private('v1/jhatka/admin/operations/rejection-reasons?' + this.params(query).toString());
+  }
+
+  createRejectionReason(body: Record<string, any>): Observable<{ reason: JhatkaQualityRejectionReason }> {
+    return this.api.post_private('v1/jhatka/admin/operations/rejection-reasons', body);
+  }
+
+  updateRejectionReason(id: string, body: Record<string, any>): Observable<{ reason: JhatkaQualityRejectionReason }> {
+    return this.api.patch_private(`v1/jhatka/admin/operations/rejection-reasons/${id}`, body);
   }
 
   getOutletStats(): Observable<JhatkaOutletStats> {
@@ -52,7 +65,7 @@ export class JhatkaAdminService {
   }
 
   updateOutlet(id: string, body: Record<string, any>): Observable<{ outlet: JhatkaOutlet }> {
-    return this.api.patch_private(`v1/jhatka/admin/outlets/${id}`, body);
+    return this.api.patch_private(`v1/jhatka/admin/operations/rejection-reasons/${id}`, body);
   }
 
   setOutletStatus(id: string, status: string, statusReason?: string) {
@@ -102,7 +115,7 @@ export class JhatkaAdminService {
   }
 
   updateCategory(id: string, body: Record<string, any>) {
-    return this.api.patch_private(`v1/jhatka/admin/taxonomy/categories/${id}`, body);
+    return this.api.patch_private(`v1/jhatka/admin/operations/rejection-reasons/${id}`, body);
   }
 
   createProduct(body: Record<string, any>) {
@@ -110,7 +123,7 @@ export class JhatkaAdminService {
   }
 
   updateProduct(id: string, body: Record<string, any>) {
-    return this.api.patch_private(`v1/jhatka/admin/taxonomy/products/${id}`, body);
+    return this.api.patch_private(`v1/jhatka/admin/operations/rejection-reasons/${id}`, body);
   }
 
   createVariant(body: Record<string, any>) {
@@ -118,7 +131,7 @@ export class JhatkaAdminService {
   }
 
   updateVariant(id: string, body: Record<string, any>) {
-    return this.api.patch_private(`v1/jhatka/admin/taxonomy/variants/${id}`, body);
+    return this.api.patch_private(`v1/jhatka/admin/operations/rejection-reasons/${id}`, body);
   }
 
   getPartners(): Observable<{ partners: any[]; count: number }> {
@@ -141,3 +154,7 @@ export class JhatkaAdminService {
     return this.api.patch_private(`v1/jhatka/admin/franchises/${id}`, { status, statusReason });
   }
 }
+
+
+
+

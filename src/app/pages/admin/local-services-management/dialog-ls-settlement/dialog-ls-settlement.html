@@ -4,8 +4,8 @@
     <mat-form-field appearance="outline">
       <mat-label>Provider</mat-label>
       <mat-select formControlName="providerId">
-        @for (provider of providers; track provider._id) {
-          <mat-option [value]="provider._id">{{ provider.businessName }}</mat-option>
+        @for (provider of providers; track provider.id || provider._id) {
+          <mat-option [value]="provider.id || provider._id">{{ provider.businessName }}</mat-option>
         }
       </mat-select>
     </mat-form-field>

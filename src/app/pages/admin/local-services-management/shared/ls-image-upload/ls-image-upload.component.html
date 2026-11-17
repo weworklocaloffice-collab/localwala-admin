@@ -1,0 +1,37 @@
+<div class="ls-image-upload">
+  <div class="ls-image-upload-label">{{ label }}</div>
+  <div class="ls-image-upload-row">
+    <div class="ls-image-upload-preview">
+      @if (value && !previewError) {
+        <img [src]="value" [alt]="label" (error)="onPreviewError()" />
+      } @else {
+        <mat-icon>image</mat-icon>
+      }
+    </div>
+    <div class="ls-image-upload-body">
+      <div class="ls-image-upload-actions">
+        <button type="button" mat-stroked-button (click)="filePicker.click()" [disabled]="disabled || uploading">
+          <mat-icon>{{ value ? 'swap_horiz' : 'upload' }}</mat-icon>
+          {{ value ? 'Replace' : 'Upload' }}
+        </button>
+        @if (value) {
+          <button type="button" mat-button (click)="remove()" [disabled]="disabled || uploading">Remove</button>
+        }
+        @if (uploading) {
+          <mat-progress-spinner diameter="22" mode="indeterminate"></mat-progress-spinner>
+        }
+      </div>
+      @if (showUrlInput) {
+        <mat-form-field appearance="outline" class="w-100">
+          <mat-label>Image URL / uploaded path</mat-label>
+          <input matInput [value]="value" (input)="onUrlInput($event)" (blur)="onUrlBlur()" [disabled]="disabled || uploading" />
+        </mat-form-field>
+      }
+      <div class="ls-image-upload-hint">JPG, PNG or WebP. Max {{ maxSizeMb }} MB.</div>
+      @if (error) {
+        <div class="ls-image-upload-error">{{ error }}</div>
+      }
+    </div>
+  </div>
+  <input #filePicker class="ls-image-upload-input" type="file" [accept]="accept" (change)="onFileSelected($event)" />
+</div>

@@ -16,6 +16,7 @@ export class DialogLsStatus {
   row: any;
   status: string = '';
   isSubmit: boolean = false;
+  reasonError: boolean = false;
 
   statusForm = new FormGroup({ note: new FormControl('') });
 
@@ -30,14 +31,54 @@ export class DialogLsStatus {
     this.status = data.status;
   }
 
+  get isProvider(): boolean {
+    return !!(this.row && this.row.businessName);
+  }
+
+  get isReject(): boolean {
+    return this.status === 'REJECTED';
+  }
+
+  get ownerName(): string {
+    const owner = this.row?.owner;
+    if (!owner || typeof owner !== 'object') return '';
+    return [owner.firstName, owner.lastName].filter(Boolean).join(' ');
+  }
+
+  get ownerEmail(): string {
+    const owner = this.row?.owner;
+    return owner && typeof owner === 'object' ? owner.email || '' : '';
+  }
+
+  get ownerPhone(): string {
+    const owner = this.row?.owner;
+    if (!owner || typeof owner !== 'object') return '';
+    return [owner.countryCode, owner.mobile].filter(Boolean).join(' ');
+  }
+
+  get serviceList(): string {
+    return Array.isArray(this.row?.serviceKeys) ? this.row.serviceKeys.join(', ') : '';
+  }
+
+  get docSummary(): string {
+    const counts = this.row?.docCounts;
+    if (!counts) return '';
+    return `${counts.pending || 0} pending, ${counts.verified || 0} verified, ${counts.rejected || 0} rejected`;
+  }
+
   onConfirm() {
     if (this.isSubmit) return;
-    this.isSubmit = true;
     const note = String(this.statusForm.value.note || '').trim();
+    if (this.isReject && !note) {
+      this.reasonError = true;
+      return;
+    }
+    this.isSubmit = true;
+    const rowId = this.row.id || this.row._id;
     // Two backend styles: transition POST :id/:status (rules/providers/offerings)
     // vs PATCH :id {status} (catalog taxonomy). Chosen by data.mode.
     if (this.data.mode === 'patch-status') {
-      this.api.patch_private(this.data.apiPath + this.row._id, { status: this.status }).subscribe({
+      this.api.patch_private(this.data.apiPath + rowId, { status: this.status }).subscribe({
         next: (response: any) => {
           this.isSubmit = false;
           this.dialogRef.close({ event: 'update', data: response });
@@ -55,7 +96,7 @@ export class DialogLsStatus {
       body.approvalNote = note;
       body.note = note;
     }
-    this.api.post_private(this.apiPath + this.row._id + '/' + this.status, body).subscribe({
+    this.api.post_private(this.apiPath + rowId + '/' + this.status, body).subscribe({
       next: (response: any) => {
         this.isSubmit = false;
         this.dialogRef.close({ event: 'update', data: response });

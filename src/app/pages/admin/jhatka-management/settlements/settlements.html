@@ -90,18 +90,100 @@
     </div>
 
     <h3 class="f-s-16 f-w-600 m-t-24">Payables ({{ payables.length }})</h3>
+    <div class="d-flex flex-wrap align-items-center gap-12 m-b-12">
+      <mat-form-field appearance="outline" class="f-s-14">
+        <mat-label>Outlet</mat-label>
+        <mat-select [(ngModel)]="generatePayableForm.outlet">
+          <mat-option *ngFor="let outlet of outlets" [value]="outlet._id || outlet.id">
+            {{ outlet.name || outlet.outletCode }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+      <mat-form-field appearance="outline" class="f-s-14">
+        <mat-label>Supplier</mat-label>
+        <mat-select [(ngModel)]="generatePayableForm.supplier">
+          <mat-option *ngFor="let supplier of payableSuppliers" [value]="supplier._id || supplier.id">
+            {{ supplier.name || supplier.code }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+      <mat-form-field appearance="outline" class="f-s-14">
+        <mat-label>Period from</mat-label>
+        <input matInput type="date" [(ngModel)]="generatePayableForm.from">
+      </mat-form-field>
+      <mat-form-field appearance="outline" class="f-s-14">
+        <mat-label>Period to (exclusive)</mat-label>
+        <input matInput type="date" [(ngModel)]="generatePayableForm.to">
+      </mat-form-field>
+      <mat-checkbox [(ngModel)]="generatePayableForm.tdsApplicable">TDS</mat-checkbox>
+      <mat-form-field appearance="outline" class="f-s-14" [class.d-none]="!generatePayableForm.tdsApplicable">
+        <mat-label>TDS rate %</mat-label>
+        <input matInput type="number" min="0" max="100" [(ngModel)]="generatePayableForm.tdsRatePercent">
+      </mat-form-field>
+      <button mat-raised-button color="primary" (click)="generatePayable()" [disabled]="generatingPayable">
+        {{ generatingPayable ? 'Generating...' : 'Generate payable' }}
+      </button>
+    </div>
+    <p class="f-s-12 text-muted">
+      Generation claims accepted receipt lines for the selected outlet, supplier, and period.
+      LocalWala finance then owns approval, payment, dispute, and void.
+    </p>
     <div class="table-responsive">
       <table mat-table [dataSource]="payables" class="w-100">
         <ng-container matColumnDef="payable">
           <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1">{{ util.appTranslate('jhatka_payable') }}</th>
           <td mat-cell *matCellDef="let element">
-            <div class="f-w-600">{{ element.payableNo }}</div>
-            <div class="m-t-4 f-s-12 text-muted">{{ element.status }} · net {{ element.totals?.netAmount | paise }}</div>
+            <div class="f-w-600">{{ element.payableNo }} | {{ element.supplier?.name || element.supplierName || 'Supplier' }}</div>
+            <div class="m-t-4 f-s-12 text-muted">
+              {{ element.outlet?.name || element.outlet?.outletCode || 'Outlet' }} |
+              {{ element.period?.label }} | {{ element.status }} |
+              net {{ element.totals?.netAmount | paise }}
+            </div>
           </td>
         </ng-container>
 
-        <tr mat-header-row *matHeaderRowDef="['payable']"></tr>
-        <tr mat-row *matRowDef="let row; columns: ['payable'];"></tr>
+        <ng-container matColumnDef="payableAction">
+          <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-16 mat-subtitle-1">{{ util.appTranslate('jhatka_action') }}</th>
+          <td mat-cell *matCellDef="let element">
+            <button
+              *ngIf="element.status === 'draft' || element.status === 'disputed'"
+              mat-button
+              color="primary"
+              (click)="approvePayable(element)">
+              {{ util.appTranslate('jhatka_approve') }}
+            </button>
+            <button
+              *ngIf="element.status === 'approved'"
+              mat-button
+              color="accent"
+              (click)="payPayable(element)">
+              Pay
+            </button>
+            <button
+              *ngIf="element.status === 'draft' || element.status === 'approved'"
+              mat-button
+              color="warn"
+              (click)="disputePayable(element)">
+              Dispute
+            </button>
+            <button
+              *ngIf="element.status !== 'paid' && element.status !== 'void'"
+              mat-button
+              color="warn"
+              (click)="voidPayable(element)">
+              Void
+            </button>
+            <span *ngIf="element.status === 'paid'" class="f-s-12 text-muted">
+              Paid{{ element.paymentReference ? ' | ' + element.paymentReference : '' }}
+            </span>
+            <span *ngIf="element.status === 'void' || element.status === 'disputed'" class="f-s-12 text-muted">
+              {{ element.statusReason || element.reason || element.status }}
+            </span>
+          </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="['payable', 'payableAction']"></tr>
+        <tr mat-row *matRowDef="let row; columns: ['payable', 'payableAction'];"></tr>
       </table>
     </div>
 

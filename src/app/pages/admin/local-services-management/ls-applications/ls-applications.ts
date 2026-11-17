@@ -3,23 +3,36 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { MaterialModule } from 'src/app/material.module';
 import { MatDialog } from '@angular/material/dialog';
+import { HttpParams } from '@angular/common/http';
 import { MatPaginator } from '@angular/material/paginator';
 import { Router } from '@angular/router';
 import { ApiService } from 'src/app/services/api-service';
 import { UtilService } from 'src/app/services/util-service';
 import { DialogLsStatus } from '../dialog-ls-status/dialog-ls-status';
+import { LsStatusBadge } from '../ls-status-badge/ls-status-badge';
 
 @Component({
   selector: 'app-ls-applications',
-  imports: [CommonModule, FormsModule, MaterialModule],
+  imports: [CommonModule, FormsModule, MaterialModule, LsStatusBadge],
   templateUrl: './ls-applications.html',
 })
 export class LsApplications {
   isLoaded: boolean = false;
+  hasError: boolean = false;
   list: any[] = [];
   currentPage: number = 0;
   pageSize: number = 10;
-  displayedColumn: string[] = ['business', 'submitted', 'status', 'action'];
+  search: string = '';
+  sortBy: string = '';
+  displayedColumn: string[] = ['select', 'business', 'contact', 'submitted', 'verification', 'status', 'action'];
+  selection: Set<string> = new Set();
+  bulkStatus: string = '';
+  bulkStatuses: string[] = ['UNDER_REVIEW', 'APPROVED', 'REJECTED'];
+
+  providerTransitions: any = {
+    SUBMITTED: ['UNDER_REVIEW', 'DRAFT'],
+    UNDER_REVIEW: ['APPROVED', 'REJECTED', 'SUBMITTED'],
+  };
 
   @ViewChild('paginator', { read: MatPaginator })
   paginator: MatPaginator;
@@ -37,28 +50,29 @@ export class LsApplications {
 
   getList() {
     this.isLoaded = false;
-    this.api
-      .get_private(
-        'v1/local-services/admin/providers?limit=' +
-          this.pageSize +
-          '&page=' +
-          this.currentPage +
-          '&statuses=SUBMITTED,UNDER_REVIEW',
-      )
-      .subscribe({
-        next: (response: any) => {
-          if (response && response.results) {
-            this.list = response.results;
-            this.paginator.length = response.totalResults;
-            this.paginator.hidePageSize = response.totalResults <= 0 ? true : false;
-          }
-          this.isLoaded = true;
-        },
-        error: (error: any) => {
-          this.isLoaded = true;
-          this.util.handleError(error, 'admin');
-        },
-      });
+    this.hasError = false;
+    let httpParams = new HttpParams()
+      .set('limit', this.pageSize)
+      .set('page', this.currentPage + 1)
+      .set('statuses', 'SUBMITTED,UNDER_REVIEW');
+    if (this.search) httpParams = httpParams.set('search', String(this.search).trim());
+    if (this.sortBy) httpParams = httpParams.set('sortBy', this.sortBy);
+    this.api.get_private('v1/local-services/admin/providers?' + httpParams.toString()).subscribe({
+      next: (response: any) => {
+        if (response && response.results) {
+          this.list = response.results;
+          this.paginator.length = response.totalResults;
+          this.paginator.hidePageSize = response.totalResults <= 0 ? true : false;
+        }
+        this.selection.clear();
+        this.isLoaded = true;
+      },
+      error: (error: any) => {
+        this.isLoaded = true;
+        this.hasError = true;
+        this.util.handleError(error, 'admin');
+      },
+    });
   }
 
   onPageChange(event: any) {
@@ -67,13 +81,83 @@ export class LsApplications {
     this.getList();
   }
 
+  onSearch() {
+    this.currentPage = 0;
+    this.getList();
+  }
+
+  rowId(row: any): string { return row.id || row._id; }
+  isSelected(row: any): boolean { return this.selection.has(this.rowId(row)); }
+  toggleRow(row: any) {
+    const id = this.rowId(row);
+    if (this.selection.has(id)) this.selection.delete(id); else this.selection.add(id);
+  }
+  toggleAll() {
+    if (this.selection.size === this.list.length) this.selection.clear();
+    else this.list.forEach((r) => this.selection.add(this.rowId(r)));
+  }
+  allSelected(): boolean { return this.list.length > 0 && this.selection.size === this.list.length; }
+  someSelected(): boolean { return this.selection.size > 0 && this.selection.size < this.list.length; }
+
+  onBulkTransition() {
+    if (!this.bulkStatus || !this.selection.size) return;
+    this.api.post_private('v1/local-services/admin/providers/bulk-transition', { ids: [...this.selection], status: this.bulkStatus }).subscribe({
+      next: () => {
+        this.util.onSuccess('ts_status_updated');
+        this.selection.clear();
+        this.bulkStatus = '';
+        this.getList();
+      },
+      error: (err: any) => this.util.handleError(err, 'admin'),
+    });
+  }
+
+  onSortChange(event: any) {
+    const fields: any = { business: 'businessName', contact: 'contactName', submitted: 'createdAt', status: 'status' };
+    this.sortBy = fields[event.active] && event.direction ? fields[event.active] + ':' + event.direction : '';
+    this.currentPage = 0;
+    if (this.paginator) this.paginator.pageIndex = 0;
+    this.getList();
+  }
+
   openDetail(row: any) {
-    this.router.navigate(['/admin/local-services-management/providers', row._id]);
+    this.router.navigate(['/admin/local-services-management/providers', row.id || row._id]);
+  }
+
+  nextStatuses(status: string): string[] {
+    return this.providerTransitions[status] || [];
+  }
+
+  statusIcon(status: string): string {
+    const icons: any = {
+      SUBMITTED: 'send',
+      UNDER_REVIEW: 'visibility',
+      DRAFT: 'undo',
+      APPROVED: 'check_circle',
+      REJECTED: 'cancel',
+    };
+    return icons[status] || 'arrow_forward';
+  }
+
+  statusColor(status: string): string {
+    if (status === 'ACTIVE' || status === 'APPROVED') return 'text-success';
+    if (status === 'REJECTED') return 'text-error';
+    if (status === 'UNDER_REVIEW') return 'text-primary';
+    return 'text-warning';
+  }
+
+  ownerName(owner: any): string {
+    if (!owner || typeof owner !== 'object') return '';
+    return [owner.firstName, owner.lastName].filter(Boolean).join(' ');
   }
 
   onTransition(row: any, status: string) {
     this.dialog
-      .open(DialogLsStatus, { data: { apiPath: 'v1/local-services/admin/providers/', row, status }, disableClose: true })
+      .open(DialogLsStatus, {
+        data: { apiPath: 'v1/local-services/admin/providers/', row, status },
+        disableClose: true,
+        width: '560px',
+      })
       .afterClosed()
       .subscribe((result: any) => {
         if (result && result.event == 'update') {

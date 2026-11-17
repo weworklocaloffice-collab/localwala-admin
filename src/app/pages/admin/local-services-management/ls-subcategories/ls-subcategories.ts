@@ -8,6 +8,7 @@ import { MatPaginator } from '@angular/material/paginator';
 import { ApiService } from 'src/app/services/api-service';
 import { UtilService } from 'src/app/services/util-service';
 import { DialogLsStatus } from '../dialog-ls-status/dialog-ls-status';
+import { DialogLsCategory } from '../dialog-ls-category/dialog-ls-category';
 
 @Component({
   selector: 'app-ls-subcategories',
@@ -20,7 +21,8 @@ export class LsSubcategories {
   currentPage: number = 0;
   pageSize: number = 10;
   selectedStatus: string = '';
-  displayedColumn: string[] = ['key', 'parent', 'status', 'action'];
+  displayedColumn: string[] = ['image', 'key', 'parent', 'status', 'action'];
+  categoryNames: { [key: string]: string } = {};
 
   @ViewChild('paginator', { read: MatPaginator })
   paginator: MatPaginator;
@@ -33,6 +35,20 @@ export class LsSubcategories {
 
   ngOnInit() {
     this.getList();
+    this.loadCategoryNames();
+  }
+
+  loadCategoryNames() {
+    this.api.get_private('v1/local-services/admin/catalog/categories?limit=100').subscribe({
+      next: (response: any) => {
+        const names: { [key: string]: string } = {};
+        (response && response.results ? response.results : []).forEach((category: any) => {
+          names[category.id || category._id] = category.name;
+        });
+        this.categoryNames = names;
+      },
+      error: (error: any) => this.util.handleError(error, 'admin'),
+    });
   }
 
   getList() {
@@ -68,6 +84,32 @@ export class LsSubcategories {
   onStatusFilter() {
     this.currentPage = 0;
     this.getList();
+  }
+
+  onCreate() {
+    this.dialog
+      .open(DialogLsCategory, { disableClose: true, width: '520px' })
+      .afterClosed()
+      .subscribe((result: any) => {
+        if (result && result.event == 'update') {
+          this.util.onSuccess('ts_record_created');
+          this.getList();
+          this.loadCategoryNames();
+        }
+      });
+  }
+
+  onEdit(row: any) {
+    this.dialog
+      .open(DialogLsCategory, { data: { row }, disableClose: true, width: '520px' })
+      .afterClosed()
+      .subscribe((result: any) => {
+        if (result && result.event == 'update') {
+          this.util.onSuccess('ts_status_updated');
+          this.getList();
+          this.loadCategoryNames();
+        }
+      });
   }
 
   onStatus(row: any, status: string) {

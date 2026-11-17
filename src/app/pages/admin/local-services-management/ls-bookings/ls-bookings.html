@@ -21,7 +21,7 @@
     </div>
 
     <div class="table-responsive">
-      <table mat-table [dataSource]="list" class="w-100">
+      <table mat-table [dataSource]="list" class="w-100" matSort (matSortChange)="onSortChange($event)">
         <ng-container matColumnDef="action">
           <th mat-header-cell *matHeaderCellDef></th>
           <td mat-cell *matCellDef="let element">
@@ -32,7 +32,7 @@
         </ng-container>
 
         <ng-container matColumnDef="code">
-          <th mat-header-cell *matHeaderCellDef class="f-w-600">Booking</th>
+          <th mat-header-cell *matHeaderCellDef class="f-w-600" mat-sort-header>Booking</th>
           <td mat-cell *matCellDef="let element">
             <div class="f-w-600">{{ element.bookingCode }}</div>
             <div class="f-s-12 text-muted">{{ element.serviceKey || element.categoryKey }}</div>
@@ -40,12 +40,12 @@
         </ng-container>
 
         <ng-container matColumnDef="mode">
-          <th mat-header-cell *matHeaderCellDef class="f-w-600">Mode</th>
+          <th mat-header-cell *matHeaderCellDef class="f-w-600" mat-sort-header>Mode</th>
           <td mat-cell *matCellDef="let element">{{ element.bookingMode }}</td>
         </ng-container>
 
         <ng-container matColumnDef="total">
-          <th mat-header-cell *matHeaderCellDef class="f-w-600">Total</th>
+          <th mat-header-cell *matHeaderCellDef class="f-w-600" mat-sort-header>Total</th>
           <td mat-cell *matCellDef="let element">₹{{ element.serviceValue || 0 }}</td>
         </ng-container>
 
@@ -60,9 +60,9 @@
         </ng-container>
 
         <ng-container matColumnDef="status">
-          <th mat-header-cell *matHeaderCellDef class="f-w-600">Status</th>
+          <th mat-header-cell *matHeaderCellDef class="f-w-600" mat-sort-header>Status</th>
           <td mat-cell *matCellDef="let element">
-            <span class="f-s-14" [ngClass]="element.status === 'COMPLETED' ? 'text-success' : element.status === 'CANCELLED' ? 'text-error' : 'text-warning'">{{ element.status }}</span>
+            <app-ls-status-badge [status]="element.status"></app-ls-status-badge>
           </td>
         </ng-container>
 
@@ -70,7 +70,16 @@
         <tr mat-row *matRowDef="let row; columns: displayedColumn"></tr>
       </table>
 
-      @if (isLoaded && !list.length) {
+      @if (!isLoaded) {
+        <div class="p-24 text-center"><mat-spinner diameter="32" class="d-inline-block"></mat-spinner></div>
+      }
+      @if (hasError) {
+        <div class="p-24 text-center text-error">
+          {{ util.appTranslate('ts_something_went_wrong') }}
+          <a (click)="getList()" class="m-l-8 cursor-pointer text-primary" matTooltip="Retry"><mat-icon class="align-middle">refresh</mat-icon></a>
+        </div>
+      }
+      @if (isLoaded && !hasError && !list.length) {
         <div class="p-24 text-center text-muted">{{ util.appTranslate('ts_no_records_found') }}</div>
       }
     </div>

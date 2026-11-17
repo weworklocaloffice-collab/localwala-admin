@@ -381,10 +381,15 @@ export class AppSearchDialogComponent {
   searchText: string = '';
   navItems = navItems;
 
-  navItemsData = navItems.filter((navitem) => navitem.displayName);
+  navItemsData: any[] = navItems.filter((navitem) => navitem.displayName);
+  lsResults: any[] = [];
 
-  constructor(public util: UtilService) {
+  constructor(public util: UtilService, public api: ApiService, private router: Router) {
     console.log('header vertical');
+  }
+
+  get isLsContext(): boolean {
+    return (this.router.url || '').includes('local-services-management');
   }
 
   onSearch() {
@@ -394,5 +399,18 @@ export class AppSearchDialogComponent {
         item.displayName &&
         item.displayName.toLowerCase().includes(search)
     );
+    this.lsResults = [];
+    if (this.isLsContext && search.length >= 2) {
+      this.api.get_private('v1/local-services/admin/search?q=' + encodeURIComponent(search)).subscribe({
+        next: (res: any) => {
+          const items: any[] = [];
+          (res.providers || []).forEach((p: any) => items.push({ displayName: p.title, route: p.route, subtitle: p.subtitle + ' · ' + p.status }));
+          (res.services || []).forEach((s: any) => items.push({ displayName: s.title, route: s.route, subtitle: s.subtitle + ' · ' + s.status }));
+          (res.bookings || []).forEach((b: any) => items.push({ displayName: b.title, route: b.route, subtitle: b.subtitle + ' · ' + b.status }));
+          this.lsResults = items;
+        },
+        error: () => { this.lsResults = []; },
+      });
+    }
   }
 }

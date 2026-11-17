@@ -11,6 +11,7 @@ import { Customers } from './customers/customers';
 import { CustomerDetail } from './customer-detail/customer-detail';
 import { Commissions } from './commissions/commissions';
 import { LoanLeads } from './loan-leads/loan-leads';
+import { LoanLeadDetail } from './loan-lead-detail/loan-lead-detail';
 import { OfferForm } from './offer-form/offer-form';
 import { Profile } from './profile/profile';
 
@@ -67,6 +68,13 @@ export const BankTeamRoutes: Routes = [
     component: LoanLeads,
     data: {
       title: 'bank_loan_leads',
+    },
+  },
+  {
+    path: 'loan-leads/:id',
+    component: LoanLeadDetail,
+    data: {
+      title: 'bank_loan_lead_detail',
     },
   },
   {

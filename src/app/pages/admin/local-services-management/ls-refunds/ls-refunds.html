@@ -19,7 +19,7 @@
     </div>
 
     <div class="table-responsive">
-      <table mat-table [dataSource]="list" class="w-100">
+      <table mat-table [dataSource]="list" class="w-100" matSort (matSortChange)="onSortChange($event)">
         <ng-container matColumnDef="booking">
           <th mat-header-cell *matHeaderCellDef class="f-w-600">Booking</th>
           <td mat-cell *matCellDef="let element">
@@ -29,14 +29,14 @@
         </ng-container>
 
         <ng-container matColumnDef="amount">
-          <th mat-header-cell *matHeaderCellDef class="f-w-600">Requested</th>
+          <th mat-header-cell *matHeaderCellDef class="f-w-600" mat-sort-header>Requested</th>
           <td mat-cell *matCellDef="let element">₹{{ element.requestedAmount }}</td>
         </ng-container>
 
         <ng-container matColumnDef="status">
-          <th mat-header-cell *matHeaderCellDef class="f-w-600">Status</th>
+          <th mat-header-cell *matHeaderCellDef class="f-w-600" mat-sort-header>Status</th>
           <td mat-cell *matCellDef="let element">
-            <div class="f-s-14">{{ element.status }}</div>
+            <app-ls-status-badge [status]="element.status"></app-ls-status-badge>
             @if (element.completedAmount > 0) {
               <div class="f-s-12 text-muted">Refunded ₹{{ element.completedAmount }}</div>
             }
@@ -54,7 +54,7 @@
           <td mat-cell *matCellDef="let element">
             @if (element.status === 'requested') {
               <a (click)="decide(element, 'approved')" class="m-r-10 cursor-pointer text-success" matTooltip="Approve + reverse ledger">
-                @if (actingOn === element._id + 'approved') {
+                @if (actingOn === (element.id || element._id) + 'approved') {
                   <mat-icon>hourglass_empty</mat-icon>
                 } @else {
                   <mat-icon>check_circle</mat-icon>
@@ -66,7 +66,7 @@
             }
             @if (element.status === 'failed' || element.status === 'approved') {
               <a (click)="retry(element)" class="cursor-pointer text-warning" matTooltip="Retry refund">
-                @if (actingOn === element._id + 'retry') {
+                @if (actingOn === (element.id || element._id) + 'retry') {
                   <mat-icon>hourglass_empty</mat-icon>
                 } @else {
                   <mat-icon>refresh</mat-icon>
@@ -80,7 +80,16 @@
         <tr mat-row *matRowDef="let row; columns: displayedColumn"></tr>
       </table>
 
-      @if (isLoaded && !list.length) {
+      @if (!isLoaded) {
+        <div class="p-24 text-center"><mat-spinner diameter="32" class="d-inline-block"></mat-spinner></div>
+      }
+      @if (hasError) {
+        <div class="p-24 text-center text-error">
+          {{ util.appTranslate('ts_something_went_wrong') }}
+          <a (click)="getList()" class="m-l-8 cursor-pointer text-primary" matTooltip="Retry"><mat-icon class="align-middle">refresh</mat-icon></a>
+        </div>
+      }
+      @if (isLoaded && !hasError && !list.length) {
         <div class="p-24 text-center text-muted">{{ util.appTranslate('ts_no_records_found') }}</div>
       }
     </div>

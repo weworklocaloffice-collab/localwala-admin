@@ -24,6 +24,17 @@ export class JhatkaSettlements {
   rules: any[] = [];
   payables: any[] = [];
   payouts: any[] = [];
+  outlets: any[] = [];
+  payableSuppliers: any[] = [];
+  generatingPayable: boolean = false;
+  generatePayableForm: any = {
+    outlet: '',
+    supplier: '',
+    from: this.isoDate(new Date(new Date().getFullYear(), new Date().getMonth(), 1)),
+    to: this.isoDate(new Date()),
+    tdsApplicable: false,
+    tdsRatePercent: 0,
+  };
 
   @ViewChild('paginator', { read: MatPaginator, static: false })
   paginator: MatPaginator;
@@ -34,6 +45,27 @@ export class JhatkaSettlements {
   ) {
     this.getList();
     this.getMoney();
+    this.getPayableOptions();
+  }
+
+  isoDate(date: Date): string {
+    const offset = date.getTimezoneOffset();
+    return new Date(date.getTime() - offset * 60000).toISOString().slice(0, 10);
+  }
+
+  getPayableOptions() {
+    this.api.get_private('v1/jhatka/admin/outlets?limit=200').subscribe({
+      next: (response: any) => {
+        this.outlets = this.pickList(response, ['outlets', 'data']);
+      },
+      error: () => {},
+    });
+    this.api.get_private('v1/jhatka/admin/suppliers?limit=200').subscribe({
+      next: (response: any) => {
+        this.payableSuppliers = this.pickList(response, ['suppliers']);
+      },
+      error: () => {},
+    });
   }
 
   pickList(response: any, keys: string[]): any[] {
@@ -71,6 +103,110 @@ export class JhatkaSettlements {
 
   documentId(element: any): string {
     return String(element?.id || element?._id || '');
+  }
+
+  generatePayable() {
+    const form = this.generatePayableForm;
+    if (!form.outlet || !form.supplier) {
+      this.util.onInfo('Select an outlet and a supplier');
+      return;
+    }
+    if (!form.from || !form.to || form.to <= form.from) {
+      this.util.onInfo('The period end must be after the period start');
+      return;
+    }
+    if (form.tdsApplicable) {
+      const rate = Number(form.tdsRatePercent);
+      if (Number.isNaN(rate) || rate < 0 || rate > 100) {
+        this.util.onInfo('TDS rate must be between 0 and 100');
+        return;
+      }
+    }
+    this.generatingPayable = true;
+    this.api
+      .post_private('v1/jhatka/admin/settlements/payables/generate', {
+        outlet: form.outlet,
+        supplier: form.supplier,
+        from: form.from,
+        to: form.to,
+        tdsApplicable: !!form.tdsApplicable,
+        tdsRatePercent: Number(form.tdsRatePercent) || 0,
+      })
+      .subscribe({
+        next: () => {
+          this.generatingPayable = false;
+          this.getMoney();
+        },
+        error: (error: any) => {
+          this.generatingPayable = false;
+          this.util.handleError(error, 'admin');
+        },
+      });
+  }
+
+  approvePayable(element: any) {
+    const id = this.documentId(element);
+    if (!id) {
+      this.util.onInfo('Payable id is missing');
+      return;
+    }
+    this.api.patch_private(`v1/jhatka/admin/settlements/payables/${id}/approve`, {}).subscribe({
+      next: () => this.getMoney(),
+      error: (error: any) => this.util.handleError(error, 'admin'),
+    });
+  }
+
+  payPayable(element: any) {
+    const id = this.documentId(element);
+    if (!id) {
+      this.util.onInfo('Payable id is missing');
+      return;
+    }
+    const paymentReference = window.prompt(
+      `Bank/UPI transfer reference for ${element.payableNo || 'this payable'} (required):`,
+    )?.trim();
+    if (!paymentReference || paymentReference.length < 3) {
+      this.util.onInfo('A payment reference of at least 3 characters is required');
+      return;
+    }
+    this.api.post_private(`v1/jhatka/admin/settlements/payables/${id}/pay`, { paymentReference }).subscribe({
+      next: () => this.getMoney(),
+      error: (error: any) => this.util.handleError(error, 'admin'),
+    });
+  }
+
+  disputePayable(element: any) {
+    const id = this.documentId(element);
+    if (!id) {
+      this.util.onInfo('Payable id is missing');
+      return;
+    }
+    const reason = window.prompt('Dispute reason (at least 3 characters):')?.trim();
+    if (!reason || reason.length < 3) {
+      this.util.onInfo('A dispute reason of at least 3 characters is required');
+      return;
+    }
+    this.api.patch_private(`v1/jhatka/admin/settlements/payables/${id}/dispute`, { reason }).subscribe({
+      next: () => this.getMoney(),
+      error: (error: any) => this.util.handleError(error, 'admin'),
+    });
+  }
+
+  voidPayable(element: any) {
+    const id = this.documentId(element);
+    if (!id) {
+      this.util.onInfo('Payable id is missing');
+      return;
+    }
+    const reason = window.prompt('Void reason (at least 3 characters):')?.trim();
+    if (!reason || reason.length < 3) {
+      this.util.onInfo('A void reason of at least 3 characters is required');
+      return;
+    }
+    this.api.patch_private(`v1/jhatka/admin/settlements/payables/${id}/void`, { reason }).subscribe({
+      next: () => this.getMoney(),
+      error: (error: any) => this.util.handleError(error, 'admin'),
+    });
   }
 
   approvePayout(element: any) {

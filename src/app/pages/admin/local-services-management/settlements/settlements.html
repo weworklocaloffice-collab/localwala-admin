@@ -6,15 +6,16 @@
 
   <mat-card-content>
     <div class="d-flex flex-wrap align-center justify-content-between mb-24 gap-12">
-      <span>Generate a settlement for unsettled revenue entries, then track its payout status</span>
-      <button mat-flat-button color="primary" (click)="onGenerate()">Generate settlement</button>
+       <span>Generate a settlement for unsettled revenue entries, then track its payout status</span>
+       <button mat-stroked-button color="warn" (click)="retryAllFailed()">Retry failed</button>
+       <button mat-flat-button color="primary" (click)="onGenerate()">Generate settlement</button>
     </div>
 
     <div class="table-responsive">
-      <table mat-table [dataSource]="list" class="w-100">
+      <table mat-table [dataSource]="list" class="w-100" matSort (matSortChange)="onSortChange($event)">
 
         <ng-container matColumnDef="settlement">
-          <th mat-header-cell *matHeaderCellDef class="f-w-600">Settlement</th>
+          <th mat-header-cell *matHeaderCellDef class="f-w-600" mat-sort-header>Settlement</th>
           <td mat-cell *matCellDef="let element">
             <div class="f-w-600">#{{ element.settlementNo }}</div>
             <div class="f-s-12 text-muted">{{ element.settlementType }}</div>
@@ -34,6 +35,13 @@
           <td mat-cell *matCellDef="let element">
             <div class="f-s-12">{{ element.from | date: 'mediumDate' }}</div>
             <div class="f-s-12 text-muted">to {{ element.to | date: 'mediumDate' }}</div>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="age">
+          <th mat-header-cell *matHeaderCellDef class="f-w-600">Age</th>
+          <td mat-cell *matCellDef="let element">
+            <span [ngClass]="isOverdue(element) ? 'text-error f-w-600' : 'text-muted'">{{ ageDays(element) }}d</span>
           </td>
         </ng-container>
 
@@ -65,9 +73,9 @@
         </ng-container>
 
         <ng-container matColumnDef="status">
-          <th mat-header-cell *matHeaderCellDef class="f-w-600">Status</th>
+          <th mat-header-cell *matHeaderCellDef class="f-w-600" mat-sort-header>Status</th>
           <td mat-cell *matCellDef="let element">
-            <span class="f-s-14" [ngClass]="element.status === 'settled' ? 'text-success' : 'text-warning'">{{ element.status }}</span>
+            <app-ls-status-badge [status]="element.status"></app-ls-status-badge>
           </td>
         </ng-container>
 
@@ -101,7 +109,16 @@
         <tr mat-row *matRowDef="let row; columns: displayedColumn"></tr>
       </table>
 
-      @if (isLoaded && !list.length) {
+      @if (!isLoaded) {
+        <div class="p-24 text-center"><mat-spinner diameter="32" class="d-inline-block"></mat-spinner></div>
+      }
+      @if (hasError) {
+        <div class="p-24 text-center text-error">
+          {{ util.appTranslate('ts_something_went_wrong') }}
+          <a (click)="getList()" class="m-l-8 cursor-pointer text-primary" matTooltip="Retry"><mat-icon class="align-middle">refresh</mat-icon></a>
+        </div>
+      }
+      @if (isLoaded && !hasError && !list.length) {
         <div class="p-24 text-center text-muted">{{ util.appTranslate('ts_no_records_found') }}</div>
       }
     </div>

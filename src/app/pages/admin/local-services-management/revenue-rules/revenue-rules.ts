@@ -96,7 +96,8 @@ export class RevenueRules {
   }
 
   onClone(row: any) {
-    this.api.post_private('v1/local-services/admin/revenue/rules/' + row._id + '/clone', {}).subscribe({
+    const rowId = row.id || row._id;
+    this.api.post_private('v1/local-services/admin/revenue/rules/' + rowId + '/clone', {}).subscribe({
       next: () => {
         this.util.onSuccess('ts_rule_cloned');
         this.getList();

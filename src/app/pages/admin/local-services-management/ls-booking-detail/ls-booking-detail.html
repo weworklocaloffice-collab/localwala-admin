@@ -1,0 +1,27 @@
+<mat-card class="cardWithShadow">
+  <mat-card-header class="m-b-16">
+    <button mat-icon-button (click)="back()" class="m-r-8"><mat-icon>arrow_back</mat-icon></button>
+    <mat-card-title>{{ booking?.bookingCode || 'Booking' }}</mat-card-title>
+  </mat-card-header>
+  <mat-card-content>
+    @if (!isLoaded) {
+      <div class="p-24 text-center"><mat-spinner diameter="32" class="d-inline-block"></mat-spinner></div>
+    } @else if (booking) {
+      <div class="f-s-14 m-b-8"><app-ls-status-badge [status]="booking.status"></app-ls-status-badge> · {{ booking.bookingMode }} · {{ booking.paymentStatus }} ({{ booking.paymentMode }})</div>
+      <div class="f-s-14">Labour ₹{{ booking.labourAmount }} · Parts ₹{{ booking.partsAmount }}</div>
+      <div class="f-s-14">Total ₹{{ booking.serviceValue }} · Paid ₹{{ booking.amountPaid || 0 }}</div>
+      @if (booking.depositAmount > 0) {
+        <div class="f-s-14">Deposit ₹{{ booking.depositAmount }} · Balance ₹{{ booking.balanceAmount }}</div>
+      }
+      @if (booking.cancelReason) {
+        <div class="f-s-14 text-error">Cancel reason: {{ booking.cancelReason }}</div>
+      }
+      <h4 class="m-t-16">History ({{ history.length }})</h4>
+      @for (h of history; track h.id || h._id) {
+        <div class="f-s-14">{{ h.from || '—' }} → {{ h.to }}@if (h.reason) { <span class="text-muted"> ({{ h.reason }})</span> }</div>
+      }
+    } @else {
+      <div class="p-24 text-center text-muted">{{ util.appTranslate('ts_no_records_found') }}</div>
+    }
+  </mat-card-content>
+</mat-card>

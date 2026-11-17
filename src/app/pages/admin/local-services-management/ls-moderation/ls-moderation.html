@@ -8,26 +8,26 @@
     <mat-tab-group>
       <mat-tab label="Offerings ({{ offerings.length }})">
         <div class="table-responsive p-t-16">
-          <table mat-table [dataSource]="offerings" class="w-100">
+          <table mat-table [dataSource]="offerings" class="w-100" matSort (matSortChange)="onOfferingSort($event)">
             <ng-container matColumnDef="service">
               <th mat-header-cell *matHeaderCellDef class="f-w-600">Service</th>
               <td mat-cell *matCellDef="let element">
-                <div class="f-w-600">{{ element.service }}</div>
-                <div class="f-s-12 text-muted">{{ element.provider }}</div>
+                <div class="f-w-600">{{ element.service?.name || element.serviceKey || '—' }}</div>
+                <div class="f-s-12 text-muted">{{ element.provider?.businessName || element.provider }}</div>
               </td>
             </ng-container>
 
             <ng-container matColumnDef="price">
-              <th mat-header-cell *matHeaderCellDef class="f-w-600">Price</th>
+              <th mat-header-cell *matHeaderCellDef class="f-w-600" mat-sort-header>Price</th>
               <td mat-cell *matCellDef="let element">
                 <span class="f-s-14">{{ element.price }}</span>
               </td>
             </ng-container>
 
             <ng-container matColumnDef="status">
-              <th mat-header-cell *matHeaderCellDef class="f-w-600">Status</th>
+              <th mat-header-cell *matHeaderCellDef class="f-w-600" mat-sort-header>Status</th>
               <td mat-cell *matCellDef="let element">
-                <span class="f-s-14 text-warning">{{ element.status }}</span>
+                <app-ls-status-badge [status]="element.status"></app-ls-status-badge>
               </td>
             </ng-container>
 
@@ -43,7 +43,16 @@
             <tr mat-row *matRowDef="let row; columns: offeringColumns"></tr>
           </table>
 
-          @if (offeringsLoaded && !offerings.length) {
+          @if (!offeringsLoaded) {
+            <div class="p-24 text-center"><mat-spinner diameter="32" class="d-inline-block"></mat-spinner></div>
+          }
+          @if (offeringsError) {
+            <div class="p-24 text-center text-error">
+              {{ util.appTranslate('ts_something_went_wrong') }}
+              <a (click)="getOfferings()" class="m-l-8 cursor-pointer text-primary" matTooltip="Retry"><mat-icon class="align-middle">refresh</mat-icon></a>
+            </div>
+          }
+          @if (offeringsLoaded && !offeringsError && !offerings.length) {
             <div class="p-24 text-center text-muted">{{ util.appTranslate('ts_no_records_found') }}</div>
           }
         </div>
@@ -53,9 +62,9 @@
 
       <mat-tab label="Documents ({{ documents.length }})">
         <div class="table-responsive p-t-16">
-          <table mat-table [dataSource]="documents" class="w-100">
+          <table mat-table [dataSource]="documents" class="w-100" matSort (matSortChange)="onDocumentSort($event)">
             <ng-container matColumnDef="kind">
-              <th mat-header-cell *matHeaderCellDef class="f-w-600">Kind</th>
+              <th mat-header-cell *matHeaderCellDef class="f-w-600" mat-sort-header>Kind</th>
               <td mat-cell *matCellDef="let element">
                 <div class="f-w-600">{{ element.kind }}</div>
                 <a [href]="element.fileUrl" target="_blank" class="f-s-12 text-primary">Open file</a>
@@ -70,9 +79,9 @@
             </ng-container>
 
             <ng-container matColumnDef="status">
-              <th mat-header-cell *matHeaderCellDef class="f-w-600">Status</th>
+              <th mat-header-cell *matHeaderCellDef class="f-w-600" mat-sort-header>Status</th>
               <td mat-cell *matCellDef="let element">
-                <span class="f-s-14 text-warning">{{ element.status }}</span>
+                <app-ls-status-badge [status]="element.status"></app-ls-status-badge>
               </td>
             </ng-container>
 
@@ -88,7 +97,16 @@
             <tr mat-row *matRowDef="let row; columns: documentColumns"></tr>
           </table>
 
-          @if (documentsLoaded && !documents.length) {
+          @if (!documentsLoaded) {
+            <div class="p-24 text-center"><mat-spinner diameter="32" class="d-inline-block"></mat-spinner></div>
+          }
+          @if (documentsError) {
+            <div class="p-24 text-center text-error">
+              {{ util.appTranslate('ts_something_went_wrong') }}
+              <a (click)="getDocuments()" class="m-l-8 cursor-pointer text-primary" matTooltip="Retry"><mat-icon class="align-middle">refresh</mat-icon></a>
+            </div>
+          }
+          @if (documentsLoaded && !documentsError && !documents.length) {
             <div class="p-24 text-center text-muted">{{ util.appTranslate('ts_no_records_found') }}</div>
           }
         </div>

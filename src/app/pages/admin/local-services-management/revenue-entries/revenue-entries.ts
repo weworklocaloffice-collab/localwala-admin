@@ -32,7 +32,7 @@ export class RevenueEntries {
 
   getList() {
     this.isLoaded = false;
-    const httpParams = new HttpParams().set('limit', this.pageSize).set('page', this.currentPage);
+    const httpParams = new HttpParams().set('limit', this.pageSize).set('page', this.currentPage + 1);
     this.api.get_private('v1/local-services/admin/revenue/entries?' + httpParams.toString()).subscribe({
       next: (response: any) => {
         if (response && response.results) {
